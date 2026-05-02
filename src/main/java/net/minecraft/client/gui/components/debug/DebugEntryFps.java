@@ -1,0 +1,26 @@
+package net.minecraft.client.gui.components.debug;
+
+import java.util.Locale;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.Options;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.chunk.LevelChunk;
+import net.optifine.Config;
+import org.jspecify.annotations.Nullable;
+
+public class DebugEntryFps implements DebugScreenEntry {
+    @Override
+    public void display(DebugScreenDisplayer p_430292_, @Nullable Level p_426610_, @Nullable LevelChunk p_428846_, @Nullable LevelChunk p_430980_) {
+        Minecraft minecraft = Minecraft.getInstance();
+        int i = minecraft.getFramerateLimitTracker().getFramerateLimit();
+        Options options = minecraft.options;
+        p_430292_.addPriorityLine(
+            String.format(Locale.ROOT, "%s T: %s%s", Config.getFpsString(), i == 260 ? "inf" : i, options.enableVsync().get() ? " vsync" : "")
+        );
+    }
+
+    @Override
+    public boolean isAllowed(boolean p_428450_) {
+        return true;
+    }
+}

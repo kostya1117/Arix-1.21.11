@@ -1,0 +1,15 @@
+package net.minecraftforge.eventbus.api.event;
+
+import net.minecraftforge.common.util.HasResult;
+import net.minecraftforge.common.util.Result;
+
+public class MutableEvent implements HasResult {
+    @Override
+    public Result getResult() {
+        return null;
+    }
+
+    @Override
+    public void setResult(Result result) {
+    }
+}
