@@ -1,11 +1,15 @@
 package net.minecraft.client.gui.screens.multiplayer;
 
 import com.mojang.logging.LogUtils;
+
+import java.time.Duration;
 import java.util.List;
-import net.minecraft.client.gui.components.AbstractWidget;
-import net.minecraft.client.gui.components.Button;
+
+import net.minecraft.client.gui.components.*;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.layouts.HeaderAndFooterLayout;
+import net.minecraft.client.gui.layouts.LayoutElement;
 import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.client.gui.screens.ConfirmScreen;
 import net.minecraft.client.gui.screens.ConnectScreen;
@@ -26,6 +30,10 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
+import ru.vidtu.ias.IASMinecraft;
+import ru.vidtu.ias.config.IASConfig;
+import ru.vidtu.ias.screen.AccountScreen;
+import ru.vidtu.ias.utils.Expression;
 
 
 public class JoinMultiplayerScreen extends Screen {
@@ -43,6 +51,12 @@ public class JoinMultiplayerScreen extends Screen {
     private ServerData editingServer;
     private LanServerDetection.LanServerList lanServerList;
     private LanServerDetection.@Nullable LanServerDetector lanServerDetector;
+
+    /**
+     * Previously added button, {@code null} if none.
+     */
+    @Nullable
+    private Button ias_button;
 
     public JoinMultiplayerScreen(Screen p_99688_) {
         super(Component.translatable("multiplayer.title"));
@@ -113,6 +127,9 @@ public class JoinMultiplayerScreen extends Screen {
         });
         this.repositionElements();
         this.onSelectedChange();
+
+        // IAS initialization
+        IASMinecraft.onInit(this.minecraft, this, this::addRenderableWidget);
     }
 
     @Override
@@ -120,6 +137,52 @@ public class JoinMultiplayerScreen extends Screen {
         this.layout.arrangeElements();
         if (this.serverSelectionList != null) {
             this.serverSelectionList.updateSize(this.width, this.layout);
+        }
+        // Skip adding, if disabled.
+        if (!IASConfig.serversButton) return;
+
+        // Calculate the position.
+        Integer x = Expression.parsePosition(IASConfig.serversButtonX, this.width, this.height);
+        Integer y = Expression.parsePosition(IASConfig.serversButtonY, this.width, this.height);
+
+        // Couldn't parse position.
+        if (x == null || y == null) {
+            // Use default position.
+            x = width / 2 + 158;
+            y = height - 30;
+
+            // Move out of any overlapping elements.
+            for (int i = 0; i < 64; i++) {
+                boolean overlapping = false;
+                for (GuiEventListener child : this.children()) {
+                    // Skip if doesn't have pos.
+                    if (!(child instanceof LayoutElement le) || child instanceof AbstractSelectionList<?> || child == this.ias_button) continue;
+
+                    // Skip if not overlapping.
+                    int x1 = le.getX() - 4;
+                    int y1 = le.getY() - 4;
+                    int x2 = x1 + le.getWidth() + 8;
+                    int y2 = y1 + le.getHeight() + 8;
+                    if (x < x1 || y < y1 || (x + 20) > x2 || (y + 20) > y2) continue;
+
+                    // Otherwise move.
+                    x = Math.max(x, x2);
+                    overlapping = true;
+                }
+                if (overlapping) continue;
+                break;
+            }
+        }
+
+        // Add or move the button.
+        if (this.ias_button != null) {
+            this.ias_button.setX(x);
+            this.ias_button.setY(y);
+        } else {
+            Button button = this.ias_button = new ImageButton(x, y, 20, 20, IASMinecraft.BUTTON, btn -> this.minecraft.setScreen(new AccountScreen(this)), Component.literal("In-Game Account Switcher"));
+            button.setTooltip(Tooltip.create(button.getMessage()));
+            button.setTooltipDelay(Duration.ofMillis(250L));
+            this.addRenderableWidget(button);
         }
     }
 
@@ -249,5 +312,13 @@ public class JoinMultiplayerScreen extends Screen {
 
     public ServerList getServers() {
         return this.servers;
+    }
+
+    @Override
+    public void render(GuiGraphics p_282860_, int p_281753_, int p_283539_, float p_282628_) {
+        super.render(p_282860_, p_281753_, p_283539_, p_282628_);
+        
+        // IAS drawing
+        IASMinecraft.onDraw(this, this.font, p_282860_);
     }
 }

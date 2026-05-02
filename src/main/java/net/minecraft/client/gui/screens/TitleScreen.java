@@ -3,6 +3,7 @@ package net.minecraft.client.gui.screens;
 import com.mojang.authlib.minecraft.BanDetails;
 import com.mojang.blaze3d.opengl.GlStateManager;
 import com.mojang.logging.LogUtils;
+import com.mojang.realmsclient.RealmsMainScreen;
 import com.mojang.realmsclient.gui.screens.RealmsNotificationsScreen;
 import java.io.IOException;
 import java.util.Calendar;
@@ -33,6 +34,7 @@ import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.FormattedText;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
@@ -43,7 +45,7 @@ import net.minecraft.world.level.storage.LevelStorageSource;
 import net.optifine.reflect.Reflector;
 import net.optifine.reflect.ReflectorForge;
 import org.slf4j.Logger;
-import ru.arixcompany.ui.altmanager.AltManagerScreen;
+import ru.vidtu.ias.IASMinecraft;
 
 public class TitleScreen extends Screen {
     private static final Logger LOGGER = LogUtils.getLogger();
@@ -98,62 +100,57 @@ public class TitleScreen extends Screen {
         return false;
     }
 
-    @Override
     protected void init() {
+        int j;
         if (this.splash == null) {
             this.splash = this.minecraft.getSplashManager().getSplash();
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(new Date());
-            int i = calendar.get(5);
-            int j = calendar.get(2) + 1;
-            if (i == 8 && j == 4) {
+            j = calendar.get(5);
+            int month = calendar.get(2) + 1;
+            if (j == 8 && month == 4) {
                 this.splash = new SplashRenderer(Component.literal("Happy birthday, OptiFine!"));
             }
 
-            if (i == 14 && j == 8) {
+            if (j == 14 && month == 8) {
                 this.splash = new SplashRenderer(Component.literal("Happy birthday, sp614x!"));
             }
         }
 
-        int i1 = this.font.width(COPYRIGHT_TEXT);
-        int j1 = this.width - i1 - 2;
-        int k1 = 24;
-        int k = this.height / 4 + 48;
-        Button button = null;
+        int i = this.font.width(COPYRIGHT_TEXT);
+        j = this.width - i - 2;
+        int l = this.height / 4 + 48;
+        Button modButton = null;
         if (this.minecraft.isDemo()) {
-            k = this.createDemoMenuOptions(k, 24);
+            l = this.createDemoMenuOptions(l, 24);
         } else {
-            k = this.createNormalMenuOptions(k, 24);
+            l = this.createNormalMenuOptions(l, 24);
             if (Reflector.ModListScreen_Constructor.exists()) {
-                button = ReflectorForge.makeButtonMods(this, k, 24);
-                this.addRenderableWidget(button);
+                modButton = ReflectorForge.makeButtonMods(this, l, 24);
+                this.addRenderableWidget(modButton);
             }
         }
 
-        k = this.createTestWorldButton(k, 24);
-        SpriteIconButton spriteiconbutton = this.addRenderableWidget(
-            CommonButtons.language(20, btnIn -> this.minecraft.setScreen(new LanguageSelectScreen(this, this.minecraft.options, this.minecraft.getLanguageManager())), true)
-        );
-        int l = this.width / 2 - 124;
-        k += 36;
-        spriteiconbutton.setPosition(l, k);
-        this.addRenderableWidget(
-            Button.builder(Component.translatable("menu.options"), btnIn -> this.minecraft.setScreen(new OptionsScreen(this, this.minecraft.options)))
-                .bounds(this.width / 2 - 100, k, 98, 20)
-                .build()
-        );
-        this.addRenderableWidget(
-            Button.builder(Component.translatable("menu.quit"), btnIn -> this.minecraft.stop()).bounds(this.width / 2 + 2, k, 98, 20).build()
-        );
-        SpriteIconButton spriteiconbutton1 = this.addRenderableWidget(
-            CommonButtons.accessibility(20, btnIn -> this.minecraft.setScreen(new AccessibilityOptionsScreen(this, this.minecraft.options)), true)
-        );
-        spriteiconbutton1.setPosition(this.width / 2 + 104, k);
-        this.addRenderableWidget(
-            new PlainTextButton(
-                j1, this.height - 10, i1, 10, COPYRIGHT_TEXT, btnIn -> this.minecraft.setScreen(new CreditsAndAttributionScreen(this)), this.font
-            )
-        );
+        l = this.createTestWorldButton(l, 24);
+        SpriteIconButton spriteiconbutton = (SpriteIconButton)this.addRenderableWidget(CommonButtons.language(20, (btnIn) -> {
+            this.minecraft.setScreen(new LanguageSelectScreen(this, this.minecraft.options, this.minecraft.getLanguageManager()));
+        }, true));
+        int i1 = this.width / 2 - 124;
+        l += 36;
+        spriteiconbutton.setPosition(i1, l);
+        this.addRenderableWidget(Button.builder(Component.translatable("menu.options"), (btnIn) -> {
+            this.minecraft.setScreen(new OptionsScreen(this, this.minecraft.options));
+        }).bounds(this.width / 2 - 100, l, 98, 20).build());
+        this.addRenderableWidget(Button.builder(Component.translatable("menu.quit"), (btnIn) -> {
+            this.minecraft.stop();
+        }).bounds(this.width / 2 + 2, l, 98, 20).build());
+        SpriteIconButton spriteiconbutton1 = this.addRenderableWidget(CommonButtons.accessibility(20, (btnIn) -> {
+            this.minecraft.setScreen(new AccessibilityOptionsScreen(this, this.minecraft.options));
+        }, true));
+        spriteiconbutton1.setPosition(this.width / 2 + 104, l);
+        this.addRenderableWidget(new PlainTextButton(j, this.height - 10, i, 10, COPYRIGHT_TEXT, (btnIn) -> {
+            this.minecraft.setScreen(new CreditsAndAttributionScreen(this));
+        }, this.font));
         if (this.realmsNotificationsScreen == null) {
             this.realmsNotificationsScreen = new RealmsNotificationsScreen();
         }
@@ -163,8 +160,11 @@ public class TitleScreen extends Screen {
         }
 
         if (Reflector.TitleScreenModUpdateIndicator_init.exists()) {
-            this.modUpdateNotification = (Screen)Reflector.call(Reflector.TitleScreenModUpdateIndicator_init, this, button);
+            this.modUpdateNotification = (Screen)Reflector.call(Reflector.TitleScreenModUpdateIndicator_init, this, modButton);
         }
+
+        // IAS initialization
+        IASMinecraft.onInit(this.minecraft, this, this::addRenderableWidget);
     }
 
     private int createTestWorldButton(int p_368793_, int p_361481_) {
@@ -181,29 +181,26 @@ public class TitleScreen extends Screen {
         return p_368793_;
     }
 
-    private int createNormalMenuOptions(int p_96764_, int p_96765_) {
-        this.addRenderableWidget(
-            Button.builder(Component.translatable("menu.singleplayer"), btnIn -> this.minecraft.setScreen(new SelectWorldScreen(this)))
-                .bounds(this.width / 2 - 100, p_96764_, 200, 20)
-                .build()
-        );
+
+    private int createNormalMenuOptions(int yIn, int rowHeightIn) {
+        this.addRenderableWidget(Button.builder(Component.translatable("menu.singleplayer"), (btnIn) -> {
+            this.minecraft.setScreen(new SelectWorldScreen(this));
+        }).bounds(this.width / 2 - 100, yIn, 200, 20).build());
         Component component = this.getMultiplayerDisabledReason();
         boolean flag = component == null;
         Tooltip tooltip = component != null ? Tooltip.create(component) : null;
         int i;
-        this.addRenderableWidget(Button.builder(Component.translatable("menu.multiplayer"), btnIn -> {
+        this.addRenderableWidget(Button.builder(Component.translatable("menu.multiplayer"), (btnIn) -> {
             Screen screen = this.minecraft.options.skipMultiplayerWarning ? new JoinMultiplayerScreen(this) : new SafetyScreen(this);
-            this.minecraft.setScreen(screen);
-        }).bounds(this.width / 2 - 100, i = p_96764_ + p_96765_, 200, 20).tooltip(tooltip).build()).active = flag;
-        boolean flag1 = Reflector.ModListScreen_Constructor.exists();
-        int j = flag1 ? this.width / 2 + 2 : this.width / 2 - 100;
-        int k = flag1 ? 98 : 200;
-        this.addRenderableWidget(
-                Button.builder(Component.translatable("altmanager.title"), btnIn -> this.minecraft.setScreen(new AltManagerScreen(this)))
-                    .bounds(j, p_96764_ = i + p_96765_, k, 20)
-                    .build()
-            );
-        return p_96764_;
+            this.minecraft.setScreen((Screen)screen);
+        }).bounds(this.width / 2 - 100, i = yIn + rowHeightIn, 200, 20).tooltip(tooltip).build()).active = flag;
+        boolean forge = Reflector.ModListScreen_Constructor.exists();
+        int realmsX = forge ? this.width / 2 + 2 : this.width / 2 - 100;
+        int realmsWidth = forge ? 98 : 200;
+        this.addRenderableWidget(Button.builder(Component.translatable("menu.online"), (btnIn) -> {
+            this.minecraft.setScreen(new RealmsMainScreen(this));
+        }).bounds(realmsX, yIn = i + rowHeightIn, realmsWidth, 20).tooltip(tooltip).build()).active = flag;
+        return yIn;
     }
 
     private  Component getMultiplayerDisabledReason() {
@@ -339,6 +336,9 @@ public class TitleScreen extends Screen {
         if (this.modUpdateNotification != null && f >= 1.0F) {
             this.modUpdateNotification.render(p_282860_, p_281753_, p_283539_, p_282628_);
         }
+
+        // IAS drawing
+        IASMinecraft.onDraw(this, this.font, p_282860_);
     }
 
     @Override

@@ -262,6 +262,8 @@ import org.joml.Vector3f;
 import org.jspecify.annotations.Nullable;
 import org.lwjgl.util.tinyfd.TinyFileDialogs;
 import org.slf4j.Logger;
+import ru.arixcompany.Arix;
+import ru.vidtu.ias.config.IASConfig;
 
 
 public class Minecraft extends ReentrantBlockableEventLoop<Runnable> implements WindowEventHandler {
@@ -278,7 +280,7 @@ public class Minecraft extends ReentrantBlockableEventLoop<Runnable> implements 
     public static final String UPDATE_DRIVERS_ADVICE = "Please make sure you have up-to-date drivers (see aka.ms/mcdriver for instructions).";
     private final long canary = Double.doubleToLongBits(Math.PI);
     private final Path resourcePackDirectory;
-    private final CompletableFuture<@Nullable ProfileResult> profileFuture;
+    private CompletableFuture<@Nullable ProfileResult> profileFuture;
     private final TextureManager textureManager;
     private final ShaderManager shaderManager;
     private final DataFixer fixerUpper;
@@ -293,7 +295,7 @@ public class Minecraft extends ReentrantBlockableEventLoop<Runnable> implements 
     private final MapRenderer mapRenderer;
     public final ParticleEngine particleEngine;
     private final ParticleResources particleResources;
-    private final User user;
+    private User user;
     public final Font font;
     public final Font fontFilterFishy;
     public final GameRenderer gameRenderer;
@@ -327,8 +329,8 @@ public class Minecraft extends ReentrantBlockableEventLoop<Runnable> implements 
     private final SplashManager splashManager;
     private final GpuWarnlistManager gpuWarnlistManager;
     private final PeriodicNotificationManager regionalCompliancies = new PeriodicNotificationManager(REGIONAL_COMPLIANCIES, Minecraft::countryEqualsISO3);
-    private final UserApiService userApiService;
-    private final CompletableFuture<UserProperties> userPropertiesFuture;
+    private UserApiService userApiService;
+    private CompletableFuture<UserProperties> userPropertiesFuture;
     private final SkinManager skinManager;
     private final AtlasManager atlasManager;
     private final ModelManager modelManager;
@@ -337,13 +339,13 @@ public class Minecraft extends ReentrantBlockableEventLoop<Runnable> implements 
     private final WaypointStyleManager waypointStyles;
     private final ToastManager toastManager;
     private final Tutorial tutorial;
-    private final PlayerSocialManager playerSocialManager;
+    private PlayerSocialManager playerSocialManager;
     private final BlockEntityRenderDispatcher blockEntityRenderDispatcher;
-    private final ClientTelemetryManager telemetryManager;
-    private final ProfileKeyPairManager profileKeyPairManager;
+    private ClientTelemetryManager telemetryManager;
+    private ProfileKeyPairManager profileKeyPairManager;
     private final RealmsDataFetcher realmsDataFetcher;
     private final QuickPlayLog quickPlayLog;
-    private final Services services;
+    private Services services;
     private final PlayerSkinRenderCache playerSkinRenderCache;
     public @Nullable MultiPlayerGameMode gameMode;
     public @Nullable ClientLevel level;
@@ -475,6 +477,7 @@ public class Minecraft extends ReentrantBlockableEventLoop<Runnable> implements 
             }
         });
         GameLoadTimesEvent.INSTANCE.endStep(TelemetryProperty.LOAD_TIME_PRE_WINDOW_MS);
+        new Arix();
 
         try {
             this.window.setIcon(this.vanillaPackResources, SharedConstants.getCurrentVersion().stable() ? IconSet.RELEASE : IconSet.SNAPSHOT);
@@ -543,7 +546,6 @@ public class Minecraft extends ReentrantBlockableEventLoop<Runnable> implements 
         this.itemRenderer = new ItemRenderer();
         this.mapTextureManager = new MapTextureManager(this.textureManager);
         this.mapRenderer = new MapRenderer(this.atlasManager, this.mapTextureManager);
-
         try {
             int i = Runtime.getRuntime().availableProcessors();
             Tesselator.init();
@@ -797,7 +799,13 @@ public class Minecraft extends ReentrantBlockableEventLoop<Runnable> implements 
             }
         }
 
-        return stringbuilder.toString();
+        String original = stringbuilder.toString();
+        
+        // Skip if not enabled or not fully loaded.
+        if (!IASConfig.barNick || !I18n.exists("ias.bar") || this.user == null) return original;
+
+        // Modify otherwise.
+        return I18n.get("ias.bar", original, this.user.getName());
     }
 
     private UserApiService createUserApiService(YggdrasilAuthenticationService p_193586_, GameConfig p_193587_) {
@@ -2438,6 +2446,43 @@ public class Minecraft extends ReentrantBlockableEventLoop<Runnable> implements 
 
     public User getUser() {
         return this.user;
+    }
+
+    // IAS setters for account switching
+    public void setServices(Services services) {
+        this.services = services;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public void setProfileFuture(CompletableFuture<ProfileResult> profileFuture) {
+        this.profileFuture = profileFuture;
+    }
+
+    public void setUserApiService(UserApiService userApiService) {
+        this.userApiService = userApiService;
+    }
+
+    public void setUserPropertiesFuture(CompletableFuture<UserApiService.UserProperties> userPropertiesFuture) {
+        this.userPropertiesFuture = userPropertiesFuture;
+    }
+
+    public void setPlayerSocialManager(PlayerSocialManager playerSocialManager) {
+        this.playerSocialManager = playerSocialManager;
+    }
+
+    public void setTelemetryManager(ClientTelemetryManager telemetryManager) {
+        this.telemetryManager = telemetryManager;
+    }
+
+    public void setProfileKeyPairManager(ProfileKeyPairManager profileKeyPairManager) {
+        this.profileKeyPairManager = profileKeyPairManager;
+    }
+
+    public void setReportingContext(ReportingContext reportingContext) {
+        this.reportingContext = reportingContext;
     }
 
     public GameProfile getGameProfile() {
