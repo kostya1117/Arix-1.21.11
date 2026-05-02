@@ -77,9 +77,9 @@ public final class IASMinecraft {
      * Button widget sprites.
      */
     public static final WidgetSprites BUTTON = new WidgetSprites(
-            IStonecutter.identifier("button_plain"),
-            IStonecutter.identifier("button_disabled"),
-            IStonecutter.identifier("button_focus")
+            IStonecutter.identifier("textures/gui/button_plain"),
+            IStonecutter.identifier("textures/gui/button_disabled"),
+            IStonecutter.identifier("textures/gui/button_focus")
     );
 
     /**

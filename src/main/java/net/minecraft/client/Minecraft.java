@@ -263,6 +263,8 @@ import org.jspecify.annotations.Nullable;
 import org.lwjgl.util.tinyfd.TinyFileDialogs;
 import org.slf4j.Logger;
 import ru.arixcompany.Arix;
+import ru.arixcompany.event.EventRepo;
+import ru.arixcompany.event.world.EventTick;
 import ru.vidtu.ias.config.IASConfig;
 
 
@@ -477,7 +479,6 @@ public class Minecraft extends ReentrantBlockableEventLoop<Runnable> implements 
             }
         });
         GameLoadTimesEvent.INSTANCE.endStep(TelemetryProperty.LOAD_TIME_PRE_WINDOW_MS);
-        new Arix();
 
         try {
             this.window.setIcon(this.vanillaPackResources, SharedConstants.getCurrentVersion().stable() ? IconSet.RELEASE : IconSet.SNAPSHOT);
@@ -673,6 +674,7 @@ public class Minecraft extends ReentrantBlockableEventLoop<Runnable> implements 
         }
 
         this.packetProcessor = new PacketProcessor(this.gameThread);
+        new Arix();
     }
 
     public boolean hasShiftDown() {
@@ -1860,6 +1862,8 @@ public class Minecraft extends ReentrantBlockableEventLoop<Runnable> implements 
         profilerfiller.popPush("keyboard");
         this.keyboardHandler.tick();
         profilerfiller.pop();
+
+        EventRepo.call(new EventTick());
     }
 
     private boolean isLevelRunningNormally() {

@@ -49,8 +49,8 @@ ofShowCapes:true
 ofNaturalTextures:false
 ofEmissiveTextures:true
 ofLazyChunkLoading:true
-ofRenderRegions:false
-ofSmartAnimations:false
+ofRenderRegions:true
+ofSmartAnimations:true
 ofAlternateBlocks:true
 ofDynamicLights:3
 ofScreenshotSize:1
@@ -58,13 +58,13 @@ ofCustomEntityModels:true
 ofCustomGuis:true
 ofShowGlErrors:true
 ofFastMath:false
-ofFastRender:false
+ofFastRender:true
 ofChatBackground:0
 ofChatShadow:true
 ofTelemetry:0
 ofHeldItemTooltips:true
 key_of.key.zoom:key.keyboard.c
-ofQuickInfo:true
+ofQuickInfo:false
 ofQuickInfoFps:6
 ofQuickInfoChunks:true
 ofQuickInfoEntities:true

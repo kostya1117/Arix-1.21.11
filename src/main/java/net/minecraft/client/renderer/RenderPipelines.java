@@ -13,11 +13,13 @@ import com.mojang.blaze3d.vertex.VertexFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.mojang.blaze3d.vertex.VertexFormatElement;
 import net.minecraft.resources.Identifier;
 
 public class RenderPipelines {
     private static final Map<Identifier, RenderPipeline> PIPELINES_BY_LOCATION = new HashMap<>();
-    private static final RenderPipeline.Snippet MATRICES_PROJECTION_SNIPPET = RenderPipeline.builder()
+    public static final RenderPipeline.Snippet MATRICES_PROJECTION_SNIPPET = RenderPipeline.builder()
         .withUniform("DynamicTransforms", UniformType.UNIFORM_BUFFER)
         .withUniform("Projection", UniformType.UNIFORM_BUFFER)
         .buildSnippet();
@@ -754,7 +756,7 @@ public class RenderPipelines {
             .build()
     );
 
-    private static RenderPipeline register(RenderPipeline p_396877_) {
+    public static RenderPipeline register(RenderPipeline p_396877_) {
         PIPELINES_BY_LOCATION.put(p_396877_.getLocation(), p_396877_);
         return p_396877_;
     }

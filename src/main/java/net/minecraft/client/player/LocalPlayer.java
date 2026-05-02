@@ -103,6 +103,8 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
+import ru.arixcompany.event.EventRepo;
+import ru.arixcompany.event.world.EventUpdate;
 
 
 public class LocalPlayer extends AbstractClientPlayer {
@@ -220,6 +222,7 @@ public class LocalPlayer extends AbstractClientPlayer {
 
     @Override
     public void tick() {
+        EventRepo.call(new EventUpdate());
         if (this.connection.hasClientLoaded()) {
             this.dropSpamThrottler.tick();
             super.tick();

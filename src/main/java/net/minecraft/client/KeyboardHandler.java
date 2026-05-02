@@ -65,6 +65,8 @@ import net.optifine.shaders.gui.GuiShaderOptions;
 import net.optifine.util.RandomUtils;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
+import ru.arixcompany.event.EventRepo;
+import ru.arixcompany.event.player.EventKey;
 
 public class KeyboardHandler {
     private static final Logger LOGGER = LogUtils.getLogger();
@@ -459,6 +461,9 @@ public class KeyboardHandler {
     }
 
     private void keyPress(long p_90894_, @KeyEvent.Action int p_90895_, KeyEvent p_423534_) {
+        EventKey event = new EventKey(p_423534_.key(), p_90895_);
+        EventRepo.call(event);
+
         Window window = this.minecraft.getWindow();
         if (p_90894_ == window.handle()) {
             this.minecraft.getFramerateLimitTracker().onInputReceived();

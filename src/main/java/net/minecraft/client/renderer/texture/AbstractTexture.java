@@ -72,6 +72,10 @@ public abstract class AbstractTexture implements AutoCloseable {
         }
     }
 
+    public void setSampler(GpuSampler gpuSampler) {
+        this.sampler = gpuSampler;
+    }
+
     public boolean hasGlTexture() {
         return this.texture != null;
     }

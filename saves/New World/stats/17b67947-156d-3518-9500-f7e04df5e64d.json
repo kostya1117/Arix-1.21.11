@@ -1,0 +1,25 @@
+{
+  "stats": {
+    "minecraft:custom": {
+      "minecraft:sprint_one_cm": 1466,
+      "minecraft:time_since_rest": 1537,
+      "minecraft:walk_one_cm": 628,
+      "minecraft:total_world_time": 1552,
+      "minecraft:leave_game": 1,
+      "minecraft:fly_one_cm": 9742,
+      "minecraft:sneak_time": 12,
+      "minecraft:play_time": 1537,
+      "minecraft:jump": 28,
+      "minecraft:time_since_death": 1537,
+      "minecraft:drop": 3
+    },
+    "minecraft:dropped": {
+      "minecraft:mutton": 2,
+      "minecraft:white_wool": 1
+    },
+    "minecraft:used": {
+      "minecraft:enchanted_golden_apple": 1
+    }
+  },
+  "DataVersion": 4671
+}

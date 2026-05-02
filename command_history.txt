@@ -1,1 +1,2 @@
 /login Player9
+/time set day
