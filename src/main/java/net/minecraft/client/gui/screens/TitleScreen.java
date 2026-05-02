@@ -3,7 +3,6 @@ package net.minecraft.client.gui.screens;
 import com.mojang.authlib.minecraft.BanDetails;
 import com.mojang.blaze3d.opengl.GlStateManager;
 import com.mojang.logging.LogUtils;
-import com.mojang.realmsclient.RealmsMainScreen;
 import com.mojang.realmsclient.gui.screens.RealmsNotificationsScreen;
 import java.io.IOException;
 import java.util.Calendar;
@@ -43,8 +42,8 @@ import net.minecraft.world.level.levelgen.presets.WorldPresets;
 import net.minecraft.world.level.storage.LevelStorageSource;
 import net.optifine.reflect.Reflector;
 import net.optifine.reflect.ReflectorForge;
-import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
+import ru.arixcompany.ui.altmanager.AltManagerScreen;
 
 public class TitleScreen extends Screen {
     private static final Logger LOGGER = LogUtils.getLogger();
@@ -200,12 +199,10 @@ public class TitleScreen extends Screen {
         int j = flag1 ? this.width / 2 + 2 : this.width / 2 - 100;
         int k = flag1 ? 98 : 200;
         this.addRenderableWidget(
-                Button.builder(Component.translatable("menu.online"), btnIn -> this.minecraft.setScreen(new RealmsMainScreen(this)))
+                Button.builder(Component.translatable("altmanager.title"), btnIn -> this.minecraft.setScreen(new AltManagerScreen(this)))
                     .bounds(j, p_96764_ = i + p_96765_, k, 20)
-                    .tooltip(tooltip)
                     .build()
-            )
-            .active = flag;
+            );
         return p_96764_;
     }
 
