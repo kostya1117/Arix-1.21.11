@@ -15,7 +15,7 @@ public class ButtonSetting extends Setting {
     private String buttonName;
 
     public ButtonSetting(String name, String description) {
-        super(name, description);
+        super(name);
     }
 
     public ButtonSetting visible(Supplier<Boolean> visible) {

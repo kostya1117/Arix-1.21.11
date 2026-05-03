@@ -14,8 +14,8 @@ import java.util.function.Supplier;
 public class MultiSelectSetting extends Setting {
     private List<String> list, selected = new ArrayList<>();
 
-    public MultiSelectSetting(String name, String description) {
-        super(name, description);
+    public MultiSelectSetting(String name) {
+        super(name);
     }
 
     public MultiSelectSetting value(String... settings) {
@@ -35,5 +35,13 @@ public class MultiSelectSetting extends Setting {
 
     public boolean isSelected(String name) {
         return selected.contains(name);
+    }
+
+    public void toggleSelected(String name) {
+        if (selected.contains(name)) {
+            selected.remove(name);
+        } else {
+            selected.add(name);
+        }
     }
 }

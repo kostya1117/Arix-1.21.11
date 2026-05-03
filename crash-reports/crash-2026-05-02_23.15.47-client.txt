@@ -1,0 +1,156 @@
+---- Minecraft Crash Report ----
+// Surprise! Haha. Well, this is awkward.
+
+Time: 2026-05-02 23:15:48
+Description: Rendering screen
+
+java.lang.IllegalArgumentException: Color parameter outside of expected range: Alpha Red Green Blue
+	at java.desktop/java.awt.Color.testColorValueRange(Color.java:312)
+	at java.desktop/java.awt.Color.<init>(Color.java:397)
+	at ru.arixcompany.utils.render.ColorUtil.getColor(ColorUtil.java:372)
+	at ru.arixcompany.utils.render.ColorUtil.interpolate(ColorUtil.java:217)
+	at ru.arixcompany.utils.render.ColorUtil.getOutLineColor(ColorUtil.java:112)
+	at ru.arixcompany.clickgui.widgets.ThemeComponent.render(ThemeComponent.java:45)
+	at ru.arixcompany.clickgui.Gui.renderGui(Gui.java:330)
+	at ru.arixcompany.clickgui.Gui.render(Gui.java:216)
+	at net.minecraft.client.gui.screens.Screen.renderWithTooltipAndSubtitles(Screen.java:111)
+	at net.minecraft.client.renderer.GameRenderer.render(GameRenderer.java:659)
+	at net.minecraft.client.Minecraft.runTick(Minecraft.java:1301)
+	at net.minecraft.client.Minecraft.run(Minecraft.java:894)
+	at net.minecraft.client.main.Main.main(Main.java:223)
+	at mcp.client.Start.main(Start.java:20)
+
+
+A detailed walkthrough of the error, its code path and all known details is as follows:
+---------------------------------------------------------------------------------------
+
+-- Head --
+Thread: Render thread
+Stacktrace:
+	at java.desktop/java.awt.Color.testColorValueRange(Color.java:312)
+	at java.desktop/java.awt.Color.<init>(Color.java:397)
+	at ru.arixcompany.utils.render.ColorUtil.getColor(ColorUtil.java:372)
+	at ru.arixcompany.utils.render.ColorUtil.interpolate(ColorUtil.java:217)
+	at ru.arixcompany.utils.render.ColorUtil.getOutLineColor(ColorUtil.java:112)
+	at ru.arixcompany.clickgui.widgets.ThemeComponent.render(ThemeComponent.java:45)
+	at ru.arixcompany.clickgui.Gui.renderGui(Gui.java:330)
+	at ru.arixcompany.clickgui.Gui.render(Gui.java:216)
+	at net.minecraft.client.gui.screens.Screen.renderWithTooltipAndSubtitles(Screen.java:111)
+
+-- Screen render details --
+Details:
+	Screen name: ru.arixcompany.clickgui.Gui
+	Mouse location: Scaled: (424.500000, 241.749741). Absolute: (849.000000, 483.000000)
+	Screen size: Scaled: (849, 484). Absolute: (1698, 967). Scale factor of 2
+Stacktrace:
+	at net.minecraft.client.renderer.GameRenderer.render(GameRenderer.java:659)
+	at net.minecraft.client.Minecraft.runTick(Minecraft.java:1301)
+	at net.minecraft.client.Minecraft.run(Minecraft.java:894)
+	at net.minecraft.client.main.Main.main(Main.java:223)
+	at mcp.client.Start.main(Start.java:20)
+
+-- Uptime --
+Details:
+	JVM uptime: 55.235s
+	Wall uptime: 41.169s
+	High-res time: 39.973s
+	Client ticks: 252 ticks / 12.600s
+Stacktrace:
+	at net.minecraft.client.Minecraft.fillReport(Minecraft.java:2325)
+	at net.minecraft.client.Minecraft.emergencySaveAndCrash(Minecraft.java:958)
+	at net.minecraft.client.Minecraft.run(Minecraft.java:914)
+	at net.minecraft.client.main.Main.main(Main.java:223)
+	at mcp.client.Start.main(Start.java:20)
+
+-- Affected level --
+Details:
+	All players: 1 total; LocalPlayer{name=Player63, id=97, pos=(117.25994945672997, 69.0, -161.91218808858332), mode=CREATIVE, permission=permission level: OWNERS}
+	Chunk stats: 169, 81
+	Level dimension: minecraft:overworld
+	Level spawn location: World: (64,81,0), Section: (at 0,1,0 in 4,5,0; chunk contains blocks 64,-64,0 to 79,319,15), Region: (0,0; contains chunks 0,0 to 31,31, blocks 0,-64,0 to 511,319,511)
+	Level time: 15947 game time, 2823 day time
+	Server brand: vanilla
+	Server type: Integrated singleplayer server
+	Tracked entity count: 79
+
+-- Last reload --
+Details:
+	Reload number: 1
+	Reload reason: initial
+	Finished: Yes
+	Packs: vanilla
+
+-- System Details --
+Details:
+	Minecraft Version: 1.21.11
+	Minecraft Version ID: 1.21.11
+	Operating System: Windows 10 (amd64) version 10.0
+	Java Version: 21.0.10, Microsoft
+	Java VM Version: OpenJDK 64-Bit Server VM (mixed mode, sharing), Microsoft
+	Memory: 98025648 bytes (93 MiB) / 442499072 bytes (422 MiB) up to 1591738368 bytes (1518 MiB)
+	CPUs: 4
+	Processor Vendor: AuthenticAMD
+	Processor Name: AMD Ryzen 3 3250U with Radeon Graphics         
+	Identifier: AuthenticAMD Family 23 Model 24 Stepping 1
+	Microarchitecture: Zen / Zen+
+	Frequency (GHz): 2.60
+	Number of physical packages: 1
+	Number of physical CPUs: 2
+	Number of logical CPUs: 4
+	Graphics card #0 name: AMD Radeon(TM) Vega 3 Graphics 
+	Graphics card #0 vendor: Advanced Micro Devices, Inc.
+	Graphics card #0 VRAM (MiB): 2048.00
+	Graphics card #0 deviceId: VideoController1
+	Graphics card #0 versionInfo: 31.0.21031.1005
+	Memory slot #0 capacity (MiB): 8192.00
+	Memory slot #0 clockSpeed (GHz): 3.20
+	Memory slot #0 type: DDR4
+	Virtual memory max (MiB): 16064.38
+	Virtual memory used (MiB): 12561.09
+	Swap memory total (MiB): 10000.00
+	Swap memory used (MiB): 4108.07
+	Space in storage for jna.tmpdir (MiB): <path not set>
+	Space in storage for org.lwjgl.system.SharedLibraryExtractPath (MiB): <path not set>
+	Space in storage for io.netty.native.workdir (MiB): <path not set>
+	Space in storage for java.io.tmpdir (MiB): available: 14524.68, total: 59103.00
+	Space in storage for workdir (MiB): available: 49773.39, total: 184138.00
+	JVM Flags: 0 total; 
+	Debug Flags: 0 total; 
+	Launched Version: mcp
+	Backend library: LWJGL version 3.3.3+5
+	Backend API: AMD Radeon(TM) Vega 3 Graphics  GL version 3.3.0 Core Profile Context 23.9.1.230821, ATI Technologies Inc.
+	Window size: 1698x967
+	GFLW Platform: win32
+	Render Extensions: GL_ARB_buffer_storage, GL_KHR_debug, GL_ARB_vertex_attrib_binding, GL_ARB_direct_state_access, GL_EXT_texture_filter_anisotropic
+	GL debug messages: 
+	Is Modded: Definitely; Client brand changed to 'optifine'; Server jar signature invalidated
+	Universe: 400921fb54442d18
+	Type: Integrated Server (map_client.txt)
+	Transparency: regular
+	Render Distance: 3/3 chunks
+	Resource Packs: vanilla
+	Current Language: ru_ru
+	Locale: ru_RU
+	System encoding: Cp1251
+	File encoding: UTF-8
+	CPU: 4x AMD Ryzen 3 3250U with Radeon Graphics 
+	Server Running: true
+	Player Count: 1 / 8; [ServerPlayer['Player63'/97, l='ServerLevel[New World]', x=117.26, y=69.00, z=-161.91]]
+	Active Data Packs: vanilla
+	Available Data Packs: minecart_improvements, redstone_experiments, trade_rebalance, vanilla
+	Enabled Feature Flags: minecraft:vanilla
+	World Generation: Stable
+	World Seed: -2545282842883677234
+	Suppressed Exceptions: ~~NONE~~
+	OptiFine Version: OptiFine_1.21.11_HD_U_J9
+	OptiFine Build: null
+	Render Distance Chunks: 3
+	Mipmaps: 2
+	Anisotropic Filtering: 1
+	Antialiasing: 0
+	Multitexture: false
+	Shaders: null
+	OpenGlVersion: 3.3.0 Core Profile Context 23.9.1.230821
+	OpenGlRenderer: AMD Radeon(TM) Vega 3 Graphics 
+	OpenGlVendor: ATI Technologies Inc.
+	CpuCount: 4

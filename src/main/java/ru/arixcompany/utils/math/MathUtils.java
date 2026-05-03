@@ -1,0 +1,27 @@
+package ru.arixcompany.utils.math;
+
+import net.minecraft.util.Mth;
+import ru.arixcompany.utils.IMinecraft;
+
+public class MathUtils implements IMinecraft {
+    public static boolean isHovered(float mouseX, float mouseY, float x, float y, float width, float height) {
+        return mouseX >= x && mouseY >= y && mouseX < x + width && mouseY < y + height;
+    }
+    public static float fast(float end, float start, float multiple) {
+        return (1.0F - Mth.clamp(deltaTime() * multiple, 0.0F, 1.0F)) * end + Mth.clamp(deltaTime() * multiple, 0.0F, 1.0F) * start;
+    }
+    public static float deltaTime() {
+        float debugFPS = mc.getFps();
+        return debugFPS > 0.0F ? 1.0F / debugFPS : 1.0F;
+    }
+
+    public static int calc(int value) {
+        return (int)(value * mc.getWindow().getGuiScale() / 2);
+    }
+
+    public static float[] calc(float mouseX, float mouseY) {
+        mouseX = mouseX * mc.getWindow().getGuiScale() / 2;
+        mouseY = mouseY * mc.getWindow().getGuiScale() / 2;
+        return new float[]{mouseX, mouseY};
+    }
+}

@@ -511,7 +511,7 @@ public class Options {
     private final OptionInstance<Boolean> entityShadows = OptionInstance.createBoolean(
         "options.entityShadows", OptionInstance.noTooltip(), true, p_438290_1_ -> this.setGraphicsPresetToCustom()
     );
-    private final OptionInstance<Boolean> forceUnicodeFont = OptionInstance.createBoolean("options.forceUnicodeFont", false, p_317299_0_ -> updateFontOptions());
+    public final OptionInstance<Boolean> forceUnicodeFont = OptionInstance.createBoolean("options.forceUnicodeFont", false, p_317299_0_ -> updateFontOptions());
     private final OptionInstance<Boolean> japaneseGlyphVariants = OptionInstance.createBoolean(
         "options.japaneseGlyphVariants",
         OptionInstance.cachedConstantTooltip(Component.translatable("options.japaneseGlyphVariants.tooltip")),

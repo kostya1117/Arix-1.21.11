@@ -310,6 +310,69 @@ public final class RoundRectShader {
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
     }
 
+
+    public static void drawHorizontalGradient(float x, float y, float w, float h,
+                                              float radius, int leftColor, int rightColor) {
+        drawHorizontalGradient(x, y, w, h, radius, radius, radius, radius, leftColor, rightColor);
+    }
+
+    public static void drawHorizontalGradient(float x, float y, float w, float h,
+                                              float tl, float tr, float br, float bl,
+                                              int leftColor, int rightColor) {
+        if (!initialized) init();
+        if (w <= 0.0f || h <= 0.0f) return;
+
+        submitSimpleQuad(
+                ROUND_RECT_PIPELINE,
+                x, y, w, h, Math.max(Math.max(tl, tr), Math.max(br, bl)),
+                leftColor,
+                rightColor,
+                rightColor,
+                leftColor,
+                "horizontal_gradient"
+        );
+    }
+
+    public static void drawRoundRectGradient(float x, float y, float w, float h,
+                                             float tl, float tr, float br, float bl,
+                                             int topColor, int bottomColor) {
+        if (!initialized) init();
+        if (w <= 0.0f || h <= 0.0f) return;
+
+        submitSimpleQuad(
+                ROUND_RECT_PIPELINE,
+                x, y, w, h, Math.max(Math.max(tl, tr), Math.max(br, bl)),
+                bottomColor,
+                bottomColor,
+                topColor,
+                topColor,
+                "vertical_gradient"
+        );
+    }
+
+    public static void drawGradient4(float x, float y, float w, float h,
+                                     float radius,
+                                     int c00, int c10, int c11, int c01) {
+        drawGradient4(x, y, w, h, radius, radius, radius, radius, c00, c10, c11, c01);
+    }
+
+    public static void drawGradient4(float x, float y, float w, float h,
+                                     float tl, float tr, float br, float bl,
+                                     int c00, int c10, int c11, int c01) {
+        if (!initialized) init();
+        if (w <= 0.0f || h <= 0.0f) return;
+
+        submitSimpleQuad(
+                ROUND_RECT_PIPELINE,
+                x, y, w, h, Math.max(Math.max(tl, tr), Math.max(br, bl)),
+                c01,
+                c11,
+                c10,
+                c00,
+                "gradient_4corner"
+        );
+    }
+
     private static float toClipX(float x) {
         float guiWidth = Minecraft.getInstance().getWindow().getGuiScaledWidth();
         return x / guiWidth * 2.0f - 1.0f;

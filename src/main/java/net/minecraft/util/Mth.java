@@ -786,4 +786,8 @@ public class Mth {
             SIN_TABLE_FAST[j] = MathUtils.roundToFloat(Math.sin(j * Math.PI * 2.0 / 4096.0));
         }
     }
+
+    public static float interpolate(float current, float old, float scale) {
+        return current + (old - current) * clamp(scale, 0.0F, 1.0F);
+    }
 }

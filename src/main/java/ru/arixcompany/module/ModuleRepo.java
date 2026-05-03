@@ -5,6 +5,7 @@ import ru.arixcompany.Arix;
 import ru.arixcompany.event.EventHandler;
 import ru.arixcompany.event.EventRepo;
 import ru.arixcompany.event.player.EventKey;
+import ru.arixcompany.module.modules.player.TestModule;
 
 import java.util.ArrayList;
 
@@ -12,7 +13,7 @@ import java.util.ArrayList;
 public class ModuleRepo {
    public ArrayList<Module> modules = new ArrayList<>();
    public ModuleRepo() {
-       //modules.add(new Module());
+       modules.add(new TestModule());
    }
 
    public void init() {
