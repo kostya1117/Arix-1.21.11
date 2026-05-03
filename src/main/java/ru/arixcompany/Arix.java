@@ -1,5 +1,6 @@
 package ru.arixcompany;
 
+import de.florianmichael.viamcp.ViaMCP;
 import lombok.Getter;
 import lombok.experimental.NonFinal;
 import net.minecraft.client.Minecraft;
@@ -31,7 +32,8 @@ public class Arix implements IMinecraft {
 
     public Arix(){
         instance = this;
-
+        ViaMCP.create();
+        ViaMCP.INSTANCE.initAsyncSlider();
         FontManager.init();
         RoundRectShader.init();
         IASMinecraft.init();

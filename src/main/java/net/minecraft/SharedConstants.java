@@ -202,7 +202,7 @@ public class SharedConstants {
     }
 
     public static int getProtocolVersion() {
-        return 774;
+        return RELEASE_NETWORK_PROTOCOL_VERSION;
     }
 
     public static boolean debugVoidTerrain(ChunkPos p_183708_) {

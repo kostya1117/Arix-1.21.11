@@ -1,4 +1,4 @@
-#Sat May 02 19:49:17 MSK 2026
+#Sun May 03 12:06:50 YEKT 2026
 TexMagFilB=0
 TexMagFilN=0
 TexMagFilS=0

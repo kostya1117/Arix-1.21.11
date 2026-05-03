@@ -87,6 +87,9 @@
       <root url="jar://$PROJECT_DIR$/lib/lwjgl-freetype-3.3.3.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/lz4-java-1.8.1.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/netty-transport-classes-epoll-4.2.7.Final.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/ViaRewind-4.1.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/ViaVersion-5.9.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/ViaBackwards-5.9.0.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

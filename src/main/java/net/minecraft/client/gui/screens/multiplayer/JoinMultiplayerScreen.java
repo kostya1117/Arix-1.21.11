@@ -5,6 +5,7 @@ import com.mojang.logging.LogUtils;
 import java.time.Duration;
 import java.util.List;
 
+import de.florianmichael.viamcp.ViaMCP;
 import net.minecraft.client.gui.components.*;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.events.GuiEventListener;
@@ -90,6 +91,9 @@ public class JoinMultiplayerScreen extends Screen {
                 serverselectionlist$entry.join();
             }
         }).width(100).build());
+        if (ViaMCP.INSTANCE.getAsyncVersionSlider() != null) { // Добавьте проверку на null
+            this.addRenderableWidget(ViaMCP.INSTANCE.getAsyncVersionSlider());
+        }
         linearlayout1.addChild(Button.builder(Component.translatable("selectServer.direct"), p_296191_ -> {
             this.editingServer = new ServerData(I18n.get("selectServer.defaultName"), "", ServerData.Type.OTHER);
             this.minecraft.setScreen(new DirectJoinServerScreen(this, this::directJoinCallback, this.editingServer));

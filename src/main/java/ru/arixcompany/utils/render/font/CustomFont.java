@@ -3,7 +3,6 @@ package ru.arixcompany.utils.render.font;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.textures.FilterMode;
-import com.mojang.blaze3d.vertex.*;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -11,8 +10,6 @@ import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.ARGB;
-import org.joml.Matrix4f;
-import org.lwjgl.stb.STBTTAlignedQuad;
 import org.lwjgl.stb.STBTTBakedChar;
 import org.lwjgl.stb.STBTTFontinfo;
 import org.lwjgl.stb.STBTruetype;
@@ -22,56 +19,35 @@ import org.lwjgl.system.MemoryUtil;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
-import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class CustomFont implements AutoCloseable {
 
-    // ============================================================
-    // Константы
-    // ============================================================
-
     private static final int ATLAS_SIZE = 2048;
-    private static final int FIRST_CHAR = 32;
-    private static final int CHAR_COUNT = 224; // ASCII 32..255
+
     private static final int OVERSAMPLE = 2;
     private static final float INV_OVERSAMPLE = 1.0f / OVERSAMPLE;
     private static final float INV_ATLAS = 1.0f / ATLAS_SIZE;
 
-    // ============================================================
-    // Minecraft color codes (§0–§f)
-    // ============================================================
+    // ВАЖНО: паддинг между глифами для LINEAR (иначе будет bleeding)
+    private static final int GLYPH_PADDING = 2;
+
+    private static final int SCAN_START = 0x0020;
+    private static final int SCAN_END = 0xFFFF;
 
     private static final int[] MC_COLORS = {
-            0xFF000000, // 0 — black
-            0xFF0000AA, // 1 — dark blue
-            0xFF00AA00, // 2 — dark green
-            0xFF00AAAA, // 3 — dark aqua
-            0xFFAA0000, // 4 — dark red
-            0xFFAA00AA, // 5 — dark purple
-            0xFFFFAA00, // 6 — gold
-            0xFFAAAAAA, // 7 — gray
-            0xFF555555, // 8 — dark gray
-            0xFF5555FF, // 9 — blue
-            0xFF55FF55, // a — green
-            0xFF55FFFF, // b — aqua
-            0xFFFF5555, // c — red
-            0xFFFF55FF, // d — light purple
-            0xFFFFFF55, // e — yellow
-            0xFFFFFFFF  // f — white
+            0xFF000000, 0xFF0000AA, 0xFF00AA00, 0xFF00AAAA,
+            0xFFAA0000, 0xFFAA00AA, 0xFFFFAA00, 0xFFAAAAAA,
+            0xFF555555, 0xFF5555FF, 0xFF55FF55, 0xFF55FFFF,
+            0xFFFF5555, 0xFFFF55FF, 0xFFFFFF55, 0xFFFFFFFF
     };
 
     private static int getColorForCode(char code) {
         if (code >= '0' && code <= '9') return MC_COLORS[code - '0'];
         if (code >= 'a' && code <= 'f') return MC_COLORS[code - 'a' + 10];
-        return -1; // не цветовой код
+        return -1;
     }
-
-    // ============================================================
-    // Поля
-    // ============================================================
 
     private final STBTTFontinfo fontInfo;
     private final ByteBuffer ttfBuffer;
@@ -79,33 +55,32 @@ public class CustomFont implements AutoCloseable {
     @Getter
     private final float fontSize;
 
-    /** Масштаб STB для данного fontSize */
     private final float stbScale;
 
-    /** Масштабированные метрики шрифта (в пикселях экрана) */
     private final float scaledAscent;
     private final float scaledDescent;
     private final float scaledLineGap;
 
-    /** Высота строки = ascent - descent + lineGap */
     @Getter
     private final float lineHeight;
 
+    // Список только реально запечённых символов (для obfuscated)
+    private final List<Integer> availableCodepoints = new ArrayList<>();
+    // Мапа только реально запечённых символов -> индекс в bakedChars
+    private final Map<Integer, Integer> codepointToIndex = new HashMap<>();
+
+    // bakedChars теперь храним буфером, но заполняем только bakedCount
     private final STBTTBakedChar.Buffer bakedChars;
+
     private DynamicTexture atlasTexture;
     private Identifier atlasLocation;
 
-    /** Кэш ширин символов (уже делённых на OVERSAMPLE) */
-    private final float[] charWidths = new float[CHAR_COUNT];
-
-    // ============================================================
-    // Конструктор
-    // ============================================================
+    // Ширины храним для всех найденных глифов (даже если не влезли в атлас)
+    private final Map<Integer, Float> charWidths = new HashMap<>();
 
     public CustomFont(String resourcePath, float fontSize) throws IOException {
         this.fontSize = fontSize;
 
-        // --- Загрузка TTF ---
         this.ttfBuffer = loadResource(resourcePath);
 
         this.fontInfo = STBTTFontinfo.create();
@@ -114,9 +89,6 @@ public class CustomFont implements AutoCloseable {
             throw new IOException("Failed to init font: " + resourcePath);
         }
 
-        // --- Метрики шрифта ---
-        // Мы bake'им с размером fontSize * OVERSAMPLE, потом делим координаты на OVERSAMPLE.
-        // Но метрики шрифта берём для реального fontSize.
         this.stbScale = STBTruetype.stbtt_ScaleForPixelHeight(fontInfo, fontSize);
 
         try (MemoryStack stack = MemoryStack.stackPush()) {
@@ -125,51 +97,174 @@ public class CustomFont implements AutoCloseable {
             IntBuffer pGap = stack.mallocInt(1);
             STBTruetype.stbtt_GetFontVMetrics(fontInfo, pAsc, pDesc, pGap);
 
-            // ascent > 0, descent < 0 (обычно)
             this.scaledAscent = pAsc.get(0) * stbScale;
-            this.scaledDescent = pDesc.get(0) * stbScale;   // отрицательное
+            this.scaledDescent = pDesc.get(0) * stbScale;
             this.scaledLineGap = pGap.get(0) * stbScale;
         }
 
         this.lineHeight = scaledAscent - scaledDescent + scaledLineGap;
 
-        // --- Bake bitmap ---
-        this.bakedChars = STBTTBakedChar.malloc(CHAR_COUNT);
-        ByteBuffer bitmap = MemoryUtil.memAlloc(ATLAS_SIZE * ATLAS_SIZE);
+        // --- Сканируем все кодпоинты, но НЕ строим codepointToIndex заранее ---
+        List<Integer> scanned = new ArrayList<>();
+        for (int codepoint = SCAN_START; codepoint <= SCAN_END; codepoint++) {
+            int glyphIndex = STBTruetype.stbtt_FindGlyphIndex(fontInfo, codepoint);
+            if (glyphIndex != 0) {
+                scanned.add(codepoint);
+
+                // Сразу считаем advance (в экранных пикселях, БЕЗ oversample)
+                try (MemoryStack stack = MemoryStack.stackPush()) {
+                    IntBuffer advanceWidth = stack.mallocInt(1);
+                    IntBuffer lsb = stack.mallocInt(1);
+                    STBTruetype.stbtt_GetCodepointHMetrics(fontInfo, codepoint, advanceWidth, lsb);
+                    float advPx = advanceWidth.get(0) * stbScale;
+                    charWidths.put(codepoint, advPx);
+                }
+            }
+        }
+
+        if (scanned.isEmpty()) {
+            MemoryUtil.memFree(ttfBuffer);
+            throw new IOException("No renderable glyphs found in font: " + resourcePath);
+        }
+
+        // Буфер bakedChars под максимум, но реально заполним только bakedCount
+        this.bakedChars = STBTTBakedChar.malloc(scanned.size());
+
+        // FIX #1: обязательно calloc (или memSet 0), иначе в атласе мусор
+        ByteBuffer bitmap = MemoryUtil.memCalloc(ATLAS_SIZE * ATLAS_SIZE);
+
         try {
-            float bakePixelHeight = fontSize * OVERSAMPLE;
-            int result = STBTruetype.stbtt_BakeFontBitmap(
-                    ttfBuffer, bakePixelHeight,
-                    bitmap, ATLAS_SIZE, ATLAS_SIZE,
-                    FIRST_CHAR, bakedChars
-            );
-            if (result <= 0) {
-                System.err.println("[CustomFont] Warning: stbtt_BakeFontBitmap returned " + result
-                        + " — atlas may be too small for font size " + fontSize);
+            int atlasX = 0;
+            int atlasY = 0;
+            int rowHeight = 0;
+
+            int bakedCount = 0;
+
+            for (int codepoint : scanned) {
+                try (MemoryStack stack = MemoryStack.stackPush()) {
+                    IntBuffer advanceWidth = stack.mallocInt(1);
+                    IntBuffer leftSideBearing = stack.mallocInt(1);
+                    STBTruetype.stbtt_GetCodepointHMetrics(fontInfo, codepoint, advanceWidth, leftSideBearing);
+
+                    IntBuffer x0 = stack.mallocInt(1);
+                    IntBuffer y0 = stack.mallocInt(1);
+                    IntBuffer x1 = stack.mallocInt(1);
+                    IntBuffer y1 = stack.mallocInt(1);
+                    STBTruetype.stbtt_GetCodepointBitmapBox(
+                            fontInfo,
+                            codepoint,
+                            stbScale * OVERSAMPLE,
+                            stbScale * OVERSAMPLE,
+                            x0, y0, x1, y1
+                    );
+
+                    int glyphW = x1.get(0) - x0.get(0);
+                    int glyphH = y1.get(0) - y0.get(0);
+
+                    // Пробел/невидимые: bitmap может быть 0x0, но advance нужен
+                    boolean hasBitmap = glyphW > 0 && glyphH > 0;
+
+                    int placeX = 0;
+                    int placeY = 0;
+
+                    if (hasBitmap) {
+                        // FIX #2: учитываем padding между глифами
+                        if (atlasX + glyphW + GLYPH_PADDING >= ATLAS_SIZE && atlasX > 0) {
+                            atlasX = 0;
+                            atlasY += rowHeight;
+                            rowHeight = 0;
+                        }
+
+                        if (atlasY + glyphH + GLYPH_PADDING >= ATLAS_SIZE) {
+                            // Атлас переполнен: просто не печём этот глиф (но advance уже в charWidths есть)
+                            // ВАЖНО: НЕ добавляем его в codepointToIndex, чтобы не рисовать мусор
+                            continue;
+                        }
+
+                        placeX = atlasX;
+                        placeY = atlasY;
+
+                        IntBuffer pWidth = stack.mallocInt(1);
+                        IntBuffer pHeight = stack.mallocInt(1);
+                        IntBuffer pXOff = stack.mallocInt(1);
+                        IntBuffer pYOff = stack.mallocInt(1);
+
+                        ByteBuffer glyphBitmap = STBTruetype.stbtt_GetCodepointBitmap(
+                                fontInfo,
+                                stbScale * OVERSAMPLE,
+                                stbScale * OVERSAMPLE,
+                                codepoint,
+                                pWidth, pHeight, pXOff, pYOff
+                        );
+
+                        if (glyphBitmap != null) {
+                            int actualWidth = pWidth.get(0);
+                            int actualHeight = pHeight.get(0);
+
+                            // Копируем в atlas с защитой от выхода
+                            for (int gy = 0; gy < actualHeight; gy++) {
+                                int dstRowOffset = (placeY + gy) * ATLAS_SIZE;
+                                int srcRowOffset = gy * actualWidth;
+                                for (int gx = 0; gx < actualWidth; gx++) {
+                                    int dstIdx = dstRowOffset + placeX + gx;
+                                    bitmap.put(dstIdx, glyphBitmap.get(srcRowOffset + gx));
+                                }
+                            }
+                            STBTruetype.stbtt_FreeBitmap(glyphBitmap);
+                        }
+
+                        atlasX += glyphW + GLYPH_PADDING;
+                        rowHeight = Math.max(rowHeight, glyphH + GLYPH_PADDING);
+                    }
+
+                    // Записываем bakedChar в позицию bakedCount
+                    STBTTBakedChar bc = bakedChars.get(bakedCount);
+                    long bcAddress = bc.address();
+
+                    if (hasBitmap) {
+                        MemoryUtil.memPutShort(bcAddress + STBTTBakedChar.X0, (short) placeX);
+                        MemoryUtil.memPutShort(bcAddress + STBTTBakedChar.Y0, (short) placeY);
+                        MemoryUtil.memPutShort(bcAddress + STBTTBakedChar.X1, (short) (placeX + glyphW));
+                        MemoryUtil.memPutShort(bcAddress + STBTTBakedChar.Y1, (short) (placeY + glyphH));
+                    } else {
+                        // невидимый глиф (пробел и т.п.)
+                        MemoryUtil.memPutShort(bcAddress + STBTTBakedChar.X0, (short) 0);
+                        MemoryUtil.memPutShort(bcAddress + STBTTBakedChar.Y0, (short) 0);
+                        MemoryUtil.memPutShort(bcAddress + STBTTBakedChar.X1, (short) 0);
+                        MemoryUtil.memPutShort(bcAddress + STBTTBakedChar.Y1, (short) 0);
+                    }
+
+                    MemoryUtil.memPutFloat(bcAddress + STBTTBakedChar.XOFF, (float) x0.get(0));
+                    MemoryUtil.memPutFloat(bcAddress + STBTTBakedChar.YOFF, (float) y0.get(0));
+                    MemoryUtil.memPutFloat(
+                            bcAddress + STBTTBakedChar.XADVANCE,
+                            (float) advanceWidth.get(0) * stbScale * OVERSAMPLE
+                    );
+
+                    // FIX #3: маппим только реально запечённые (или хотя бы корректно описанные) bakedCount
+                    codepointToIndex.put(codepoint, bakedCount);
+                    availableCodepoints.add(codepoint);
+
+                    bakedCount++;
+                }
             }
 
-            // --- Кэш ширин ---
-            for (int i = 0; i < CHAR_COUNT; i++) {
-                charWidths[i] = bakedChars.get(i).xadvance() * INV_OVERSAMPLE;
-            }
+            // --- NativeImage ---
+            NativeImage image = new NativeImage(NativeImage.Format.RGBA, ATLAS_SIZE, ATLAS_SIZE, false);
 
-            // --- Создание NativeImage → DynamicTexture ---
-            NativeImage image = new NativeImage(
-                    NativeImage.Format.RGBA, ATLAS_SIZE, ATLAS_SIZE, false
-            );
             for (int py = 0; py < ATLAS_SIZE; py++) {
                 int rowOffset = py * ATLAS_SIZE;
                 for (int px = 0; px < ATLAS_SIZE; px++) {
                     int alpha = bitmap.get(rowOffset + px) & 0xFF;
-                    // NativeImage.setPixelABGR ожидает ABGR: alpha в старших битах
-                    image.setPixelABGR(px, py, (alpha << 24) | 0x00FFFFFF);
+                    int argb = (alpha << 24) | 0x00FFFFFF;
+                    image.setPixelABGR(px, py, argb);
                 }
             }
 
             String textureName = "customfont_" + resourcePath.hashCode() + "_" + (int) fontSize;
             this.atlasTexture = new DynamicTexture(() -> textureName, image);
             this.atlasTexture.setSampler(
-                    RenderSystem.getSamplerCache().getRepeat(FilterMode.LINEAR)
+                    RenderSystem.getSamplerCache().getClampToEdge(FilterMode.LINEAR)
             );
 
             this.atlasLocation = Identifier.withDefaultNamespace("dynamic/" + textureName);
@@ -180,9 +275,7 @@ public class CustomFont implements AutoCloseable {
         }
     }
 
-    // ============================================================
-    // Публичные методы рендера
-    // ============================================================
+    // ------------------- Render API -------------------
 
     public void drawString(GuiGraphics g, String text, float x, float y, int color) {
         drawString(g, text, x, y, color, false);
@@ -190,10 +283,7 @@ public class CustomFont implements AutoCloseable {
 
     public void drawString(GuiGraphics g, String text, float x, float y, int color, boolean shadow) {
         if (text == null || text.isEmpty()) return;
-
-        if (shadow) {
-            renderText(g, text, x + 1.0f, y + 1.0f, darken(color), true);
-        }
+        if (shadow) renderText(g, text, x + 1.0f, y + 1.0f, darken(color), true);
         renderText(g, text, x, y, color, false);
     }
 
@@ -201,8 +291,7 @@ public class CustomFont implements AutoCloseable {
         drawCenteredString(g, text, x, y, color, false);
     }
 
-    public void drawCenteredString(GuiGraphics g, String text, float x, float y,
-                                   int color, boolean shadow) {
+    public void drawCenteredString(GuiGraphics g, String text, float x, float y, int color, boolean shadow) {
         float w = getWidth(text);
         drawString(g, text, x - w * 0.5f, y, color, shadow);
     }
@@ -211,31 +300,19 @@ public class CustomFont implements AutoCloseable {
         drawRightString(g, text, x, y, color, false);
     }
 
-    public void drawRightString(GuiGraphics g, String text, float x, float y,
-                                int color, boolean shadow) {
+    public void drawRightString(GuiGraphics g, String text, float x, float y, int color, boolean shadow) {
         float w = getWidth(text);
         drawString(g, text, x - w, y, color, shadow);
     }
 
-    // ============================================================
-    // Внутренний рендер (ядро)
-    // ============================================================
+    // ------------------- Core render -------------------
 
-    /**
-     * Главная функция рендера. Использует STBTTAlignedQuad для получения
-     * правильных экранных координат каждого глифа. Это гарантирует
-     * единообразное вертикальное выравнивание всех символов.
-     */
-    private void renderText(GuiGraphics g, String text, float x, float y,
-                            int originalColor, boolean isShadow) {
-        if (text == null || text.isEmpty()) return;
-
-        // baseline Y — отступаем ascent от верхнего края строки
-        // STB quad'ы считают Y от baseline (yoff отрицателен для символов выше baseline)
+    private void renderText(GuiGraphics g, String text, float x, float y, int originalColor, boolean isShadow) {
         float baselineY = y + scaledAscent;
         float startX = x;
 
         int currentColor = originalColor;
+
         boolean bold = false;
         boolean italic = false;
         boolean underline = false;
@@ -243,23 +320,19 @@ public class CustomFont implements AutoCloseable {
         boolean obfuscated = false;
 
         float lineStartX = startX;
-
-        // Для stbtt_GetBakedQuad нам нужен float[] xpos
-        // Но мы вручную считаем позиции, чтобы не терять float-точность
-
         float cursorX = startX;
+
+        int prevCpForKerning = -1;
 
         for (int i = 0; i < text.length(); i++) {
             char c = text.charAt(i);
 
-            // --- Обработка § кодов ---
             if (c == '§' && i + 1 < text.length()) {
                 char code = Character.toLowerCase(text.charAt(i + 1));
                 i++;
 
                 int mappedColor = getColorForCode(code);
                 if (mappedColor != -1) {
-                    // Цветовой код: применяем цвет, сбрасываем форматирование
                     int alpha = ARGB.alpha(originalColor);
                     currentColor = ARGB.color(alpha,
                             ARGB.red(mappedColor),
@@ -267,11 +340,7 @@ public class CustomFont implements AutoCloseable {
                             ARGB.blue(mappedColor));
                     if (isShadow) currentColor = darken(currentColor);
 
-                    bold = false;
-                    italic = false;
-                    underline = false;
-                    strikethrough = false;
-                    obfuscated = false;
+                    bold = italic = underline = strikethrough = obfuscated = false;
                 } else {
                     switch (code) {
                         case 'l' -> bold = true;
@@ -281,18 +350,15 @@ public class CustomFont implements AutoCloseable {
                         case 'k' -> obfuscated = true;
                         case 'r' -> {
                             currentColor = isShadow ? darken(originalColor) : originalColor;
-                            bold = false;
-                            italic = false;
-                            underline = false;
-                            strikethrough = false;
-                            obfuscated = false;
+                            bold = italic = underline = strikethrough = obfuscated = false;
                         }
                     }
                 }
+
+                prevCpForKerning = -1;
                 continue;
             }
 
-            // --- Перенос строки ---
             if (c == '\n') {
                 if (underline) drawLineDecoration(g, lineStartX, cursorX, baselineY, 1.0f, currentColor);
                 if (strikethrough) drawLineDecoration(g, lineStartX, cursorX, baselineY, -scaledAscent * 0.35f, currentColor);
@@ -300,133 +366,108 @@ public class CustomFont implements AutoCloseable {
                 cursorX = startX;
                 baselineY += lineHeight;
                 lineStartX = startX;
+                prevCpForKerning = -1;
                 continue;
             }
 
-            // --- Obfuscated ---
             char renderChar = c;
             if (obfuscated && c != ' ') {
-                // Подбираем случайный символ похожей ширины
                 renderChar = getRandomCharSimilarWidth(c);
             }
 
-            // --- Проверка диапазона ---
-            int charIndex = renderChar - FIRST_CHAR;
-            if (charIndex < 0 || charIndex >= CHAR_COUNT) {
-                // Символ вне baked диапазона — пропускаем с пробелом
-                cursorX += getCharWidth(' ');
+            int cp = (int) renderChar;
+
+            // (опционально) kerning — делает текст заметно “правильнее” по spacing
+            if (prevCpForKerning != -1) {
+                cursorX += STBTruetype.stbtt_GetCodepointKernAdvance(fontInfo, prevCpForKerning, cp) * stbScale;
+            }
+
+            Integer charIndex = codepointToIndex.get(cp);
+            if (charIndex == null) {
+                // нет в атласе -> просто продвигаем курсор по метрикам
+                float adv = getCharWidth(renderChar);
+                if (bold) adv += 1.0f;
+                cursorX += adv;
+                prevCpForKerning = cp;
                 continue;
             }
 
-            // --- Получаем данные глифа ---
             STBTTBakedChar charData = bakedChars.get(charIndex);
 
-            // UV координаты в атласе
-            float u0 = charData.x0() * INV_ATLAS;
-            float v0 = charData.y0() * INV_ATLAS;
-            float u1 = charData.x1() * INV_ATLAS;
-            float v1 = charData.y1() * INV_ATLAS;
+            int srcX = charData.x0();
+            int srcY = charData.y0();
+            int srcW = charData.x1() - charData.x0();
+            int srcH = charData.y1() - charData.y0();
 
-            // Размер глифа на экране
-            float glyphW = (charData.x1() - charData.x0()) * INV_OVERSAMPLE;
-            float glyphH = (charData.y1() - charData.y0()) * INV_OVERSAMPLE;
-
-            // Позиция глифа на экране (xoff/yoff уже в пикселях baked размера,
-            // нужно поделить на OVERSAMPLE)
             float glyphX = cursorX + charData.xoff() * INV_OVERSAMPLE;
             float glyphY = baselineY + charData.yoff() * INV_OVERSAMPLE;
 
-            // Italic: скос верхней части
-            float italicShearTop = italic ? (glyphH * 0.2f) : 0;
-            float italicShearBottom = 0;
-
-            if (glyphW > 0 && glyphH > 0) {
-                drawGlyph(g, glyphX, glyphY, glyphW, glyphH,
-                        u0, v0, u1, v1,
-                        italicShearTop, italicShearBottom,
-                        currentColor);
+            if (srcW > 0 && srcH > 0) {
+                drawGlyph(g, glyphX, glyphY, srcX, srcY, srcW, srcH, italic, currentColor);
 
                 if (bold) {
-                    drawGlyph(g, glyphX + 1.0f, glyphY, glyphW, glyphH,
-                            u0, v0, u1, v1,
-                            italicShearTop, italicShearBottom,
-                            currentColor);
+                    drawGlyph(g, glyphX + 1.0f, glyphY, srcX, srcY, srcW, srcH, italic, currentColor);
                 }
             }
 
             float advance = charData.xadvance() * INV_OVERSAMPLE;
             if (bold) advance += 1.0f;
             cursorX += advance;
+
+            prevCpForKerning = cp;
         }
 
-        // Декорации для последней строки
-        if (underline) {
-            drawLineDecoration(g, lineStartX, cursorX, baselineY, 1.0f, currentColor);
-        }
-        if (strikethrough) {
-            drawLineDecoration(g, lineStartX, cursorX, baselineY, -scaledAscent * 0.35f, currentColor);
-        }
+        if (underline) drawLineDecoration(g, lineStartX, cursorX, baselineY, 1.0f, currentColor);
+        if (strikethrough) drawLineDecoration(g, lineStartX, cursorX, baselineY, -scaledAscent * 0.35f, currentColor);
     }
 
-    /**
-     * Рендерит один глиф через blit. Координаты — float, но blit принимает int.
-     * Чтобы избежать "прыганья" символов, мы округляем ТОЛЬКО финальные
-     * позиции, а advance остаётся float.
-     */
     private void drawGlyph(GuiGraphics g,
-                           float x, float y, float w, float h,
-                           float u0, float v0, float u1, float v1,
-                           float italicShearTop, float italicShearBottom,
+                           float x, float y,
+                           int srcX, int srcY, int srcW, int srcH,
+                           boolean italic,
                            int color) {
-        // Для стандартного blit (без italic) — простой вызов
-        // Используем sub-pixel позиции через blit с float UV
-
-        int ix = Math.round(x);
-        int iy = Math.round(y);
-        int iw = Math.max(1, Math.round(w));
-        int ih = Math.max(1, Math.round(h));
-
-        // UV в пикселях атласа для blit
-        float srcX = u0 * ATLAS_SIZE;
-        float srcY = v0 * ATLAS_SIZE;
-        int srcW = Math.round((u1 - u0) * ATLAS_SIZE);
-        int srcH = Math.round((v1 - v0) * ATLAS_SIZE);
-
         if (srcW <= 0 || srcH <= 0) return;
+
+        g.pose().pushMatrix();
+
+        // translateLocal = “нормальный” сдвиг в экранных координатах
+        g.pose().translateLocal(x, y);
+
+        // Рисуем oversampled-битмап и масштабируем до нормального размера 1/OVERSAMPLE
+        g.pose().scale(INV_OVERSAMPLE, INV_OVERSAMPLE);
+
+        // Простейшая “italic” через shear (если тебе не надо — можно выкинуть блок)
+        if (italic) {
+            float shear = 0.25f;
+            float dstH = srcH * INV_OVERSAMPLE;
+            // сдвиг, чтобы верх был правее низа
+            g.pose().translateLocal(shear * dstH, 0.0f);
+            g.pose().shearX(-shear);
+        }
 
         g.blit(
                 RenderPipelines.GUI_TEXTURED,
                 atlasLocation,
-                ix, iy,
-                srcX, srcY,
-                iw, ih,
+                0, 0,
+                (float) srcX, (float) srcY,
+                srcW, srcH,
                 srcW, srcH,
                 ATLAS_SIZE, ATLAS_SIZE,
                 color
         );
+
+        g.pose().popMatrix();
     }
 
-    /**
-     * Рисует горизонтальную линию (underline / strikethrough).
-     * @param yOffset смещение от baseline (+ вниз, - вверх)
-     */
-    private void drawLineDecoration(GuiGraphics g, float fromX, float toX,
-                                    float baselineY, float yOffset, int color) {
+    private void drawLineDecoration(GuiGraphics g, float fromX, float toX, float baselineY, float yOffset, int color) {
         int y = Math.round(baselineY + yOffset);
         int x1 = Math.round(fromX);
         int x2 = Math.round(toX);
-        if (x2 > x1) {
-            g.fill(x1, y, x2, y + 1, color);
-        }
+        if (x2 > x1) g.fill(x1, y, x2, y + 1, color);
     }
 
-    // ============================================================
-    // Метрики
-    // ============================================================
+    // ------------------- Metrics -------------------
 
-    /**
-     * Ширина текста с учётом § кодов.
-     */
     public float getWidth(String text) {
         if (text == null || text.isEmpty()) return 0;
 
@@ -434,30 +475,38 @@ public class CustomFont implements AutoCloseable {
         float maxWidth = 0;
         boolean bold = false;
 
+        int prevCpForKerning = -1;
+
         for (int i = 0; i < text.length(); i++) {
             char c = text.charAt(i);
 
             if (c == '§' && i + 1 < text.length()) {
                 char code = Character.toLowerCase(text.charAt(i + 1));
                 i++;
+                if (code == 'l') bold = true;
+                else if (code == 'r' || getColorForCode(code) != -1) bold = false;
 
-                if (code == 'l') {
-                    bold = true;
-                } else if (code == 'r' || getColorForCode(code) != -1) {
-                    bold = false;
-                }
+                prevCpForKerning = -1;
                 continue;
             }
 
             if (c == '\n') {
                 maxWidth = Math.max(maxWidth, width);
                 width = 0;
+                prevCpForKerning = -1;
                 continue;
+            }
+
+            int cp = (int) c;
+            if (prevCpForKerning != -1) {
+                width += STBTruetype.stbtt_GetCodepointKernAdvance(fontInfo, prevCpForKerning, cp) * stbScale;
             }
 
             float cw = getCharWidth(c);
             if (bold) cw += 1.0f;
             width += cw;
+
+            prevCpForKerning = cp;
         }
 
         return Math.max(maxWidth, width);
@@ -468,66 +517,44 @@ public class CustomFont implements AutoCloseable {
     }
 
     private float getCharWidth(char c) {
-        int idx = c - FIRST_CHAR;
-        if (idx < 0 || idx >= CHAR_COUNT) {
-            return fontSize * 0.3f; // fallback для неизвестных
-        }
-        return charWidths[idx];
+        Float w = charWidths.get((int) c);
+        if (w != null) return w;
+        return fontSize * 0.3f;
     }
 
-    /**
-     * Высота текста (учитывает переносы строк).
-     */
     public float getHeight(String text) {
         if (text == null || text.isEmpty()) return lineHeight;
-
         int lines = 1;
-        boolean inCode = false;
         for (int i = 0; i < text.length(); i++) {
             char c = text.charAt(i);
-            if (c == '§' && i + 1 < text.length()) {
-                i++; // skip code char
-                continue;
-            }
+            if (c == '§' && i + 1 < text.length()) { i++; continue; }
             if (c == '\n') lines++;
         }
         return lines * lineHeight;
     }
 
-    /**
-     * Высота одной строки.
-     */
     public float getHeight() {
         return lineHeight;
     }
 
-    /**
-     * Ascent — расстояние от верха строки до baseline.
-     */
     public float getAscent() {
         return scaledAscent;
     }
 
-    /**
-     * Descent — расстояние от baseline до низа строки (положительное значение).
-     */
     public float getDescent() {
-        return -scaledDescent; // scaledDescent отрицателен
+        return -scaledDescent;
     }
 
-    // ============================================================
-    // Утилиты
-    // ============================================================
+    // ------------------- Utils -------------------
 
-    /**
-     * Обрезает текст до заданной ширины.
-     */
     public String trimToWidth(String text, float maxWidth) {
         if (text == null) return "";
 
         StringBuilder sb = new StringBuilder();
         float w = 0;
         boolean bold = false;
+
+        int prevCpForKerning = -1;
 
         for (int i = 0; i < text.length(); i++) {
             char c = text.charAt(i);
@@ -538,79 +565,76 @@ public class CustomFont implements AutoCloseable {
 
                 if (code == 'l') bold = true;
                 else if (code == 'r' || getColorForCode(code) != -1) bold = false;
+
                 i++;
+                prevCpForKerning = -1;
                 continue;
             }
 
-            float cw = getCharWidth(c);
+            int cp = (int) c;
+            float kern = 0;
+            if (prevCpForKerning != -1) {
+                kern = STBTruetype.stbtt_GetCodepointKernAdvance(fontInfo, prevCpForKerning, cp) * stbScale;
+            }
+
+            float cw = getCharWidth(c) + kern;
             if (bold) cw += 1.0f;
+
             if (w + cw > maxWidth) break;
 
             sb.append(c);
             w += cw;
+
+            prevCpForKerning = cp;
         }
+
         return sb.toString();
     }
 
-    /**
-     * Убирает все § коды из текста.
-     */
     public static String stripColorCodes(String text) {
         if (text == null) return "";
         StringBuilder sb = new StringBuilder(text.length());
         for (int i = 0; i < text.length(); i++) {
             char c = text.charAt(i);
-            if (c == '§' && i + 1 < text.length()) {
-                i++;
-                continue;
-            }
+            if (c == '§' && i + 1 < text.length()) { i++; continue; }
             sb.append(c);
         }
         return sb.toString();
     }
 
-    /**
-     * Затемняет цвет для тени (25% яркости).
-     */
     private static int darken(int color) {
         int a = ARGB.alpha(color);
         int r = (int) (ARGB.red(color) * 0.25f);
-        int gr = (int) (ARGB.green(color) * 0.25f);
+        int g = (int) (ARGB.green(color) * 0.25f);
         int b = (int) (ARGB.blue(color) * 0.25f);
-        return ARGB.color(a, r, gr, b);
+        return ARGB.color(a, r, g, b);
     }
 
-    /**
-     * Подбирает случайный символ с шириной, похожей на оригинальный (для §k).
-     */
     private char getRandomCharSimilarWidth(char original) {
         float targetWidth = getCharWidth(original);
-        // Пробуем несколько раз найти символ с похожей шириной
+
         for (int attempt = 0; attempt < 5; attempt++) {
-            char candidate = (char) (FIRST_CHAR + 1 + (int) (Math.random() * (CHAR_COUNT - 1)));
+            if (availableCodepoints.isEmpty()) break;
+            int randomIndex = (int) (Math.random() * availableCodepoints.size());
+            char candidate = (char) (int) availableCodepoints.get(randomIndex);
             float candidateWidth = getCharWidth(candidate);
             if (Math.abs(candidateWidth - targetWidth) < targetWidth * 0.3f) {
                 return candidate;
             }
         }
-        // Fallback: любой символ
-        return (char) (FIRST_CHAR + 1 + (int) (Math.random() * (CHAR_COUNT - 1)));
-    }
 
-    // ============================================================
-    // Загрузка ресурсов
-    // ============================================================
+        if (!availableCodepoints.isEmpty()) {
+            return (char) (int) availableCodepoints.get((int) (Math.random() * availableCodepoints.size()));
+        }
+        return original;
+    }
 
     private static ByteBuffer loadResource(String path) throws IOException {
         String cleanPath = path.startsWith("/") ? path.substring(1) : path;
 
         InputStream is = CustomFont.class.getClassLoader().getResourceAsStream(cleanPath);
-        if (is == null) {
-            is = CustomFont.class.getResourceAsStream(path);
-        }
-        if (is == null) {
-            throw new IOException("Font resource not found: " + path);
-        }
+        if (is == null) is = CustomFont.class.getResourceAsStream(path);
+        if (is == null) throw new IOException("Font resource not found: " + path);
 
         try {
             byte[] bytes = is.readAllBytes();
@@ -622,33 +646,24 @@ public class CustomFont implements AutoCloseable {
         }
     }
 
-    // ============================================================
-    // Очистка
-    // ============================================================
-
     @Override
     public void close() {
-        if (bakedChars != null) {
-            bakedChars.free();
+        if (bakedChars != null) bakedChars.free();
+
+        if (atlasLocation != null) {
+            try {
+                Minecraft.getInstance().getTextureManager().release(atlasLocation);
+            } catch (Exception ignored) {}
         }
 
         if (atlasTexture != null) {
-            if (atlasLocation != null) {
-                try {
-                    Minecraft.getInstance().getTextureManager().release(atlasLocation);
-                } catch (Exception ignored) {
-                    // Может быть вызвано после закрытия контекста
-                }
-            }
+            try {
+                atlasTexture.close();
+            } catch (Exception ignored) {}
             atlasTexture = null;
-            atlasLocation = null;
         }
+        atlasLocation = null;
 
-        if (ttfBuffer != null) {
-            MemoryUtil.memFree(ttfBuffer);
-        }
-
-        // fontInfo создан через STBTTFontinfo.create() — это managed struct,
-        // он не владеет нативной памятью, но ссылается на ttfBuffer
+        if (ttfBuffer != null) MemoryUtil.memFree(ttfBuffer);
     }
 }

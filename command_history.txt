@@ -1,2 +1,4 @@
 /login Player9
+/reg AutisMoregzs
+/hub
 /time set day

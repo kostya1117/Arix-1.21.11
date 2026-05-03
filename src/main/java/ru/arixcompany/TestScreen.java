@@ -67,12 +67,12 @@ public class TestScreen extends Screen {
         }
 
         if (small != null) {
-            small.drawString(g, "Small font - 12px", contentX, contentY, 0xFFE0E0E0);
+            small.drawString(g, "Small font - 12px - abcdefghijklmnopqrstuvwxyz", contentX, contentY, 0xFFE0E0E0);
             contentY += 22;
         }
 
         if (small != null) {
-            small.drawString(g, "Small font - 12px - abcdefghijklmnopqrstuvwxyz", contentX, contentY, 0xFF999999);
+            small.drawString(g, "Small font - 12px - абвгдежзийклмнопрстуфхцчшщъыьэюя", contentX, contentY, 0xFF999999);
             contentY += 18;
         }
 
@@ -93,7 +93,7 @@ public class TestScreen extends Screen {
                 hovered1 ? 0xFF4752C4 : 0xFF5865F2
         );
         if (regular != null) {
-            regular.drawCenteredString(g, "Primary", btnX1 + btnW / 2.0F, contentY + 8, 0xFFFFFFFF);
+            regular.drawCenteredString(g, "абвгдежзийклмнопрстуфхцчшщъыьэюя", btnX1 + btnW / 2.0F, contentY + 8, 0xFFFFFFFF);
         }
 
         // Кнопка 2 — Outlined

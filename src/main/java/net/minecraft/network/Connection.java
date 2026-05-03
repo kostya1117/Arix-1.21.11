@@ -2,6 +2,14 @@ package net.minecraft.network;
 
 import com.google.common.collect.Queues;
 import com.mojang.logging.LogUtils;
+import com.viaversion.viaversion.api.connection.UserConnection;
+import com.viaversion.viaversion.connection.UserConnectionImpl;
+import com.viaversion.viaversion.protocol.ProtocolPipelineImpl;
+import de.florianmichael.vialoadingbase.ViaLoadingBase;
+import de.florianmichael.vialoadingbase.netty.event.CompressionReorderEvent;
+import de.florianmichael.viamcp.MCPVLBPipeline;
+import de.florianmichael.viamcp.ViaMCP;
+import de.florianmichael.viamcp.ViaProtocolStripper;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelException;
@@ -18,6 +26,7 @@ import io.netty.channel.ChannelPromise;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.local.LocalChannel;
 import io.netty.channel.local.LocalServerChannel;
+import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.flow.FlowControlHandler;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.handler.timeout.TimeoutException;
@@ -431,15 +440,22 @@ public class Connection extends SimpleChannelInboundHandler<Packet<?>> {
     public static ChannelFuture connect(InetSocketAddress p_290034_, EventLoopGroupHolder p_450865_, final Connection p_290031_) {
         return new Bootstrap().group(p_450865_.eventLoopGroup()).handler(new ChannelInitializer<Channel>() {
             @Override
-            protected void initChannel(Channel p_129552_) {
+            protected void initChannel(Channel channel) {
                 try {
-                    p_129552_.config().setOption(ChannelOption.TCP_NODELAY, true);
-                } catch (ChannelException channelexception) {
+                    channel.config().setOption(ChannelOption.TCP_NODELAY, true);
+                } catch (ChannelException ignored) {
                 }
 
-                ChannelPipeline channelpipeline = p_129552_.pipeline().addLast("timeout", new ReadTimeoutHandler(30));
+                ChannelPipeline channelpipeline = channel.pipeline().addLast("timeout", new ReadTimeoutHandler(30));
                 Connection.configureSerialization(channelpipeline, PacketFlow.CLIENTBOUND, false, p_290031_.bandwidthDebugMonitor);
+
                 p_290031_.configurePacketHandler(channelpipeline);
+
+                if (channel instanceof SocketChannel && ViaLoadingBase.getInstance().getTargetVersion().getVersion() != SharedConstants.getProtocolVersion()) {
+                    final UserConnection user = new UserConnectionImpl(channel, true);
+                    new ProtocolPipelineImpl(user);
+                    channel.pipeline().addBefore("packet_handler", "via_mcp_pipeline", new MCPVLBPipeline(user));
+                }
             }
         }).channel(p_450865_.channelCls()).connect(p_290034_.getAddress(), p_290034_.getPort());
     }
@@ -546,6 +562,7 @@ public class Connection extends SimpleChannelInboundHandler<Packet<?>> {
             } else {
                 this.channel.pipeline().addAfter("prepender", "compress", new CompressionEncoder(p_129485_));
             }
+            this.channel.pipeline().fireUserEventTriggered(new CompressionReorderEvent());
         } else {
             if (this.channel.pipeline().get("decompress") instanceof CompressionDecoder) {
                 this.channel.pipeline().remove("decompress");
