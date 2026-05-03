@@ -35,7 +35,6 @@ public class Arix implements IMinecraft {
     @NonFinal
     ModuleRepo moduleRepo;
 
-
     public Arix(){
         instance = this;
         ViaMCP.create();

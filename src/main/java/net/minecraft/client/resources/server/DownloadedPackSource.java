@@ -5,7 +5,6 @@ import com.google.common.hash.HashCode;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
 import com.mojang.logging.LogUtils;
-import com.mojang.realmsclient.Unit;
 import com.mojang.util.UndashedUuid;
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -114,8 +113,6 @@ public class DownloadedPackSource implements AutoCloseable {
             private void updateProgress(long p_310910_) {
                 if (this.totalBytes.isPresent()) {
                     this.message = Component.translatable("download.pack.progress.percent", p_310910_ * 100L / this.totalBytes.getAsLong());
-                } else {
-                    this.message = Component.translatable("download.pack.progress.bytes", Unit.humanReadable(p_310910_));
                 }
 
                 this.updateToast();

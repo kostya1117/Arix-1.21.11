@@ -3,7 +3,6 @@ package net.minecraft.client.multiplayer.chat.report;
 import com.mojang.authlib.yggdrasil.request.AbuseReportRequest.ClientInfo;
 import com.mojang.authlib.yggdrasil.request.AbuseReportRequest.RealmInfo;
 import com.mojang.authlib.yggdrasil.request.AbuseReportRequest.ThirdPartyServerInfo;
-import com.mojang.realmsclient.dto.RealmsServer;
 import java.util.Locale;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.Minecraft;
@@ -21,10 +20,6 @@ public record ReportEnvironment(String clientVersion, ReportEnvironment.@Nullabl
         return create(new ReportEnvironment.Server.ThirdParty(p_238999_));
     }
 
-    public static ReportEnvironment realm(RealmsServer p_239765_) {
-        return create(new ReportEnvironment.Server.Realm(p_239765_));
-    }
-
     public static ReportEnvironment create(ReportEnvironment.@Nullable Server p_239956_) {
         return new ReportEnvironment(getClientVersion(), p_239956_);
     }
@@ -40,9 +35,7 @@ public record ReportEnvironment(String clientVersion, ReportEnvironment.@Nullabl
     }
 
     public @Nullable RealmInfo realmInfo() {
-        return this.server instanceof ReportEnvironment.Server.Realm reportenvironment$server$realm
-            ? new RealmInfo(String.valueOf(reportenvironment$server$realm.realmId()), reportenvironment$server$realm.slotId())
-            : null;
+        return new RealmInfo("0", 0);
     }
 
     private static String getClientVersion() {
@@ -57,14 +50,6 @@ public record ReportEnvironment(String clientVersion, ReportEnvironment.@Nullabl
 
     
     public interface Server {
-        
-        record Realm(long realmId, int slotId) implements ReportEnvironment.Server {
-            public Realm(RealmsServer p_239068_) {
-                this(p_239068_.id, p_239068_.activeSlot);
-            }
-        }
-
-        
         record ThirdParty(String ip) implements ReportEnvironment.Server {
         }
     }

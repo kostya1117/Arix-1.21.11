@@ -177,17 +177,6 @@ public class JoinMultiplayerScreen extends Screen {
                 break;
             }
         }
-
-        // Add or move the button.
-        if (this.ias_button != null) {
-            this.ias_button.setX(x);
-            this.ias_button.setY(y);
-        } else {
-            Button button = this.ias_button = new ImageButton(x, y, 20, 20, IASMinecraft.BUTTON, btn -> this.minecraft.setScreen(new AccountScreen(this)), Component.literal("In-Game Account Switcher"));
-            button.setTooltip(Tooltip.create(button.getMessage()));
-            button.setTooltipDelay(Duration.ofMillis(250L));
-            this.addRenderableWidget(button);
-        }
     }
 
     @Override

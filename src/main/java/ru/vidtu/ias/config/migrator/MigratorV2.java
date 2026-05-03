@@ -31,7 +31,6 @@ import ru.vidtu.ias.account.OfflineAccount;
 import ru.vidtu.ias.config.IASConfig;
 import ru.vidtu.ias.config.IASStorage;
 import ru.vidtu.ias.config.TextAlign;
-import ru.vidtu.ias.crypt.DummyCrypt;
 import ru.vidtu.ias.utils.GSONUtils;
 
 import java.io.ByteArrayOutputStream;
@@ -94,26 +93,17 @@ final class MigratorV2 implements Migrator {
                         String accessToken = GSONUtils.getStringOrThrow(rawAccount, "accessToken");
                         String refreshToken = GSONUtils.getStringOrThrow(rawAccount, "refreshToken");
 
-                        // Convert tokens.
-                        byte[] unencrypted;
+                        // Convert tokens - store without encryption.
+                        byte[] data;
                         try (ByteArrayOutputStream byteOut = new ByteArrayOutputStream(accessToken.length() + refreshToken.length() + 4);
                              DataOutputStream out = new DataOutputStream(byteOut)) {
                             out.writeUTF(accessToken);
                             out.writeUTF(refreshToken);
-                            unencrypted = byteOut.toByteArray();
-                        }
-                        byte[] data;
-                        try (ByteArrayOutputStream byteOut = new ByteArrayOutputStream(unencrypted.length + 32);
-                             DataOutputStream out = new DataOutputStream(byteOut)) {
-                            DummyCrypt crypt = DummyCrypt.INSTANCE;
-                            byte[] encrypted = crypt.encrypt(unencrypted);
-                            out.writeUTF(crypt.type());
-                            out.write(encrypted);
                             data = byteOut.toByteArray();
                         }
 
                         // Create.
-                        yield new MicrosoftAccount(true, uuid, name, data);
+                        yield new MicrosoftAccount(false, uuid, name, data);
                     }
                     case "ias:offline", "ru.vidtu.ias.account.offlineaccount" -> {
                         // Extract.

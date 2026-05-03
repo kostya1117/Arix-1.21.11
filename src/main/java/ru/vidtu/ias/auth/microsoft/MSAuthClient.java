@@ -30,7 +30,6 @@ import ru.vidtu.ias.account.MicrosoftAccount;
 import ru.vidtu.ias.auth.handlers.CreateHandler;
 import ru.vidtu.ias.auth.microsoft.fields.DeviceAuth;
 import ru.vidtu.ias.auth.microsoft.fields.MSTokens;
-import ru.vidtu.ias.crypt.Crypt;
 import ru.vidtu.ias.utils.Holder;
 import ru.vidtu.ias.utils.IUtils;
 import ru.vidtu.ias.utils.exceptions.DevicePendingException;
@@ -61,12 +60,6 @@ public final class MSAuthClient implements Closeable {
      */
     @NotNull
     public static final Logger LOGGER = LoggerFactory.getLogger("IAS/MSAuthClient");
-
-    /**
-     * Account crypt.
-     */
-    @NotNull
-    private final Crypt crypt;
 
     /**
      * Login handler.
@@ -100,12 +93,10 @@ public final class MSAuthClient implements Closeable {
     /**
      * Creates an HTTP client for MS auth.
      *
-     * @param crypt   Account crypt
      * @param handler Creation handler
      */
     @Contract(pure = true)
-    public MSAuthClient(@NotNull Crypt crypt, @NotNull CreateHandler handler) {
-        this.crypt = crypt;
+    public MSAuthClient(@NotNull CreateHandler handler) {
         this.handler = handler;
     }
 
@@ -230,7 +221,7 @@ public final class MSAuthClient implements Closeable {
             }, IAS.executor()).exceptionallyAsync(t -> {
                 // Probable case - no internet connection.
                 if (IUtils.anyInCausalChain(t, err -> err instanceof UnresolvedAddressException || err instanceof NoRouteToHostException || err instanceof HttpTimeoutException || err instanceof ConnectException)) {
-                    throw new FriendlyException("Unable to connect to MS servers.", t,  "ias.error.connect");
+                    throw new FriendlyException("Unable to connect to MS servers.", t, "ias.error.connect");
                 }
 
                 // Handle error.
@@ -240,11 +231,10 @@ public final class MSAuthClient implements Closeable {
                 if (profile == null || this.handler.cancelled()) return null;
 
                 // Log it and display progress.
-                LOGGER.info("IAS: Encrypting tokens...");
+                LOGGER.info("IAS: Saving tokens...");
                 this.handler.stage(MicrosoftAccount.ENCRYPTING);
 
-                // Write the tokens.
-                byte[] unencrypted;
+                // Write the tokens as plain bytes.
                 try (ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
                      DataOutputStream out = new DataOutputStream(byteOut)) {
                     // Write the access token.
@@ -254,25 +244,9 @@ public final class MSAuthClient implements Closeable {
                     out.writeUTF(ms.refresh());
 
                     // Flush it.
-                    unencrypted = byteOut.toByteArray();
-                } catch (Throwable t) {
-                    throw new RuntimeException("Unable to write the tokens.", t);
-                }
-
-                // Encrypt the tokens.
-                try (ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
-                     DataOutputStream out = new DataOutputStream(byteOut)) {
-                    // Encrypt.
-                    byte[] encrypted = this.crypt.encrypt(unencrypted);
-
-                    // Write data.
-                    out.writeUTF(this.crypt.type());
-                    out.write(encrypted);
-
-                    // Flush it.
                     data.set(byteOut.toByteArray());
                 } catch (Throwable t) {
-                    throw new RuntimeException("Unable to encrypt the tokens.", t);
+                    throw new RuntimeException("Unable to write the tokens.", t);
                 }
 
                 // Return the profile as-is.
@@ -290,7 +264,7 @@ public final class MSAuthClient implements Closeable {
                 this.handler.stage(MicrosoftAccount.FINALIZING);
 
                 // Create and return the data.
-                MicrosoftAccount account = new MicrosoftAccount(this.crypt.insecure(), uuid, name, data.get());
+                MicrosoftAccount account = new MicrosoftAccount(false, uuid, name, data.get());
                 this.handler.success(account);
             }, IAS.executor()).exceptionallyAsync(t -> {
                 // Handle error.
@@ -320,7 +294,6 @@ public final class MSAuthClient implements Closeable {
     @NotNull
     public String toString() {
         return "MSAuthClient{" +
-                "crypt=" + this.crypt +
                 ", expire=" + this.expire +
                 ", poll=" + this.poll +
                 '}';

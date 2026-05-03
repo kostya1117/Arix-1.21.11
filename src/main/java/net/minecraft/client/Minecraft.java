@@ -31,9 +31,6 @@ import com.mojang.datafixers.DataFixer;
 import com.mojang.jtracy.DiscontinuousFrame;
 import com.mojang.jtracy.TracyClient;
 import com.mojang.logging.LogUtils;
-import com.mojang.realmsclient.RealmsMainScreen;
-import com.mojang.realmsclient.client.RealmsClient;
-import com.mojang.realmsclient.gui.RealmsDataFetcher;
 import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -345,7 +342,6 @@ public class Minecraft extends ReentrantBlockableEventLoop<Runnable> implements 
     private final BlockEntityRenderDispatcher blockEntityRenderDispatcher;
     private ClientTelemetryManager telemetryManager;
     private ProfileKeyPairManager profileKeyPairManager;
-    private final RealmsDataFetcher realmsDataFetcher;
     private final QuickPlayLog quickPlayLog;
     private Services services;
     private final PlayerSkinRenderCache playerSkinRenderCache;
@@ -598,8 +594,6 @@ public class Minecraft extends ReentrantBlockableEventLoop<Runnable> implements 
         this.resourceManager.registerReloadListener(this.gpuWarnlistManager);
         this.resourceManager.registerReloadListener(this.regionalCompliancies);
         this.gui = new Gui(this);
-        RealmsClient realmsclient = RealmsClient.getOrCreate(this);
-        this.realmsDataFetcher = new RealmsDataFetcher(realmsclient);
         RenderSystem.setErrorCallback(this::onFullscreenError);
         if (this.mainRenderTarget.width != this.window.getWidth() || this.mainRenderTarget.height != this.window.getHeight()) {
             StringBuilder stringbuilder = new StringBuilder(
@@ -651,7 +645,7 @@ public class Minecraft extends ReentrantBlockableEventLoop<Runnable> implements 
         this.reloadStateTracker.startReload(ResourceLoadStateTracker.ReloadReason.INITIAL, list1);
         ReloadInstance reloadinstance = this.resourceManager.createReload(Util.backgroundExecutor().forName("resourceLoad"), this, RESOURCE_RELOAD_INITIAL_TASK, list1);
         GameLoadTimesEvent.INSTANCE.beginStep(TelemetryProperty.LOAD_TIME_LOADING_OVERLAY_MS);
-        Minecraft.GameLoadCookie minecraft$gameloadcookie = new Minecraft.GameLoadCookie(realmsclient, p_91084_.quickPlay);
+        Minecraft.GameLoadCookie minecraft$gameloadcookie = new Minecraft.GameLoadCookie(p_91084_.quickPlay);
         this.setOverlay(
             new LoadingOverlay(
                 this, reloadinstance, p_447796_ -> Util.ifElse(p_447796_, p_296162_ -> this.rollbackResourcePacks(p_296162_, minecraft$gameloadcookie), () -> {
@@ -718,7 +712,7 @@ public class Minecraft extends ReentrantBlockableEventLoop<Runnable> implements 
         boolean flag = this.addInitialScreens(list);
         Runnable runnable = () -> {
             if (p_299870_ != null && p_299870_.quickPlayData.isEnabled()) {
-                QuickPlay.connect(this, p_299870_.quickPlayData.variant(), p_299870_.realmsClient());
+                QuickPlay.connect(this, p_299870_.quickPlayData.variant());
             } else {
                 this.setScreen(new TitleScreen(true, new LogoRenderer(flag)));
             }
@@ -2102,8 +2096,6 @@ public class Minecraft extends ReentrantBlockableEventLoop<Runnable> implements 
         TitleScreen titlescreen = new TitleScreen();
         if (flag) {
             this.setScreen(titlescreen);
-        } else if (serverdata != null && serverdata.isRealm()) {
-            this.setScreen(new RealmsMainScreen(titlescreen));
         } else {
             this.setScreen(new JoinMultiplayerScreen(titlescreen));
         }
@@ -2828,10 +2820,6 @@ public class Minecraft extends ReentrantBlockableEventLoop<Runnable> implements 
         return this.reportingContext;
     }
 
-    public RealmsDataFetcher realmsDataFetcher() {
-        return this.realmsDataFetcher;
-    }
-
     public QuickPlayLog quickPlayLog() {
         return this.quickPlayLog;
     }
@@ -2927,6 +2915,6 @@ public class Minecraft extends ReentrantBlockableEventLoop<Runnable> implements 
     }
 
     
-    record GameLoadCookie(RealmsClient realmsClient, GameConfig.QuickPlayData quickPlayData) {
+    record GameLoadCookie(GameConfig.QuickPlayData quickPlayData) {
     }
 }

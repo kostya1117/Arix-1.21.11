@@ -41,7 +41,7 @@ public class ViaMCP {
     private AsyncVersionSlider asyncVersionSlider;
 
     public ViaMCP() {
-        ViaLoadingBase.ViaLoadingBaseBuilder.create().runDirectory(new File("ViaMCP")).nativeVersion(SharedConstants.getProtocolVersion()).onProtocolReload(protocolVersion -> {
+        ViaLoadingBase.ViaLoadingBaseBuilder.create().runDirectory(new File("arix/via")).nativeVersion(SharedConstants.getProtocolVersion()).onProtocolReload(protocolVersion -> {
             if (getAsyncVersionSlider() != null) {
                 getAsyncVersionSlider().setVersion(protocolVersion.getVersion());
             }

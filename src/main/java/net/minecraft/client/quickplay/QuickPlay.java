@@ -1,13 +1,6 @@
 package net.minecraft.client.quickplay;
 
 import com.mojang.logging.LogUtils;
-import com.mojang.realmsclient.RealmsMainScreen;
-import com.mojang.realmsclient.client.RealmsClient;
-import com.mojang.realmsclient.dto.RealmsServer;
-import com.mojang.realmsclient.dto.RealmsServerList;
-import com.mojang.realmsclient.exception.RealmsServiceException;
-import com.mojang.realmsclient.gui.screens.RealmsLongRunningMcoTaskScreen;
-import com.mojang.realmsclient.util.task.GetServerDetailsTask;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import net.minecraft.client.Minecraft;
@@ -42,7 +35,7 @@ public class QuickPlay {
     private static final Component TO_WORLD_LIST = Component.translatable("gui.toWorld");
     private static final Component TO_REALMS_LIST = Component.translatable("gui.toRealms");
 
-    public static void connect(Minecraft p_279319_, GameConfig.QuickPlayVariant p_410522_, RealmsClient p_279322_) {
+    public static void connect(Minecraft p_279319_, GameConfig.QuickPlayVariant p_410522_) {
         if (!p_410522_.isEnabled()) {
             LOGGER.error("Quick play disabled");
             p_279319_.setScreen(new TitleScreen());
@@ -50,9 +43,6 @@ public class QuickPlay {
             switch (p_410522_) {
                 case GameConfig.QuickPlayMultiplayerData gameconfig$quickplaymultiplayerdata:
                     joinMultiplayerWorld(p_279319_, gameconfig$quickplaymultiplayerdata.serverAddress());
-                    break;
-                case GameConfig.QuickPlayRealmsData gameconfig$quickplayrealmsdata:
-                    joinRealmsWorld(p_279319_, p_279322_, gameconfig$quickplayrealmsdata.realmId());
                     break;
                 case GameConfig.QuickPlaySinglePlayerData gameconfig$quickplaysingleplayerdata:
                     String s = gameconfig$quickplaysingleplayerdata.worldId();
@@ -108,31 +98,5 @@ public class QuickPlay {
 
         ServerAddress serveraddress = ServerAddress.parseString(p_279128_);
         ConnectScreen.startConnecting(new JoinMultiplayerScreen(new TitleScreen()), p_279276_, serveraddress, serverdata, true, null);
-    }
-
-    private static void joinRealmsWorld(Minecraft p_279320_, RealmsClient p_279468_, String p_279371_) {
-        long i;
-        RealmsServerList realmsserverlist;
-        try {
-            i = Long.parseLong(p_279371_);
-            realmsserverlist = p_279468_.listRealms();
-        } catch (NumberFormatException numberformatexception) {
-            Screen screen1 = new RealmsMainScreen(new TitleScreen());
-            p_279320_.setScreen(new DisconnectedScreen(screen1, ERROR_TITLE, INVALID_IDENTIFIER, TO_REALMS_LIST));
-            return;
-        } catch (RealmsServiceException realmsserviceexception) {
-            Screen screen = new TitleScreen();
-            p_279320_.setScreen(new DisconnectedScreen(screen, ERROR_TITLE, REALM_CONNECT, TO_TITLE));
-            return;
-        }
-
-        RealmsServer realmsserver = realmsserverlist.servers().stream().filter(p_279424_ -> p_279424_.id == i).findFirst().orElse(null);
-        if (realmsserver == null) {
-            Screen screen2 = new RealmsMainScreen(new TitleScreen());
-            p_279320_.setScreen(new DisconnectedScreen(screen2, ERROR_TITLE, REALM_PERMISSION, TO_REALMS_LIST));
-        } else {
-            TitleScreen titlescreen = new TitleScreen();
-            p_279320_.setScreen(new RealmsLongRunningMcoTaskScreen(titlescreen, new GetServerDetailsTask(titlescreen, realmsserver)));
-        }
     }
 }

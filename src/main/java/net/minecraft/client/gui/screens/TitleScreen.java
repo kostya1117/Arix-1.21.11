@@ -3,8 +3,6 @@ package net.minecraft.client.gui.screens;
 import com.mojang.authlib.minecraft.BanDetails;
 import com.mojang.blaze3d.opengl.GlStateManager;
 import com.mojang.logging.LogUtils;
-import com.mojang.realmsclient.RealmsMainScreen;
-import com.mojang.realmsclient.gui.screens.RealmsNotificationsScreen;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
@@ -53,7 +51,6 @@ public class TitleScreen extends Screen {
     private static final Component COPYRIGHT_TEXT = Component.translatable("title.credits");
     private static final String DEMO_LEVEL_ID = "Demo_World";
     private  SplashRenderer splash;
-    private  RealmsNotificationsScreen realmsNotificationsScreen;
     private boolean fading;
     private long fadeInStart;
     private final LogoRenderer logoRenderer;
@@ -73,15 +70,8 @@ public class TitleScreen extends Screen {
         this.logoRenderer = Objects.requireNonNullElseGet(p_265067_, () -> new LogoRenderer(false));
     }
 
-    private boolean realmsNotificationsEnabled() {
-        return this.realmsNotificationsScreen != null;
-    }
-
     @Override
     public void tick() {
-        if (this.realmsNotificationsEnabled()) {
-            this.realmsNotificationsScreen.tick();
-        }
     }
 
     public static void registerTextures(TextureManager p_378459_) {
@@ -137,33 +127,25 @@ public class TitleScreen extends Screen {
         }, true));
         int i1 = this.width / 2 - 124;
         l += 36;
-        spriteiconbutton.setPosition(i1, l);
+        spriteiconbutton.setPosition(i1, l + 15);
         this.addRenderableWidget(Button.builder(Component.translatable("menu.options"), (btnIn) -> {
             this.minecraft.setScreen(new OptionsScreen(this, this.minecraft.options));
-        }).bounds(this.width / 2 - 100, l, 98, 20).build());
+        }).bounds(this.width / 2 - 100, l + 15, 98, 20).build());
         this.addRenderableWidget(Button.builder(Component.translatable("menu.quit"), (btnIn) -> {
             this.minecraft.stop();
-        }).bounds(this.width / 2 + 2, l, 98, 20).build());
+        }).bounds(this.width / 2 + 2, l + 15, 98, 20).build());
         SpriteIconButton spriteiconbutton1 = this.addRenderableWidget(CommonButtons.accessibility(20, (btnIn) -> {
             this.minecraft.setScreen(new AccessibilityOptionsScreen(this, this.minecraft.options));
         }, true));
-        spriteiconbutton1.setPosition(this.width / 2 + 104, l);
+        spriteiconbutton1.setPosition(this.width / 2 + 104, l + 15);
         this.addRenderableWidget(new PlainTextButton(j, this.height - 10, i, 10, COPYRIGHT_TEXT, (btnIn) -> {
             this.minecraft.setScreen(new CreditsAndAttributionScreen(this));
         }, this.font));
-        if (this.realmsNotificationsScreen == null) {
-            this.realmsNotificationsScreen = new RealmsNotificationsScreen();
-        }
-
-        if (this.realmsNotificationsEnabled()) {
-            this.realmsNotificationsScreen.init(this.width, this.height);
-        }
 
         if (Reflector.TitleScreenModUpdateIndicator_init.exists()) {
             this.modUpdateNotification = (Screen)Reflector.call(Reflector.TitleScreenModUpdateIndicator_init, this, modButton);
         }
 
-        // IAS initialization
         IASMinecraft.onInit(this.minecraft, this, this::addRenderableWidget);
     }
 
@@ -197,9 +179,6 @@ public class TitleScreen extends Screen {
         boolean forge = Reflector.ModListScreen_Constructor.exists();
         int realmsX = forge ? this.width / 2 + 2 : this.width / 2 - 100;
         int realmsWidth = forge ? 98 : 200;
-        this.addRenderableWidget(Button.builder(Component.translatable("menu.online"), (btnIn) -> {
-            this.minecraft.setScreen(new RealmsMainScreen(this));
-        }).bounds(realmsX, yIn = i + rowHeightIn, realmsWidth, 20).tooltip(tooltip).build()).active = flag;
         return yIn;
     }
 
@@ -329,10 +308,6 @@ public class TitleScreen extends Screen {
             p_282860_.drawString(this.font, s, 2, this.height - 10, ARGB.white(f));
         }
 
-        if (this.realmsNotificationsEnabled() && f >= 1.0F) {
-            this.realmsNotificationsScreen.render(p_282860_, p_281753_, p_283539_, p_282628_);
-        }
-
         if (this.modUpdateNotification != null && f >= 1.0F) {
             this.modUpdateNotification.render(p_282860_, p_281753_, p_283539_, p_282628_);
         }
@@ -347,22 +322,16 @@ public class TitleScreen extends Screen {
 
     @Override
     public boolean mouseClicked(MouseButtonEvent p_426752_, boolean p_428227_) {
-        return super.mouseClicked(p_426752_, p_428227_) ? true : this.realmsNotificationsEnabled() && this.realmsNotificationsScreen.mouseClicked(p_426752_, p_428227_);
+        return super.mouseClicked(p_426752_, p_428227_);
     }
 
     @Override
     public void removed() {
-        if (this.realmsNotificationsScreen != null) {
-            this.realmsNotificationsScreen.removed();
-        }
     }
 
     @Override
     public void added() {
         super.added();
-        if (this.realmsNotificationsScreen != null) {
-            this.realmsNotificationsScreen.added();
-        }
     }
 
     private void confirmDemo(boolean p_96778_) {

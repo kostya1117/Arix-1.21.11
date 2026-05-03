@@ -29,7 +29,6 @@ import ru.vidtu.ias.IAS;
 import ru.vidtu.ias.account.MicrosoftAccount;
 import ru.vidtu.ias.auth.handlers.CreateHandler;
 import ru.vidtu.ias.config.IASConfig;
-import ru.vidtu.ias.crypt.Crypt;
 import ru.vidtu.ias.utils.Holder;
 import ru.vidtu.ias.utils.IUtils;
 import ru.vidtu.ias.utils.exceptions.FriendlyException;
@@ -118,12 +117,6 @@ public final class MSAuthServer implements Runnable, Closeable {
     private final String doneMessage;
 
     /**
-     * Account crypt.
-     */
-    @NotNull
-    private final Crypt crypt;
-
-    /**
      * Login handler.
      */
     @NotNull
@@ -156,15 +149,13 @@ public final class MSAuthServer implements Runnable, Closeable {
      * Creates an HTTP server for MS auth.
      *
      * @param doneMessage Message on the "done" screen
-     * @param crypt       Account crypt
      * @param handler     Creation handler
      * @throws RuntimeException If unable to create an HTTP server
      */
-    public MSAuthServer(@NotNull String doneMessage, @NotNull Crypt crypt, @NotNull CreateHandler handler) {
+    public MSAuthServer(@NotNull String doneMessage, @NotNull CreateHandler handler) {
         try {
             // Assign the values.
             this.doneMessage = doneMessage;
-            this.crypt = crypt;
             this.handler = handler;
 
             // Create the server.
@@ -532,11 +523,10 @@ public final class MSAuthServer implements Runnable, Closeable {
                 if (profile == null || this.handler.cancelled()) return null;
 
                 // Log it and display progress.
-                LOGGER.info("IAS: Encrypting tokens...");
+                LOGGER.info("IAS: Saving tokens...");
                 this.handler.stage(MicrosoftAccount.ENCRYPTING);
 
-                // Write the tokens.
-                byte[] unencrypted;
+                // Write the tokens as plain bytes.
                 try (ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
                      DataOutputStream out = new DataOutputStream(byteOut)) {
                     // Write the access token.
@@ -546,25 +536,9 @@ public final class MSAuthServer implements Runnable, Closeable {
                     out.writeUTF(refresh.get());
 
                     // Flush it.
-                    unencrypted = byteOut.toByteArray();
-                } catch (Throwable t) {
-                    throw new RuntimeException("Unable to write the tokens.", t);
-                }
-
-                // Encrypt the tokens.
-                try (ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
-                     DataOutputStream out = new DataOutputStream(byteOut)) {
-                    // Encrypt.
-                    byte[] encrypted = this.crypt.encrypt(unencrypted);
-
-                    // Write data.
-                    out.writeUTF(this.crypt.type());
-                    out.write(encrypted);
-
-                    // Flush it.
                     data.set(byteOut.toByteArray());
                 } catch (Throwable t) {
-                    throw new RuntimeException("Unable to encrypt the tokens.", t);
+                    throw new RuntimeException("Unable to write the tokens.", t);
                 }
 
                 // Return the profile as-is.
@@ -582,7 +556,7 @@ public final class MSAuthServer implements Runnable, Closeable {
                 this.handler.stage(MicrosoftAccount.FINALIZING);
 
                 // Create and return the data.
-                MicrosoftAccount account = new MicrosoftAccount(this.crypt.insecure(), uuid, name, data.get());
+                MicrosoftAccount account = new MicrosoftAccount(false, uuid, name, data.get());
                 this.handler.success(account);
             }, IAS.executor()).exceptionallyAsync(t -> {
                 // Handle error.
@@ -614,8 +588,7 @@ public final class MSAuthServer implements Runnable, Closeable {
     @NotNull
     public String toString() {
         return "MSAuthServer{" +
-                "crypt=" + this.crypt +
-                ", port=" + this.port +
+                "port=" + this.port +
                 '}';
     }
 }

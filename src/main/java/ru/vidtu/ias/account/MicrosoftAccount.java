@@ -29,7 +29,6 @@ import ru.vidtu.ias.IAS;
 import ru.vidtu.ias.auth.LoginData;
 import ru.vidtu.ias.auth.handlers.LoginHandler;
 import ru.vidtu.ias.auth.microsoft.MSAuth;
-import ru.vidtu.ias.crypt.Crypt;
 import ru.vidtu.ias.utils.Holder;
 import ru.vidtu.ias.utils.IUtils;
 import ru.vidtu.ias.utils.exceptions.FriendlyException;
@@ -43,8 +42,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.ConnectException;
 import java.net.NoRouteToHostException;
-import java.net.http.HttpTimeoutException;
-import java.nio.channels.UnresolvedAddressException;
+import java.net.http.HttpTimeoutException;import java.nio.channels.UnresolvedAddressException;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -248,64 +246,23 @@ public final class MicrosoftAccount implements Account {
             handler.stage(INITIALIZING);
 
             // Value holders.
-            Holder<Crypt> crypt = new Holder<>();
             Holder<String> access = new Holder<>();
             Holder<String> refresh = new Holder<>();
-            Holder<Boolean> recrypt = new Holder<>(false);
+            Holder<Boolean> resave = new Holder<>(false);
 
-            // Read the crypt.
-            CompletableFuture<Crypt> future;
-            byte[] crypted;
-            try (ByteArrayInputStream byteIn = new ByteArrayInputStream(this.data);
-                 DataInputStream in = new DataInputStream(byteIn)) {
-                // Read and process the crypt.
-                future = Crypt.readType(in, handler::password);
-
-                // Crypted data.
-                crypted = in.readAllBytes();
-            }
-
-            // Decrypt.
-            future.thenApplyAsync(value -> {
+            // Read the tokens from plain data.
+            CompletableFuture.supplyAsync(() -> {
                 // Skip if cancelled.
-                if (value == null || handler.cancelled()) return null;
+                if (handler.cancelled()) return false;
 
-                // Log it and display progress.
-                LOGGER.info("IAS: Decrypting tokens...");
-                handler.stage(DECRYPTING);
-
-                // Decrypt.
-                byte[] data = value.decrypt(crypted);
-
-                // Migrate and set the crypt.
-                Crypt migrate = value.migrate();
-                if (migrate != null) {
-                    crypt.set(migrate);
-                    recrypt.set(true);
-                } else {
-                    crypt.set(value);
-                }
-
-                // Continue.
-                return data;
-            }, IAS.executor()).thenApplyAsync(value -> {
-                // Skip if cancelled.
-                if (value == null || handler.cancelled()) return false;
-
-                // Read the decrypted data into tokens.
-                try (ByteArrayInputStream byteIn = new ByteArrayInputStream(value);
+                // Read the tokens.
+                try (ByteArrayInputStream byteIn = new ByteArrayInputStream(this.data);
                      DataInputStream in = new DataInputStream(byteIn)) {
                     // Read the access token.
                     access.set(in.readUTF());
 
                     // Read the refresh token.
                     refresh.set(in.readUTF());
-
-                    // Verify the buffer.
-                    int available = in.available();
-                    if (available != 0) {
-                        throw new IOException("Leftover: " + in.available());
-                    }
 
                     // Return continue.
                     return true;
@@ -330,8 +287,8 @@ public final class MicrosoftAccount implements Account {
                     LOGGER.info("IAS: Converting MSR to MSA/MSR...");
                     handler.stage(MSR_TO_MSA_MSR);
 
-                    // Require recrypting data.
-                    recrypt.set(true);
+                    // Require resaving data.
+                    resave.set(true);
 
                     // Convert MSR to MSA/MSR.
                     return MSAuth.msrToMsaMsr(refresh.get()).thenComposeAsync(ms -> {
@@ -400,17 +357,16 @@ public final class MicrosoftAccount implements Account {
                 // Skip if cancelled.
                 if (profile == null || handler.cancelled()) return;
 
-                // Re-encrypt if required.
+                // Re-save tokens if refreshed.
                 boolean saveStorage = false;
-                if (recrypt.get()) {
+                if (resave.get()) {
                     // Log it and display progress.
-                    LOGGER.info("IAS: Encrypting tokens...");
+                    LOGGER.info("IAS: Saving refreshed tokens...");
                     handler.stage(ENCRYPTING);
 
                     // Write the tokens.
                     String accessMem = access.get();
                     String refreshMem = refresh.get();
-                    byte[] unencrypted;
                     try (ByteArrayOutputStream byteOut = new ByteArrayOutputStream(accessMem.length() + refreshMem.length() + 4);
                          DataOutputStream out = new DataOutputStream(byteOut)) {
                         // Write the access token.
@@ -420,27 +376,10 @@ public final class MicrosoftAccount implements Account {
                         out.writeUTF(refreshMem);
 
                         // Flush it.
-                        unencrypted = byteOut.toByteArray();
-                    } catch (Throwable t) {
-                        throw new RuntimeException("Unable to write the tokens.", t);
-                    }
-
-                    // Encrypt the tokens.
-                    try (ByteArrayOutputStream byteOut = new ByteArrayOutputStream(unencrypted.length + 32);
-                         DataOutputStream out = new DataOutputStream(byteOut)) {
-                        // Encrypt.
-                        Crypt val = crypt.get();
-                        byte[] encrypted = val.encrypt(unencrypted);
-
-                        // Write data.
-                        out.writeUTF(val.type());
-                        out.write(encrypted);
-
-                        // Flush it.
                         this.data = byteOut.toByteArray();
                         saveStorage = true;
                     } catch (Throwable t) {
-                        throw new RuntimeException("Unable to encrypt the tokens.", t);
+                        throw new RuntimeException("Unable to write the tokens.", t);
                     }
                 }
 

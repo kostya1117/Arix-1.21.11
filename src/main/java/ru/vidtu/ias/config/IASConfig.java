@@ -138,9 +138,9 @@ public final class IASConfig {
     public static String serversButtonY = null;
 
     /**
-     * Allow storing accounts without Crypt, {@code false} by default.
+     * Allow storing accounts without Crypt, {@code true} by default (no crypt used).
      */
-    public static boolean allowNoCrypt = false;
+    public static boolean allowNoCrypt = true;
 
     /**
      * Display warning toasts for invalid names, {@code true} by default.
@@ -187,8 +187,8 @@ public final class IASConfig {
             // Log.
             LOGGER.debug("IAS: Loading config for {}...", path);
 
-            // Get the file.
-            Path file = path.resolve("ias.json");
+            // Get the file - use arix/config folder
+            Path file = path.resolve("../config/ias.json");
 
             // Skip if it doesn't exist.
             if (!Files.isRegularFile(file)) {
@@ -247,8 +247,8 @@ public final class IASConfig {
             serversTextAlign = Objects.requireNonNullElse(serversTextAlign, TextAlign.LEFT);
             server = Objects.requireNonNullElse(server, ServerMode.AVAILABLE);
 
-            // Get the file.
-            Path file = path.resolve("ias.json");
+            // Get the file - use arix/config folder
+            Path file = path.resolve("../config/ias.json");
 
             // Hacky JSON writing.
             @SuppressWarnings("InstantiationOfUtilityClass") // <- Hack.

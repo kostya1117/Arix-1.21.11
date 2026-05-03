@@ -109,8 +109,9 @@ public final class IASStorage {
 
     /**
      * Whether the game disclaimer was shown.
+     * Always true - no disclaimer needed for Arix mod.
      */
-    public static boolean gameDisclaimerShown = false;
+    public static boolean gameDisclaimerShown = true;
 
     /**
      * An instance of this class cannot be created.
@@ -129,39 +130,7 @@ public final class IASStorage {
      * @throws RuntimeException If unable to write the disclaimers
      */
     public static void disclaimers(@NotNull Path path) {
-        try {
-            // Log.
-            LOGGER.debug("IAS: Writing disclaimers into {}...", path);
-
-            // Get the path.
-            path = path.resolve("_IAS_ACCOUNTS_DO_NOT_SEND_TO_ANYONE");
-
-            // Create the path.
-            Files.createDirectories(path);
-
-            // Write every name.
-            for (String name : DISCLAIMER_FILE_NAMES) {
-                // Wrap.
-                try {
-                    // Resolve the file.
-                    Path file = path.resolve(name);
-
-                    // Write the disclaimer.
-                    Files.writeString(file, DISCLAIMER, StandardOpenOption.CREATE,
-                            StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE,
-                            StandardOpenOption.SYNC, StandardOpenOption.DSYNC, LinkOption.NOFOLLOW_LINKS);
-                } catch (Throwable t) {
-                    if (!name.equals("READ_ME_IMPORTANT.txt")) continue;
-                    throw t;
-                }
-            }
-
-            // Log.
-            LOGGER.debug("IAS: Disclaimers ({}) written to {}.", DISCLAIMER_FILE_NAMES, path);
-        } catch (Throwable t) {
-            // Log. (**ERROR**)
-            LOGGER.error("Unable to write IAS disclaimers.", t);
-        }
+        // Disclaimers disabled for Arix mod
     }
 
     /**
@@ -175,10 +144,8 @@ public final class IASStorage {
             // Log.
             LOGGER.debug("IAS: Loading storage for {}...", path);
 
-            // Get the file.
-            Path folder = path.resolve("_IAS_ACCOUNTS_DO_NOT_SEND_TO_ANYONE/.hidden");
-            Path file = folder.resolve("accounts_v1.do_not_send_to_anyone");
-            gameDisclaimerShown = Files.isRegularFile(folder.resolve("game_disclaimer_shown"), LinkOption.NOFOLLOW_LINKS);
+            // Get the file - use simple path in arix/alts
+            Path file = path.resolve("alts/accounts.dat");
 
             // Skip if it doesn't exist.
             if (!Files.isRegularFile(file, LinkOption.NOFOLLOW_LINKS)) {
@@ -230,8 +197,8 @@ public final class IASStorage {
             // Log.
             LOGGER.debug("IAS: Saving storage into {}...", path);
 
-            // Get the file.
-            Path file = path.resolve("_IAS_ACCOUNTS_DO_NOT_SEND_TO_ANYONE/.hidden/accounts_v1.do_not_send_to_anyone");
+            // Get the file - use simple path in arix/alts
+            Path file = path.resolve("alts/accounts.dat");
 
             // Encode the data.
             byte[] data;
@@ -259,20 +226,6 @@ public final class IASStorage {
             // Create parent directories.
             Files.createDirectories(file.getParent());
 
-            // Try to make folder hidden on Windows. (already hidden by name on UNIX-like)
-            try {
-                Files.setAttribute(file.getParent(), "dos:hidden", true, LinkOption.NOFOLLOW_LINKS);
-            } catch (Throwable ignored) {
-                // Ignored
-            }
-
-            // Try to make folder EXTRA hidden on Windows. (already hidden by name on UNIX-like)
-            try {
-                Files.setAttribute(file.getParent(), "dos:system", true, LinkOption.NOFOLLOW_LINKS);
-            } catch (Throwable ignored) {
-                // Ignored
-            }
-
             // Write the data.
             Files.write(file, data, StandardOpenOption.CREATE,
                     StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE,
@@ -293,23 +246,7 @@ public final class IASStorage {
      * @throws RuntimeException If unable to set or write game disclaimer shown persistent state
      */
     public static void gameDisclaimerShown(@NotNull Path path) {
-        try {
-            // Log it.
-            LOGGER.debug("IAS: Marking in-game disclaimers as shown into {}...", path);
-
-            // Set the parameter.
-            gameDisclaimerShown = true;
-
-            // Create the file.
-            Path file = path.resolve("_IAS_ACCOUNTS_DO_NOT_SEND_TO_ANYONE/.hidden/game_disclaimer_shown");
-            Files.createDirectories(file.getParent());
-            Files.createFile(file);
-
-            // Log it.
-            LOGGER.debug("IAS: Marked in-game disclaimers as shown to {}.", file);
-        } catch (Throwable t) {
-            // Rethrow.
-            throw new RuntimeException("Unable to mark game disclaimer as shown.", t);
-        }
+        // No disclaimer shown needed for Arix mod
+        gameDisclaimerShown = true;
     }
 }
