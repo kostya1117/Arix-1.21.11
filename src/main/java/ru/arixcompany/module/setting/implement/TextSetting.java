@@ -11,11 +11,11 @@ import java.util.function.Supplier;
 @Setter
 @Accessors(chain = true)
 public class TextSetting extends Setting {
-    private String text;
-    private int min, max;
+    public String text;
+    public boolean active;
 
-    public TextSetting(String name, String description) {
-        super(name, description);
+    public TextSetting(String name) {
+        super(name);
     }
 
     public TextSetting visible(Supplier<Boolean> visible) {

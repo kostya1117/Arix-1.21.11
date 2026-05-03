@@ -4,8 +4,10 @@ import com.google.common.collect.Lists;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class SettingAdder {
@@ -24,5 +26,11 @@ public class SettingAdder {
 
     public List<Setting> settings() {
         return settings;
+    }
+
+    public List<Setting> getSettingsForGUI() {
+        return settings.stream()
+                .filter(s -> s.getVisible() == null || s.getVisible().get())
+                .collect(Collectors.toList());
     }
 }

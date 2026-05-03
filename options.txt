@@ -49,7 +49,7 @@ realmsNotifications:true
 showSubtitles:false
 directionalAudio:false
 touchscreen:false
-bobView:true
+bobView:false
 toggleCrouch:false
 toggleSprint:true
 toggleAttack:false

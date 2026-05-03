@@ -10,21 +10,21 @@ import java.util.function.Supplier;
 @Getter
 @Setter
 @Accessors(chain = true)
-public class SliderSettings extends Setting {
+public class SliderSetting extends Setting {
     private float value, min, max, step = 0.01f;
     private boolean integer;
 
-    public SliderSettings(String name, String description) {
-        super(name, description);
+    public SliderSetting(String name) {
+        super(name);
     }
 
-    public SliderSettings range(float min, float max) {
+    public SliderSetting range(float min, float max) {
         this.min = min;
         this.max = max;
         return this;
     }
 
-    public SliderSettings range(int min, int max) {
+    public SliderSetting range(int min, int max) {
         this.min = min;
         this.max = max;
         this.integer = true;
@@ -35,12 +35,12 @@ public class SliderSettings extends Setting {
         return (int) value;
     }
 
-    public SliderSettings visible(Supplier<Boolean> visible) {
+    public SliderSetting visible(Supplier<Boolean> visible) {
         setVisible(visible);
         return this;
     }
 
-    public SliderSettings step(float step) {
+    public SliderSetting step(float step) {
         this.step = step;
         return this;
     }

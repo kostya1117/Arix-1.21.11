@@ -5,6 +5,8 @@ import lombok.Setter;
 import ru.arixcompany.event.EventRepo;
 import ru.arixcompany.module.setting.SettingAdder;
 import ru.arixcompany.utils.IMinecraft;
+import ru.arixcompany.utils.animation.Animation;
+import ru.arixcompany.utils.animation.impl.EaseInOutQuad;
 
 @Getter
 @Setter
@@ -16,6 +18,9 @@ public class Module extends SettingAdder implements IMinecraft {
     public boolean state;
     public Category category;
     public boolean binding;
+
+    public final Animation animation = new EaseInOutQuad(200, 1.0);
+    public final Animation mAnim     = new EaseInOutQuad(240, 1.0);
 
     public Module(String name, Category category) {
         this.name = name;

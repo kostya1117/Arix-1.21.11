@@ -1,6 +1,8 @@
 package ru.arixcompany.module;
 
 import lombok.Getter;
+import ru.arixcompany.utils.animation.Animation;
+import ru.arixcompany.utils.animation.impl.EaseInOutQuad;
 
 import java.awt.*;
 
@@ -141,6 +143,8 @@ public enum Theme {
             new Color(255, 245, 200),
             new Color(190, 160, 90)
     );
+
+    public Animation animation = new EaseInOutQuad(300, 1.0);
 
     private final Color main;
     private final Color bg;

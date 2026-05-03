@@ -14,9 +14,10 @@ import java.util.function.Supplier;
 public class BindSetting extends Setting {
     private int key = GLFW.GLFW_KEY_UNKNOWN;
     private int type = 1;
+    public boolean active;
 
-    public BindSetting(String name, String description) {
-        super(name, description);
+    public BindSetting(String name) {
+        super(name);
     }
 
     public BindSetting visible(Supplier<Boolean> visible) {

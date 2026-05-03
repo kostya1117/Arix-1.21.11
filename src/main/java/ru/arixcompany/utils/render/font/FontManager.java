@@ -61,6 +61,23 @@ public class FontManager {
         });
     }
 
+    public static CustomFont get(float size) {
+        // Округляем до 0.5 для кэша (избегаем бесконечного количества ключей)
+        float roundedSize = Math.round(size * 2.0f) / 2.0f;
+        String key = Fonts.SF.name() + "_" + roundedSize;
+
+        return fonts.computeIfAbsent(key, k -> {
+            try {
+                return new CustomFont(Fonts.SF.getPath(), roundedSize);
+            } catch (IOException e) {
+                System.err.println("[FontManager] Failed to load font '"
+                        + Fonts.SF.name() + "' size " + roundedSize + ": " + e.getMessage());
+                e.printStackTrace();
+                return null;
+            }
+        });
+    }
+
     // ============================================================
     // Инициализация и очистка
     // ============================================================

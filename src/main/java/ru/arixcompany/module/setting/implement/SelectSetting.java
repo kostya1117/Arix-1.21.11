@@ -14,8 +14,8 @@ public class SelectSetting extends Setting {
     private String selected;
     private List<String> list;
 
-    public SelectSetting(String name, String description) {
-        super(name, description);
+    public SelectSetting(String name) {
+        super(name);
     }
 
     public SelectSetting value(String... values) {

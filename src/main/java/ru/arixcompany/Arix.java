@@ -2,15 +2,18 @@ package ru.arixcompany;
 
 import de.florianmichael.viamcp.ViaMCP;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.experimental.NonFinal;
 import net.minecraft.client.Minecraft;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.glfw.GLFW;
+import ru.arixcompany.clickgui.Gui;
 import ru.arixcompany.event.EventHandler;
 import ru.arixcompany.event.EventRepo;
 import ru.arixcompany.event.player.EventKey;
 import ru.arixcompany.module.ModuleRepo;
+import ru.arixcompany.module.Theme;
 import ru.arixcompany.utils.IMinecraft;
 import ru.arixcompany.utils.render.RoundRectShader;
 import ru.arixcompany.utils.render.font.FontManager;
@@ -25,6 +28,9 @@ public class Arix implements IMinecraft {
     public static Arix instance;
     public static final File gameDirectory = new File(Minecraft.getInstance().gameDirectory, "arix");
     public boolean initialized = false;
+    @Setter
+    @Getter
+    private Theme currentTheme = Theme.PURPLE;
 
     @NonFinal
     ModuleRepo moduleRepo;
@@ -51,7 +57,7 @@ public class Arix implements IMinecraft {
     @EventHandler
     public void onKey(EventKey e) {
         if (e.getAction() == 1 && e.getKey() == GLFW.GLFW_KEY_RIGHT_SHIFT && mc.screen == null) {
-            mc.setScreen(new TestScreen());
+            mc.setScreen(new Gui());
         }
     }
 }
