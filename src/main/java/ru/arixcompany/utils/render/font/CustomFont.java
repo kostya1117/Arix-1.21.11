@@ -29,8 +29,6 @@ public class CustomFont implements AutoCloseable {
     private static final int OVERSAMPLE = 2;
     private static final float INV_OVERSAMPLE = 1.0f / OVERSAMPLE;
     private static final float INV_ATLAS = 1.0f / ATLAS_SIZE;
-
-    // ВАЖНО: паддинг между глифами для LINEAR (иначе будет bleeding)
     private static final int GLYPH_PADDING = 2;
 
     private static final int SCAN_START = 0x0020;

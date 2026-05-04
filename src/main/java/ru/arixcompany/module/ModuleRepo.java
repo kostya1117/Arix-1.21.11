@@ -14,6 +14,11 @@ public class ModuleRepo {
    public ArrayList<Module> modules = new ArrayList<>();
    public ModuleRepo() {
        modules.add(new TestModule());
+      modules.add(new TestModule());
+      modules.add(new TestModule());
+      modules.add(new TestModule());
+      modules.add(new TestModule());
+      modules.add(new TestModule());
    }
 
    public void init() {

@@ -75,7 +75,6 @@ public final class RoundRectShader {
     public static void drawRoundRect(float x, float y, float w, float h, float radius, int color) {
         if (!initialized) init();
         if (w <= 0.0f || h <= 0.0f) return;
-        if (ARGB.alpha(color) <= 0) return;
 
         radius = Mth.clamp(radius, 0.0f, Math.min(w, h) * 0.5f);
 
@@ -91,7 +90,6 @@ public final class RoundRectShader {
                                      float tl, float tr, float br, float bl, int color) {
         if (!initialized) init();
         if (w <= 0.0f || h <= 0.0f) return;
-        if (ARGB.alpha(color) <= 0) return;
 
         float max = Math.min(w, h) * 0.5f;
         tl = Mth.clamp(tl, 0.0f, max);
@@ -111,7 +109,7 @@ public final class RoundRectShader {
                                             float radius, float thickness, int color) {
         if (!initialized) init();
         if (w <= 0.0f || h <= 0.0f) return;
-        if (ARGB.alpha(color) <= 0) return;
+        
         if (thickness <= 0.0f) return;
 
         float max = Math.min(w, h) * 0.5f;

@@ -375,16 +375,13 @@ public class ColorUtil {
         return c >> 24 & 0xFF;
     }
 
-    // Строка 372 — замени метод getColor(float, float, float, float)
     public static int getColor(float r, float g, float b, float a) {
-        int ri = Math.max(0, Math.min(255, Math.round(r)));
-        int gi = Math.max(0, Math.min(255, Math.round(g)));
-        int bi = Math.max(0, Math.min(255, Math.round(b)));
-        int ai = Math.max(0, Math.min(255, Math.round(a)));
+        int ri = Math.clamp(Math.round(r), 0, 255);
+        int gi = Math.clamp(Math.round(g), 0, 255);
+        int bi = Math.clamp(Math.round(b), 0, 255);
+        int ai = Math.clamp(Math.round(a), 0, 255);
         return (ai << 24) | (ri << 16) | (gi << 8) | bi;
     }
-
-    // Строка 217 — замени метод interpolate(int, int, double)
 
     public static int getColor(int red, int green, int blue) {
         return getColor(red, green, blue, 255);
@@ -439,10 +436,10 @@ public class ColorUtil {
     public static int overCol(int color1, int color2, float percent01) {
         float percent = Mth.clamp(percent01, 0.0F, 1.0F);
         return getColor(
-                Mth.lerp(red(color1), red(color2), percent),
-                Mth.lerp(green(color1), green(color2), percent),
-                Mth.lerp(blue(color1), blue(color2), percent),
-                Mth.lerp(alpha(color1), alpha(color2), percent)
+                Mth.lerp(percent, red(color1),   red(color2)),
+                Mth.lerp(percent, green(color1), green(color2)),
+                Mth.lerp(percent, blue(color1),  blue(color2)),
+                Mth.lerp(percent, alpha(color1), alpha(color2))
         );
     }
 

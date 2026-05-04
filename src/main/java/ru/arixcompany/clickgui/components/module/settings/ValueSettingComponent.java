@@ -25,32 +25,38 @@ public final class ValueSettingComponent implements IComponent {
                        int outlineColor, int accentColor, int bgColor,
                        int textInactive, int textActive, float alpha) {
         float sliderY = y + 10.0F;
-        float sliderW = width - 2.5F;
+        // Ограничиваем ширину слайдера чтобы он не выходил за пределы компонента
+        float sliderW = Math.max(0, width - 2.5F);
         float progress = clamp01((setting.getValue() - setting.getMin()) / (setting.getMax() - setting.getMin()));
         float progressW = sliderW * progress;
 
-        RenderUtils.drawRoundRectOutline(x, sliderY + 2.0F, sliderW, 4.0F, 2.0F,0.3F, outlineColor);
+        // Фон слайдера
+        RenderUtils.drawRoundRectOutline(x, sliderY + 2.0F, sliderW, 4.0F, 2.0F, 0.3F, outlineColor);
         RenderUtils.fillRoundRect(x, sliderY + 2.0F, sliderW, 4.0F, 2.0F, bgColor);
 
+        // Заполненная часть слайдера
         if (progressW > 2.0F) {
             RenderUtils.fillRoundRect(x + 1.0F, sliderY + 2.5F, progressW - 2.0F, 3.0F, 2.0F, accentColor);
         }
 
+        // Thumb (кружочек)
         float thumbX = x + 1.0F + progressW - 5.0F + (progressW < 1.0F ? 5 : 2);
         RenderUtils.fillRoundRect(thumbX, sliderY + 2.2F, 5.0F, 3.88F, 2.0F, textActive);
 
+        // Текст значения
         String valueText = formatValue();
-        float valueW    = FontManager.get(13).getWidth(valueText);
+        float valueW = FontManager.get(10).getWidth(valueText);
 
-        FontManager.get(13).drawString(guiGraphics,setting.getName(),x, y + 1.0F + 7.0F,textInactive);
-        FontManager.get(13).drawString(guiGraphics,valueText,x + sliderW - valueW - 2.0F, y + 7.0F,accentColor);
+        float labelY = y + 1.5F;
+        FontManager.get(10).drawString(guiGraphics, setting.getName(), x, labelY, textInactive);
+        FontManager.get(10).drawString(guiGraphics, valueText, x + sliderW - valueW - 2.0F, labelY, accentColor);
     }
 
     @Override
     public boolean handleClick(float x, float y, float width,
                                int mouseX, int mouseY, int button) {
         float sliderW       = width - 2.5F;
-        float sliderActualY = y + 12.0F;
+        float sliderActualY = y + 10.0F;
 
         if (button == 0 && hovered(mouseX, mouseY, x, sliderActualY, sliderW, 4.0F)) {
             Gui.activeValueSetting = setting;

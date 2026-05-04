@@ -30,26 +30,27 @@ public final class BindSettingComponent implements IComponent {
                        int textInactive, int textActive, float alpha) {
         String displayName = (setting.getName() != null && !setting.getName().isEmpty()) ? setting.getName() : "KEY";
         String keyText     = setting.active ? "..." : StringUtil.getBindName(setting.getKey());
-        float keyW         = FontManager.get(12).getWidth(keyText);
+        float keyW         = FontManager.get(10).getWidth(keyText);
         float btnW         = Math.max(MIN_BTN_WIDTH, keyW + 8.0F);
 
         float bgX = calcBgX(x, width, btnW);
         float bgW = calcBgW(x, width, btnW);
 
-        FontManager.get(13).drawString(guiGraphics,displayName, x, y + 1.0F + 6.8F,textInactive);
+        float textY = y + (getHeight() / 2.0F) - (FontManager.get(10).getHeight() / 2.0F);
+        FontManager.get(10).drawString(guiGraphics, displayName, x, textY, textInactive);
 
-        RenderUtils.drawRoundRectOutline(bgX, y, bgW, BIND_HEIGHT, 3.0F,0.1F, outlineColor);
-        RenderUtils.fillRoundRect(bgX, y, bgW, BIND_HEIGHT, 3.0F, bgColor);
+        RenderUtils.drawRoundRectOutline(bgX, textY, bgW, BIND_HEIGHT, 3.0F,0.1F, outlineColor);
+        RenderUtils.fillRoundRect(bgX, textY, bgW, BIND_HEIGHT, 3.0F, bgColor);
 
-        FontManager.get(13).drawString(guiGraphics,keyText,  bgX + bgW / 2.0F - keyW / 2.0F,
-                y + 1.5F + 5.7F,setting.active ? accentColor : textInactive);
+        FontManager.get(10).drawString(guiGraphics,keyText,  bgX + bgW / 2.0F - keyW / 2.0F,
+                textY,setting.active ? accentColor : textInactive);
     }
 
     @Override
     public boolean handleClick( float x, float y, float width,
                                int mouseX, int mouseY, int button) {
         String keyText = setting.active ? "..." : StringUtil.getBindName(setting.getKey());
-        float keyW         = FontManager.get(12).getWidth(keyText);
+        float keyW     = FontManager.get(10).getWidth(keyText);
         float btnW     = Math.max(MIN_BTN_WIDTH, keyW + 8.0F);
 
         float bgX = calcBgX(x, width, btnW);

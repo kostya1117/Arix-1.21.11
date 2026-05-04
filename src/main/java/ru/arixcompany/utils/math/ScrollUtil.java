@@ -46,11 +46,11 @@ public class ScrollUtil implements IMinecraft {
    }
 
    public void handleScroll(double scrollY) {
-      if (this.enabled) {
-         float wheel = (float) scrollY * (this.speed * 10.0F);
-         float stretch = 0.0F;
-         this.target = Math.min(Math.max(this.target + wheel / 2.0F, this.max - stretch), stretch);
-      }
+      // Scroll работает как в Minecraft: от 0 до max (положительные значения)
+      // scrollY > 0 = скролл вверх (уменьшаем scroll)
+      // scrollY < 0 = скролл вниз (увеличиваем scroll)
+      float delta = (float) scrollY * this.speed;
+      this.target = Mth.clamp(this.target - delta, 0.0F, this.max);
    }
 
    @SuppressWarnings("unchecked")
@@ -99,18 +99,19 @@ public class ScrollUtil implements IMinecraft {
       this.target = 0.0F;
    }
 
-   public void setMax(float max, float height) {
-      this.max = -max + height;
+   public void setMax(float max) {
+      // max теперь всегда положительное значение (contentHeight - visibleHeight)
+      this.max = Math.max(0.0F, max);
    }
 
    public void render(float x, float y, float width, float height, float alpha) {
-      if (!(this.getMax() >= 0.0F)) {
-         float percentage = this.getMax() != 0.0F ? this.getScroll() / this.getMax() : 0.0F;
-         float targetBarHeight = height - this.getMax() / (this.getMax() - height) * height;
+      if (this.max > 0.0F) {
+         float percentage = this.max > 0.0F ? this.getScroll() / this.max : 0.0F;
+         float targetBarHeight = height * height / (height + this.max);
          this.barHeight = Mth.interpolate(targetBarHeight, this.barHeight, 0.9F);
          boolean allowed = this.barHeight < height && this.barHeight > 0.0F;
          if (allowed) {
-            float scrollY = y + height * percentage - this.barHeight * percentage;
+            float scrollY = y + (height - this.barHeight) * percentage;
             int mainColor = ColorUtil.replAlpha(ColorUtil.getMainColor(1, 1),
                   (int) Mth.clamp(255.0F * alpha, 0.0F, 255.0F));
             int mainColor20 = ColorUtil.replAlpha(ColorUtil.getMainColor(1, 1),
@@ -119,10 +120,6 @@ public class ScrollUtil implements IMinecraft {
              RenderUtils.fillRoundRect(x, scrollY, width, this.barHeight, 1.0F, mainColor);
          }
       }
-   }
-
-    public void setMax(float max) {
-      this.max = max;
    }
 
 }

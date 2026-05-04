@@ -5,47 +5,31 @@ import lombok.RequiredArgsConstructor;
 import net.minecraft.client.gui.GuiGraphics;
 import ru.arixcompany.clickgui.components.IComponent;
 import ru.arixcompany.module.setting.implement.MultiSelectSetting;
-import ru.arixcompany.utils.math.MathUtils;
 import ru.arixcompany.utils.render.ColorUtil;
 import ru.arixcompany.utils.render.RenderUtils;
 import ru.arixcompany.utils.render.font.FontManager;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RequiredArgsConstructor
 public final class ListSettingComponent implements IComponent {
 
     @Getter private final MultiSelectSetting setting;
-    private final Map<String, Float> itemAnimations = new HashMap<>();
 
-    private static final float SPACING = 3.0F, ITEM_H = 10.0F, PADDING = 4.0F, CALC_W = 105.47F;
+    private static final float ROW_H      = 13.0F;
+    private static final float BTN_H      = 10.0F;
+    private static final float BTN_PAD    = 6.0F;
+    private static final float BTN_GAP    = 3.0F;
 
-    /**
-     * Безопасно получаем список — никогда не вернёт null.
-     */
     private List<String> safeList() {
-        List<String> list = setting.getList();
-        return list != null ? list : Collections.emptyList();
+        List<String> l = setting.getList();
+        return l != null ? l : Collections.emptyList();
     }
 
     @Override
     public float getHeight() {
-        List<String> list = safeList();
-        if (list.isEmpty()) return 0;
-
-        float curX = 0, curY = 10.0F;
-        for (String name : list) {
-            float itemW = FontManager.get(12).getWidth(name) + PADDING * 2;
-            if (curX + itemW > CALC_W) {
-                curX = 0;
-                curY += ITEM_H + SPACING;
-            }
-            curX += itemW + SPACING;
-        }
-        return curY + ITEM_H;
+        return ROW_H;
     }
 
     @Override
@@ -55,33 +39,33 @@ public final class ListSettingComponent implements IComponent {
                        int textInactive, int textActive, float alpha) {
 
         List<String> list = safeList();
+
+        // Название настройки — слева, как у BooleanSetting
+        float labelY = y + (ROW_H / 2.0F) - (FontManager.get(10).getHeight() / 2.0F);
+        FontManager.get(10).drawString(guiGraphics, setting.getName(), x, labelY, textInactive);
+
         if (list.isEmpty()) return;
 
-        FontManager.get(13).drawString(guiGraphics, setting.getName(), x, y + 7.0F, textInactive);
+        // Кнопки — справа, идём справа налево
+        float btnX = x + width;
+        for (int i = list.size() - 1; i >= 0; i--) {
+            String name = list.get(i);
+            float btnW = FontManager.get(10).getWidth(name) + BTN_PAD * 2;
+            btnX -= btnW;
 
-        float curX = x, curY = y + 10.0F;
-        for (String name : list) {
-            float nameW = FontManager.get(12).getWidth(name);
-            float itemW  = nameW + PADDING * 2;
-            if (curX + itemW > x + width) {
-                curX = x;
-                curY += ITEM_H + SPACING;
-            }
+            boolean selected = setting.isSelected(name);
+            int bg   = selected ? accentColor : bgColor;
+            int text = selected ? textActive  : textInactive;
 
-            RenderUtils.drawRoundRectOutline(curX, curY, itemW, ITEM_H, 3.0F, 0.1F, outlineColor);
-            RenderUtils.fillRoundRect(curX, curY, itemW, ITEM_H, 3.0F, bgColor);
+            RenderUtils.fillRoundRect(btnX, y + (ROW_H - BTN_H) / 2.0F, btnW, BTN_H, 3.0F, bg);
+            RenderUtils.drawRoundRectOutline(btnX, y + (ROW_H - BTN_H) / 2.0F, btnW, BTN_H, 3.0F, 0.5F, outlineColor);
 
-            String animKey = setting.getName() + "_" + name;
-            float anim = itemAnimations.getOrDefault(animKey, setting.isSelected(name) ? 1.0F : 0.0F);
-            anim = MathUtils.fast(anim, setting.isSelected(name) ? 1.0F : 0.0F, 10.0F);
-            itemAnimations.put(animKey, anim);
+            FontManager.get(10).drawString(guiGraphics, name,
+                    btnX + btnW / 2.0F - FontManager.get(10).getWidth(name) / 2.0F,
+                    y + (ROW_H - BTN_H) / 2.0F,
+                    text);
 
-            FontManager.get(13).drawString(
-                    guiGraphics, name,
-                    curX + PADDING, curY + 3.0F - 1.0F + 5.0F,
-                    ColorUtil.overCol(textInactive, accentColor, anim)
-            );
-            curX += itemW + SPACING;
+            btnX -= BTN_GAP;
         }
     }
 
@@ -93,19 +77,18 @@ public final class ListSettingComponent implements IComponent {
         List<String> list = safeList();
         if (list.isEmpty()) return false;
 
-        float curX = x, curY = y + 10.0F;
-        for (String name : list) {
-            float nameW = FontManager.get(12).getWidth(name);
-            float itemW  = nameW + PADDING * 2;
-            if (curX + itemW > x + width) {
-                curX = x;
-                curY += ITEM_H + SPACING;
-            }
-            if (hovered(mouseX, mouseY, curX, curY, itemW, ITEM_H)) {
+        float btnX = x + width;
+        for (int i = list.size() - 1; i >= 0; i--) {
+            String name = list.get(i);
+            float btnW = FontManager.get(10).getWidth(name) + BTN_PAD * 2;
+            btnX -= btnW;
+
+            if (hovered(mouseX, mouseY, btnX, y + (ROW_H - BTN_H) / 2.0F, btnW, BTN_H)) {
                 setting.toggleSelected(name);
                 return true;
             }
-            curX += itemW + SPACING;
+
+            btnX -= BTN_GAP;
         }
         return false;
     }

@@ -26,7 +26,7 @@ public final class ColorSettingComponent implements IComponent {
         float[] findPosition(ColorSetting colorSetting);
     }
 
-    private static final float BTN_W = 46.48F;
+    private static final float BTN_W = 51F;
     private static final float BTN_H = 10.075F;
 
 
@@ -43,22 +43,22 @@ public final class ColorSettingComponent implements IComponent {
         float colorW = 40.0F;
         float colorX = x + width - colorW - 2.0F;
 
-        FontManager.get(13).drawString(guiGraphics,setting.getName(), x, y + 1.0F + 7.0F,textInactive);
+        FontManager.get(10).drawString(guiGraphics,setting.getName(), x, y + (getHeight() / 2.0F) - (FontManager.get(10).getHeight() / 2.0F),textInactive);
 
         Color hueColor = setting.getColor();
-        RenderUtils.drawRoundRectOutline(colorX - 10.0F, y, BTN_W, BTN_H, 3.0F,0.1F, outlineColor);
-        RenderUtils.fillRoundRect(colorX - 10.0F, y, BTN_W, BTN_H, 3.0F, bgColor);
+        RenderUtils.drawRoundRectOutline(colorX - 15.0F,  y + (getHeight() / 2.0F) - (FontManager.get(10).getHeight() / 2.0F), BTN_W, BTN_H, 3.0F,0.1F, outlineColor);
+        RenderUtils.fillRoundRect(colorX - 15.0F,  y + (getHeight() / 2.0F) - (FontManager.get(10).getHeight() / 2.0F), BTN_W, BTN_H, 3.0F, bgColor);
         RenderUtils.fillRoundRect(
-                colorX + 32.0F - 10.0F, y + 0.8F, 13.285F, 8.315F,
+                colorX + 32.0F - 10.0F, y + (getHeight() / 2.0F) - (FontManager.get(10).getHeight() / 2.0F), 13.285F, 8.315F,
                 0.0F, 3.0F, 3.0F, 0.0F,
                 ColorUtil.replAlpha(hueColor.getRGB(), (int) (255.0F * alpha))
         );
 
         String hex = String.format("#%02X%02X%02X",
                 hueColor.getRed(), hueColor.getGreen(), hueColor.getBlue());
-        float hexW = FontManager.get(12).getWidth(hex);
-        FontManager.get(13).drawString(guiGraphics,hex,  colorX + colorW / 2.0F - hexW / 2.0F - 14.0F,
-                y + 1.5F + 5.7F,textInactive);
+        float hexW = FontManager.get(10).getWidth(hex);
+        FontManager.get(10).drawString(guiGraphics,hex,  colorX + colorW / 2.0F - hexW / 2.0F - 16.0F,
+                y + (getHeight() / 2.0F) - (FontManager.get(10).getHeight() / 2.0F),textInactive);
     }
 
     public void renderColorPicker(float mainAlpha) {

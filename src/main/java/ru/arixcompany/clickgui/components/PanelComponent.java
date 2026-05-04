@@ -2,125 +2,155 @@ package ru.arixcompany.clickgui.components;
 
 import lombok.RequiredArgsConstructor;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.util.Mth;
 import ru.arixcompany.Arix;
 import ru.arixcompany.clickgui.Colors;
 import ru.arixcompany.clickgui.Gui;
 import ru.arixcompany.clickgui.components.module.ModuleComponent;
 import ru.arixcompany.module.Category;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 import ru.arixcompany.module.Module;
 import ru.arixcompany.utils.math.ScrollUtil;
 import ru.arixcompany.utils.render.RenderUtils;
 import ru.arixcompany.utils.render.font.FontManager;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @RequiredArgsConstructor
 public final class PanelComponent implements IComponent {
 
-    public static final float PANEL_WIDTH         = 126.0F;
-    public static final float PANEL_HEADER_HEIGHT = 19.0F;
-    public static final float PANEL_BODY_HEIGHT   = 220.0F;
-    public static final float PANEL_PADDING       = 4.0F;
+    public static final float PANEL_WIDTH = 135.0F; // Чуть шире для современного вида
+    public static final float PANEL_HEADER_HEIGHT = 24.0F;
+    public static final float PANEL_MAX_BODY_HEIGHT = 280.0F;
+    public static final float PANEL_PADDING = 5.0F;
 
     private final ModuleComponent moduleComponent;
 
     @Override
-    public void render(GuiGraphics guiGraphics,
-                       int mouseX, int mouseY, float alpha) {
+    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float alpha) {
         if (Gui.categories == null || Arix.getInstance() == null) return;
-
         for (Category category : Gui.categories) {
-            renderPanel(guiGraphics,mouseX, mouseY, alpha, category);
+            renderPanel(guiGraphics, mouseX, mouseY, alpha, category);
         }
     }
 
-    private void renderPanel(GuiGraphics guiGraphics,int mouseX, int mouseY,
-                             float mainAlpha, Category category) {
+    private void renderPanel(GuiGraphics guiGraphics, int mouseX, int mouseY, float mainAlpha, Category category) {
         float panelX = Gui.getCategoryPanelX(category);
         float panelY = Gui.getCategoryPanelY(category);
 
         boolean headerHovered = isHovered(mouseX, mouseY, panelX, panelY, PANEL_WIDTH, PANEL_HEADER_HEIGHT);
         Gui.animRun(Gui.getCategoryHoverAnimation(category), headerHovered ? 1.0 : 0.0);
 
-        float openAnim  = Gui.getCategoryDropdownAnimation(category).getOutput();
-        float alphaAnim = Gui.getCategoryDropdownAlphaAnimation(category).getOutput();
+        float openAnim = Gui.getCategoryDropdownAnimation(category).getOutput();
         float hoverAnim = Gui.getCategoryHoverAnimation(category).getOutput();
-        float bodyH     = PANEL_BODY_HEIGHT * openAnim;
-        float totalH    = PANEL_HEADER_HEIGHT + bodyH;
 
-        RenderUtils.fillRoundRect(panelX, panelY, PANEL_WIDTH, totalH, 7, Colors.bgPrimary(mainAlpha));
-        RenderUtils.drawRoundRectOutline(panelX, panelY, PANEL_WIDTH, totalH, 7,0.7F, Colors.outline(mainAlpha));
+        float contentH = calcContentHeight(category);
+        float targetBodyH = Math.min(contentH, PANEL_MAX_BODY_HEIGHT);
+        float bodyH = targetBodyH * openAnim;
+        float totalH = PANEL_HEADER_HEIGHT + bodyH;
 
-        RenderUtils.fillRoundRect(panelX, panelY, PANEL_WIDTH, PANEL_HEADER_HEIGHT,
-                7, 7, 0, 0, Colors.bgSecondary(mainAlpha));;
+        // Главный фон панели (Body)
+        RenderUtils.fillRoundRect(panelX, panelY, PANEL_WIDTH, totalH, 6.0F, Colors.bgPrimary(mainAlpha));
+        // Красивая обводка всей панели
+        RenderUtils.drawRoundRectOutline(panelX, panelY, PANEL_WIDTH, totalH, 6.0F, 1.0F, Colors.outline(mainAlpha));
+
+        // Фон шапки (Header)
+        RenderUtils.pushClipRect(panelX, panelY, PANEL_WIDTH, PANEL_HEADER_HEIGHT);
+        RenderUtils.fillRoundRect(panelX, panelY, PANEL_WIDTH, PANEL_HEADER_HEIGHT, 0, Colors.bgSecondary(mainAlpha));
         if (hoverAnim > 0.001F) {
-            RenderUtils.fillRoundRect(panelX, panelY, PANEL_WIDTH, PANEL_HEADER_HEIGHT,
-                    7, 7, 0, 0, Colors.hoverBg(mainAlpha, hoverAnim));
+            RenderUtils.fillRoundRect(panelX, panelY, PANEL_WIDTH, PANEL_HEADER_HEIGHT, 0, Colors.hoverBg(mainAlpha, hoverAnim));
+        }
+        RenderUtils.popClipRect();
+
+        // Разделительная линия между шапкой и телом, если панель открыта
+        if (openAnim > 0.01F) {
+            RenderUtils.fillRoundRect(panelX, panelY + PANEL_HEADER_HEIGHT - 1, PANEL_WIDTH, 1, 0, Colors.outline(mainAlpha * openAnim));
         }
 
-//        renderer2D.text(FontRegistry.ICONS, panelX + 5, panelY + 9.8F, 12,
-//                category.getIcon(), Colors.accent(mainAlpha));
-
-        FontManager.get(11).drawString(guiGraphics,category.getName(), panelX + 17, panelY + 9.9F,Colors.textActive(mainAlpha));
+        // Текст категории (по центру для стиля Dropdown)
+        String catName = category.getName();
+        float textW = FontManager.get(13).getWidth(catName);
+        FontManager.get(13).drawString(guiGraphics, catName, panelX + (PANEL_WIDTH / 2) - (textW / 2), panelY + 8.0F, Colors.textActive(mainAlpha));
 
         if (bodyH <= 0.001F) return;
 
-        float contentH   = calcContentHeight(category);
+        // Скроллинг
         ScrollUtil scroll = Gui.getCategoryScrollUtil(category);
-        scroll.setSpeed(6);
+        scroll.setSpeed(8);
         scroll.setEnabled(isHovered(mouseX, mouseY, panelX, panelY + PANEL_HEADER_HEIGHT, PANEL_WIDTH, bodyH));
         scroll.update();
-        scroll.setMax(
-                Mth.clamp(contentH + PANEL_PADDING * 2, bodyH, 9999),
-                Math.max(1, bodyH - 4)
-        );
+        // max = contentHeight - visibleHeight (положительное значение)
+        scroll.setMax(contentH - targetBodyH);
 
-        RenderUtils.pushRoundedClipRect(
-                panelX + 1, panelY + PANEL_HEADER_HEIGHT,
-                PANEL_WIDTH - 2, Math.max(1, bodyH - 1),
-                0, 0, 7, 7
-        );
+        // Используем -scroll для смещения контента вверх
+        float scrollValue = -scroll.getScroll();
+        float drawY = panelY + PANEL_HEADER_HEIGHT + PANEL_PADDING + scrollValue;
 
-        float drawY = panelY + PANEL_HEADER_HEIGHT + PANEL_PADDING + scroll.getScroll();
+        // Применяем ОБА clip'а:
+        // - RenderUtils.pushClipRect для RoundRectShader (GL11 напрямую)
+        // - guiGraphics.enableScissor для текста (Minecraft pipeline)
+        float clipX = panelX;
+        float clipY = panelY + PANEL_HEADER_HEIGHT;
+        float clipW = PANEL_WIDTH;
+        float clipH = bodyH;
+
+        RenderUtils.pushClipRect(clipX, clipY, clipW, clipH);
+        guiGraphics.enableScissor((int) clipX, (int) clipY, (int) (clipX + clipW), (int) (clipY + clipH));
+
         for (Module module : getDisplayModules(category)) {
-            drawY = moduleComponent.renderModule(guiGraphics,mouseX, mouseY,
-                    mainAlpha * alphaAnim,
-                    panelX, drawY, module,
-                    moduleComponent.getSettingComponentCache()
+            drawY = moduleComponent.renderModule(
+                    guiGraphics, mouseX, mouseY, mainAlpha * openAnim,
+                    panelX, drawY, module, category, moduleComponent.getSettingComponentCache()
             );
         }
 
+        guiGraphics.disableScissor();
         RenderUtils.popClipRect();
 
-        if (contentH > bodyH - 8) {
-            scroll.render(
-                    panelX + PANEL_WIDTH - 3,
-                    panelY + PANEL_HEADER_HEIGHT + 2,
-                    2, Math.max(1, bodyH - 4),
-                    mainAlpha);
+        // Полоса прокрутки (Scrollbar)
+        if (contentH > targetBodyH) {
+            float scrollProgress = scroll.getScroll() / scroll.getMax();
+            float scrollBarH = Math.max(15.0F, (targetBodyH / contentH) * targetBodyH);
+            float scrollBarY = panelY + PANEL_HEADER_HEIGHT + 2 + ((targetBodyH - scrollBarH - 4) * scrollProgress);
+
+            RenderUtils.fillRoundRect(panelX + PANEL_WIDTH - 4, scrollBarY, 2, scrollBarH, 1, Colors.accent(mainAlpha * 0.7f));
         }
+    }
+
+    public boolean mouseClickedCategory(int mouseX, int mouseY, int button, Category category) {
+        float openAnim = Gui.getCategoryDropdownAnimation(category).getOutput();
+        if (openAnim <= 0.001F) return false;
+
+        float panelX = Gui.getCategoryPanelX(category);
+        float panelY = Gui.getCategoryPanelY(category);
+        float bodyH = Math.min(calcContentHeight(category), PANEL_MAX_BODY_HEIGHT) * openAnim;
+
+        if (!isHovered(mouseX, mouseY, panelX, panelY + PANEL_HEADER_HEIGHT, PANEL_WIDTH, bodyH)) return false;
+
+        // Делегируем клики в модули
+        return moduleComponent.processCategoryClicks(category, panelX, panelY, mouseX, mouseY, button);
     }
 
     @Override
     public boolean mouseScrolled(float mouseX, float mouseY, double scrollY) {
         if (Gui.categories == null) return false;
-
         for (Category category : Gui.categories) {
             float openAnim = Gui.getCategoryDropdownAnimation(category).getOutput();
             if (openAnim <= 0.001F) continue;
-
+            
             float panelX = Gui.getCategoryPanelX(category);
             float panelY = Gui.getCategoryPanelY(category);
-            float bodyH  = PANEL_BODY_HEIGHT * openAnim;
+            float contentH = calcContentHeight(category);
+            float targetBodyH = Math.min(contentH, PANEL_MAX_BODY_HEIGHT);
+            float bodyH = targetBodyH * openAnim;
 
-            if (isHovered(mouseX, mouseY,
-                    panelX, panelY + PANEL_HEADER_HEIGHT,
-                    PANEL_WIDTH, bodyH)) {
-                Gui.getCategoryScrollUtil(category).handleScroll(scrollY);
-                return true;
+            // Проверяем что мышь над панелью
+            if (isHovered(mouseX, mouseY, panelX, panelY + PANEL_HEADER_HEIGHT, PANEL_WIDTH, bodyH)) {
+                // Проверяем что контент больше чем видимая область
+                if (contentH > targetBodyH) {
+                    ScrollUtil scroll = Gui.getCategoryScrollUtil(category);
+                    scroll.handleScroll(scrollY);
+                    return true;
+                }
             }
         }
         return false;
@@ -130,30 +160,18 @@ public final class PanelComponent implements IComponent {
         float total = PANEL_PADDING;
         for (Module module : getDisplayModules(category)) {
             total += ModuleComponent.MODULE_HEIGHT + ModuleComponent.MODULE_GAP;
-            float sAnim  = Gui.getModuleSettingsAnimation(module).getOutput();
-            float saAnim = Gui.getModuleSettingsAlphaAnimation(module).getOutput();
-            if (sAnim > 0.001F || saAnim > 0.001F) {
-                total += moduleComponent.calcSettingsHeight(module,
-                        moduleComponent.getSettingComponentCache()) * sAnim + ModuleComponent.MODULE_GAP;
+            float sAnim = Gui.getModuleSettingsAnimation(module).getOutput();
+            if (sAnim > 0.001F) {
+                total += moduleComponent.calcSettingsHeight(module, moduleComponent.getSettingComponentCache()) * sAnim + ModuleComponent.MODULE_GAP;
             }
         }
         return total + PANEL_PADDING;
     }
 
     public static List<Module> getDisplayModules(Category category) {
-        if (Arix.getInstance() == null || Arix.getInstance().getModuleRepo() == null)
-            return new ArrayList<>();
-
+        if (Arix.getInstance() == null || Arix.getInstance().getModuleRepo() == null) return new ArrayList<>();
         List<Module> list = Arix.getInstance().getModuleRepo().getModule(category);
-        if (list == null) return new ArrayList<>();
-
-        if (Gui.activeSearch && !Gui.searchText.isEmpty()) {
-            String s = Gui.searchText.toLowerCase().trim();
-            return list.stream()
-                    .filter(m -> m.name.toLowerCase().contains(s))
-                    .collect(Collectors.toList());
-        }
-        return list;
+        return list != null ? list : new ArrayList<>();
     }
 
     public static boolean isHovered(float mx, float my, float x, float y, float w, float h) {
