@@ -6,7 +6,7 @@ import ru.arixcompany.Arix;
 import ru.arixcompany.clickgui.Colors;
 import ru.arixcompany.clickgui.Gui;
 import ru.arixcompany.clickgui.components.IComponent;
-import ru.arixcompany.module.Theme;
+import ru.arixcompany.features.module.Theme;
 import ru.arixcompany.utils.animation.Direction;
 import ru.arixcompany.utils.math.MathUtils;
 import ru.arixcompany.utils.render.ColorUtil;

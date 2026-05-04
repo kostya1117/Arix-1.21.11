@@ -5,15 +5,18 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.NonFinal;
 import net.minecraft.client.Minecraft;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.lwjgl.glfw.GLFW;
 import ru.arixcompany.clickgui.Gui;
-import ru.arixcompany.event.EventHandler;
-import ru.arixcompany.event.EventRepo;
-import ru.arixcompany.event.player.EventKey;
-import ru.arixcompany.module.ModuleRepo;
-import ru.arixcompany.module.Theme;
+import ru.arixcompany.features.command.CommandRepo;
+import ru.arixcompany.features.event.EventHandler;
+import ru.arixcompany.features.event.EventRepo;
+import ru.arixcompany.features.event.player.EventKey;
+import ru.arixcompany.features.file.Directories;
+import ru.arixcompany.features.file.FileController;
+import ru.arixcompany.features.file.FileRepo;
+import ru.arixcompany.features.file.exception.FileProcessingException;
+import ru.arixcompany.features.module.ModuleRepo;
+import ru.arixcompany.features.module.Theme;
 import ru.arixcompany.utils.IMinecraft;
 import ru.arixcompany.utils.render.RoundRectShader;
 import ru.arixcompany.utils.render.font.FontManager;
@@ -27,6 +30,7 @@ public class Arix implements IMinecraft {
     @Getter
     public static Arix instance;
     public static final File gameDirectory = new File(Minecraft.getInstance().gameDirectory, "arix");
+    public static final String gameDirectoryPath = new File(Minecraft.getInstance().gameDirectory, "arix").getAbsolutePath();
     public boolean initialized = false;
     @Setter
     @Getter
@@ -34,6 +38,12 @@ public class Arix implements IMinecraft {
 
     @NonFinal
     ModuleRepo moduleRepo;
+    @NonFinal
+    FileController fileController;
+    @NonFinal
+    FileRepo fileRepo;
+    @NonFinal
+    CommandRepo commandRepo;
 
     public Arix(){
         instance = this;
@@ -43,6 +53,10 @@ public class Arix implements IMinecraft {
         RoundRectShader.init();
         IASMinecraft.init();
         moduleRepo = new ModuleRepo();
+        commandRepo = new CommandRepo();
+        commandRepo.setup();
+
+        initFileManager();
 
         EventRepo.register(this);
         initialized = true;
@@ -51,6 +65,30 @@ public class Arix implements IMinecraft {
 
     void onExit() {
         IAS.close();
+
+        if (isInitialized()) {
+            try {
+                fileController.saveFiles();
+            } catch (FileProcessingException ignored) {
+            } finally {
+                fileController.stopAutoSave();
+            }
+        }
+    }
+
+    public void initFileManager() {
+        Directories.createDirectories(Directories.directory, Directories.filesDirectory,
+                Directories.configDirectory);
+
+        fileRepo = new FileRepo();
+        fileRepo.setup();
+
+        fileController = new FileController(fileRepo.getClientFiles(), Directories.filesDirectory,
+                Directories.configDirectory);
+        try {
+            fileController.loadFiles();
+        } catch (FileProcessingException ignored) {
+        }
     }
 
     @EventHandler

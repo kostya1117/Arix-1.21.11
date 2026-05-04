@@ -6,7 +6,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.util.Mth;
 import ru.arixcompany.clickgui.Gui;
 import ru.arixcompany.clickgui.components.IComponent;
-import ru.arixcompany.module.setting.implement.TextSetting;
+import ru.arixcompany.features.module.setting.implement.TextSetting;
 import ru.arixcompany.utils.render.ColorUtil;
 import ru.arixcompany.utils.render.RenderUtils;
 import ru.arixcompany.utils.render.font.FontManager;

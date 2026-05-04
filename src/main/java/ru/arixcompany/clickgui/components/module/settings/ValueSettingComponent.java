@@ -5,14 +5,14 @@ import lombok.RequiredArgsConstructor;
 import net.minecraft.client.gui.GuiGraphics;
 import ru.arixcompany.clickgui.Gui;
 import ru.arixcompany.clickgui.components.IComponent;
-import ru.arixcompany.module.setting.implement.SliderSetting;
+import ru.arixcompany.features.module.setting.implement.ValueSetting;
 import ru.arixcompany.utils.render.RenderUtils;
 import ru.arixcompany.utils.render.font.FontManager;
 
 @RequiredArgsConstructor
 public final class ValueSettingComponent implements IComponent {
 
-    @Getter private final SliderSetting setting;
+    @Getter private final ValueSetting setting;
 
     @Override
     public float getHeight() {

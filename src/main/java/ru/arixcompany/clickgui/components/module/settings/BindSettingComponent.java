@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import net.minecraft.client.gui.GuiGraphics;
 import ru.arixcompany.clickgui.Gui;
 import ru.arixcompany.clickgui.components.IComponent;
-import ru.arixcompany.module.setting.implement.BindSetting;
+import ru.arixcompany.features.module.setting.implement.BindSetting;
 import ru.arixcompany.utils.math.StringUtil;
 import ru.arixcompany.utils.render.RenderUtils;
 import ru.arixcompany.utils.render.font.FontManager;

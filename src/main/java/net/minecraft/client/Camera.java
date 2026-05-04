@@ -1,6 +1,7 @@
 package net.minecraft.client;
 
 import java.util.Arrays;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.tags.FluidTags;
@@ -24,6 +25,10 @@ import net.optifine.reflect.Reflector;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
+import ru.arixcompany.Arix;
+import ru.arixcompany.features.event.EventRepo;
+import ru.arixcompany.features.event.player.EventRotation;
+import ru.arixcompany.features.module.modules.misc.CameraTweaks;
 
 public class Camera implements TrackedWaypoint.Camera {
     private static final float DEFAULT_CAMERA_DISTANCE = 4.0F;
@@ -47,28 +52,79 @@ public class Camera implements TrackedWaypoint.Camera {
     private float partialTickTime;
     private final EnvironmentAttributeProbe attributeProbe = new EnvironmentAttributeProbe();
 
+    private EventRotation rotationEvent;
+    private float previousYaw = 0.0F;
+    private float previousPitch = 0.0F;
+    private float cameraTransition = 1.0F;
+    private int lastCameraMode = 0;
+    private float interpolatedDistance;
+
+    private float smoothCameraDistance(float targetDistance) {
+        interpolatedDistance = interpolatedDistance + (targetDistance - interpolatedDistance) / 10.0F;
+        return interpolatedDistance;
+    }
+
     public void setup(Level p_458249_, Entity p_90577_, boolean p_90578_, boolean p_90579_, float p_90580_) {
         this.initialized = true;
         this.level = p_458249_;
         this.entity = p_90577_;
         this.detached = p_90578_;
         this.partialTickTime = p_90580_;
+
+        int currentCameraMode = p_90578_ ? (p_90579_ ? 2 : 1) : 0;
+        if (currentCameraMode != this.lastCameraMode) {
+            this.cameraTransition = 0.0F;
+        }
+        this.lastCameraMode = currentCameraMode;
+
+        if (!p_90578_) {
+            this.cameraTransition = 0.0F;
+        } else {
+            this.cameraTransition += (1.0F - this.cameraTransition) * (p_90580_ * 0.1F);
+            this.cameraTransition = Mth.clamp(this.cameraTransition, 0.0F, 1.0F);
+        }
+
+        if (p_90577_ != null) {
+            float originalYaw = p_90577_.getViewYRot(p_90580_);
+            float originalPitch = p_90577_.getViewXRot(p_90580_);
+            this.rotationEvent = new EventRotation(originalYaw, originalPitch, p_90580_);
+            EventRepo.call(this.rotationEvent);
+        } else {
+            this.rotationEvent = null;
+        }
+
+
+        float yaw;
+        float pitch;
+        if (p_90578_) {
+            yaw = Mth.lerp(this.cameraTransition, this.previousYaw, p_90577_.getViewYRot(p_90580_));
+            pitch = Mth.lerp(this.cameraTransition, this.previousPitch, p_90577_.getViewXRot(p_90580_));
+        } else {
+            yaw = p_90577_.getViewYRot(p_90580_);
+            pitch = p_90577_.getViewXRot(p_90580_);
+        }
+
+        if (this.rotationEvent != null && !this.rotationEvent.isCancelled()) {
+            yaw = this.rotationEvent.getYaw();
+            pitch = this.rotationEvent.getPitch();
+        }
+
         if (p_90577_.isPassenger()
-            && p_90577_.getVehicle() instanceof Minecart minecart
-            && minecart.getBehavior() instanceof NewMinecartBehavior newminecartbehavior
-            && newminecartbehavior.cartHasPosRotLerp()) {
+                && p_90577_.getVehicle() instanceof Minecart minecart
+                && minecart.getBehavior() instanceof NewMinecartBehavior newminecartbehavior
+                && newminecartbehavior.cartHasPosRotLerp()) {
             Vec3 vec3 = minecart.getPassengerRidingPosition(p_90577_)
-                .subtract(minecart.position())
-                .subtract(p_90577_.getVehicleAttachmentPoint(minecart))
-                .add(new Vec3(0.0, Mth.lerp(p_90580_, this.eyeHeightOld, this.eyeHeight), 0.0));
-            this.setRotation(p_90577_.getViewYRot(p_90580_), p_90577_.getViewXRot(p_90580_));
+                    .subtract(minecart.position())
+                    .subtract(p_90577_.getVehicleAttachmentPoint(minecart))
+                    .add(new Vec3(0.0, Mth.lerp(p_90580_, this.eyeHeightOld, this.eyeHeight), 0.0));
+            this.setRotation(yaw, pitch);
             this.setPosition(newminecartbehavior.getCartLerpPosition(p_90580_).add(vec3));
         } else {
-            this.setRotation(p_90577_.getViewYRot(p_90580_), p_90577_.getViewXRot(p_90580_));
+            this.setRotation(yaw, pitch);
             this.setPosition(
-                Mth.lerp(p_90580_, p_90577_.xo, p_90577_.getX()),
-                Mth.lerp(p_90580_, p_90577_.yo, p_90577_.getY()) + Mth.lerp(p_90580_, this.eyeHeightOld, this.eyeHeight),
-                Mth.lerp(p_90580_, p_90577_.zo, p_90577_.getZ())
+                    Mth.lerp(p_90580_, p_90577_.xo, p_90577_.getX()),
+                    Mth.lerp(p_90580_, p_90577_.yo, p_90577_.getY()) + Mth.lerp(p_90580_, this.eyeHeightOld, this.eyeHeight),
+                    Mth.lerp(p_90580_, p_90577_.zo, p_90577_.getZ())
             );
         }
 
@@ -77,26 +133,53 @@ public class Camera implements TrackedWaypoint.Camera {
                 this.setRotation(this.yRot + 180.0F, -this.xRot);
             }
 
-            float f1 = 4.0F;
-            float f2 = 1.0F;
+            float f1 = DEFAULT_CAMERA_DISTANCE;
             if (p_90577_ instanceof LivingEntity livingentity1) {
-                f2 = livingentity1.getScale();
-                f1 = (float)livingentity1.getAttributeValue(Attributes.CAMERA_DISTANCE);
+                float attributeDistance = (float) livingentity1.getAttributeValue(Attributes.CAMERA_DISTANCE);
+                f1 = Math.max(f1, attributeDistance);
             }
 
-            float f3 = f2;
-            float f = f1;
-            if (p_90577_.isPassenger() && p_90577_.getVehicle() instanceof LivingEntity livingentity) {
-                f3 = livingentity.getScale();
-                f = (float)livingentity.getAttributeValue(Attributes.CAMERA_DISTANCE);
-            }
+            float maxDist = this.getMaxZoomWithTweaks(f1);
 
-            this.move(-this.getMaxZoom(Math.max(f2 * f1, f3 * f)), 0.0F, 0.0F);
-        } else if (p_90577_ instanceof LivingEntity && ((LivingEntity)p_90577_).isSleeping()) {
-            Direction direction = ((LivingEntity)p_90577_).getBedOrientation();
+            float perspectiveFactor = (float) Math.sin(this.cameraTransition * Math.PI / 2.0);
+            float smoothedDist = Mth.lerp(perspectiveFactor, 1.0F, maxDist);
+
+            this.move(-smoothCameraDistance(smoothedDist), 0.0F, 0.0F);
+        } else if (p_90577_ instanceof LivingEntity && ((LivingEntity) p_90577_).isSleeping()) {
+            Direction direction = ((LivingEntity) p_90577_).getBedOrientation();
             this.setRotation(direction != null ? direction.toYRot() - 180.0F : 0.0F, 0.0F);
             this.move(0.0F, 0.3F, 0.0F);
+        } else {
+            smoothCameraDistance(0.0F);
         }
+
+        this.previousYaw = yaw;
+        this.previousPitch = pitch;
+        this.rotationEvent = null;
+    }
+
+    private float getMaxZoomWithTweaks(float desiredDistance) {
+        CameraTweaks cameraTweaks = getCameraTweaks();
+
+        if (cameraTweaks != null && cameraTweaks.isState() && CameraTweaks.through.isValue()) {
+            Minecraft minecraft = Minecraft.getInstance();
+            if (minecraft.options.getCameraType() != CameraType.FIRST_PERSON) {
+                return DEFAULT_CAMERA_DISTANCE * CameraTweaks.focus.getValue();
+            }
+        }
+
+        return getMaxZoom(desiredDistance);
+    }
+
+    private CameraTweaks getCameraTweaks() {
+        try {
+            if (Arix.getInstance() != null && Arix.getInstance().getModuleRepo() != null) {
+                return (CameraTweaks) Arix.getInstance().getModuleRepo().getModule(CameraTweaks.class);
+            }
+        } catch (Exception e) {
+            return null;
+        }
+        return null;
     }
 
     public void tick() {
@@ -108,19 +191,24 @@ public class Camera implements TrackedWaypoint.Camera {
     }
 
     private float getMaxZoom(float p_345111_) {
-        float f = 0.1F;
-
-        for (int i = 0; i < 8; i++) {
+        for (int i = 0; i < 12; i++) {
             float f1 = (i & 1) * 2 - 1;
             float f2 = (i >> 1 & 1) * 2 - 1;
             float f3 = (i >> 2 & 1) * 2 - 1;
-            Vec3 vec3 = this.position.add(f1 * 0.1F, f2 * 0.1F, f3 * 0.1F);
-            Vec3 vec31 = vec3.add(new Vec3(this.forwards).scale(-p_345111_));
+            f1 *= 0.1F;
+            f2 *= 0.1F;
+            f3 *= 0.1F;
+            Vec3 vec3 = this.position.add(f1, f2, f3);
+            Vec3 vec31 = new Vec3(
+                    this.position.x - (double) this.forwards.x() * p_345111_ + (double) f1 + (double) f3,
+                    this.position.y - (double) this.forwards.y() * p_345111_ + (double) f2,
+                    this.position.z - (double) this.forwards.z() * p_345111_ + (double) f3
+            );
             HitResult hitresult = this.level.clip(new ClipContext(vec3, vec31, ClipContext.Block.VISUAL, ClipContext.Fluid.NONE, this.entity));
             if (hitresult.getType() != HitResult.Type.MISS) {
-                float f4 = (float)hitresult.getLocation().distanceToSqr(this.position);
-                if (f4 < Mth.square(p_345111_)) {
-                    p_345111_ = Mth.sqrt(f4);
+                float f4 = (float) hitresult.getLocation().distanceTo(this.position);
+                if (f4 < p_345111_) {
+                    p_345111_ = f4;
                 }
             }
         }
@@ -140,7 +228,11 @@ public class Camera implements TrackedWaypoint.Camera {
     public void setRotation(float pitchIn, float yawIn, float z) {
         this.xRot = yawIn;
         this.yRot = pitchIn;
-        this.rotation.rotationYXZ((float) Math.PI - pitchIn * (float) (Math.PI / 180.0), -yawIn * (float) (Math.PI / 180.0), z * (float) (Math.PI / 180.0));
+        this.rotation.rotationYXZ(
+                (float) Math.PI - pitchIn * (float) (Math.PI / 180.0),
+                -yawIn * (float) (Math.PI / 180.0),
+                z * (float) (Math.PI / 180.0)
+        );
         FORWARDS.rotate(this.rotation, this.forwards);
         UP.rotate(this.rotation, this.up);
         LEFT.rotate(this.rotation, this.left);
@@ -199,7 +291,7 @@ public class Camera implements TrackedWaypoint.Camera {
 
     public Camera.NearPlane getNearPlane() {
         Minecraft minecraft = Minecraft.getInstance();
-        double d0 = (double)minecraft.getWindow().getWidth() / minecraft.getWindow().getHeight();
+        double d0 = (double) minecraft.getWindow().getWidth() / minecraft.getWindow().getHeight();
         double d1 = Math.tan(minecraft.options.fov().get().intValue() * (float) (Math.PI / 180.0) / 2.0) * 0.05F;
         double d2 = d1 * d0;
         Vec3 vec3 = new Vec3(this.forwards).scale(0.05F);
@@ -221,7 +313,7 @@ public class Camera implements TrackedWaypoint.Camera {
         Camera.NearPlane camera$nearplane = this.getNearPlane();
 
         for (Vec3 vec3 : Arrays.asList(
-            camera$nearplane.forward, camera$nearplane.getTopLeft(), camera$nearplane.getTopRight(), camera$nearplane.getBottomLeft(), camera$nearplane.getBottomRight()
+                camera$nearplane.forward, camera$nearplane.getTopLeft(), camera$nearplane.getTopRight(), camera$nearplane.getBottomLeft(), camera$nearplane.getBottomRight()
         )) {
             Vec3 vec31 = this.position.add(vec3);
             BlockPos blockpos = BlockPos.containing(vec31);
@@ -257,7 +349,7 @@ public class Camera implements TrackedWaypoint.Camera {
 
         BlockState blockstate = this.level.getBlockState(this.blockPosition);
         if (Reflector.IForgeBlockState_getStateAtViewpoint.exists()) {
-            blockstate = (BlockState)Reflector.call(blockstate, Reflector.IForgeBlockState_getStateAtViewpoint, this.level, this.blockPosition, this.position);
+            blockstate = (BlockState) Reflector.call(blockstate, Reflector.IForgeBlockState_getStateAtViewpoint, this.level, this.blockPosition, this.position);
         }
 
         return blockstate;

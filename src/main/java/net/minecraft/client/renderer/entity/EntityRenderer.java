@@ -40,6 +40,8 @@ import net.optifine.reflect.Reflector;
 import net.optifine.shaders.Shaders;
 import net.optifine.util.Either;
 import org.jspecify.annotations.Nullable;
+import ru.arixcompany.Arix;
+import ru.arixcompany.features.module.modules.render.Nametags;
 
 public abstract class EntityRenderer<T extends Entity, S extends EntityRenderState> implements IEntityRenderer {
     private static final float SHADOW_POWER_FALLOFF_Y = 0.5F;
@@ -138,8 +140,17 @@ public abstract class EntityRenderer<T extends Entity, S extends EntityRenderSta
         this.submitNameTag(p_431602_, p_427228_, p_425204_, p_426406_);
     }
 
-    protected boolean shouldShowName(T p_114504_, double p_363875_) {
-        return p_114504_.shouldShowName() || p_114504_.hasCustomName() && p_114504_ == this.entityRenderDispatcher.crosshairPickEntity;
+    protected boolean shouldShowName(T entity, double distance) {
+        if (Arix.getInstance()
+                .getModuleRepo()
+                .getModule(Nametags.class)
+                .isState()) {
+            return false;
+        }
+
+        return entity.shouldShowName() ||
+                entity.hasCustomName() &&
+                        entity == this.entityRenderDispatcher.crosshairPickEntity;
     }
 
     public Font getFont() {
@@ -147,6 +158,12 @@ public abstract class EntityRenderer<T extends Entity, S extends EntityRenderSta
     }
 
     protected void submitNameTag(S p_429896_, PoseStack p_428845_, SubmitNodeCollector p_426439_, CameraRenderState p_428408_) {
+        if (Arix.getInstance()
+                .getModuleRepo()
+                .getModule(Nametags.class)
+                .isState()) {
+            return;
+        }
         boolean flag = p_429896_.nameTag != null;
         Component component = p_429896_.nameTag;
         if (Reflector.ForgeEventFactoryClient_fireRenderNameTagEvent.exists()) {
@@ -209,17 +226,28 @@ public abstract class EntityRenderer<T extends Entity, S extends EntityRenderSta
 
         if (this.entityRenderDispatcher.camera != null) {
             p_367427_.distanceToCameraSq = this.entityRenderDispatcher.distanceToSqr(p_367571_);
-            boolean flag1 = p_367427_.distanceToCameraSq < 4096.0 && this.shouldShowName(p_367571_, p_367427_.distanceToCameraSq);
-            if (Reflector.ForgeHooksClient_isNameplateInRenderDistance.exists()) {
-                flag1 = Reflector.ForgeHooksClient_isNameplateInRenderDistance.callBoolean(p_367571_, p_367427_.distanceToCameraSq)
+
+            boolean nametagsEnabled = Arix.getInstance()
+                    .getModuleRepo()
+                    .getModule(Nametags.class)
+                    .isState();
+
+            boolean flag1 = !nametagsEnabled && p_367427_.distanceToCameraSq < 4096.0
                     && this.shouldShowName(p_367571_, p_367427_.distanceToCameraSq);
+
+            if (Reflector.ForgeHooksClient_isNameplateInRenderDistance.exists()) {
+                flag1 = !nametagsEnabled
+                        && Reflector.ForgeHooksClient_isNameplateInRenderDistance.callBoolean(p_367571_, p_367427_.distanceToCameraSq)
+                        && this.shouldShowName(p_367571_, p_367427_.distanceToCameraSq);
             }
 
             if (flag1) {
                 p_367427_.nameTag = this.getNameTag(p_367571_);
-                p_367427_.nameTagAttachment = p_367571_.getAttachments().getNullable(EntityAttachment.NAME_TAG, 0, p_367571_.getYRot(p_363243_));
+                p_367427_.nameTagAttachment = p_367571_.getAttachments()
+                        .getNullable(EntityAttachment.NAME_TAG, 0, p_367571_.getYRot(p_363243_));
             } else {
                 p_367427_.nameTag = null;
+                p_367427_.nameTagAttachment = null;
             }
         }
 

@@ -37,7 +37,6 @@ import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MessageSignature;
-import net.minecraft.network.chat.Style;
 import net.minecraft.network.protocol.game.ServerboundChangeGameModePacket;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.commands.GameModeCommand;
@@ -63,10 +62,9 @@ import net.optifine.reflect.Reflector;
 import net.optifine.shaders.Shaders;
 import net.optifine.shaders.gui.GuiShaderOptions;
 import net.optifine.util.RandomUtils;
-import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
-import ru.arixcompany.event.EventRepo;
-import ru.arixcompany.event.player.EventKey;
+import ru.arixcompany.features.event.EventRepo;
+import ru.arixcompany.features.event.player.EventKey;
 
 public class KeyboardHandler {
     private static final Logger LOGGER = LogUtils.getLogger();

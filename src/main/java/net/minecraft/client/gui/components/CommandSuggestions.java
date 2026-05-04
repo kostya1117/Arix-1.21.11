@@ -47,6 +47,8 @@ import net.minecraft.world.phys.Vec2;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jspecify.annotations.Nullable;
+import ru.arixcompany.Arix;
+import ru.arixcompany.features.command.CommandRepo;
 
 
 public class CommandSuggestions {
@@ -192,10 +194,18 @@ public class CommandSuggestions {
         return list;
     }
 
+    @Nullable
+    private ParseResults<SharedSuggestionProvider> prodlasioParse;
+
     public void updateCommandInfo() {
         String s = this.input.getValue();
+
         if (this.currentParse != null && !this.currentParse.getReader().getString().equals(s)) {
             this.currentParse = null;
+        }
+
+        if (this.prodlasioParse != null && !this.prodlasioParse.getReader().getString().equals(s)) {
+            this.prodlasioParse = null;
         }
 
         if (!this.keepSuggestions) {
@@ -204,14 +214,49 @@ public class CommandSuggestions {
         }
 
         this.commandUsage.clear();
+
         StringReader stringreader = new StringReader(s);
+        int cursor = this.input.getCursorPosition();
+
+        if (stringreader.canRead(CommandRepo.COMMAND_TARGET.length())
+                && stringreader.getString().startsWith(CommandRepo.COMMAND_TARGET, stringreader.getCursor())) {
+
+            stringreader.setCursor(stringreader.getCursor() + CommandRepo.COMMAND_TARGET.length());
+
+            if (this.prodlasioParse == null) {
+                this.prodlasioParse = Arix.getInstance()
+                        .getCommandRepo()
+                        .getCommandDispatcher()
+                        .parse(stringreader, Arix.getInstance().getCommandRepo().getSource());
+            }
+
+            if (cursor >= 1 && (this.suggestions == null || !this.keepSuggestions)) {
+                this.pendingSuggestions = Arix.getInstance()
+                        .getCommandRepo()
+                        .getCommandDispatcher()
+                        .getCompletionSuggestions(this.prodlasioParse, cursor);
+
+                this.pendingSuggestions.thenRun(() -> {
+                    if (this.pendingSuggestions != null && this.pendingSuggestions.isDone()) {
+                        this.suggestions = null;
+
+                        if (this.allowSuggestions && this.minecraft.options.autoSuggestions().get()) {
+                            this.showSuggestions(false);
+                        }
+                    }
+                });
+            }
+
+            return;
+        }
+        // ===== КОНЕЦ ТВОЕЙ ЛОГИКИ =====
+
         boolean flag = stringreader.canRead() && stringreader.peek() == '/';
         if (flag) {
             stringreader.skip();
         }
 
         boolean flag1 = this.commandsOnly || flag;
-        int i = this.input.getCursorPosition();
         if (flag1) {
             CommandDispatcher<ClientSuggestionProvider> commanddispatcher = this.minecraft.player.connection.getCommands();
             if (this.currentParse == null) {
@@ -219,8 +264,8 @@ public class CommandSuggestions {
             }
 
             int j = this.onlyShowIfCursorPastError ? stringreader.getCursor() : 1;
-            if (i >= j && (this.suggestions == null || !this.keepSuggestions)) {
-                this.pendingSuggestions = commanddispatcher.getCompletionSuggestions(this.currentParse, i);
+            if (cursor >= j && (this.suggestions == null || !this.keepSuggestions)) {
+                this.pendingSuggestions = commanddispatcher.getCompletionSuggestions(this.currentParse, cursor);
                 this.pendingSuggestions.thenRun(() -> {
                     if (this.pendingSuggestions.isDone()) {
                         this.updateUsageInfo();
@@ -228,7 +273,7 @@ public class CommandSuggestions {
                 });
             }
         } else {
-            String s1 = s.substring(0, i);
+            String s1 = s.substring(0, cursor);
             int k = getLastWordIndex(s1);
             Collection<String> collection = this.minecraft.player.connection.getSuggestionsProvider().getCustomTabSugggestions();
             this.pendingSuggestions = SharedSuggestionProvider.suggest(collection, new SuggestionsBuilder(s1, k));
@@ -397,7 +442,7 @@ public class CommandSuggestions {
         return this.suggestions != null ? CommonComponents.NEW_LINE.copy().append(this.suggestions.getNarrationMessage()) : CommonComponents.EMPTY;
     }
 
-    
+
     public class SuggestionsList {
         private final Rect2i rect;
         private final String originalContents;

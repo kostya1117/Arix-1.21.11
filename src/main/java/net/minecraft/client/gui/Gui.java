@@ -84,6 +84,8 @@ import net.optifine.TextureAnimations;
 import net.optifine.reflect.Reflector;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jspecify.annotations.Nullable;
+import ru.arixcompany.features.event.EventRepo;
+import ru.arixcompany.features.event.render.EventScreen;
 
 public class Gui {
     private static final Identifier CROSSHAIR_SPRITE = Identifier.withDefaultNamespace("hud/crosshair");
@@ -235,6 +237,7 @@ public class Gui {
                 this.renderSubtitleOverlay(p_282884_, true);
             }
         }
+        EventRepo.call(new EventScreen(p_282884_));
     }
 
     private void renderBossOverlay(GuiGraphics p_407400_, DeltaTracker p_407876_) {

@@ -1,0 +1,22 @@
+{
+  "modules": {
+    "testmodule": {
+      "bind": -1,
+      "state": false,
+      "Test bind Setting": -1,
+      "Боалеан": false,
+      "Цвет сеттинг": {
+        "current": -65536.0,
+        "saturation": 1.0,
+        "brightness": 1.0
+      },
+      "Лист": "One,Two",
+      "Мод": "1Аб",
+      "Слайдер": 0.0,
+      "Текст Сеттинг": "1"
+    }
+  },
+  "misc": {
+    "Theme": "PURPLE"
+  }
+}

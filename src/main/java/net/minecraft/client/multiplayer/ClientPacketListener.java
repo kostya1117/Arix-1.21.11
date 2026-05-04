@@ -12,6 +12,7 @@ import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.logging.LogUtils;
 import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
@@ -338,6 +339,10 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
+import ru.arixcompany.Arix;
+import ru.arixcompany.features.command.CommandRepo;
+import ru.arixcompany.features.event.EventRepo;
+import ru.arixcompany.features.event.world.EventChat;
 
 
 public class ClientPacketListener extends ClientCommonPacketListenerImpl implements ClientGamePacketListener, TickablePacketListener {
@@ -2629,6 +2634,24 @@ public class ClientPacketListener extends ClientCommonPacketListenerImpl impleme
     }
 
     public void sendChat(String p_249888_) {
+        if (p_249888_.startsWith(CommandRepo.COMMAND_TARGET)) {
+            try {
+                Arix.getInstance().getCommandRepo().getCommandDispatcher().execute(
+                        p_249888_.substring(CommandRepo.COMMAND_TARGET.length()),
+                        Arix.getInstance().getCommandRepo().getSource()
+                );
+            } catch (CommandSyntaxException ignored) {}
+
+            return;
+        }
+
+        EventChat event = new EventChat(p_249888_);
+        EventRepo.call(event);
+
+        if (event.isCancelled()) {
+            return;
+        }
+
         Instant instant = Instant.now();
         long i = Crypt.SaltSupplier.getLong();
         LastSeenMessagesTracker.Update lastseenmessagestracker$update = this.lastSeenMessages.generateAndApplyUpdate();

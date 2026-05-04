@@ -7,7 +7,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import ru.arixcompany.clickgui.Colors;
 import ru.arixcompany.clickgui.Gui;
 import ru.arixcompany.clickgui.components.IComponent;
-import ru.arixcompany.module.setting.implement.ColorSetting;
+import ru.arixcompany.features.module.setting.implement.ColorSetting;
 import ru.arixcompany.utils.animation.Direction;
 import ru.arixcompany.utils.render.ColorUtil;
 import ru.arixcompany.utils.render.RenderUtils;

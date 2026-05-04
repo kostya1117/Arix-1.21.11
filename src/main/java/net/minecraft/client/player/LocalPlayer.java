@@ -99,12 +99,10 @@ import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
-import ru.arixcompany.event.EventRepo;
-import ru.arixcompany.event.world.EventUpdate;
+import ru.arixcompany.features.event.EventRepo;
+import ru.arixcompany.features.event.world.EventUpdate;
 
 
 public class LocalPlayer extends AbstractClientPlayer {

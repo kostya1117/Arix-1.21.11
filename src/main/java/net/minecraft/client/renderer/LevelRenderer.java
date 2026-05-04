@@ -159,6 +159,9 @@ import org.joml.Matrix4fc;
 import org.joml.Vector4f;
 import org.jspecify.annotations.Nullable;
 import org.lwjgl.opengl.GL11;
+import ru.arixcompany.features.event.EventRepo;
+import ru.arixcompany.features.event.render.EventRender3D;
+import ru.arixcompany.utils.math.ProjectUtils;
 
 public class LevelRenderer implements ResourceManagerReloadListener, AutoCloseable {
     private static final Identifier TRANSPARENCY_POST_CHAIN_ID = Identifier.withDefaultNamespace("transparency");
@@ -581,16 +584,16 @@ public class LevelRenderer implements ResourceManagerReloadListener, AutoCloseab
     }
 
     public void renderLevel(
-        GraphicsResourceAllocator p_367325_,
-        DeltaTracker p_342180_,
-        boolean p_109603_,
-        Camera p_109604_,
-        Matrix4f p_254120_,
-        Matrix4f p_330527_,
-        Matrix4f p_429784_,
-        GpuBufferSlice p_407881_,
-        Vector4f p_410175_,
-        boolean p_407316_
+            GraphicsResourceAllocator p_367325_,
+            DeltaTracker p_342180_,
+            boolean p_109603_,
+            Camera p_109604_,
+            Matrix4f p_254120_,
+            Matrix4f p_330527_,
+            Matrix4f p_429784_,
+            GpuBufferSlice p_407881_,
+            Vector4f p_410175_,
+            boolean p_407316_
     ) {
         float f = p_342180_.getGameTimeDeltaPartialTick(false);
         float f1 = f;
@@ -642,6 +645,16 @@ public class LevelRenderer implements ResourceManagerReloadListener, AutoCloseab
         this.debugRenderer.emitGizmos(frustum, vec3.x, vec3.y, vec3.z, p_342180_.getGameTimeDeltaPartialTick(false));
         this.gameTestBlockHighlightRenderer.emitGizmos();
         profilerfiller.popPush("setupFrameGraph");
+
+        ProjectUtils.lastModMat.set(RenderSystem.getModelViewMatrix());
+
+        PoseStack matrixStack = new com.mojang.blaze3d.vertex.PoseStack();
+        matrixStack.mulPose(com.mojang.math.Axis.XP.rotationDegrees(p_109604_.xRot()));
+        matrixStack.mulPose(com.mojang.math.Axis.YP.rotationDegrees(p_109604_.yRot() + 180.0F));
+        ProjectUtils.lastWorldSpaceMatrix.set(matrixStack.last().pose());
+
+        ProjectUtils.lastProjMat.set(p_429784_);
+
         Matrix4fStack matrix4fstack = RenderSystem.getModelViewStack();
         matrix4fstack.pushMatrix();
         matrix4fstack.mul(p_254120_);
@@ -666,19 +679,19 @@ public class LevelRenderer implements ResourceManagerReloadListener, AutoCloseab
         FramePass framepass = framegraphbuilder.addPass("clear");
         this.targets.main = framepass.readsAndWrites(this.targets.main);
         framepass.executes(
-            () -> {
-                RenderTarget rendertarget = this.minecraft.getMainRenderTarget();
-                RenderSystem.getDevice()
-                    .createCommandEncoder()
-                    .clearColorAndDepthTextures(
-                        rendertarget.getColorTexture(), ARGB.colorFromFloat(0.0F, p_410175_.x, p_410175_.y, p_410175_.z), rendertarget.getDepthTexture(), 1.0
-                    );
-                if (flag) {
-                    Shaders.clearRenderBuffer();
-                    Shaders.setCamera(p_254120_, p_330527_, p_109604_, f1);
-                    Shaders.renderPrepare();
+                () -> {
+                    RenderTarget rendertarget = this.minecraft.getMainRenderTarget();
+                    RenderSystem.getDevice()
+                            .createCommandEncoder()
+                            .clearColorAndDepthTextures(
+                                    rendertarget.getColorTexture(), ARGB.colorFromFloat(0.0F, p_410175_.x, p_410175_.y, p_410175_.z), rendertarget.getDepthTexture(), 1.0
+                            );
+                    if (flag) {
+                        Shaders.clearRenderBuffer();
+                        Shaders.setCamera(p_254120_, p_330527_, p_109604_, f1);
+                        Shaders.renderPrepare();
+                    }
                 }
-            }
         );
         if (p_407316_) {
             this.skyRenderer.setRenderParameters(this.level, f1);
@@ -735,6 +748,19 @@ public class LevelRenderer implements ResourceManagerReloadListener, AutoCloseab
         this.targets.clear();
         matrix4fstack.popMatrix();
         profilerfiller.pop();
+
+
+        {
+            com.mojang.blaze3d.vertex.PoseStack stack =
+                    new com.mojang.blaze3d.vertex.PoseStack();
+
+            stack.mulPose(new Matrix4f(p_254120_));
+
+            float tickDelta = p_342180_.getGameTimeDeltaPartialTick(true);
+
+            EventRepo.call(new EventRender3D(stack,tickDelta));
+        }
+
         this.levelRenderState.reset();
     }
 

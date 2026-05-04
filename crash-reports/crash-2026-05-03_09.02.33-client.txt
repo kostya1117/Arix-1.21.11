@@ -4,7 +4,7 @@
 Time: 2026-05-03 09:02:34
 Description: Rendering screen
 
-java.lang.NullPointerException: Cannot invoke "java.util.List.iterator()" because the return value of "ru.arixcompany.module.setting.implement.MultiSelectSetting.getList()" is null
+java.lang.NullPointerException: Cannot invoke "java.util.List.iterator()" because the return value of "ru.arixcompany.features.module.setting.implement.ListSetting.getList()" is null
 	at ru.arixcompany.clickgui.components.module.settings.ListSettingComponent.getHeight(ListSettingComponent.java:27)
 	at ru.arixcompany.clickgui.components.module.ModuleComponent.calcSettingsHeight(ModuleComponent.java:333)
 	at ru.arixcompany.clickgui.components.PanelComponent.calcContentHeight(PanelComponent.java:136)

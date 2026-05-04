@@ -67,6 +67,8 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import org.apache.commons.lang3.mutable.MutableObject;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
+import ru.arixcompany.features.event.EventRepo;
+import ru.arixcompany.features.event.player.EventAttack;
 
 
 public class MultiPlayerGameMode {
@@ -427,6 +429,13 @@ public class MultiPlayerGameMode {
     }
 
     public void attack(Player p_105224_, Entity p_105225_) {
+        EventAttack event = new EventAttack(p_105225_);
+        EventRepo.call(event);
+
+        if (event.isCancelled()) {
+            return;
+        }
+
         this.ensureHasSentCarriedItem();
         this.connection.send(ServerboundInteractPacket.createAttackPacket(p_105225_, p_105224_.isShiftKeyDown()));
         if (this.localPlayerMode != GameType.SPECTATOR) {

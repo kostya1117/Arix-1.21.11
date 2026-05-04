@@ -21,6 +21,9 @@ import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+
+import lombok.Getter;
+import lombok.Setter;
 import net.minecraft.CrashReport;
 import net.minecraft.CrashReportCategory;
 import net.minecraft.ReportedException;
@@ -122,6 +125,10 @@ import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
+import ru.arixcompany.utils.animation.Animation;
+import ru.arixcompany.utils.animation.Direction;
+import ru.arixcompany.utils.animation.impl.EaseInOutQuad;
+import ru.arixcompany.utils.math.ProjectUtils;
 
 public class GameRenderer implements TrackedWaypoint.Projector, AutoCloseable {
     private static final Identifier BLUR_POST_CHAIN_ID = Identifier.withDefaultNamespace("blur");
@@ -400,6 +407,9 @@ public class GameRenderer implements TrackedWaypoint.Projector, AutoCloseable {
         this.fovModifier = Mth.clamp(this.fovModifier, 0.1F, 1.5F);
     }
 
+    private final Animation zoomAnimation = new EaseInOutQuad(150, 1.0);
+    private boolean lastZoomState = true;
+
     public float getFov(Camera p_109142_, float p_109143_, boolean p_109144_) {
         if (this.isPanoramicMode()) {
             return 90.0F;
@@ -411,27 +421,21 @@ public class GameRenderer implements TrackedWaypoint.Projector, AutoCloseable {
             f *= Mth.lerp(p_109143_, this.oldFovModifier, this.fovModifier);
         }
 
-        boolean flag = false;
+        boolean zoom = false;
         if (this.minecraft.screen == null) {
-            flag = this.minecraft.options.ofKeyBindZoom.isDown();
+            zoom = this.minecraft.options.ofKeyBindZoom.isDown();
         }
 
-        if (flag) {
-            if (!Config.zoomMode) {
-                Config.zoomMode = true;
-                Config.zoomSmoothCamera = this.minecraft.options.smoothCamera;
-                this.minecraft.options.smoothCamera = true;
-                this.minecraft.levelRenderer.needsUpdate();
-            }
-
-            if (Config.zoomMode) {
-                f /= 4.0F;
-            }
-        } else if (Config.zoomMode) {
-            Config.zoomMode = false;
-            this.minecraft.options.smoothCamera = Config.zoomSmoothCamera;
+        if (zoom != this.lastZoomState) {
+            this.lastZoomState = zoom;
+            this.zoomAnimation.setDirection(zoom ? Direction.FORWARDS : Direction.BACKWARDS);
+            Config.zoomMode = zoom;
             this.minecraft.levelRenderer.needsUpdate();
         }
+
+        float zoomAnim = (float) this.zoomAnimation.getOutput();
+        float zoomFactor = Mth.lerp(zoomAnim, 1.0F, 1.2F);
+        f /= zoomFactor;
 
         if (p_109142_.entity() instanceof LivingEntity livingentity && livingentity.isDeadOrDying()) {
             float f1 = Math.min(livingentity.deathTime + p_109143_, 20.0F);
@@ -445,8 +449,8 @@ public class GameRenderer implements TrackedWaypoint.Projector, AutoCloseable {
         }
 
         if (Reflector.ForgeEventFactoryClient_fireComputeFov.exists()) {
-            ViewportEvent.ComputeFov viewportevent$computefov = (ViewportEvent.ComputeFov)Reflector.ForgeEventFactoryClient_fireComputeFov
-                .call(this, p_109142_, p_109143_, f, p_109144_);
+            ViewportEvent.ComputeFov viewportevent$computefov = (ViewportEvent.ComputeFov) Reflector.ForgeEventFactoryClient_fireComputeFov
+                    .call(this, p_109142_, p_109143_, f, p_109144_);
             if (viewportevent$computefov != null) {
                 return viewportevent$computefov.getFOV();
             }
@@ -544,12 +548,50 @@ public class GameRenderer implements TrackedWaypoint.Projector, AutoCloseable {
         }
     }
 
+    private Matrix4f cachedProjectionMatrix = new Matrix4f();
+    private float lastZoomFactor = 1.0F;
     public Matrix4f getProjectionMatrix(float p_364788_) {
-        Matrix4f matrix4f = new Matrix4f();
-        this.clipDistance = this.renderDistance + 1024.0F;
-        return matrix4f.perspective(
-            p_364788_ * (float) (Math.PI / 180.0), (float)this.minecraft.getWindow().getWidth() / this.minecraft.getWindow().getHeight(), 0.05F, this.clipDistance
+        boolean zoom = false;
+        if (this.minecraft.screen == null) {
+            zoom = this.minecraft.options.ofKeyBindZoom.isDown();
+        }
+        if (zoom != this.lastZoomState) {
+            this.lastZoomState = zoom;
+            this.zoomAnimation.setDirection(zoom ? Direction.FORWARDS : Direction.BACKWARDS);
+            this.cachedProjectionMatrix = null;
+        }
+
+        float zoomAnim = (float) this.zoomAnimation.getOutput();
+        float zoomFactor = Mth.lerp(zoomAnim, 1.0F, 4.0F);
+
+        if (Math.abs(zoomFactor - this.lastZoomFactor) < 0.001F && this.cachedProjectionMatrix != null) {
+            return this.cachedProjectionMatrix;
+        }
+
+        this.lastZoomFactor = zoomFactor;
+
+        float nearPlane = 0.05F;
+        if (zoomFactor > 2.0F) {
+            nearPlane = 0.05F * (zoomFactor / 2.0F);
+            nearPlane = Math.min(nearPlane, 0.5F);
+        }
+
+        float aspect = (float)this.minecraft.getWindow().getWidth() /
+                this.minecraft.getWindow().getHeight();
+        float adjustedFOV = p_364788_ / zoomFactor;
+
+        Matrix4f result = new Matrix4f();
+        result.perspective(
+                adjustedFOV * (float) (Math.PI / 180.0),
+                aspect,
+                nearPlane,
+                this.clipDistance
         );
+
+        this.cachedProjectionMatrix = result;
+        ProjectUtils.lastProjMat.set(result);
+
+        return result;
     }
 
     public float getDepthFar() {

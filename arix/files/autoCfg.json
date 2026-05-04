@@ -1,0 +1,33 @@
+{
+  "modules": {
+    "testmodule": {
+      "bind": -1,
+      "state": false,
+      "Test bind Setting": -1,
+      "Боалеан": false,
+      "Цвет сеттинг": {
+        "current": -65536.0,
+        "saturation": 1.0,
+        "brightness": 1.0
+      },
+      "Лист": "s233,Three,sds,One,Two,sdsdsd",
+      "Мод": "sdsdsds",
+      "Слайдер": 1.0,
+      "Текст Сеттинг": ""
+    },
+    "cameratweaks": {
+      "bind": -1,
+      "state": true,
+      "Приближение": 1.0,
+      "Камера через стенки": true
+    },
+    "nametags": {
+      "bind": -1,
+      "state": true,
+      "Кого рендерить": "Игроки,Предметы"
+    }
+  },
+  "misc": {
+    "Theme": "PURPLE"
+  }
+}

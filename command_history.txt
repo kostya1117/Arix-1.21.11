@@ -2,3 +2,14 @@
 /reg AutisMoregzs
 /hub
 /time set day
+/reg 1
+/l 1
+/reg
+/reg 1
+/an221
+/set-skin 1488
+/hub
+/an217
+/an221
+/an217
+/an221

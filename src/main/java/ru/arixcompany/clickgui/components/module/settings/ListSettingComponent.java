@@ -4,8 +4,8 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.minecraft.client.gui.GuiGraphics;
 import ru.arixcompany.clickgui.components.IComponent;
-import ru.arixcompany.module.setting.implement.MultiSelectSetting;
-import ru.arixcompany.utils.render.ColorUtil;
+import ru.arixcompany.clickgui.components.module.ModuleComponent;
+import ru.arixcompany.features.module.setting.implement.ListSetting;
 import ru.arixcompany.utils.render.RenderUtils;
 import ru.arixcompany.utils.render.font.FontManager;
 
@@ -15,21 +15,45 @@ import java.util.List;
 @RequiredArgsConstructor
 public final class ListSettingComponent implements IComponent {
 
-    @Getter private final MultiSelectSetting setting;
+    @Getter
+    private final ListSetting setting;
 
-    private static final float ROW_H      = 13.0F;
-    private static final float BTN_H      = 10.0F;
-    private static final float BTN_PAD    = 6.0F;
-    private static final float BTN_GAP    = 3.0F;
-
-    private List<String> safeList() {
-        List<String> l = setting.getList();
-        return l != null ? l : Collections.emptyList();
-    }
+    private static final float LABEL_H = 10f;
+    private static final float BTN_H = 10f;
+    private static final float BTN_PAD = 6f;
+    private static final float BTN_GAP_X = 6f;
+    private static final float BTN_GAP_Y = 4f;
 
     @Override
     public float getHeight() {
-        return ROW_H;
+
+        List<String> list = safeList();
+        if (list.isEmpty()) return LABEL_H + 6f;
+
+        float width = ModuleComponent.getSettingsWidth();
+
+        float xCursor = 0;
+        int rows = 1;
+
+        for (String name : list) {
+
+            float btnW = FontManager.get(10).getWidth(name) + BTN_PAD * 2;
+
+            if (btnW > width) {
+                rows++;
+                xCursor = 0;
+                continue;
+            }
+
+            if (xCursor + btnW > width) {
+                rows++;
+                xCursor = 0;
+            }
+
+            xCursor += btnW + BTN_GAP_X;
+        }
+
+        return LABEL_H + 6f + rows * (BTN_H + BTN_GAP_Y);
     }
 
     @Override
@@ -40,60 +64,98 @@ public final class ListSettingComponent implements IComponent {
 
         List<String> list = safeList();
 
-        // Название настройки — слева, как у BooleanSetting
-        float labelY = y + (ROW_H / 2.0F) - (FontManager.get(10).getHeight() / 2.0F);
-        FontManager.get(10).drawString(guiGraphics, setting.getName(), x, labelY, textInactive);
+        FontManager.get(10).drawString(guiGraphics,
+                setting.getName(),
+                x,
+                y,
+                textInactive
+        );
 
         if (list.isEmpty()) return;
 
-        // Кнопки — справа, идём справа налево
-        float btnX = x + width;
-        for (int i = list.size() - 1; i >= 0; i--) {
-            String name = list.get(i);
+        float xCursor = x;
+        float yCursor = y + LABEL_H + 6f;
+
+        for (String name : list) {
+
             float btnW = FontManager.get(10).getWidth(name) + BTN_PAD * 2;
-            btnX -= btnW;
+
+            if (btnW > width) {
+                xCursor = x;
+                yCursor += BTN_H + BTN_GAP_Y;
+            }
+
+            if (xCursor + btnW > x + width) {
+                xCursor = x;
+                yCursor += BTN_H + BTN_GAP_Y;
+            }
 
             boolean selected = setting.isSelected(name);
-            int bg   = selected ? accentColor : bgColor;
-            int text = selected ? textActive  : textInactive;
+            int rectColor = selected ? accentColor : bgColor;
 
-            RenderUtils.fillRoundRect(btnX, y + (ROW_H - BTN_H) / 2.0F, btnW, BTN_H, 3.0F, bg);
-            RenderUtils.drawRoundRectOutline(btnX, y + (ROW_H - BTN_H) / 2.0F, btnW, BTN_H, 3.0F, 0.5F, outlineColor);
+            RenderUtils.fillRoundRect(
+                    xCursor,
+                    yCursor,
+                    btnW,
+                    BTN_H,
+                    3f,
+                    rectColor
+            );
 
-            FontManager.get(10).drawString(guiGraphics, name,
-                    btnX + btnW / 2.0F - FontManager.get(10).getWidth(name) / 2.0F,
-                    y + (ROW_H - BTN_H) / 2.0F,
-                    text);
+            FontManager.get(10).drawString(guiGraphics,
+                    name,
+                    xCursor + BTN_PAD,
+                    yCursor,
+                    textInactive
+            );
 
-            btnX -= BTN_GAP;
+            xCursor += btnW + BTN_GAP_X;
         }
     }
 
     @Override
     public boolean handleClick(float x, float y, float width,
                                int mouseX, int mouseY, int button) {
+
         if (button != 0) return false;
 
         List<String> list = safeList();
         if (list.isEmpty()) return false;
 
-        float btnX = x + width;
-        for (int i = list.size() - 1; i >= 0; i--) {
-            String name = list.get(i);
-            float btnW = FontManager.get(10).getWidth(name) + BTN_PAD * 2;
-            btnX -= btnW;
+        float xCursor = x;
+        float yCursor = y + LABEL_H + 6f;
 
-            if (hovered(mouseX, mouseY, btnX, y + (ROW_H - BTN_H) / 2.0F, btnW, BTN_H)) {
+        for (String name : list) {
+
+            float btnW = FontManager.get(10).getWidth(name) + BTN_PAD * 2;
+
+            if (btnW > width) {
+                xCursor = x;
+                yCursor += BTN_H + BTN_GAP_Y;
+            }
+
+            if (xCursor + btnW > x + width) {
+                xCursor = x;
+                yCursor += BTN_H + BTN_GAP_Y;
+            }
+
+            if (hovered(mouseX, mouseY, xCursor, yCursor, btnW, BTN_H)) {
                 setting.toggleSelected(name);
                 return true;
             }
 
-            btnX -= BTN_GAP;
+            xCursor += btnW + BTN_GAP_X;
         }
+
         return false;
     }
 
+    private List<String> safeList() {
+        List<String> l = setting.getList();
+        return l != null ? l : Collections.emptyList();
+    }
+
     private boolean hovered(float mx, float my, float x, float y, float w, float h) {
-        return mx >= x && my >= y && mx < x + w && my < y + h;
+        return mx >= x && my >= y && mx <= x + w && my <= y + h;
     }
 }

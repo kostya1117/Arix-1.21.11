@@ -1,7 +1,7 @@
 package ru.arixcompany.clickgui;
 
 import ru.arixcompany.Arix;
-import ru.arixcompany.module.Theme;
+import ru.arixcompany.features.module.Theme;
 import ru.arixcompany.utils.render.ColorUtil;
 
 public final class Colors {
