@@ -6,7 +6,9 @@ import lombok.Setter;
 import lombok.experimental.NonFinal;
 import net.minecraft.client.Minecraft;
 import org.lwjgl.glfw.GLFW;
-import ru.arixcompany.clickgui.Gui;
+import ru.arixcompany.features.repos.AltRepo;
+import ru.arixcompany.ui.alt.SessionUtil;
+import ru.arixcompany.ui.clickgui.Gui;
 import ru.arixcompany.features.command.CommandRepo;
 import ru.arixcompany.features.event.EventHandler;
 import ru.arixcompany.features.event.EventRepo;
@@ -20,8 +22,6 @@ import ru.arixcompany.features.module.Theme;
 import ru.arixcompany.utils.IMinecraft;
 import ru.arixcompany.utils.render.RoundRectShader;
 import ru.arixcompany.utils.render.font.FontManager;
-import ru.vidtu.ias.IAS;
-import ru.vidtu.ias.IASMinecraft;
 
 import java.io.File;
 
@@ -51,12 +51,12 @@ public class Arix implements IMinecraft {
         ViaMCP.INSTANCE.initAsyncSlider();
         FontManager.init();
         RoundRectShader.init();
-        IASMinecraft.init();
         moduleRepo = new ModuleRepo();
         commandRepo = new CommandRepo();
         commandRepo.setup();
 
         initFileManager();
+        tryAutoLogin();
 
         EventRepo.register(this);
         initialized = true;
@@ -64,7 +64,6 @@ public class Arix implements IMinecraft {
     }
 
     void onExit() {
-        IAS.close();
 
         if (isInitialized()) {
             try {
@@ -89,6 +88,20 @@ public class Arix implements IMinecraft {
             fileController.loadFiles();
         } catch (FileProcessingException ignored) {
         }
+    }
+
+    private void tryAutoLogin() {
+
+        String last = AltRepo.getLastAlt();
+
+        if (last == null) return;
+
+        boolean exists = AltRepo.getAlts().stream()
+                .anyMatch(a -> a.getName().equalsIgnoreCase(last));
+
+        if (!exists) return;
+
+        SessionUtil.setSession(last);
     }
 
     @EventHandler

@@ -5,13 +5,13 @@ Time: 2026-05-03 09:02:34
 Description: Rendering screen
 
 java.lang.NullPointerException: Cannot invoke "java.util.List.iterator()" because the return value of "ru.arixcompany.features.module.setting.implement.ListSetting.getList()" is null
-	at ru.arixcompany.clickgui.components.module.settings.ListSettingComponent.getHeight(ListSettingComponent.java:27)
-	at ru.arixcompany.clickgui.components.module.ModuleComponent.calcSettingsHeight(ModuleComponent.java:333)
-	at ru.arixcompany.clickgui.components.PanelComponent.calcContentHeight(PanelComponent.java:136)
-	at ru.arixcompany.clickgui.components.PanelComponent.renderPanel(PanelComponent.java:71)
-	at ru.arixcompany.clickgui.components.PanelComponent.render(PanelComponent.java:36)
-	at ru.arixcompany.clickgui.Gui.renderGui(Gui.java:328)
-	at ru.arixcompany.clickgui.Gui.render(Gui.java:216)
+	at ru.arixcompany.ui.clickgui.components.module.settings.ListSettingComponent.getHeight(ListSettingComponent.java:27)
+	at ru.arixcompany.ui.clickgui.components.module.ModuleComponent.calcSettingsHeight(ModuleComponent.java:333)
+	at ru.arixcompany.ui.clickgui.components.PanelComponent.calcContentHeight(PanelComponent.java:136)
+	at ru.arixcompany.ui.clickgui.components.PanelComponent.renderPanel(PanelComponent.java:71)
+	at ru.arixcompany.ui.clickgui.components.PanelComponent.render(PanelComponent.java:36)
+	at ru.arixcompany.ui.clickgui.Gui.renderGui(Gui.java:328)
+	at ru.arixcompany.ui.clickgui.Gui.render(Gui.java:216)
 	at net.minecraft.client.gui.screens.Screen.renderWithTooltipAndSubtitles(Screen.java:111)
 	at net.minecraft.client.renderer.GameRenderer.render(GameRenderer.java:659)
 	at net.minecraft.client.Minecraft.runTick(Minecraft.java:1301)
@@ -26,18 +26,18 @@ A detailed walkthrough of the error, its code path and all known details is as f
 -- Head --
 Thread: Render thread
 Stacktrace:
-	at ru.arixcompany.clickgui.components.module.settings.ListSettingComponent.getHeight(ListSettingComponent.java:27)
-	at ru.arixcompany.clickgui.components.module.ModuleComponent.calcSettingsHeight(ModuleComponent.java:333)
-	at ru.arixcompany.clickgui.components.PanelComponent.calcContentHeight(PanelComponent.java:136)
-	at ru.arixcompany.clickgui.components.PanelComponent.renderPanel(PanelComponent.java:71)
-	at ru.arixcompany.clickgui.components.PanelComponent.render(PanelComponent.java:36)
-	at ru.arixcompany.clickgui.Gui.renderGui(Gui.java:328)
-	at ru.arixcompany.clickgui.Gui.render(Gui.java:216)
+	at ru.arixcompany.ui.clickgui.components.module.settings.ListSettingComponent.getHeight(ListSettingComponent.java:27)
+	at ru.arixcompany.ui.clickgui.components.module.ModuleComponent.calcSettingsHeight(ModuleComponent.java:333)
+	at ru.arixcompany.ui.clickgui.components.PanelComponent.calcContentHeight(PanelComponent.java:136)
+	at ru.arixcompany.ui.clickgui.components.PanelComponent.renderPanel(PanelComponent.java:71)
+	at ru.arixcompany.ui.clickgui.components.PanelComponent.render(PanelComponent.java:36)
+	at ru.arixcompany.ui.clickgui.Gui.renderGui(Gui.java:328)
+	at ru.arixcompany.ui.clickgui.Gui.render(Gui.java:216)
 	at net.minecraft.client.gui.screens.Screen.renderWithTooltipAndSubtitles(Screen.java:111)
 
 -- Screen render details --
 Details:
-	Screen name: ru.arixcompany.clickgui.Gui
+	Screen name: ru.arixcompany.ui.clickgui.Gui
 	Mouse location: Scaled: (574.500000, 189.195450). Absolute: (1149.000000, 378.000000)
 	Screen size: Scaled: (849, 484). Absolute: (1698, 967). Scale factor of 2
 Stacktrace:

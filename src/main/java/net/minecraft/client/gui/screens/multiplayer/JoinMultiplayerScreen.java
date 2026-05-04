@@ -31,10 +31,6 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
-import ru.vidtu.ias.IASMinecraft;
-import ru.vidtu.ias.config.IASConfig;
-import ru.vidtu.ias.screen.AccountScreen;
-import ru.vidtu.ias.utils.Expression;
 
 
 public class JoinMultiplayerScreen extends Screen {
@@ -131,9 +127,6 @@ public class JoinMultiplayerScreen extends Screen {
         });
         this.repositionElements();
         this.onSelectedChange();
-
-        // IAS initialization
-        IASMinecraft.onInit(this.minecraft, this, this::addRenderableWidget);
     }
 
     @Override
@@ -141,41 +134,6 @@ public class JoinMultiplayerScreen extends Screen {
         this.layout.arrangeElements();
         if (this.serverSelectionList != null) {
             this.serverSelectionList.updateSize(this.width, this.layout);
-        }
-        // Skip adding, if disabled.
-        if (!IASConfig.serversButton) return;
-
-        // Calculate the position.
-        Integer x = Expression.parsePosition(IASConfig.serversButtonX, this.width, this.height);
-        Integer y = Expression.parsePosition(IASConfig.serversButtonY, this.width, this.height);
-
-        // Couldn't parse position.
-        if (x == null || y == null) {
-            // Use default position.
-            x = width / 2 + 158;
-            y = height - 30;
-
-            // Move out of any overlapping elements.
-            for (int i = 0; i < 64; i++) {
-                boolean overlapping = false;
-                for (GuiEventListener child : this.children()) {
-                    // Skip if doesn't have pos.
-                    if (!(child instanceof LayoutElement le) || child instanceof AbstractSelectionList<?> || child == this.ias_button) continue;
-
-                    // Skip if not overlapping.
-                    int x1 = le.getX() - 4;
-                    int y1 = le.getY() - 4;
-                    int x2 = x1 + le.getWidth() + 8;
-                    int y2 = y1 + le.getHeight() + 8;
-                    if (x < x1 || y < y1 || (x + 20) > x2 || (y + 20) > y2) continue;
-
-                    // Otherwise move.
-                    x = Math.max(x, x2);
-                    overlapping = true;
-                }
-                if (overlapping) continue;
-                break;
-            }
         }
     }
 
@@ -310,8 +268,5 @@ public class JoinMultiplayerScreen extends Screen {
     @Override
     public void render(GuiGraphics p_282860_, int p_281753_, int p_283539_, float p_282628_) {
         super.render(p_282860_, p_281753_, p_283539_, p_282628_);
-        
-        // IAS drawing
-        IASMinecraft.onDraw(this, this.font, p_282860_);
     }
 }

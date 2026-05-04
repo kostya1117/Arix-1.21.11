@@ -256,8 +256,6 @@ import org.slf4j.Logger;
 import ru.arixcompany.Arix;
 import ru.arixcompany.features.event.EventRepo;
 import ru.arixcompany.features.event.world.EventTick;
-import ru.vidtu.ias.config.IASConfig;
-
 
 public class Minecraft extends ReentrantBlockableEventLoop<Runnable> implements WindowEventHandler {
     static Minecraft instance;
@@ -790,12 +788,8 @@ public class Minecraft extends ReentrantBlockableEventLoop<Runnable> implements 
         }
 
         String original = stringbuilder.toString();
-        
-        // Skip if not enabled or not fully loaded.
-        if (!IASConfig.barNick || !I18n.exists("ias.bar") || this.user == null) return original;
 
-        // Modify otherwise.
-        return I18n.get("ias.bar", original, this.user.getName());
+        return original;
     }
 
     private UserApiService createUserApiService(YggdrasilAuthenticationService p_193586_, GameConfig p_193587_) {

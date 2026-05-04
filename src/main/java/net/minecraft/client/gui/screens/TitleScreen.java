@@ -43,7 +43,7 @@ import net.minecraft.world.level.storage.LevelStorageSource;
 import net.optifine.reflect.Reflector;
 import net.optifine.reflect.ReflectorForge;
 import org.slf4j.Logger;
-import ru.vidtu.ias.IASMinecraft;
+import ru.arixcompany.ui.alt.AltManagerScreen;
 
 public class TitleScreen extends Screen {
     private static final Logger LOGGER = LogUtils.getLogger();
@@ -134,6 +134,15 @@ public class TitleScreen extends Screen {
         this.addRenderableWidget(Button.builder(Component.translatable("menu.quit"), (btnIn) -> {
             this.minecraft.stop();
         }).bounds(this.width / 2 + 2, l + 15, 98, 20).build());
+
+        // Alt Manager button (ниже Settings)
+        this.addRenderableWidget(
+                Button.builder(Component.literal("Alt Manager"),
+                                b -> this.minecraft.setScreen(new AltManagerScreen(this)))
+                        .bounds(this.width / 2 - 100, l + 40, 200, 20)
+                        .build()
+        );
+
         SpriteIconButton spriteiconbutton1 = this.addRenderableWidget(CommonButtons.accessibility(20, (btnIn) -> {
             this.minecraft.setScreen(new AccessibilityOptionsScreen(this, this.minecraft.options));
         }, true));
@@ -145,8 +154,6 @@ public class TitleScreen extends Screen {
         if (Reflector.TitleScreenModUpdateIndicator_init.exists()) {
             this.modUpdateNotification = (Screen)Reflector.call(Reflector.TitleScreenModUpdateIndicator_init, this, modButton);
         }
-
-        IASMinecraft.onInit(this.minecraft, this, this::addRenderableWidget);
     }
 
     private int createTestWorldButton(int p_368793_, int p_361481_) {
@@ -311,9 +318,6 @@ public class TitleScreen extends Screen {
         if (this.modUpdateNotification != null && f >= 1.0F) {
             this.modUpdateNotification.render(p_282860_, p_281753_, p_283539_, p_282628_);
         }
-
-        // IAS drawing
-        IASMinecraft.onDraw(this, this.font, p_282860_);
     }
 
     @Override

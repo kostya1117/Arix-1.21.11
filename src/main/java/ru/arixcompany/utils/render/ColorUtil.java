@@ -1,7 +1,7 @@
 package ru.arixcompany.utils.render;
 
 import net.minecraft.util.Mth;
-import ru.arixcompany.clickgui.Gui;
+import ru.arixcompany.ui.clickgui.Gui;
 import ru.arixcompany.features.module.Theme;
 
 import java.awt.*;

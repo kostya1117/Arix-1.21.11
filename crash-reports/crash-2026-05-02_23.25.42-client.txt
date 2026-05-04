@@ -14,12 +14,12 @@ java.lang.NullPointerException: Cannot invoke "java.util.function.Supplier.get()
 	at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:234)
 	at java.base/java.util.stream.ReferencePipeline.collect(ReferencePipeline.java:693)
 	at ru.arixcompany.features.module.setting.SettingAdder.getSettingsForGUI(SettingAdder.java:31)
-	at ru.arixcompany.clickgui.components.module.ModuleComponent.renderSettingsBox(ModuleComponent.java:240)
-	at ru.arixcompany.clickgui.components.module.ModuleComponent.renderModule(ModuleComponent.java:230)
-	at ru.arixcompany.clickgui.components.PanelComponent.renderPanel(PanelComponent.java:89)
-	at ru.arixcompany.clickgui.components.PanelComponent.render(PanelComponent.java:36)
-	at ru.arixcompany.clickgui.Gui.renderGui(Gui.java:328)
-	at ru.arixcompany.clickgui.Gui.render(Gui.java:216)
+	at ru.arixcompany.ui.clickgui.components.module.ModuleComponent.renderSettingsBox(ModuleComponent.java:240)
+	at ru.arixcompany.ui.clickgui.components.module.ModuleComponent.renderModule(ModuleComponent.java:230)
+	at ru.arixcompany.ui.clickgui.components.PanelComponent.renderPanel(PanelComponent.java:89)
+	at ru.arixcompany.ui.clickgui.components.PanelComponent.render(PanelComponent.java:36)
+	at ru.arixcompany.ui.clickgui.Gui.renderGui(Gui.java:328)
+	at ru.arixcompany.ui.clickgui.Gui.render(Gui.java:216)
 	at net.minecraft.client.gui.screens.Screen.renderWithTooltipAndSubtitles(Screen.java:111)
 	at net.minecraft.client.renderer.GameRenderer.render(GameRenderer.java:659)
 	at net.minecraft.client.Minecraft.runTick(Minecraft.java:1301)
@@ -43,17 +43,17 @@ Stacktrace:
 	at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:234)
 	at java.base/java.util.stream.ReferencePipeline.collect(ReferencePipeline.java:693)
 	at ru.arixcompany.features.module.setting.SettingAdder.getSettingsForGUI(SettingAdder.java:31)
-	at ru.arixcompany.clickgui.components.module.ModuleComponent.renderSettingsBox(ModuleComponent.java:240)
-	at ru.arixcompany.clickgui.components.module.ModuleComponent.renderModule(ModuleComponent.java:230)
-	at ru.arixcompany.clickgui.components.PanelComponent.renderPanel(PanelComponent.java:89)
-	at ru.arixcompany.clickgui.components.PanelComponent.render(PanelComponent.java:36)
-	at ru.arixcompany.clickgui.Gui.renderGui(Gui.java:328)
-	at ru.arixcompany.clickgui.Gui.render(Gui.java:216)
+	at ru.arixcompany.ui.clickgui.components.module.ModuleComponent.renderSettingsBox(ModuleComponent.java:240)
+	at ru.arixcompany.ui.clickgui.components.module.ModuleComponent.renderModule(ModuleComponent.java:230)
+	at ru.arixcompany.ui.clickgui.components.PanelComponent.renderPanel(PanelComponent.java:89)
+	at ru.arixcompany.ui.clickgui.components.PanelComponent.render(PanelComponent.java:36)
+	at ru.arixcompany.ui.clickgui.Gui.renderGui(Gui.java:328)
+	at ru.arixcompany.ui.clickgui.Gui.render(Gui.java:216)
 	at net.minecraft.client.gui.screens.Screen.renderWithTooltipAndSubtitles(Screen.java:111)
 
 -- Screen render details --
 Details:
-	Screen name: ru.arixcompany.clickgui.Gui
+	Screen name: ru.arixcompany.ui.clickgui.Gui
 	Mouse location: Scaled: (424.500000, 241.749741). Absolute: (849.000000, 483.000000)
 	Screen size: Scaled: (849, 484). Absolute: (1698, 967). Scale factor of 2
 Stacktrace:

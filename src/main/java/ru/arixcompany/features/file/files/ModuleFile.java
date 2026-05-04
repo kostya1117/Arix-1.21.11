@@ -4,7 +4,7 @@ import com.google.gson.*;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import ru.arixcompany.Arix;
-import ru.arixcompany.clickgui.Gui;
+import ru.arixcompany.ui.clickgui.Gui;
 import ru.arixcompany.features.file.ClientFile;
 import ru.arixcompany.features.file.exception.FileLoadException;
 import ru.arixcompany.features.file.exception.FileSaveException;
