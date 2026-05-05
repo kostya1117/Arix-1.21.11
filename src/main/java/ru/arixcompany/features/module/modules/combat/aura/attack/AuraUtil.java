@@ -1,15 +1,13 @@
-package ru.arixcompany.utils.aurautil;
+package ru.arixcompany.features.module.modules.combat.aura.attack;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.FireworkRocketEntity;
-import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.EntityHitResult;
-import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -39,12 +37,6 @@ public class AuraUtil implements IMinecraft {
         return Minecraft.getInstance().player.distanceTo(entity);
     }
 
-    public static double calculateFOVFromCamera(Entity target) {
-        Vec3 playerLook = Minecraft.getInstance().player.getViewVector(1.0F);
-        Vec3 toTarget = target.getPosition(1.0F).subtract(Minecraft.getInstance().player.getEyePosition(1.0F)).normalize();
-        double dot = playerLook.dot(toTarget);
-        return Math.toDegrees(Math.acos(dot));
-    }
     @Nullable
     public static EntityHitResult raycast(Entity entity, Vec3 min, Vec3 max, AABB box, Predicate<Entity> predicate, double maxDistance) {
         Level world = entity.level();
@@ -90,12 +82,6 @@ public class AuraUtil implements IMinecraft {
             return new EntityHitResult(entity2, vec3d);
         }
     }
-    public static HitResult rayTrace(double dst, float yaw, float pitch) {
-        Vec3 vec3d = mc.player.getEyePosition(Minecraft.getInstance().getFrameTimeNs());
-        Vec3 vec3d2 = getRotationVector(yaw, pitch);
-        Vec3 vec3d3 = vec3d.add(vec3d2.x * dst, vec3d2.y * dst, vec3d2.z * dst);
-        return mc.level.clip(new ClipContext(vec3d, vec3d3, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, mc.player));
-    }
     private static @NotNull Vec3 getRotationVector(float yaw, float pitch) {
         float yawRad = yaw * 0.017453292F;
         float pitchRad = pitch * 0.017453292F;
@@ -105,5 +91,4 @@ public class AuraUtil implements IMinecraft {
         float sinPitch = Mth.sin(-pitchRad);
         return new Vec3(sinYaw * cosPitch, sinPitch, cosYaw * cosPitch);
     }
-
 }

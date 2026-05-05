@@ -1,7 +1,9 @@
-package ru.arixcompany.utils.aurautil.rotsystem;
+package ru.arixcompany.features.module.modules.combat.aura.rotation;
 
+import lombok.Getter;
 import net.minecraft.util.Mth;
 
+@Getter
 public class Rotation {
     private final float yaw;
     private final float pitch;
@@ -9,14 +11,6 @@ public class Rotation {
     public Rotation(float yaw, float pitch) {
         this.yaw = Mth.wrapDegrees(yaw);
         this.pitch = Mth.clamp(pitch, -90F, 90F);
-    }
-
-    public float getYaw() {
-        return yaw;
-    }
-
-    public float getPitch() {
-        return pitch;
     }
 
     public float getDelta(Rotation other) {

@@ -1,4 +1,4 @@
-package ru.arixcompany.utils.aurautil.other;
+package ru.arixcompany.features.module.modules.combat.aura.rotation.impl;
 
 import ru.arixcompany.utils.IMinecraft;
 
@@ -25,5 +25,4 @@ public class SensUtils implements IMinecraft {
     public static float applyMinimalThreshold(float delta, float threshold) {
         return Math.abs(delta) < threshold ? 0 : delta;
     }
-
 }

@@ -14,14 +14,4 @@ public class MathUtils implements IMinecraft {
         float debugFPS = mc.getFps();
         return debugFPS > 0.0F ? 1.0F / debugFPS : 1.0F;
     }
-
-    public static int calc(int value) {
-        return (int)(value * mc.getWindow().getGuiScale() / 2);
-    }
-
-    public static float[] calc(float mouseX, float mouseY) {
-        mouseX = mouseX * mc.getWindow().getGuiScale() / 2;
-        mouseY = mouseY * mc.getWindow().getGuiScale() / 2;
-        return new float[]{mouseX, mouseY};
-    }
 }

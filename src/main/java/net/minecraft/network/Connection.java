@@ -62,6 +62,8 @@ import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
+import ru.arixcompany.features.event.EventRepo;
+import ru.arixcompany.features.event.world.EventPacket;
 
 public class Connection extends SimpleChannelInboundHandler<Packet<?>> {
     private static final float AVERAGE_PACKETS_SMOOTHING = 0.75F;
@@ -172,8 +174,13 @@ public class Connection extends SimpleChannelInboundHandler<Packet<?>> {
         }
     }
 
-    private static <T extends PacketListener> void genericsFtw(Packet<T> p_129518_, PacketListener p_129519_) {
-        p_129518_.handle((T)p_129519_);
+    private static <T extends PacketListener> void genericsFtw(Packet<T> packet, PacketListener p_129519_) {
+        EventPacket packetEvent = new EventPacket(packet, EventPacket.Type.RECEIVE);
+        EventRepo.call(packetEvent);
+        if (packetEvent.isCancelled()) {
+           return;
+        }
+        packet.handle((T)p_129519_);
     }
 
     private void validateListener(ProtocolInfo<?> p_336036_, PacketListener p_331542_) {
@@ -284,8 +291,13 @@ public class Connection extends SimpleChannelInboundHandler<Packet<?>> {
         });
     }
 
-    public void send(Packet<?> p_129513_) {
-        this.send(p_129513_, null);
+    public void send(Packet<?> packet) {
+        EventPacket packetEvent = new EventPacket(packet, EventPacket.Type.SEND);
+        EventRepo.call(packetEvent);
+        if (packetEvent.isCancelled()) {
+            return;
+        }
+        this.send(packet, null);
     }
 
     public void send(Packet<?> p_298754_, @Nullable ChannelFutureListener p_406534_) {

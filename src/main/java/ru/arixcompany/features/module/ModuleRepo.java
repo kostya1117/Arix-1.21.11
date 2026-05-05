@@ -5,7 +5,9 @@ import ru.arixcompany.Arix;
 import ru.arixcompany.features.event.EventHandler;
 import ru.arixcompany.features.event.EventRepo;
 import ru.arixcompany.features.event.player.EventKey;
-import ru.arixcompany.features.module.modules.combat.KillAura;
+import ru.arixcompany.features.module.modules.combat.Aura;
+import ru.arixcompany.features.module.modules.combat.NoFriendDMG;
+import ru.arixcompany.features.module.modules.misc.AutoAccept;
 import ru.arixcompany.features.module.modules.misc.CameraTweaks;
 import ru.arixcompany.features.module.modules.player.TestModule;
 import ru.arixcompany.features.module.modules.render.HandView;
@@ -21,7 +23,9 @@ public class ModuleRepo {
        modules.add(new CameraTweaks());
        modules.add(new Nametags());
        modules.add(new HandView());
-       modules.add(new KillAura());
+       modules.add(new Aura());
+       modules.add(new NoFriendDMG());
+       modules.add(new AutoAccept());
    }
 
    public void init() {

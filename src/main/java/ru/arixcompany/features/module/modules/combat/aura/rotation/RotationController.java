@@ -1,19 +1,22 @@
-package ru.arixcompany.utils.aurautil.rotsystem;
+package ru.arixcompany.features.module.modules.combat.aura.rotation;
 
+import lombok.Getter;
+import lombok.Setter;
 import net.minecraft.util.Mth;
 import ru.arixcompany.features.event.EventHandler;
 import ru.arixcompany.features.event.player.EventInput;
 import ru.arixcompany.features.event.world.EventGameTick;
-import ru.arixcompany.utils.IMinecraft;
-import ru.arixcompany.utils.aurautil.System;
-import ru.arixcompany.utils.aurautil.freelooksystem.FreeLookSystem;
-import ru.arixcompany.utils.aurautil.other.SensUtils;
+import ru.arixcompany.features.module.modules.combat.aura.IComponent;
+import ru.arixcompany.features.module.modules.combat.aura.rotation.impl.FreeLookController;
+import ru.arixcompany.features.module.modules.combat.aura.rotation.impl.SensUtils;
 import ru.arixcompany.utils.player.MoveUtils;
 
-public class RotationSystem extends System {
-    private static final RotationSystem INSTANCE = new RotationSystem();
+@Getter
+@Setter
+public class RotationController extends IComponent {
+    private static final RotationController INSTANCE = new RotationController();
 
-    public static RotationSystem getInstance() {
+    public static RotationController getInstance() {
         return INSTANCE;
     }
 
@@ -54,12 +57,12 @@ public class RotationSystem extends System {
     }
 
     public static void update(Rotation target, float yawSpeed, float pitchSpeed, float yawReturnSpeed, float pitchReturnSpeed, int timeout, int priority, boolean clientRotation) {
-        final RotationSystem instance = getInstance();
+        final RotationController instance = getInstance();
         if (instance.currentPriority > priority) {
             return;
         }
         if (instance.currentTask == RotationTask.IDLE && !clientRotation) {
-            FreeLookSystem.setActive(true);
+            FreeLookController.setActive(true);
         }
 
         instance.currentYawSpeed = yawSpeed;
@@ -95,7 +98,7 @@ public class RotationSystem extends System {
         currentTask = RotationTask.IDLE;
         currentPriority = 0;
         if (!getInstance().isRotating()) {
-            FreeLookSystem.setActive(false);
+            FreeLookController.setActive(false);
         }
     }
 
@@ -119,77 +122,5 @@ public class RotationSystem extends System {
         AIM,
         RESET,
         IDLE
-    }
-
-    public RotationTask currentTask() {
-        return currentTask;
-    }
-
-    public void currentTask(RotationTask task) {
-        this.currentTask = task;
-    }
-
-    public float currentYawSpeed() {
-        return currentYawSpeed;
-    }
-
-    public void currentYawSpeed(float speed) {
-        this.currentYawSpeed = speed;
-    }
-
-    public float currentPitchSpeed() {
-        return currentPitchSpeed;
-    }
-
-    public void currentPitchSpeed(float speed) {
-        this.currentPitchSpeed = speed;
-    }
-
-    public float currentYawReturnSpeed() {
-        return currentYawReturnSpeed;
-    }
-
-    public void currentYawReturnSpeed(float speed) {
-        this.currentYawReturnSpeed = speed;
-    }
-
-    public float currentPitchReturnSpeed() {
-        return currentPitchReturnSpeed;
-    }
-
-    public void currentPitchReturnSpeed(float speed) {
-        this.currentPitchReturnSpeed = speed;
-    }
-
-    public int currentPriority() {
-        return currentPriority;
-    }
-
-    public void currentPriority(int priority) {
-        this.currentPriority = priority;
-    }
-
-    public int currentTimeout() {
-        return currentTimeout;
-    }
-
-    public void currentTimeout(int timeout) {
-        this.currentTimeout = timeout;
-    }
-
-    public int idleTicks() {
-        return idleTicks;
-    }
-
-    public void idleTicks(int ticks) {
-        this.idleTicks = ticks;
-    }
-
-    public Rotation targetRotation() {
-        return targetRotation;
-    }
-
-    public void targetRotation(Rotation rotation) {
-        this.targetRotation = rotation;
     }
 }

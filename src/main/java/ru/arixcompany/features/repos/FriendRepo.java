@@ -23,9 +23,9 @@ public class FriendRepo {
    public static boolean isFriend(String friend) {
       return friends.stream().anyMatch(isFriend -> isFriend.getName().equals(friend));
    }
-    public static boolean isFriend(Entity e) {
-        return friends.stream().anyMatch(isFriend -> isFriend.getName().equals(e.getName().getString()));
-    }
+   public static boolean isFriend(Entity e) {
+       return friends.stream().anyMatch(isFriend -> isFriend.getName().equals(e.getName().getString()));
+   }
 
    public static void remove(String name) {
       friends.removeIf(friend -> friend.getName().equalsIgnoreCase(name));

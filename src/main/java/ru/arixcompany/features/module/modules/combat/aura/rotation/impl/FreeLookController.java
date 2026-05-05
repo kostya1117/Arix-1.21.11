@@ -1,4 +1,4 @@
-package ru.arixcompany.utils.aurautil.freelooksystem;
+package ru.arixcompany.features.module.modules.combat.aura.rotation.impl;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -6,9 +6,9 @@ import net.minecraft.util.Mth;
 import ru.arixcompany.features.event.EventHandler;
 import ru.arixcompany.features.event.player.EventMouseLook;
 import ru.arixcompany.features.event.player.EventRotation;
-import ru.arixcompany.utils.aurautil.System;
+import ru.arixcompany.features.module.modules.combat.aura.IComponent;
 
-public class FreeLookSystem extends System {
+public class FreeLookController extends IComponent {
 
     @Getter
     @Setter
