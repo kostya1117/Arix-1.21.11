@@ -7,6 +7,7 @@ import ru.arixcompany.features.event.EventRepo;
 import ru.arixcompany.features.event.player.EventKey;
 import ru.arixcompany.features.module.modules.misc.CameraTweaks;
 import ru.arixcompany.features.module.modules.player.TestModule;
+import ru.arixcompany.features.module.modules.render.HandView;
 import ru.arixcompany.features.module.modules.render.Nametags;
 
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ public class ModuleRepo {
        modules.add(new TestModule());
        modules.add(new CameraTweaks());
        modules.add(new Nametags());
+       modules.add(new HandView());
    }
 
    public void init() {
