@@ -27,10 +27,10 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-public class Aura extends Module {
+public class KillAura extends Module {
 
     @Getter
-    private LivingEntity target;
+    public static LivingEntity target;
 
     @Getter
     private Vec2 rotateVector = new Vec2(0, 0);
@@ -45,8 +45,8 @@ public class Aura extends Module {
     private final ListSetting targets;
     private final ListSetting options;
 
-    public Aura() {
-        super("Aura", Category.Combat);
+    public KillAura() {
+        super("KillAura", Category.Combat);
 
         rotationMode = new SelectSetting("Ротация головы")
                 .value("None", "FunTime");

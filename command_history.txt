@@ -18,3 +18,6 @@
 /warp pvp
 /an217
 /ah search алмазный меч
+/an101
+/an103
+/kit start

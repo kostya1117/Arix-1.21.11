@@ -58,7 +58,7 @@ public class RenderType {
         }
     }
 
-    static RenderType create(String p_452180_, RenderSetup p_453207_) {
+    public static RenderType create(String p_452180_, RenderSetup p_453207_) {
         return new RenderType(p_452180_, p_453207_);
     }
 
