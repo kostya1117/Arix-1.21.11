@@ -20,9 +20,12 @@ import ru.arixcompany.features.event.render.EventRender3D;
 import ru.arixcompany.features.module.Category;
 import ru.arixcompany.features.module.Module;
 import ru.arixcompany.features.module.modules.combat.KillAura;
+import ru.arixcompany.ui.clickgui.Colors;
 import ru.arixcompany.utils.animation.Animation;
 import ru.arixcompany.utils.animation.Direction;
 import ru.arixcompany.utils.animation.impl.EaseInOutQuad;
+
+import java.awt.*;
 
 public class TargetESP extends Module {
 
@@ -40,7 +43,7 @@ public class TargetESP extends Module {
                     .withCull(false)
                     .withDepthTestFunction(DepthTestFunction.NO_DEPTH_TEST)
                     .withDepthWrite(false)
-                    .withBlend(BlendFunction.LIGHTNING)
+                    .withBlend(BlendFunction.TRANSLUCENT)
                     .build()
     );
 
@@ -90,50 +93,48 @@ public class TargetESP extends Module {
         Vec3 cam = mc.gameRenderer.getMainCamera().position();
 
         matrices.pushPose();
+
         matrices.translate(
                 pos.x - cam.x,
                 pos.y - cam.y + entity.getBbHeight() / 1.75,
                 pos.z - cam.z
         );
 
-        matrices.mulPose(
-                Axis.YP.rotationDegrees(
-                        -mc.gameRenderer.getMainCamera().xRot()
-                )
-        );
-        matrices.mulPose(
-                Axis.XP.rotationDegrees(
-                        mc.gameRenderer.getMainCamera().yRot()
-                )
-        );
+        matrices.mulPose(mc.gameRenderer.getMainCamera().rotation());
 
-        float rotation = (float)
-                ((Math.sin(System.currentTimeMillis() / 1600.0) + 1) / 2 * 720);
+        float rotation = (System.currentTimeMillis() % 2000L) / 2000.0f * 360.0f;
+        matrices.mulPose(Axis.ZP.rotationDegrees(rotation));
 
-        matrices.mulPose(
-                Axis.ZP.rotationDegrees(rotation)
-        );
+        Color baseColor = Arix.getInstance().getCurrentTheme().getMain();
+        Color damageColor = new Color(255, 60, 60);
 
-        float scale = 1.5f;
-        matrices.scale(scale, scale, scale);
+        float hurtProgress = clamp01((entity.hurtTime - tickDelta) / 10.0f);
+        hurtProgress = hurtProgress * hurtProgress;
+
+        int r = lerpInt(baseColor.getRed(), damageColor.getRed(), hurtProgress);
+        int g = lerpInt(baseColor.getGreen(), damageColor.getGreen(), hurtProgress);
+        int b = lerpInt(baseColor.getBlue(), damageColor.getBlue(), hurtProgress);
+
+        float baseScale = 1.1f;
+        float finalScale = baseScale - (0.18f * hurtProgress);
+        matrices.scale(finalScale, finalScale, finalScale);
 
         Matrix4f matrix = matrices.last().pose();
-        VertexConsumer vertex =
-                buffer.getBuffer(texLayerND(TEX_CLIENT));
+        VertexConsumer vertex = buffer.getBuffer(texLayerND(TEX_CLIENT));
 
         int alphaValue = (int) (255f * alpha.getOutput());
 
         vertex.addVertex(matrix, -0.5f, -0.5f, 0)
-                .setColor(255, 255, 255, alphaValue)
+                .setColor(r, g, b, alphaValue)
                 .setUv(0, 1);
         vertex.addVertex(matrix, 0.5f, -0.5f, 0)
-                .setColor(255, 255, 255, alphaValue)
+                .setColor(r, g, b, alphaValue)
                 .setUv(1, 1);
         vertex.addVertex(matrix, 0.5f, 0.5f, 0)
-                .setColor(255, 255, 255, alphaValue)
+                .setColor(r, g, b, alphaValue)
                 .setUv(1, 0);
         vertex.addVertex(matrix, -0.5f, 0.5f, 0)
-                .setColor(255, 255, 255, alphaValue)
+                .setColor(r, g, b, alphaValue)
                 .setUv(0, 0);
 
         matrices.popPose();
@@ -147,5 +148,13 @@ public class TargetESP extends Module {
                         .withTexture(RenderType.SAMPLER0, tex)
                         .createRenderSetup()
         );
+    }
+
+    private float clamp01(float value) {
+        return Math.max(0.0f, Math.min(1.0f, value));
+    }
+
+    private int lerpInt(int from, int to, float delta) {
+        return (int) (from + (to - from) * delta);
     }
 }

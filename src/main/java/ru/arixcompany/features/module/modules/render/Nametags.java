@@ -102,7 +102,7 @@ public class Nametags extends Module {
                 float rectX = screenX - textWidth / 2f - padding;
                 float rectY = screenY - textHeight - 8f;
 
-                boolean isFriend = FriendRepo.isFriend(player.getDisplayName().getString());
+                boolean isFriend = FriendRepo.isFriend(player);
                 int bgColor = isFriend ? 0x8028FF28 : 0x90000000;
 
                 RenderUtils.fillRoundRect(rectX, rectY,

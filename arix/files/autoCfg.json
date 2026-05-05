@@ -17,7 +17,7 @@
     },
     "cameratweaks": {
       "bind": 82,
-      "state": false,
+      "state": true,
       "Приближение": 1.0,
       "Камера через стенки": false
     },
@@ -44,7 +44,7 @@
     },
     "killaura": {
       "bind": 82,
-      "state": false,
+      "state": true,
       "Ротация головы": "FunTime",
       "Дистанция атаки": 3.0,
       "Доп. дистанция": 1.0,
@@ -53,7 +53,7 @@
     },
     "nofrienddmg": {
       "bind": -1,
-      "state": false
+      "state": true
     },
     "autoaccept": {
       "bind": -1,
@@ -66,6 +66,6 @@
     }
   },
   "misc": {
-    "Theme": "PURPLE"
+    "Theme": "TEAL"
   }
 }

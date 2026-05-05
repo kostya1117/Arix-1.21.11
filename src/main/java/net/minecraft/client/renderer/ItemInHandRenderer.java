@@ -305,7 +305,7 @@ public class ItemInHandRenderer {
 
     private void applyEatTransform(PoseStack p_109331_, float p_109332_, HumanoidArm p_109333_, ItemStack p_109334_, Player p_343800_) {
         HandView mod = getHandView();
-        if (mod != null && mod.disableFoodAnimation()) {
+        if (mod != null && mod.disableFoodAnimation() && mod.isState()) {
             return;
         }
         float f = p_343800_.getUseItemRemainingTicks() - p_109332_ + 1.0F;
@@ -664,7 +664,7 @@ public class ItemInHandRenderer {
                 : !this.itemModelResolver.shouldPlaySwapAnimation(newStack);
 
         HandView mod = getHandView();
-        return original || (mod != null && mod.skipSwapping());
+        return original || (mod != null && mod.skipSwapping() && mod.isState());
     }
 
     private static HandView getHandView() {

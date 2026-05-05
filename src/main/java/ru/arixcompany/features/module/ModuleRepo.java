@@ -13,11 +13,12 @@ import ru.arixcompany.features.module.modules.player.TestModule;
 import ru.arixcompany.features.module.modules.render.HandView;
 import ru.arixcompany.features.module.modules.render.Nametags;
 import ru.arixcompany.features.module.modules.render.TargetESP;
+import ru.arixcompany.utils.IMinecraft;
 
 import java.util.ArrayList;
 
 @Getter
-public class ModuleRepo {
+public class ModuleRepo implements IMinecraft {
    public ArrayList<Module> modules = new ArrayList<>();
    public ModuleRepo() {
        modules.add(new TestModule());
@@ -44,7 +45,9 @@ public class ModuleRepo {
          Module[] modules = Arix.getInstance().getModuleRepo().getBind(event.getKey());
          if (modules != null) {
             for (Module module : modules) {
-               module.toggle();
+                if (mc.screen == null) {
+                    module.toggle();
+                }
             }
          }
       }
