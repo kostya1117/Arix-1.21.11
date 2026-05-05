@@ -14,3 +14,5 @@
 /an217
 /an221
 /reg 1
+/an221
+/warp pvp

@@ -41,6 +41,11 @@ import net.optifine.Config;
 import net.optifine.CustomItems;
 import net.optifine.reflect.Reflector;
 import net.optifine.shaders.Shaders;
+import ru.arixcompany.Arix;
+import ru.arixcompany.features.event.EventRepo;
+import ru.arixcompany.features.event.render.EventArmRender;
+import ru.arixcompany.features.event.render.EventHeldItemRenderer;
+import ru.arixcompany.features.module.modules.render.HandView;
 
 public class ItemInHandRenderer {
     private static final RenderType MAP_BACKGROUND = RenderTypes.entityCutout(Identifier.withDefaultNamespace("textures/map/map_background.png"));
@@ -126,6 +131,8 @@ public class ItemInHandRenderer {
     private final EntityRenderDispatcher entityRenderDispatcher;
     private final ItemModelResolver itemModelResolver;
     private static boolean renderItemHand = false;
+
+    private InteractionHand currentHand = InteractionHand.MAIN_HAND;
 
     public ItemInHandRenderer(Minecraft p_234241_, EntityRenderDispatcher p_234242_, ItemModelResolver p_376876_) {
         this.minecraft = p_234241_;
@@ -297,6 +304,10 @@ public class ItemInHandRenderer {
     }
 
     private void applyEatTransform(PoseStack p_109331_, float p_109332_, HumanoidArm p_109333_, ItemStack p_109334_, Player p_343800_) {
+        HandView mod = getHandView();
+        if (mod != null && mod.disableFoodAnimation()) {
+            return;
+        }
         float f = p_343800_.getUseItemRemainingTicks() - p_109332_ + 1.0F;
         float f1 = f / p_109334_.getUseDuration(p_343800_);
         if (f1 < 0.8F) {
@@ -347,9 +358,15 @@ public class ItemInHandRenderer {
         p_109336_.mulPose(Axis.YP.rotationDegrees(i * -45.0F));
     }
 
-    private void applyItemArmTransform(PoseStack p_109383_, HumanoidArm p_109384_, float p_109385_) {
-        int i = p_109384_ == HumanoidArm.RIGHT ? 1 : -1;
-        p_109383_.translate(i * 0.56F, -0.52F + p_109385_ * -0.6F, -0.72F);
+    private void applyItemArmTransform(PoseStack poseStack, HumanoidArm arm, float equipProgress) {
+        HandView mod = getHandView();
+
+        if (mod != null && mod.isState() && this.currentHand == InteractionHand.MAIN_HAND) {
+            return;
+        }
+
+        int i = arm == HumanoidArm.RIGHT ? 1 : -1;
+        poseStack.translate(i * 0.56F, -0.52F + equipProgress * -0.6F, -0.72F);
     }
 
     public void renderHandsWithItems(float p_109315_, PoseStack p_109316_, SubmitNodeCollector p_424174_, LocalPlayer p_109318_, int p_109319_) {
@@ -450,6 +467,7 @@ public class ItemInHandRenderer {
         SubmitNodeCollector p_425151_,
         int p_109381_
     ) {
+        this.currentHand = p_109375_;
         if (!Config.isShaders() || !Shaders.isSkipRenderHand(p_109375_)) {
             if (!p_109372_.isScoping()) {
                 boolean flag = p_109375_ == InteractionHand.MAIN_HAND;
@@ -457,6 +475,7 @@ public class ItemInHandRenderer {
                 p_109379_.pushPose();
                 if (p_109377_.isEmpty()) {
                     if (flag && !p_109372_.isInvisible()) {
+                        EventRepo.call(new EventArmRender(this.currentHand, p_109379_));
                         this.renderPlayerArm(p_109379_, p_425151_, p_109381_, p_109378_, p_109376_, humanoidarm);
                     }
                 } else if (p_109377_.has(DataComponents.MAP_ID)) {
@@ -626,16 +645,33 @@ public class ItemInHandRenderer {
         }
     }
 
-    private void swingArm(float p_376030_, PoseStack p_378498_, int p_375719_, HumanoidArm p_377471_) {
-        float f = -0.4F * Mth.sin(Mth.sqrt(p_376030_) * (float) Math.PI);
-        float f1 = 0.2F * Mth.sin(Mth.sqrt(p_376030_) * (float) (Math.PI * 2));
-        float f2 = -0.2F * Mth.sin(p_376030_ * (float) Math.PI);
-        p_378498_.translate(p_375719_ * f, f1, f2);
-        this.applyItemArmAttackTransform(p_378498_, p_377471_, p_376030_);
+    private void swingArm(float progress, PoseStack poseStack, int side, HumanoidArm arm) {
+        EventHeldItemRenderer event = new EventHeldItemRenderer(this.currentHand, poseStack, progress);
+        EventRepo.call(event);
+
+        if (!event.isCancelled()) {
+            float f = -0.4F * Mth.sin(Mth.sqrt(progress) * (float) Math.PI);
+            float f1 = 0.2F * Mth.sin(Mth.sqrt(progress) * (float) (Math.PI * 2));
+            float f2 = -0.2F * Mth.sin(progress * (float) Math.PI);
+            poseStack.translate(side * f, f1, f2);
+            this.applyItemArmAttackTransform(poseStack, arm, progress);
+        }
     }
 
-    private boolean shouldInstantlyReplaceVisibleItem(ItemStack p_376473_, ItemStack p_378754_) {
-        return ItemStack.matchesIgnoringComponents(p_376473_, p_378754_, DataComponentType::ignoreSwapAnimation) ? true : !this.itemModelResolver.shouldPlaySwapAnimation(p_378754_);
+    private boolean shouldInstantlyReplaceVisibleItem(ItemStack oldStack, ItemStack newStack) {
+        boolean original = ItemStack.matchesIgnoringComponents(oldStack, newStack, DataComponentType::ignoreSwapAnimation)
+                ? true
+                : !this.itemModelResolver.shouldPlaySwapAnimation(newStack);
+
+        HandView mod = getHandView();
+        return original || (mod != null && mod.skipSwapping());
+    }
+
+    private static HandView getHandView() {
+        if (Arix.getInstance() == null) return null;
+        return (HandView) Arix.getInstance()
+                .getModuleRepo()
+                .getModule(HandView.class);
     }
 
     public void tick() {
