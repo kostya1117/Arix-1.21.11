@@ -10,14 +10,12 @@ import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.ARGB;
-import org.lwjgl.stb.STBTTBakedChar;
-import org.lwjgl.stb.STBTTFontinfo;
-import org.lwjgl.stb.STBTruetype;
+import org.lwjgl.stb.*;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
+import net.minecraft.ChatFormatting;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.util.*;
@@ -25,620 +23,634 @@ import java.util.*;
 public class CustomFont implements AutoCloseable {
 
     private static final int ATLAS_SIZE = 2048;
-
     private static final int OVERSAMPLE = 2;
-    private static final float INV_OVERSAMPLE = 1.0f / OVERSAMPLE;
-    private static final float INV_ATLAS = 1.0f / ATLAS_SIZE;
-    private static final int GLYPH_PADDING = 2;
-
-    private static final int SCAN_START = 0x0020;
-    private static final int SCAN_END = 0xFFFF;
-
-    private static final int[] MC_COLORS = {
-            0xFF000000, 0xFF0000AA, 0xFF00AA00, 0xFF00AAAA,
-            0xFFAA0000, 0xFFAA00AA, 0xFFFFAA00, 0xFFAAAAAA,
-            0xFF555555, 0xFF5555FF, 0xFF55FF55, 0xFF55FFFF,
-            0xFFFF5555, 0xFFFF55FF, 0xFFFFFF55, 0xFFFFFFFF
-    };
+    private static final float INV_OS = 1f / OVERSAMPLE;
+    private static final int PAD = 2;
+    private static final int SCAN_S = 0x0020;
+    private static final int SCAN_E = 0xFFFF;
 
     private static int getColorForCode(char code) {
-        if (code >= '0' && code <= '9') return MC_COLORS[code - '0'];
-        if (code >= 'a' && code <= 'f') return MC_COLORS[code - 'a' + 10];
-        return -1;
+        ChatFormatting fmt = ChatFormatting.getByCode(code);
+        if (fmt == null) return -1;
+        Integer color = fmt.getColor();
+        if (color == null) return -1;
+        return 0xFF000000 | color;
     }
 
     private final STBTTFontinfo fontInfo;
     private final ByteBuffer ttfBuffer;
+    @Getter private final float fontSize;
+    private final float scale;
+    private final float asc, desc, gap, lineH;
 
-    @Getter
-    private final float fontSize;
-
-    private final float stbScale;
-
-    private final float scaledAscent;
-    private final float scaledDescent;
-    private final float scaledLineGap;
-
-    @Getter
-    private final float lineHeight;
-
-    // Список только реально запечённых символов (для obfuscated)
-    private final List<Integer> availableCodepoints = new ArrayList<>();
-    // Мапа только реально запечённых символов -> индекс в bakedChars
-    private final Map<Integer, Integer> codepointToIndex = new HashMap<>();
-
-    // bakedChars теперь храним буфером, но заполняем только bakedCount
-    private final STBTTBakedChar.Buffer bakedChars;
+    private final List<Integer> codepoints = new ArrayList<>();
+    private final Map<Integer, Integer> idxMap = new HashMap<>();
+    private final STBTTBakedChar.Buffer baked;
+    private final Map<Integer, Float> widths = new HashMap<>();
 
     private DynamicTexture atlasTexture;
-    private Identifier atlasLocation;
+    private Identifier atlasId;
 
-    // Ширины храним для всех найденных глифов (даже если не влезли в атлас)
-    private final Map<Integer, Float> charWidths = new HashMap<>();
-
-    public CustomFont(String resourcePath, float fontSize) throws IOException {
-        this.fontSize = fontSize;
-
-        this.ttfBuffer = loadResource(resourcePath);
-
-        this.fontInfo = STBTTFontinfo.create();
+    public CustomFont(String path, float sz) throws IOException {
+        fontSize = sz;
+        ttfBuffer = load(path);
+        fontInfo = STBTTFontinfo.create();
         if (!STBTruetype.stbtt_InitFont(fontInfo, ttfBuffer)) {
             MemoryUtil.memFree(ttfBuffer);
-            throw new IOException("Failed to init font: " + resourcePath);
+            throw new IOException("Cannot init font: " + path);
         }
+        scale = STBTruetype.stbtt_ScaleForPixelHeight(fontInfo, sz);
 
-        this.stbScale = STBTruetype.stbtt_ScaleForPixelHeight(fontInfo, fontSize);
-
-        try (MemoryStack stack = MemoryStack.stackPush()) {
-            IntBuffer pAsc = stack.mallocInt(1);
-            IntBuffer pDesc = stack.mallocInt(1);
-            IntBuffer pGap = stack.mallocInt(1);
-            STBTruetype.stbtt_GetFontVMetrics(fontInfo, pAsc, pDesc, pGap);
-
-            this.scaledAscent = pAsc.get(0) * stbScale;
-            this.scaledDescent = pDesc.get(0) * stbScale;
-            this.scaledLineGap = pGap.get(0) * stbScale;
+        try (MemoryStack st = MemoryStack.stackPush()) {
+            IntBuffer a = st.mallocInt(1), d = st.mallocInt(1), g = st.mallocInt(1);
+            STBTruetype.stbtt_GetFontVMetrics(fontInfo, a, d, g);
+            asc = a.get(0) * scale;
+            desc = d.get(0) * scale;
+            gap = g.get(0) * scale;
         }
+        lineH = asc - desc + gap;
 
-        this.lineHeight = scaledAscent - scaledDescent + scaledLineGap;
-
-        // --- Сканируем все кодпоинты, но НЕ строим codepointToIndex заранее ---
-        List<Integer> scanned = new ArrayList<>();
-        for (int codepoint = SCAN_START; codepoint <= SCAN_END; codepoint++) {
-            int glyphIndex = STBTruetype.stbtt_FindGlyphIndex(fontInfo, codepoint);
-            if (glyphIndex != 0) {
-                scanned.add(codepoint);
-
-                // Сразу считаем advance (в экранных пикселях, БЕЗ oversample)
-                try (MemoryStack stack = MemoryStack.stackPush()) {
-                    IntBuffer advanceWidth = stack.mallocInt(1);
-                    IntBuffer lsb = stack.mallocInt(1);
-                    STBTruetype.stbtt_GetCodepointHMetrics(fontInfo, codepoint, advanceWidth, lsb);
-                    float advPx = advanceWidth.get(0) * stbScale;
-                    charWidths.put(codepoint, advPx);
+        for (int cp = SCAN_S; cp <= SCAN_E; cp++) {
+            if (STBTruetype.stbtt_FindGlyphIndex(fontInfo, cp) != 0) {
+                codepoints.add(cp);
+                try (MemoryStack st = MemoryStack.stackPush()) {
+                    IntBuffer adv = st.mallocInt(1), lsb = st.mallocInt(1);
+                    STBTruetype.stbtt_GetCodepointHMetrics(fontInfo, cp, adv, lsb);
+                    widths.put(cp, adv.get(0) * scale);
                 }
             }
         }
+        if (codepoints.isEmpty()) throw new IOException("No glyphs: " + path);
 
-        if (scanned.isEmpty()) {
-            MemoryUtil.memFree(ttfBuffer);
-            throw new IOException("No renderable glyphs found in font: " + resourcePath);
-        }
+        baked = STBTTBakedChar.malloc(codepoints.size());
+        ByteBuffer bmp = MemoryUtil.memCalloc(ATLAS_SIZE * ATLAS_SIZE);
 
-        // Буфер bakedChars под максимум, но реально заполним только bakedCount
-        this.bakedChars = STBTTBakedChar.malloc(scanned.size());
+        int bakedCnt = 0;
+        for (int cp : codepoints) packGlyph(cp, bmp, bakedCnt++);
 
-        // FIX #1: обязательно calloc (или memSet 0), иначе в атласе мусор
-        ByteBuffer bitmap = MemoryUtil.memCalloc(ATLAS_SIZE * ATLAS_SIZE);
+        NativeImage img = new NativeImage(NativeImage.Format.RGBA, ATLAS_SIZE, ATLAS_SIZE, false);
+        for (int y = 0; y < ATLAS_SIZE; y++)
+            for (int x = 0; x < ATLAS_SIZE; x++) {
+                int alpha = bmp.get(y * ATLAS_SIZE + x) & 0xFF;
+                img.setPixelABGR(x, y, (alpha << 24) | 0x00FFFFFF);
+            }
+        MemoryUtil.memFree(bmp);
 
-        try {
-            int atlasX = 0;
-            int atlasY = 0;
-            int rowHeight = 0;
+        String name = "cf_" + path.hashCode() + "_" + (int) sz;
+        atlasTexture = new DynamicTexture(() -> name, img);
+        atlasTexture.setSampler(RenderSystem.getSamplerCache().getClampToEdge(FilterMode.LINEAR));
+        atlasId = Identifier.withDefaultNamespace("dynamic/" + name);
+        Minecraft.getInstance().getTextureManager().register(atlasId, atlasTexture);
+    }
 
-            int bakedCount = 0;
+    private int packX = 0, packY = 0, packRowH = 0;
 
-            for (int codepoint : scanned) {
-                try (MemoryStack stack = MemoryStack.stackPush()) {
-                    IntBuffer advanceWidth = stack.mallocInt(1);
-                    IntBuffer leftSideBearing = stack.mallocInt(1);
-                    STBTruetype.stbtt_GetCodepointHMetrics(fontInfo, codepoint, advanceWidth, leftSideBearing);
+    private void packGlyph(int cp, ByteBuffer bmp, int slot) {
+        try (MemoryStack st = MemoryStack.stackPush()) {
+            IntBuffer adv = st.mallocInt(1), lsb = st.mallocInt(1);
+            STBTruetype.stbtt_GetCodepointHMetrics(fontInfo, cp, adv, lsb);
+            IntBuffer x0 = st.mallocInt(1), y0 = st.mallocInt(1),
+                    x1 = st.mallocInt(1), y1 = st.mallocInt(1);
+            STBTruetype.stbtt_GetCodepointBitmapBox(fontInfo, cp,
+                    scale * OVERSAMPLE, scale * OVERSAMPLE, x0, y0, x1, y1);
 
-                    IntBuffer x0 = stack.mallocInt(1);
-                    IntBuffer y0 = stack.mallocInt(1);
-                    IntBuffer x1 = stack.mallocInt(1);
-                    IntBuffer y1 = stack.mallocInt(1);
-                    STBTruetype.stbtt_GetCodepointBitmapBox(
-                            fontInfo,
-                            codepoint,
-                            stbScale * OVERSAMPLE,
-                            stbScale * OVERSAMPLE,
-                            x0, y0, x1, y1
-                    );
+            int gw = x1.get(0) - x0.get(0), gh = y1.get(0) - y0.get(0);
+            boolean has = gw > 0 && gh > 0;
+            int px = 0, py = 0;
 
-                    int glyphW = x1.get(0) - x0.get(0);
-                    int glyphH = y1.get(0) - y0.get(0);
-
-                    // Пробел/невидимые: bitmap может быть 0x0, но advance нужен
-                    boolean hasBitmap = glyphW > 0 && glyphH > 0;
-
-                    int placeX = 0;
-                    int placeY = 0;
-
-                    if (hasBitmap) {
-                        // FIX #2: учитываем padding между глифами
-                        if (atlasX + glyphW + GLYPH_PADDING >= ATLAS_SIZE && atlasX > 0) {
-                            atlasX = 0;
-                            atlasY += rowHeight;
-                            rowHeight = 0;
-                        }
-
-                        if (atlasY + glyphH + GLYPH_PADDING >= ATLAS_SIZE) {
-                            // Атлас переполнен: просто не печём этот глиф (но advance уже в charWidths есть)
-                            // ВАЖНО: НЕ добавляем его в codepointToIndex, чтобы не рисовать мусор
-                            continue;
-                        }
-
-                        placeX = atlasX;
-                        placeY = atlasY;
-
-                        IntBuffer pWidth = stack.mallocInt(1);
-                        IntBuffer pHeight = stack.mallocInt(1);
-                        IntBuffer pXOff = stack.mallocInt(1);
-                        IntBuffer pYOff = stack.mallocInt(1);
-
-                        ByteBuffer glyphBitmap = STBTruetype.stbtt_GetCodepointBitmap(
-                                fontInfo,
-                                stbScale * OVERSAMPLE,
-                                stbScale * OVERSAMPLE,
-                                codepoint,
-                                pWidth, pHeight, pXOff, pYOff
-                        );
-
-                        if (glyphBitmap != null) {
-                            int actualWidth = pWidth.get(0);
-                            int actualHeight = pHeight.get(0);
-
-                            // Копируем в atlas с защитой от выхода
-                            for (int gy = 0; gy < actualHeight; gy++) {
-                                int dstRowOffset = (placeY + gy) * ATLAS_SIZE;
-                                int srcRowOffset = gy * actualWidth;
-                                for (int gx = 0; gx < actualWidth; gx++) {
-                                    int dstIdx = dstRowOffset + placeX + gx;
-                                    bitmap.put(dstIdx, glyphBitmap.get(srcRowOffset + gx));
-                                }
-                            }
-                            STBTruetype.stbtt_FreeBitmap(glyphBitmap);
-                        }
-
-                        atlasX += glyphW + GLYPH_PADDING;
-                        rowHeight = Math.max(rowHeight, glyphH + GLYPH_PADDING);
-                    }
-
-                    // Записываем bakedChar в позицию bakedCount
-                    STBTTBakedChar bc = bakedChars.get(bakedCount);
-                    long bcAddress = bc.address();
-
-                    if (hasBitmap) {
-                        MemoryUtil.memPutShort(bcAddress + STBTTBakedChar.X0, (short) placeX);
-                        MemoryUtil.memPutShort(bcAddress + STBTTBakedChar.Y0, (short) placeY);
-                        MemoryUtil.memPutShort(bcAddress + STBTTBakedChar.X1, (short) (placeX + glyphW));
-                        MemoryUtil.memPutShort(bcAddress + STBTTBakedChar.Y1, (short) (placeY + glyphH));
-                    } else {
-                        // невидимый глиф (пробел и т.п.)
-                        MemoryUtil.memPutShort(bcAddress + STBTTBakedChar.X0, (short) 0);
-                        MemoryUtil.memPutShort(bcAddress + STBTTBakedChar.Y0, (short) 0);
-                        MemoryUtil.memPutShort(bcAddress + STBTTBakedChar.X1, (short) 0);
-                        MemoryUtil.memPutShort(bcAddress + STBTTBakedChar.Y1, (short) 0);
-                    }
-
-                    MemoryUtil.memPutFloat(bcAddress + STBTTBakedChar.XOFF, (float) x0.get(0));
-                    MemoryUtil.memPutFloat(bcAddress + STBTTBakedChar.YOFF, (float) y0.get(0));
-                    MemoryUtil.memPutFloat(
-                            bcAddress + STBTTBakedChar.XADVANCE,
-                            (float) advanceWidth.get(0) * stbScale * OVERSAMPLE
-                    );
-
-                    // FIX #3: маппим только реально запечённые (или хотя бы корректно описанные) bakedCount
-                    codepointToIndex.put(codepoint, bakedCount);
-                    availableCodepoints.add(codepoint);
-
-                    bakedCount++;
+            if (has) {
+                if (packX + gw + PAD >= ATLAS_SIZE && packX > 0) {
+                    packX = 0;
+                    packY += packRowH;
+                    packRowH = 0;
                 }
+                if (packY + gh + PAD >= ATLAS_SIZE) return;
+                px = packX;
+                py = packY;
+
+                IntBuffer pw = st.mallocInt(1), ph = st.mallocInt(1),
+                        ox = st.mallocInt(1), oy = st.mallocInt(1);
+                ByteBuffer gb = STBTruetype.stbtt_GetCodepointBitmap(fontInfo,
+                        scale * OVERSAMPLE, scale * OVERSAMPLE, cp, pw, ph, ox, oy);
+                if (gb != null) {
+                    int aw = pw.get(0), ah = ph.get(0);
+                    for (int gy = 0; gy < ah; gy++)
+                        for (int gx = 0; gx < aw; gx++)
+                            bmp.put((py + gy) * ATLAS_SIZE + px + gx,
+                                    gb.get(gy * aw + gx));
+                    STBTruetype.stbtt_FreeBitmap(gb);
+                }
+                packX += gw + PAD;
+                packRowH = Math.max(packRowH, gh + PAD);
             }
 
-            // --- NativeImage ---
-            NativeImage image = new NativeImage(NativeImage.Format.RGBA, ATLAS_SIZE, ATLAS_SIZE, false);
+            long adr = baked.get(slot).address();
+            MemoryUtil.memPutShort(adr + STBTTBakedChar.X0, (short) (has ? px : 0));
+            MemoryUtil.memPutShort(adr + STBTTBakedChar.Y0, (short) (has ? py : 0));
+            MemoryUtil.memPutShort(adr + STBTTBakedChar.X1, (short) (has ? px + gw : 0));
+            MemoryUtil.memPutShort(adr + STBTTBakedChar.Y1, (short) (has ? py + gh : 0));
+            MemoryUtil.memPutFloat(adr + STBTTBakedChar.XOFF, (float) x0.get(0));
+            MemoryUtil.memPutFloat(adr + STBTTBakedChar.YOFF, (float) y0.get(0));
+            MemoryUtil.memPutFloat(adr + STBTTBakedChar.XADVANCE,
+                    adv.get(0) * scale * OVERSAMPLE);
 
-            for (int py = 0; py < ATLAS_SIZE; py++) {
-                int rowOffset = py * ATLAS_SIZE;
-                for (int px = 0; px < ATLAS_SIZE; px++) {
-                    int alpha = bitmap.get(rowOffset + px) & 0xFF;
-                    int argb = (alpha << 24) | 0x00FFFFFF;
-                    image.setPixelABGR(px, py, argb);
-                }
-            }
-
-            String textureName = "customfont_" + resourcePath.hashCode() + "_" + (int) fontSize;
-            this.atlasTexture = new DynamicTexture(() -> textureName, image);
-            this.atlasTexture.setSampler(
-                    RenderSystem.getSamplerCache().getClampToEdge(FilterMode.LINEAR)
-            );
-
-            this.atlasLocation = Identifier.withDefaultNamespace("dynamic/" + textureName);
-            Minecraft.getInstance().getTextureManager().register(atlasLocation, atlasTexture);
-
-        } finally {
-            MemoryUtil.memFree(bitmap);
+            idxMap.put(cp, slot);
         }
     }
 
-    // ------------------- Render API -------------------
+    // ==================== RENDER ====================
 
-    public void drawString(GuiGraphics g, String text, float x, float y, int color) {
-        drawString(g, text, x, y, color, false);
+    public void drawString(GuiGraphics g, String t, float x, float y, int col) {
+        drawString(g, t, x, y, col, false);
     }
 
-    public void drawString(GuiGraphics g, String text, float x, float y, int color, boolean shadow) {
-        if (text == null || text.isEmpty()) return;
-        if (shadow) renderText(g, text, x + 1.0f, y + 1.0f, darken(color), true);
-        renderText(g, text, x, y, color, false);
+    public void drawString(GuiGraphics g, String t, float x, float y, int col, boolean sh) {
+        if (isEmpty(t)) return;
+        if (sh) render(g, t, x + 1, y + 1, darken(col), true);
+        render(g, t, x, y, col, false);
     }
 
-    public void drawCenteredString(GuiGraphics g, String text, float x, float y, int color) {
-        drawCenteredString(g, text, x, y, color, false);
+    public void drawCenteredString(GuiGraphics g, String t, float x, float y, int col) {
+        drawString(g, t, x - getWidth(t) / 2, y, col);
     }
 
-    public void drawCenteredString(GuiGraphics g, String text, float x, float y, int color, boolean shadow) {
-        float w = getWidth(text);
-        drawString(g, text, x - w * 0.5f, y, color, shadow);
+    public void drawCenteredString(GuiGraphics g, String t, float x, float y, int col, boolean sh) {
+        drawString(g, t, x - getWidth(t) / 2, y, col, sh);
     }
 
-    public void drawRightString(GuiGraphics g, String text, float x, float y, int color) {
-        drawRightString(g, text, x, y, color, false);
+    public void drawRightString(GuiGraphics g, String t, float x, float y, int col) {
+        drawString(g, t, x - getWidth(t), y, col);
     }
 
-    public void drawRightString(GuiGraphics g, String text, float x, float y, int color, boolean shadow) {
-        float w = getWidth(text);
-        drawString(g, text, x - w, y, color, shadow);
+    public void drawRightString(GuiGraphics g, String t, float x, float y, int col, boolean sh) {
+        drawString(g, t, x - getWidth(t), y, col, sh);
     }
 
-    // ------------------- Core render -------------------
+    // ==================== COMPONENT RENDER (Minecraft native) ====================
 
-    private void renderText(GuiGraphics g, String text, float x, float y, int originalColor, boolean isShadow) {
-        float baselineY = y + scaledAscent;
-        float startX = x;
+    public void drawComponent(GuiGraphics g, net.minecraft.network.chat.Component comp, float x, float y, int col) {
+        drawComponent(g, comp, x, y, col, false);
+    }
 
-        int currentColor = originalColor;
+    public void drawComponent(GuiGraphics g, net.minecraft.network.chat.Component comp, float x, float y, int col, boolean sh) {
+        if (comp == null) return;
+        if (sh) renderComponent(g, comp, x + 1, y + 1, darken(col), true);
+        renderComponent(g, comp, x, y, col, false);
+    }
 
-        boolean bold = false;
-        boolean italic = false;
-        boolean underline = false;
-        boolean strikethrough = false;
-        boolean obfuscated = false;
+    public void drawCenteredComponent(GuiGraphics g, net.minecraft.network.chat.Component comp, float x, float y, int col) {
+        drawComponent(g, comp, x - getComponentWidth(comp) / 2, y, col);
+    }
 
-        float lineStartX = startX;
-        float cursorX = startX;
+    public void drawCenteredComponent(GuiGraphics g, net.minecraft.network.chat.Component comp, float x, float y, int col, boolean sh) {
+        drawComponent(g, comp, x - getComponentWidth(comp) / 2, y, col, sh);
+    }
 
-        int prevCpForKerning = -1;
+    public void drawRightComponent(GuiGraphics g, net.minecraft.network.chat.Component comp, float x, float y, int col) {
+        drawComponent(g, comp, x - getComponentWidth(comp), y, col);
+    }
 
-        for (int i = 0; i < text.length(); i++) {
-            char c = text.charAt(i);
+    public void drawRightComponent(GuiGraphics g, net.minecraft.network.chat.Component comp, float x, float y, int col, boolean sh) {
+        drawComponent(g, comp, x - getComponentWidth(comp), y, col, sh);
+    }
 
-            if (c == '§' && i + 1 < text.length()) {
-                char code = Character.toLowerCase(text.charAt(i + 1));
+    private void renderComponent(GuiGraphics g, net.minecraft.network.chat.Component comp, float x, float y, int baseCol, boolean shadow) {
+        float cx = x, by = y + asc;
+        renderComponentRec(g, comp, cx, by, baseCol, shadow, -1);
+    }
+
+    private float renderComponentRec(GuiGraphics g, net.minecraft.network.chat.Component comp, float cx, float by, int baseCol, boolean shadow, int prev) {
+        net.minecraft.network.chat.Style style = comp.getStyle();
+
+        int col = baseCol;
+        if (style.getColor() != null) {
+            Integer styleColor = style.getColor().getValue();
+            if (styleColor != null) {
+                int alpha = ARGB.alpha(baseCol);
+                col = ARGB.color(alpha, ARGB.red(styleColor), ARGB.green(styleColor), ARGB.blue(styleColor));
+                if (shadow) col = darken(col);
+            }
+        }
+
+        boolean bold = style.isBold();
+        boolean ital = style.isItalic();
+        boolean und = style.isUnderlined();
+        boolean strk = style.isStrikethrough();
+        boolean obf = style.isObfuscated();
+
+        StringBuilder contentBuilder = new StringBuilder();
+        comp.getContents().visit((text) -> {
+            contentBuilder.append(text);
+            return java.util.Optional.empty();
+        });
+        String content = contentBuilder.toString();
+        
+        float lsx = cx;
+
+        for (int i = 0; i < content.length(); i++) {
+            char ch = content.charAt(i);
+
+            if (ch == '§' && i + 1 < content.length()) {
+                char code = Character.toLowerCase(content.charAt(i + 1));
                 i++;
+
+                if (code == 'r') {
+                    col = shadow ? darken(baseCol) : baseCol;
+                    bold = ital = und = strk = obf = false;
+                    prev = -1;
+                    continue;
+                }
 
                 int mappedColor = getColorForCode(code);
                 if (mappedColor != -1) {
-                    int alpha = ARGB.alpha(originalColor);
-                    currentColor = ARGB.color(alpha,
+                    int alpha = ARGB.alpha(baseCol);
+                    col = ARGB.color(alpha,
                             ARGB.red(mappedColor),
                             ARGB.green(mappedColor),
                             ARGB.blue(mappedColor));
-                    if (isShadow) currentColor = darken(currentColor);
-
-                    bold = italic = underline = strikethrough = obfuscated = false;
+                    if (shadow) col = darken(col);
                 } else {
                     switch (code) {
                         case 'l' -> bold = true;
-                        case 'o' -> italic = true;
-                        case 'n' -> underline = true;
-                        case 'm' -> strikethrough = true;
-                        case 'k' -> obfuscated = true;
-                        case 'r' -> {
-                            currentColor = isShadow ? darken(originalColor) : originalColor;
-                            bold = italic = underline = strikethrough = obfuscated = false;
+                        case 'o' -> ital = true;
+                        case 'n' -> und = true;
+                        case 'm' -> strk = true;
+                        case 'k' -> obf = true;
+                    }
+                }
+                
+                prev = -1;
+                continue;
+            }
+            
+            if (ch == '\n') {
+                if (und) fill(g, lsx, cx, by + 1, col);
+                if (strk) fill(g, lsx, cx, by - asc * 0.35f, col);
+                cx = lsx;
+                by += lineH;
+                prev = -1;
+                continue;
+            }
+
+            char rc = obf && ch != ' ' ? randChar(ch) : ch;
+            int cp = (int) rc;
+
+            if (prev != -1) cx += STBTruetype.stbtt_GetCodepointKernAdvance(fontInfo, prev, cp) * scale;
+
+            Integer idx = idxMap.get(cp);
+            if (idx == null) {
+                float adv = fontSize * 0.5f;
+                if (bold) adv += 1;
+                cx += adv;
+                prev = cp;
+                continue;
+            }
+
+            STBTTBakedChar cd = baked.get(idx);
+            int sx = cd.x0(), sy = cd.y0(), sw = cd.x1() - sx, sh = cd.y1() - sy;
+            float gx = cx + cd.xoff() * INV_OS;
+            float gy = by + cd.yoff() * INV_OS;
+
+            if (sw > 0 && sh > 0) {
+                drawGlyph(g, gx, gy, cd, ital, col);
+                if (bold) drawGlyph(g, gx + 1, gy, cd, ital, col);
+            }
+
+            float adv = cd.xadvance() * INV_OS;
+            if (bold) adv += 1;
+            cx += adv;
+            prev = cp;
+        }
+
+        if (und) fill(g, lsx, cx, by + 1, col);
+        if (strk) fill(g, lsx, cx, by - asc * 0.35f, col);
+
+        // Siblings
+        for (net.minecraft.network.chat.Component sib : comp.getSiblings()) {
+            cx = renderComponentRec(g, sib, cx, by, baseCol, shadow, prev);
+        }
+
+        return cx;
+    }
+
+    public float getComponentWidth(net.minecraft.network.chat.Component comp) {
+        if (comp == null) return 0;
+        return getCompWidthRec(comp, -1);
+    }
+
+    private float getCompWidthRec(net.minecraft.network.chat.Component comp, int prev) {
+        float w = 0;
+        boolean bold = comp.getStyle().isBold();
+        
+        // Используем visit для правильного извлечения текста
+        StringBuilder contentBuilder = new StringBuilder();
+        comp.getContents().visit((text) -> {
+            contentBuilder.append(text);
+            return java.util.Optional.empty();
+        });
+        String content = contentBuilder.toString();
+
+        for (int i = 0; i < content.length(); i++) {
+            char ch = content.charAt(i);
+            
+            // Обработка §-кодов (пропускаем их при подсчёте ширины)
+            if (ch == '§' && i + 1 < content.length()) {
+                char code = Character.toLowerCase(content.charAt(i + 1));
+                i++; // Пропускаем код
+                
+                // §r сбрасывает форматирование
+                if (code == 'r') {
+                    bold = false;
+                } else if (code == 'l') {
+                    bold = true;
+                }
+                // Цветовые коды НЕ сбрасывают bold
+                
+                prev = -1;
+                continue;
+            }
+            
+            if (ch == '\n') { prev = -1; continue; }
+            
+            int cp = (int) ch;
+            if (prev != -1) w += STBTruetype.stbtt_GetCodepointKernAdvance(fontInfo, prev, cp) * scale;
+            
+            float cw = getCharW(ch);
+            if (bold) cw += 1;
+            w += cw;
+            prev = cp;
+        }
+
+        for (net.minecraft.network.chat.Component sib : comp.getSiblings()) {
+            w += getCompWidthRec(sib, prev);
+        }
+
+        return w;
+    }
+
+    // ★★★ STATE — как у них ★★★
+    private static final class State {
+        int col;
+        boolean bold, ital, und, strk, obf;
+
+        void reset(int base, boolean shadow) {
+            col = shadow ? darken(base) : base;
+            bold = ital = und = strk = obf = false;
+        }
+    }
+
+    private void render(GuiGraphics g, String t, float x, float y,
+                        int baseCol, boolean shadow) {
+        float bx = x, cx = x, by = y + asc;
+        State s = new State();
+        s.reset(baseCol, shadow);
+        int prev = -1;
+
+        for (int i = 0; i < t.length(); i++) {
+            char ch = t.charAt(i);
+
+            // ★★★ ИХ ЛОГИКА: проверка null + RESET ★★★
+            if (ch == '§' && i + 1 < t.length()) {
+                ChatFormatting fmt = ChatFormatting.getByCode(t.charAt(i + 1));
+                i++; // пропускаем код
+
+                if (fmt == null) continue; // ★★★ НЕВАЛИДНЫЙ КОД — пропуск ★★★
+
+                if (fmt == ChatFormatting.RESET) {
+                    s.reset(baseCol, shadow);
+                    prev = -1;
+                    continue;
+                }
+
+                if (fmt.isColor()) {
+                    // Цвет: alpha из base, RGB из формата
+                    s.col = ARGB.color(ARGB.alpha(baseCol),
+                            ARGB.red(fmt.getColor()),
+                            ARGB.green(fmt.getColor()),
+                            ARGB.blue(fmt.getColor()));
+                    if (shadow) s.col = darken(s.col);
+                } else {
+                    // Форматирование
+                    switch (fmt) {
+                        case BOLD -> s.bold = true;
+                        case ITALIC -> s.ital = true;
+                        case UNDERLINE -> s.und = true;
+                        case STRIKETHROUGH -> s.strk = true;
+                        case OBFUSCATED -> s.obf = true;
+                        default -> {
                         }
                     }
                 }
-
-                prevCpForKerning = -1;
                 continue;
             }
 
-            if (c == '\n') {
-                if (underline) drawLineDecoration(g, lineStartX, cursorX, baselineY, 1.0f, currentColor);
-                if (strikethrough) drawLineDecoration(g, lineStartX, cursorX, baselineY, -scaledAscent * 0.35f, currentColor);
-
-                cursorX = startX;
-                baselineY += lineHeight;
-                lineStartX = startX;
-                prevCpForKerning = -1;
+            if (ch == '\n') {
+                drawDeco(g, bx, cx, by, s);
+                cx = bx;
+                by += lineH;
+                prev = -1;
                 continue;
             }
 
-            char renderChar = c;
-            if (obfuscated && c != ' ') {
-                renderChar = getRandomCharSimilarWidth(c);
-            }
+            char rc = s.obf && ch != ' ' ? randChar(ch) : ch;
+            int cp = rc;
 
-            int cp = (int) renderChar;
+            if (prev != -1)
+                cx += STBTruetype.stbtt_GetCodepointKernAdvance(fontInfo, prev, cp) * scale;
+            prev = cp;
 
-            // (опционально) kerning — делает текст заметно “правильнее” по spacing
-            if (prevCpForKerning != -1) {
-                cursorX += STBTruetype.stbtt_GetCodepointKernAdvance(fontInfo, prevCpForKerning, cp) * stbScale;
-            }
-
-            Integer charIndex = codepointToIndex.get(cp);
-            if (charIndex == null) {
-                // нет в атласе -> просто продвигаем курсор по метрикам
-                float adv = getCharWidth(renderChar);
-                if (bold) adv += 1.0f;
-                cursorX += adv;
-                prevCpForKerning = cp;
+            Integer slot = idxMap.get(cp);
+            if (slot == null) {
+                cx += fontSize * .5f + (s.bold ? 1 : 0);
                 continue;
             }
 
-            STBTTBakedChar charData = bakedChars.get(charIndex);
-
-            int srcX = charData.x0();
-            int srcY = charData.y0();
-            int srcW = charData.x1() - charData.x0();
-            int srcH = charData.y1() - charData.y0();
-
-            float glyphX = cursorX + charData.xoff() * INV_OVERSAMPLE;
-            float glyphY = baselineY + charData.yoff() * INV_OVERSAMPLE;
-
-            if (srcW > 0 && srcH > 0) {
-                drawGlyph(g, glyphX, glyphY, srcX, srcY, srcW, srcH, italic, currentColor);
-
-                if (bold) {
-                    drawGlyph(g, glyphX + 1.0f, glyphY, srcX, srcY, srcW, srcH, italic, currentColor);
-                }
+            STBTTBakedChar bc = baked.get(slot);
+            int sw = bc.x1() - bc.x0(), sh = bc.y1() - bc.y0();
+            float gx = cx + bc.xoff() * INV_OS, gy = by + bc.yoff() * INV_OS;
+            if (sw > 0 && sh > 0) {
+                drawGlyph(g, gx, gy, bc, s.ital, s.col);
+                if (s.bold) drawGlyph(g, gx + 1, gy, bc, s.ital, s.col);
             }
-
-            float advance = charData.xadvance() * INV_OVERSAMPLE;
-            if (bold) advance += 1.0f;
-            cursorX += advance;
-
-            prevCpForKerning = cp;
+            cx += bc.xadvance() * INV_OS + (s.bold ? 1 : 0);
         }
-
-        if (underline) drawLineDecoration(g, lineStartX, cursorX, baselineY, 1.0f, currentColor);
-        if (strikethrough) drawLineDecoration(g, lineStartX, cursorX, baselineY, -scaledAscent * 0.35f, currentColor);
+        drawDeco(g, bx, cx, by, s);
     }
 
-    private void drawGlyph(GuiGraphics g,
-                           float x, float y,
-                           int srcX, int srcY, int srcW, int srcH,
-                           boolean italic,
-                           int color) {
-        if (srcW <= 0 || srcH <= 0) return;
+    private void drawDeco(GuiGraphics g, float fx, float tx, float by, State s) {
+        int c = s.col;
+        if (s.und) fill(g, fx, tx, by + 1, c);
+        if (s.strk) fill(g, fx, tx, by - asc * .35f, c);
+    }
 
+    private void drawGlyph(GuiGraphics g, float x, float y,
+                           STBTTBakedChar bc, boolean ital, int col) {
+        int sw = bc.x1() - bc.x0(), sh = bc.y1() - bc.y0();
+        if (sw <= 0 || sh <= 0) return;
         g.pose().pushMatrix();
-
-        // translateLocal = “нормальный” сдвиг в экранных координатах
         g.pose().translateLocal(x, y);
-
-        // Рисуем oversampled-битмап и масштабируем до нормального размера 1/OVERSAMPLE
-        g.pose().scale(INV_OVERSAMPLE, INV_OVERSAMPLE);
-
-        // Простейшая “italic” через shear (если тебе не надо — можно выкинуть блок)
-        if (italic) {
-            float shear = 0.25f;
-            float dstH = srcH * INV_OVERSAMPLE;
-            // сдвиг, чтобы верх был правее низа
-            g.pose().translateLocal(shear * dstH, 0.0f);
-            g.pose().shearX(-shear);
+        g.pose().scale(INV_OS, INV_OS);
+        if (ital) {
+            g.pose().translateLocal(.25f * sh * INV_OS, 0);
+            g.pose().shearX(-.25f);
         }
-
-        g.blit(
-                RenderPipelines.GUI_TEXTURED,
-                atlasLocation,
-                0, 0,
-                (float) srcX, (float) srcY,
-                srcW, srcH,
-                srcW, srcH,
-                ATLAS_SIZE, ATLAS_SIZE,
-                color
-        );
-
+        g.blit(RenderPipelines.GUI_TEXTURED, atlasId, 0, 0,
+                bc.x0(), bc.y0(), sw, sh, sw, sh, ATLAS_SIZE, ATLAS_SIZE, col);
         g.pose().popMatrix();
     }
 
-    private void drawLineDecoration(GuiGraphics g, float fromX, float toX, float baselineY, float yOffset, int color) {
-        int y = Math.round(baselineY + yOffset);
-        int x1 = Math.round(fromX);
-        int x2 = Math.round(toX);
-        if (x2 > x1) g.fill(x1, y, x2, y + 1, color);
+    private void fill(GuiGraphics g, float x1, float x2, float yy, int col) {
+        int y = Math.round(yy), a = Math.round(x1), b = Math.round(x2);
+        if (b > a) g.fill(a, y, b, y + 1, col);
     }
 
-    // ------------------- Metrics -------------------
+    // ==================== METRICS ====================
 
-    public float getWidth(String text) {
-        if (text == null || text.isEmpty()) return 0;
-
-        float width = 0;
-        float maxWidth = 0;
+    public float getWidth(String t) {
+        if (isEmpty(t)) return 0;
+        float w = 0, max = 0;
         boolean bold = false;
+        int prev = -1;
 
-        int prevCpForKerning = -1;
+        for (int i = 0; i < t.length(); i++) {
+            char ch = t.charAt(i);
 
-        for (int i = 0; i < text.length(); i++) {
-            char c = text.charAt(i);
-
-            if (c == '§' && i + 1 < text.length()) {
-                char code = Character.toLowerCase(text.charAt(i + 1));
+            // ★★★ ИХ ЛОГИКА: проверка null ★★★
+            if (ch == '§' && i + 1 < t.length()) {
+                ChatFormatting fmt = ChatFormatting.getByCode(t.charAt(i + 1));
                 i++;
-                if (code == 'l') bold = true;
-                else if (code == 'r' || getColorForCode(code) != -1) bold = false;
 
-                prevCpForKerning = -1;
+                if (fmt == null) continue; // невалидный код
+
+                if (fmt == ChatFormatting.RESET) {
+                    bold = false;
+                    prev = -1;
+                    continue;
+                }
+                if (fmt == ChatFormatting.BOLD) bold = true;
                 continue;
             }
 
-            if (c == '\n') {
-                maxWidth = Math.max(maxWidth, width);
-                width = 0;
-                prevCpForKerning = -1;
+            if (ch == '\n') {
+                max = Math.max(max, w);
+                w = 0;
+                prev = -1;
                 continue;
             }
 
-            int cp = (int) c;
-            if (prevCpForKerning != -1) {
-                width += STBTruetype.stbtt_GetCodepointKernAdvance(fontInfo, prevCpForKerning, cp) * stbScale;
-            }
-
-            float cw = getCharWidth(c);
-            if (bold) cw += 1.0f;
-            width += cw;
-
-            prevCpForKerning = cp;
+            if (prev != -1)
+                w += STBTruetype.stbtt_GetCodepointKernAdvance(fontInfo, prev, ch) * scale;
+            prev = ch;
+            w += getCharW(ch) + (bold ? 1 : 0);
         }
-
-        return Math.max(maxWidth, width);
+        return Math.max(max, w);
     }
 
     public float getWidth(char c) {
-        return getCharWidth(c);
+        return getCharW(c);
     }
 
-    private float getCharWidth(char c) {
-        Float w = charWidths.get((int) c);
-        if (w != null) return w;
-        return fontSize * 0.3f;
+    private float getCharW(char c) {
+        Float v = widths.get((int) c);
+        return v != null ? v : fontSize * .3f;
     }
 
-    public float getHeight(String text) {
-        if (text == null || text.isEmpty()) return lineHeight;
-        int lines = 1;
-        for (int i = 0; i < text.length(); i++) {
-            char c = text.charAt(i);
-            if (c == '§' && i + 1 < text.length()) { i++; continue; }
-            if (c == '\n') lines++;
+    public float getHeight(String t) {
+        if (isEmpty(t)) return lineH;
+        int l = 1;
+        for (int i = 0; i < t.length(); i++) {
+            if (t.charAt(i) == '\n') l++;
+            else if (t.charAt(i) == '§') i++;
         }
-        return lines * lineHeight;
+        return l * lineH;
     }
 
     public float getHeight() {
-        return lineHeight;
+        return lineH;
     }
 
     public float getAscent() {
-        return scaledAscent;
+        return asc;
     }
 
     public float getDescent() {
-        return -scaledDescent;
+        return -desc;
     }
 
-    // ------------------- Utils -------------------
-
-    public String trimToWidth(String text, float maxWidth) {
-        if (text == null) return "";
-
+    public String trimToWidth(String t, float max) {
+        if (isEmpty(t)) return "";
         StringBuilder sb = new StringBuilder();
         float w = 0;
         boolean bold = false;
+        int prev = -1;
 
-        int prevCpForKerning = -1;
+        for (int i = 0; i < t.length(); i++) {
+            char ch = t.charAt(i);
 
-        for (int i = 0; i < text.length(); i++) {
-            char c = text.charAt(i);
-
-            if (c == '§' && i + 1 < text.length()) {
-                char code = Character.toLowerCase(text.charAt(i + 1));
-                sb.append(c).append(text.charAt(i + 1));
-
-                if (code == 'l') bold = true;
-                else if (code == 'r' || getColorForCode(code) != -1) bold = false;
-
+            if (ch == '§' && i + 1 < t.length()) {
+                ChatFormatting fmt = ChatFormatting.getByCode(t.charAt(i + 1));
                 i++;
-                prevCpForKerning = -1;
+                sb.append(ch).append(t.charAt(i));
+
+                if (fmt == null) continue;
+                if (fmt == ChatFormatting.RESET) {
+                    bold = false;
+                    prev = -1;
+                    continue;
+                }
+                if (fmt == ChatFormatting.BOLD) bold = true;
                 continue;
             }
 
-            int cp = (int) c;
-            float kern = 0;
-            if (prevCpForKerning != -1) {
-                kern = STBTruetype.stbtt_GetCodepointKernAdvance(fontInfo, prevCpForKerning, cp) * stbScale;
-            }
-
-            float cw = getCharWidth(c) + kern;
-            if (bold) cw += 1.0f;
-
-            if (w + cw > maxWidth) break;
-
-            sb.append(c);
+            float k = prev != -1 ?
+                    STBTruetype.stbtt_GetCodepointKernAdvance(fontInfo, prev, ch) * scale : 0;
+            float cw = getCharW(ch) + k + (bold ? 1 : 0);
+            if (w + cw > max) break;
+            sb.append(ch);
             w += cw;
-
-            prevCpForKerning = cp;
-        }
-
-        return sb.toString();
-    }
-
-    public static String stripColorCodes(String text) {
-        if (text == null) return "";
-        StringBuilder sb = new StringBuilder(text.length());
-        for (int i = 0; i < text.length(); i++) {
-            char c = text.charAt(i);
-            if (c == '§' && i + 1 < text.length()) { i++; continue; }
-            sb.append(c);
+            prev = ch;
         }
         return sb.toString();
     }
 
-    private static int darken(int color) {
-        int a = ARGB.alpha(color);
-        int r = (int) (ARGB.red(color) * 0.25f);
-        int g = (int) (ARGB.green(color) * 0.25f);
-        int b = (int) (ARGB.blue(color) * 0.25f);
-        return ARGB.color(a, r, g, b);
+    public static String strip(String t) {
+        if (isEmpty(t)) return "";
+        StringBuilder sb = new StringBuilder(t.length());
+        for (int i = 0; i < t.length(); i++)
+            if (t.charAt(i) == '§') i++;
+            else sb.append(t.charAt(i));
+        return sb.toString();
     }
 
-    private char getRandomCharSimilarWidth(char original) {
-        float targetWidth = getCharWidth(original);
+    // ==================== UTILS ====================
 
-        for (int attempt = 0; attempt < 5; attempt++) {
-            if (availableCodepoints.isEmpty()) break;
-            int randomIndex = (int) (Math.random() * availableCodepoints.size());
-            char candidate = (char) (int) availableCodepoints.get(randomIndex);
-            float candidateWidth = getCharWidth(candidate);
-            if (Math.abs(candidateWidth - targetWidth) < targetWidth * 0.3f) {
-                return candidate;
-            }
-        }
-
-        if (!availableCodepoints.isEmpty()) {
-            return (char) (int) availableCodepoints.get((int) (Math.random() * availableCodepoints.size()));
-        }
-        return original;
+    private static boolean isEmpty(String s) {
+        return s == null || s.isEmpty();
     }
 
-    private static ByteBuffer loadResource(String path) throws IOException {
-        String cleanPath = path.startsWith("/") ? path.substring(1) : path;
+    private static int darken(int c) {
+        return ARGB.color(ARGB.alpha(c),
+                (int) (ARGB.red(c) * .25f), (int) (ARGB.green(c) * .25f), (int) (ARGB.blue(c) * .25f));
+    }
 
-        InputStream is = CustomFont.class.getClassLoader().getResourceAsStream(cleanPath);
-        if (is == null) is = CustomFont.class.getResourceAsStream(path);
-        if (is == null) throw new IOException("Font resource not found: " + path);
+    private char randChar(char orig) {
+        float tw = getCharW(orig);
+        for (int a = 0; a < 5; a++) {
+            char cand = (char) (int) codepoints.get((int) (Math.random() * codepoints.size()));
+            if (Math.abs(getCharW(cand) - tw) < tw * .3f) return cand;
+        }
+        return codepoints.isEmpty() ? orig : (char) (int) codepoints.get((int) (Math.random() * codepoints.size()));
+    }
 
+    private static ByteBuffer load(String p) throws IOException {
+        String cp = p.startsWith("/") ? p.substring(1) : p;
+        InputStream is = CustomFont.class.getClassLoader().getResourceAsStream(cp);
+        if (is == null) throw new IOException("Not found: " + p);
         try {
-            byte[] bytes = is.readAllBytes();
-            ByteBuffer buffer = MemoryUtil.memAlloc(bytes.length);
-            buffer.put(bytes).flip();
-            return buffer;
+            byte[] b = is.readAllBytes();
+            ByteBuffer bb = MemoryUtil.memAlloc(b.length);
+            bb.put(b).flip();
+            return bb;
         } finally {
             is.close();
         }
@@ -646,22 +658,13 @@ public class CustomFont implements AutoCloseable {
 
     @Override
     public void close() {
-        if (bakedChars != null) bakedChars.free();
-
-        if (atlasLocation != null) {
-            try {
-                Minecraft.getInstance().getTextureManager().release(atlasLocation);
-            } catch (Exception ignored) {}
-        }
-
+        if (baked != null) baked.free();
+        if (atlasId != null) Minecraft.getInstance().getTextureManager().release(atlasId);
         if (atlasTexture != null) {
-            try {
-                atlasTexture.close();
-            } catch (Exception ignored) {}
+            atlasTexture.close();
             atlasTexture = null;
         }
-        atlasLocation = null;
-
+        atlasId = null;
         if (ttfBuffer != null) MemoryUtil.memFree(ttfBuffer);
     }
 }

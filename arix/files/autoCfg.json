@@ -2,7 +2,7 @@
   "modules": {
     "testmodule": {
       "bind": -1,
-      "state": false,
+      "state": true,
       "Test bind Setting": -1,
       "Боалеан": false,
       "Цвет сеттинг": {
@@ -10,8 +10,8 @@
         "saturation": 1.0,
         "brightness": 1.0
       },
-      "Лист": "s233,Three,sds,One,Two,sdsdsd",
-      "Мод": "sdsdsds",
+      "Лист": "Three,sds,One,Two,sdsdsd,s233",
+      "Мод": "sdsd",
       "Слайдер": 1.0,
       "Текст Сеттинг": ""
     },

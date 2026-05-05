@@ -125,9 +125,6 @@ import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
-import ru.arixcompany.utils.animation.Animation;
-import ru.arixcompany.utils.animation.Direction;
-import ru.arixcompany.utils.animation.impl.EaseInOutQuad;
 import ru.arixcompany.utils.math.ProjectUtils;
 
 public class GameRenderer implements TrackedWaypoint.Projector, AutoCloseable {
@@ -407,8 +404,8 @@ public class GameRenderer implements TrackedWaypoint.Projector, AutoCloseable {
         this.fovModifier = Mth.clamp(this.fovModifier, 0.1F, 1.5F);
     }
 
-    private final Animation zoomAnimation = new EaseInOutQuad(150, 1.0);
-    private boolean lastZoomState = true;
+    private float zoomProgress = 0.0F;
+    private boolean lastZoomState = false;
 
     public float getFov(Camera p_109142_, float p_109143_, boolean p_109144_) {
         if (this.isPanoramicMode()) {
@@ -428,13 +425,15 @@ public class GameRenderer implements TrackedWaypoint.Projector, AutoCloseable {
 
         if (zoom != this.lastZoomState) {
             this.lastZoomState = zoom;
-            this.zoomAnimation.setDirection(zoom ? Direction.FORWARDS : Direction.BACKWARDS);
             Config.zoomMode = zoom;
             this.minecraft.levelRenderer.needsUpdate();
         }
 
-        float zoomAnim = (float) this.zoomAnimation.getOutput();
-        float zoomFactor = Mth.lerp(zoomAnim, 1.0F, 1.2F);
+        // Плавная интерполяция зума
+        float targetZoom = zoom ? 1.0F : 0.0F;
+        this.zoomProgress = Mth.lerp(0.15F, this.zoomProgress, targetZoom);
+        
+        float zoomFactor = Mth.lerp(this.zoomProgress, 1.0F, 1.2F);
         f /= zoomFactor;
 
         if (p_109142_.entity() instanceof LivingEntity livingentity && livingentity.isDeadOrDying()) {
@@ -557,16 +556,14 @@ public class GameRenderer implements TrackedWaypoint.Projector, AutoCloseable {
         }
         if (zoom != this.lastZoomState) {
             this.lastZoomState = zoom;
-            this.zoomAnimation.setDirection(zoom ? Direction.FORWARDS : Direction.BACKWARDS);
             this.cachedProjectionMatrix = null;
         }
 
-        float zoomAnim = (float) this.zoomAnimation.getOutput();
-        float zoomFactor = Mth.lerp(zoomAnim, 1.0F, 4.0F);
-
-        if (Math.abs(zoomFactor - this.lastZoomFactor) < 0.001F && this.cachedProjectionMatrix != null) {
-            return this.cachedProjectionMatrix;
-        }
+        // Плавная интерполяция зума
+        float targetZoom = zoom ? 1.0F : 0.0F;
+        this.zoomProgress = Mth.lerp(0.15F, this.zoomProgress, targetZoom);
+        
+        float zoomFactor = Mth.lerp(this.zoomProgress, 1.0F, 4.0F);
 
         this.lastZoomFactor = zoomFactor;
 

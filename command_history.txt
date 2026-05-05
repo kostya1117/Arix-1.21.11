@@ -14,3 +14,10 @@
 /an217
 /an221
 /reg 1
+/reg Xyeglotiche999
+/kit start
+/warp pvp
+/login Xyeglotiche999
+/hub
+/login Xyeglotiche999
+/an101

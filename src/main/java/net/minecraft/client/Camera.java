@@ -57,10 +57,10 @@ public class Camera implements TrackedWaypoint.Camera {
     private float previousPitch = 0.0F;
     private float cameraTransition = 1.0F;
     private int lastCameraMode = 0;
-    private float interpolatedDistance;
+    private float interpolatedDistance = 0.0F;
 
     private float smoothCameraDistance(float targetDistance) {
-        interpolatedDistance = interpolatedDistance + (targetDistance - interpolatedDistance) / 10.0F;
+        interpolatedDistance = interpolatedDistance + (targetDistance - interpolatedDistance);
         return interpolatedDistance;
     }
 
@@ -74,13 +74,15 @@ public class Camera implements TrackedWaypoint.Camera {
         int currentCameraMode = p_90578_ ? (p_90579_ ? 2 : 1) : 0;
         if (currentCameraMode != this.lastCameraMode) {
             this.cameraTransition = 0.0F;
+            this.interpolatedDistance = 0.0F;
         }
         this.lastCameraMode = currentCameraMode;
 
         if (!p_90578_) {
             this.cameraTransition = 0.0F;
+            this.interpolatedDistance = 0.0F;
         } else {
-            this.cameraTransition += (1.0F - this.cameraTransition) * (p_90580_ * 0.1F);
+            this.cameraTransition += (1.0F - this.cameraTransition) * (p_90580_);
             this.cameraTransition = Mth.clamp(this.cameraTransition, 0.0F, 1.0F);
         }
 
@@ -372,6 +374,11 @@ public class Camera implements TrackedWaypoint.Camera {
         this.entity = null;
         this.attributeProbe.reset();
         this.initialized = false;
+        this.interpolatedDistance = 0.0F;
+        this.cameraTransition = 1.0F;
+        this.lastCameraMode = 0;
+        this.previousYaw = 0.0F;
+        this.previousPitch = 0.0F;
     }
 
     public float getPartialTickTime() {

@@ -80,18 +80,21 @@ public class Nametags extends Module {
                 float screenX = (float) pos[0];
                 float screenY = (float) pos[1];
 
-                String name = player.getDisplayName().getString().replace("⚡", "");
+                // Используем Component напрямую
+                net.minecraft.network.chat.Component displayName = player.getDisplayName();
                 float health = player.getHealth();
 
-                String text =
-                        name + " "
-                                + ChatFormatting.GRAY + "["
-                                + ChatFormatting.WHITE + String.format("%.1f", health)
-                                + ChatFormatting.GRAY + "]"
-                                + ChatFormatting.RESET;
+                // Создаём Component с форматированием
+                net.minecraft.network.chat.Component nameComponent = displayName.copy()
+                        .append(net.minecraft.network.chat.Component.literal(" [")
+                                .withStyle(ChatFormatting.GRAY))
+                        .append(net.minecraft.network.chat.Component.literal(String.format("%.1f", health))
+                                .withStyle(ChatFormatting.WHITE))
+                        .append(net.minecraft.network.chat.Component.literal("]")
+                                .withStyle(ChatFormatting.GRAY));
 
                 float fontSize = 10;
-                float textWidth = FontManager.get(fontSize).getWidth(text);
+                float textWidth = FontManager.get(fontSize).getComponentWidth(nameComponent);
                 float textHeight = FontManager.get(fontSize).getHeight();
 
                 float padding = 4f;
@@ -99,7 +102,7 @@ public class Nametags extends Module {
                 float rectX = screenX - textWidth / 2f - padding;
                 float rectY = screenY - textHeight - 8f;
 
-                boolean isFriend = FriendRepo.isFriend(name);
+                boolean isFriend = FriendRepo.isFriend(player.getDisplayName().getString());
                 int bgColor = isFriend ? 0x8028FF28 : 0x90000000;
 
                 RenderUtils.fillRoundRect(rectX, rectY,
@@ -109,9 +112,9 @@ public class Nametags extends Module {
                         bgColor
                 );
 
-                FontManager.get(fontSize).drawString(
+                FontManager.get(fontSize).drawComponent(
                         e.getGuiGraphics(),
-                        text,
+                        nameComponent,
                         screenX - textWidth / 2f,
                         rectY + 2f,
                         0xFFFFFFFF
@@ -186,10 +189,11 @@ public class Nametags extends Module {
             float x = (float) screen.x;
             float y = (float) screen.y;
 
-            String name = item.getItem().getHoverName().getString();
+            // Используем Component напрямую из предмета
+            net.minecraft.network.chat.Component itemName = item.getItem().getHoverName();
 
             float fontSize = 10;
-            float textWidth = FontManager.get(fontSize).getWidth(name);
+            float textWidth = FontManager.get(fontSize).getComponentWidth(itemName);
 
             float rectW = textWidth + 24;
             float rectH = 16;
@@ -210,9 +214,9 @@ public class Nametags extends Module {
             g.renderItemDecorations(mc.font, item.getItem(), 0, 0);
             g.pose().popMatrix();
 
-            FontManager.get(fontSize).drawString(
+            FontManager.get(fontSize).drawComponent(
                     g,
-                    name,
+                    itemName,
                     x - rectW / 2f + 20,
                     y - 6,
                     0xFFFFFFFF
