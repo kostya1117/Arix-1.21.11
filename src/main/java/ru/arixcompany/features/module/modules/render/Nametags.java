@@ -2,11 +2,13 @@ package ru.arixcompany.features.module.modules.render;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3d;
 import ru.arixcompany.features.event.EventHandler;
 import ru.arixcompany.features.event.render.EventRender3D;
@@ -52,8 +54,8 @@ public class Nametags extends Module {
             double y = Mth.lerp(e.getTickDelta(), player.yo, player.getY());
             double z = Mth.lerp(e.getTickDelta(), player.zo, player.getZ());
 
-            Vector3d head = ProjectUtils.worldSpaceToScreenSpace(
-                    new Vector3d(x, y + player.getBbHeight() + 0.3, z)
+            Vec3 head = ProjectUtils.worldSpaceToScreenSpace(
+                    new Vec3(x, y + player.getBbHeight() + 0.3, z)
             );
 
             if (head == null || head.z < 0 || head.z > 1) continue;
@@ -80,12 +82,10 @@ public class Nametags extends Module {
                 float screenX = (float) pos[0];
                 float screenY = (float) pos[1];
 
-                // Используем Component напрямую
-                net.minecraft.network.chat.Component displayName = player.getDisplayName();
+                Component displayName = player.getDisplayName();
                 float health = player.getHealth();
 
-                // Создаём Component с форматированием
-                net.minecraft.network.chat.Component nameComponent = displayName.copy()
+                Component nameComponent = displayName.copy()
                         .append(net.minecraft.network.chat.Component.literal(" [")
                                 .withStyle(ChatFormatting.GRAY))
                         .append(net.minecraft.network.chat.Component.literal(String.format("%.1f", health))
@@ -180,8 +180,8 @@ public class Nametags extends Module {
                 mc.player.getBoundingBox().inflate(64)
         )) {
 
-            Vector3d screen = ProjectUtils.worldSpaceToScreenSpace(
-                    new Vector3d(item.getX(), item.getY() + 0.2, item.getZ())
+            Vec3 screen = ProjectUtils.worldSpaceToScreenSpace(
+                    new Vec3(item.getX(), item.getY() + 0.2, item.getZ())
             );
 
             if (screen == null || screen.z < 0 || screen.z > 1) continue;
@@ -189,8 +189,7 @@ public class Nametags extends Module {
             float x = (float) screen.x;
             float y = (float) screen.y;
 
-            // Используем Component напрямую из предмета
-            net.minecraft.network.chat.Component itemName = item.getItem().getHoverName();
+            Component itemName = item.getItem().getHoverName();
 
             float fontSize = 10;
             float textWidth = FontManager.get(fontSize).getComponentWidth(itemName);

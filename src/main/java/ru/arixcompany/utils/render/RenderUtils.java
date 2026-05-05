@@ -8,15 +8,8 @@ import java.util.ArrayDeque;
 
 public class RenderUtils {
 
-    // =====================================================================
-    //  Transform Stack (портировано из Renderer2D)
-    // =====================================================================
-
     private static final ArrayDeque<float[]> transformStack = new ArrayDeque<>();
 
-    /**
-     * Масштабирование от точки (0, 0)
-     */
     public static void pushScale(float scale) {
         pushScale(scale, scale, 0.0f, 0.0f);
     }
@@ -25,17 +18,11 @@ public class RenderUtils {
         pushScale(sx, sy, 0.0f, 0.0f);
     }
 
-    /**
-     * Масштабирование от заданной точки origin
-     */
     public static void pushScale(float scale, float originX, float originY) {
         pushScale(scale, scale, originX, originY);
     }
 
     public static void pushScale(float sx, float sy, float originX, float originY) {
-        // Матрица масштабирования относительно точки (originX, originY):
-        // [sx,  0, originX*(1-sx)]
-        // [0,  sy, originY*(1-sy)]
         float[] current = transformStack.isEmpty() ? identity() : transformStack.peek();
         float[] scale = new float[]{
                 sx, 0,  originX * (1.0f - sx),
@@ -44,9 +31,6 @@ public class RenderUtils {
         transformStack.push(multiply(current, scale));
     }
 
-    /**
-     * Масштабирование от центра экрана
-     */
     public static void pushScaleCentered(float scale) {
         pushScaleCentered(scale, scale);
     }
@@ -58,9 +42,6 @@ public class RenderUtils {
         pushScale(sx, sy, cx, cy);
     }
 
-    /**
-     * Сдвиг (трансляция)
-     */
     public static void pushTranslation(float tx, float ty) {
         float[] current = transformStack.isEmpty() ? identity() : transformStack.peek();
         float[] translation = new float[]{
@@ -70,9 +51,6 @@ public class RenderUtils {
         transformStack.push(multiply(current, translation));
     }
 
-    /**
-     * Вращение (в градусах)
-     */
     public static void pushRotation(float degrees) {
         float[] current = transformStack.isEmpty() ? identity() : transformStack.peek();
         float rad = (float) Math.toRadians(degrees);
@@ -85,18 +63,12 @@ public class RenderUtils {
         transformStack.push(multiply(current, rotation));
     }
 
-    /**
-     * Снимает последнюю трансформацию (универсальный pop для scale/translate/rotate)
-     */
     public static void popTransform() {
         if (!transformStack.isEmpty()) {
             transformStack.pop();
         }
     }
 
-    /**
-     * Алиасы для удобства — соответствуют методам Renderer2D
-     */
     public static void popScale() {
         popTransform();
     }
@@ -105,16 +77,10 @@ public class RenderUtils {
         popTransform();
     }
 
-    /**
-     * Получить текущую матрицу трансформации (для ручного использования)
-     */
     public static float[] currentTransform() {
         return transformStack.isEmpty() ? identity() : transformStack.peek();
     }
 
-    /**
-     * Трансформировать точку через текущую матрицу
-     */
     public static float transformX(float x, float y) {
         float[] m = currentTransform();
         return m[0] * x + m[1] * y + m[2];
@@ -124,10 +90,6 @@ public class RenderUtils {
         float[] m = currentTransform();
         return m[3] * x + m[4] * y + m[5];
     }
-
-    // =====================================================================
-    //  Clip Stack
-    // =====================================================================
 
     private static final ArrayDeque<ClipRect> clipStack = new ArrayDeque<>();
 
@@ -213,10 +175,6 @@ public class RenderUtils {
         GL11.glScissor(applied.x, applied.y, applied.w, applied.h);
     }
 
-    // =====================================================================
-    //  Round Rect
-    // =====================================================================
-
     public static void fillRoundRect(float x, float y, float w, float h, float radius, int color) {
         RoundRectShader.drawRoundRect(x, y, w, h, radius, color);
     }
@@ -235,10 +193,6 @@ public class RenderUtils {
                                   float radius, int layers, int shadowColor) {
         RoundRectShader.drawShadow(x, y, w, h, radius, layers, shadowColor);
     }
-
-    // =====================================================================
-    //  Gradients
-    // =====================================================================
 
     public static void fillRoundRectGradient(float x, float y, float w, float h,
                                              float radius, int topColor, int bottomColor) {
@@ -294,10 +248,6 @@ public class RenderUtils {
         RoundRectShader.drawGradient4(x, y, w, h, tl, tr, br, bl, c00, c10, c11, c01);
     }
 
-    // =====================================================================
-    //  Transform Matrix helpers (внутренние)
-    // =====================================================================
-
     private static float[] identity() {
         return new float[]{
                 1, 0, 0,
@@ -305,11 +255,6 @@ public class RenderUtils {
         };
     }
 
-    /**
-     * Перемножение двух аффинных матриц 2x3
-     * [a0 a1 a2]   [b0 b1 b2]
-     * [a3 a4 a5] * [b3 b4 b5]
-     */
     private static float[] multiply(float[] a, float[] b) {
         return new float[]{
                 a[0] * b[0] + a[1] * b[3],

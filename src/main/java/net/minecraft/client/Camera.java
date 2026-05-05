@@ -60,7 +60,8 @@ public class Camera implements TrackedWaypoint.Camera {
     private float interpolatedDistance = 0.0F;
 
     private float smoothCameraDistance(float targetDistance) {
-        interpolatedDistance = interpolatedDistance + (targetDistance - interpolatedDistance);
+        float speed = 0.1F;
+        interpolatedDistance += (targetDistance - interpolatedDistance) * speed;
         return interpolatedDistance;
     }
 
@@ -82,7 +83,7 @@ public class Camera implements TrackedWaypoint.Camera {
             this.cameraTransition = 0.0F;
             this.interpolatedDistance = 0.0F;
         } else {
-            this.cameraTransition += (1.0F - this.cameraTransition) * (p_90580_);
+            this.cameraTransition += (1.0F - this.cameraTransition) * (p_90580_ * 0.1F);
             this.cameraTransition = Mth.clamp(this.cameraTransition, 0.0F, 1.0F);
         }
 

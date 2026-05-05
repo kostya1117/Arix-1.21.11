@@ -249,7 +249,6 @@ public class CommandSuggestions {
 
             return;
         }
-        // ===== КОНЕЦ ТВОЕЙ ЛОГИКИ =====
 
         boolean flag = stringreader.canRead() && stringreader.peek() == '/';
         if (flag) {

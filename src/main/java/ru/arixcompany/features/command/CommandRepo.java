@@ -10,6 +10,7 @@ import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.server.permissions.PermissionSet;
 import ru.arixcompany.features.command.commands.ConfigCommand;
 import ru.arixcompany.features.command.commands.FriendCommand;
+import ru.arixcompany.features.command.commands.WayPointCommand;
 import ru.arixcompany.features.event.EventHandler;
 import ru.arixcompany.features.event.EventRepo;
 import ru.arixcompany.features.event.world.EventChat;
@@ -32,7 +33,8 @@ public class CommandRepo implements IMinecraft {
     public void setup() {
         List.of(
                 new ConfigCommand(),
-                new FriendCommand()
+                new FriendCommand(),
+                new WayPointCommand()
         ).forEach(command -> {
             commandList.add(command);
             LiteralArgumentBuilder<SharedSuggestionProvider> builder = LiteralArgumentBuilder.literal(command.getName());
