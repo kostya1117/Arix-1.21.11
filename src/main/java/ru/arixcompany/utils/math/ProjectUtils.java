@@ -2,6 +2,7 @@ package ru.arixcompany.utils.math;
 
 import lombok.experimental.UtilityClass;
 import net.minecraft.client.Camera;
+import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
 import org.joml.Vector3d;
 import org.joml.Vector3f;
@@ -15,7 +16,7 @@ public class ProjectUtils implements IMinecraft {
     public static final Matrix4f lastModMat = new Matrix4f();
     public static final Matrix4f lastWorldSpaceMatrix = new Matrix4f();
 
-    public static Vector3d worldSpaceToScreenSpace(Vector3d pos) {
+    public static Vec3 worldSpaceToScreenSpace(Vec3 pos) {
         Camera camera = mc.getEntityRenderDispatcher().camera;
         int displayHeight = mc.getWindow().getHeight();
         int[] viewport = new int[4];
@@ -28,7 +29,7 @@ public class ProjectUtils implements IMinecraft {
         Matrix4f matrixProj = new Matrix4f(lastProjMat);
         Matrix4f matrixModel = new Matrix4f(lastModMat);
         matrixProj.mul(matrixModel).project(transformedCoordinates.x(), transformedCoordinates.y(), transformedCoordinates.z(), viewport, target);
-        return new Vector3d(target.x / getScaleFactor(), (displayHeight - target.y) / getScaleFactor(), target.z);
+        return new Vec3(target.x / getScaleFactor(), (displayHeight - target.y) / getScaleFactor(), target.z);
     }
 
     public static double getScaleFactor() {

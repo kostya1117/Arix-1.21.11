@@ -45,15 +45,14 @@ public class AltManagerScreen extends Screen {
 
     @Override
     protected void init() {
-
         scrollOffset = savedScroll;
 
         int panelX = width / 2 - PANEL_WIDTH / 2;
 
         listX = panelX;
-        listY = 70;
+        listY = 85;
         listWidth = PANEL_WIDTH - SCROLLBAR_WIDTH - 4;
-        listHeight = height - 170;
+        listHeight = height - 210;
 
         scrollRectWidth = SCROLLBAR_WIDTH;
         scrollRectX = listX + listWidth + 2;
@@ -68,6 +67,7 @@ public class AltManagerScreen extends Screen {
         addRenderableWidget(searchField);
 
         nameField = new EditBox(font, panelX, height - 110, PANEL_WIDTH, 20, Component.literal("Username"));
+        nameField.setMaxLength(16);
         addRenderableWidget(nameField);
 
         addRenderableWidget(Button.builder(Component.literal("Add"), b -> addAlt())
@@ -149,20 +149,18 @@ public class AltManagerScreen extends Screen {
 
     @Override
     public boolean mouseClicked(MouseButtonEvent event, boolean p_431348_) {
-
         double mouseX = event.x();
         double mouseY = event.y();
 
         if (event.button() == 0) {
             if (mouseX >= scrollRectX && mouseX <= scrollRectX + scrollRectWidth &&
                     mouseY >= scrollRectY && mouseY <= scrollRectY + scrollRectHeight) {
-
                 draggingScrollbar = true;
                 return true;
             }
         }
 
-        if (event.button() == 0) {
+        if (event.button() == 0 || event.button() == 1) {
             if (mouseX >= listX && mouseX <= listX + listWidth &&
                     mouseY >= listY && mouseY <= listY + listHeight) {
 
@@ -170,11 +168,19 @@ public class AltManagerScreen extends Screen {
                 List<AltRepo.Alt> list = getFiltered();
 
                 if (index >= 0 && index < list.size()) {
+                    AltRepo.Alt alt = list.get(index);
+
+                    if (event.button() == 1) {
+                        AltRepo.remove(alt);
+                        selectedIndex = -1;
+                        save();
+                        return true;
+                    }
 
                     long time = System.currentTimeMillis();
 
                     if (index == selectedIndex && time - lastClickTime < 300) {
-                        login(list.get(index).getName());
+                        login(alt.getName());
                         loginFlashTime = time;
                     }
 
@@ -197,7 +203,6 @@ public class AltManagerScreen extends Screen {
     @Override
     public boolean mouseDragged(MouseButtonEvent event, double p_94699_, double p_94700_) {
         if (draggingScrollbar) {
-
             int contentHeight = getFiltered().size() * ROW_HEIGHT;
             int maxScroll = Math.max(0, contentHeight - listHeight);
             if (maxScroll <= 0) return true;
@@ -214,7 +219,6 @@ public class AltManagerScreen extends Screen {
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double deltaX, double deltaY) {
-
         if (mouseX >= listX && mouseX <= listX + listWidth &&
                 mouseY >= listY && mouseY <= listY + listHeight) {
 
@@ -238,6 +242,15 @@ public class AltManagerScreen extends Screen {
 
         g.drawCenteredString(font, title, width / 2, 15, 0xFFFFFFFF);
         g.drawCenteredString(font, "Current: " + current, width / 2, 28, 0xFFAAAAAA);
+
+        // Рендеринг подсказок управления слева от списка
+        int hintX = listX - 130;
+        int hintY = listY + 4;
+        g.drawString(font, "Управление:", hintX, hintY, 0xFFFFFFFF);
+        g.drawString(font, "• ЛКМ: Выбрать", hintX, hintY + 14, 0xFFAAAAAA);
+        g.drawString(font, "• 2хЛКМ: Войти", hintX, hintY + 26, 0xFFAAAAAA);
+        g.drawString(font, "• ПКМ: Удалить", hintX, hintY + 38, 0xFFFF5555); // Выделим красным для наглядности
+        g.drawString(font, "• Колесо: Скролл", hintX, hintY + 50, 0xFFAAAAAA);
 
         List<AltRepo.Alt> list = getFiltered();
 
@@ -270,7 +283,6 @@ public class AltManagerScreen extends Screen {
         g.disableScissor();
 
         if (maxScroll > 0) {
-
             g.fill(scrollRectX, scrollRectY,
                     scrollRectX + scrollRectWidth,
                     scrollRectY + scrollRectHeight,

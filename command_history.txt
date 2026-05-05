@@ -16,7 +16,5 @@
 /reg 1
 /an221
 /warp pvp
-/reg XyesosSperma1488
-/login XyesosSperma1488
-/loginXyesosSperma1488
-/login XyesosSperma1488
+/an217
+/ah search алмазный меч

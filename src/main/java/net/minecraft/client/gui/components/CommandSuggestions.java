@@ -198,16 +198,16 @@ public class CommandSuggestions {
     private ParseResults<SharedSuggestionProvider> prodlasioParse;
 
     public void updateCommandInfo() {
-        String s = this.input.getValue();
+        String inputText = this.input.getValue();
+        int cursor = this.input.getCursorPosition();
 
-        if (this.currentParse != null && !this.currentParse.getReader().getString().equals(s)) {
+        // Сбрасываем parse, если текст изменился
+        if (this.currentParse != null &&
+                !this.currentParse.getReader().getString().equals(inputText)) {
             this.currentParse = null;
         }
 
-        if (this.prodlasioParse != null && !this.prodlasioParse.getReader().getString().equals(s)) {
-            this.prodlasioParse = null;
-        }
-
+        // Сбрасываем UI, если не нужно сохранять подсказки
         if (!this.keepSuggestions) {
             this.input.setSuggestion(null);
             this.suggestions = null;
@@ -215,69 +215,90 @@ public class CommandSuggestions {
 
         this.commandUsage.clear();
 
-        StringReader stringreader = new StringReader(s);
-        int cursor = this.input.getCursorPosition();
+        StringReader reader = new StringReader(inputText);
 
-        if (stringreader.canRead(CommandRepo.COMMAND_TARGET.length())
-                && stringreader.getString().startsWith(CommandRepo.COMMAND_TARGET, stringreader.getCursor())) {
+        // === 1) Обработка кастомных команд с префиксом COMMAND_TARGET ===
+        if (reader.canRead(CommandRepo.COMMAND_TARGET.length()) &&
+                reader.getString().startsWith(CommandRepo.COMMAND_TARGET, reader.getCursor())) {
 
-            stringreader.setCursor(stringreader.getCursor() + CommandRepo.COMMAND_TARGET.length());
+            // Пропускаем префикс
+            reader.setCursor(reader.getCursor() + CommandRepo.COMMAND_TARGET.length());
 
-            if (this.prodlasioParse == null) {
-                this.prodlasioParse = Arix.getInstance()
-                        .getCommandRepo()
-                        .getCommandDispatcher()
-                        .parse(stringreader, Arix.getInstance().getCommandRepo().getSource());
+            // Парсим через твой кастомный dispatcher (теперь ClientSuggestionProvider)
+            if (this.currentParse == null) {
+                CommandDispatcher<ClientSuggestionProvider> dispatcher =
+                        Arix.getInstance().getCommandRepo().getCommandDispatcher();
+                ClientSuggestionProvider source =
+                        Arix.getInstance().getCommandRepo().getSource();
+
+                this.currentParse = dispatcher.parse(reader, source);
             }
 
+            // Запрашиваем suggestions + usage
             if (cursor >= 1 && (this.suggestions == null || !this.keepSuggestions)) {
-                this.pendingSuggestions = Arix.getInstance()
-                        .getCommandRepo()
-                        .getCommandDispatcher()
-                        .getCompletionSuggestions(this.prodlasioParse, cursor);
+                CommandDispatcher<ClientSuggestionProvider> dispatcher =
+                        Arix.getInstance().getCommandRepo().getCommandDispatcher();
+
+                this.pendingSuggestions = dispatcher.getCompletionSuggestions(this.currentParse, cursor);
 
                 this.pendingSuggestions.thenRun(() -> {
                     if (this.pendingSuggestions != null && this.pendingSuggestions.isDone()) {
                         this.suggestions = null;
 
+                        // Показываем подсказки
                         if (this.allowSuggestions && this.minecraft.options.autoSuggestions().get()) {
                             this.showSuggestions(false);
                         }
+
+                        // 👉 Ключевой момент: показываем usage / аргументы
+                        this.updateUsageInfo();
                     }
                 });
             }
 
             return;
         }
-        // ===== КОНЕЦ ТВОЕЙ ЛОГИКИ =====
 
-        boolean flag = stringreader.canRead() && stringreader.peek() == '/';
-        if (flag) {
-            stringreader.skip();
+        // === 2) Обработка ванильных команд (/...) ===
+        boolean isSlash = reader.canRead() && reader.peek() == '/';
+        if (isSlash) {
+            reader.skip();
         }
 
-        boolean flag1 = this.commandsOnly || flag;
-        if (flag1) {
-            CommandDispatcher<ClientSuggestionProvider> commanddispatcher = this.minecraft.player.connection.getCommands();
+        boolean shouldUseCommands = this.commandsOnly || isSlash;
+        if (shouldUseCommands) {
+            CommandDispatcher<ClientSuggestionProvider> vanillaDispatcher =
+                    this.minecraft.player.connection.getCommands();
+            ClientSuggestionProvider vanillaSource =
+                    this.minecraft.player.connection.getSuggestionsProvider();
+
             if (this.currentParse == null) {
-                this.currentParse = commanddispatcher.parse(stringreader, this.minecraft.player.connection.getSuggestionsProvider());
+                this.currentParse = vanillaDispatcher.parse(reader, vanillaSource);
             }
 
-            int j = this.onlyShowIfCursorPastError ? stringreader.getCursor() : 1;
-            if (cursor >= j && (this.suggestions == null || !this.keepSuggestions)) {
-                this.pendingSuggestions = commanddispatcher.getCompletionSuggestions(this.currentParse, cursor);
+            int minCursor = this.onlyShowIfCursorPastError ? reader.getCursor() : 1;
+            if (cursor >= minCursor && (this.suggestions == null || !this.keepSuggestions)) {
+                this.pendingSuggestions = vanillaDispatcher.getCompletionSuggestions(this.currentParse, cursor);
+
                 this.pendingSuggestions.thenRun(() -> {
-                    if (this.pendingSuggestions.isDone()) {
+                    if (this.pendingSuggestions != null && this.pendingSuggestions.isDone()) {
                         this.updateUsageInfo();
                     }
                 });
             }
-        } else {
-            String s1 = s.substring(0, cursor);
-            int k = getLastWordIndex(s1);
-            Collection<String> collection = this.minecraft.player.connection.getSuggestionsProvider().getCustomTabSugggestions();
-            this.pendingSuggestions = SharedSuggestionProvider.suggest(collection, new SuggestionsBuilder(s1, k));
+
+            return;
         }
+
+        // === 3) Обычный текст → кастомные таб‑подсказки игрока ===
+        String prefix = inputText.substring(0, cursor);
+        int lastWord = getLastWordIndex(prefix);
+        Collection<String> custom = this.minecraft.player.connection
+                .getSuggestionsProvider()
+                .getCustomTabSugggestions();
+
+        this.pendingSuggestions = SharedSuggestionProvider.suggest(custom,
+                new SuggestionsBuilder(prefix, lastWord));
     }
 
     private static int getLastWordIndex(String p_93913_) {

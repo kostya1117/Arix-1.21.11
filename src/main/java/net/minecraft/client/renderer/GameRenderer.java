@@ -429,9 +429,8 @@ public class GameRenderer implements TrackedWaypoint.Projector, AutoCloseable {
             this.minecraft.levelRenderer.needsUpdate();
         }
 
-        // Плавная интерполяция зума
         float targetZoom = zoom ? 1.0F : 0.0F;
-        this.zoomProgress = Mth.lerp(0.15F, this.zoomProgress, targetZoom);
+        this.zoomProgress = Mth.lerp(0.05F, this.zoomProgress, targetZoom);
         
         float zoomFactor = Mth.lerp(this.zoomProgress, 1.0F, 1.2F);
         f /= zoomFactor;
