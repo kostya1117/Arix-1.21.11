@@ -255,6 +255,7 @@ import org.lwjgl.util.tinyfd.TinyFileDialogs;
 import org.slf4j.Logger;
 import ru.arixcompany.Arix;
 import ru.arixcompany.features.event.EventRepo;
+import ru.arixcompany.features.event.world.EventGameTick;
 import ru.arixcompany.features.event.world.EventTick;
 
 public class Minecraft extends ReentrantBlockableEventLoop<Runnable> implements WindowEventHandler {
@@ -1264,6 +1265,7 @@ public class Minecraft extends ReentrantBlockableEventLoop<Runnable> implements 
             this.toastManager.update();
             profilerfiller.popPush("mouse");
             this.mouseHandler.handleAccumulatedMovement();
+            EventRepo.call(new EventGameTick());
             profilerfiller.popPush("render");
             long i = Util.getNanos();
             if (!this.debugEntries.isCurrentlyEnabled(DebugScreenEntries.GPU_UTILIZATION) && !this.metricsRecorder.isRecording()) {

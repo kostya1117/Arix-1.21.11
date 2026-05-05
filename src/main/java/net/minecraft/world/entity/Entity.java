@@ -206,8 +206,8 @@ public abstract class Entity implements SyncedDataHolder, DebugValueSource, Name
     private BlockPos blockPosition;
     private ChunkPos chunkPosition;
     private Vec3 deltaMovement = Vec3.ZERO;
-    private float yRot;
-    private float xRot;
+    public float yRot;
+    public float xRot;
     public float yRotO;
     public float xRotO;
     private AABB bb = INITIAL_AABB;

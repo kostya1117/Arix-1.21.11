@@ -44,4 +44,14 @@ public class ListSetting extends Setting {
             selected.add(name);
         }
     }
+
+    public void enable(String name) {
+        if (!selected.contains(name)) {
+            selected.add(name);
+        }
+    }
+
+    public boolean is(String name) {
+        return selected.contains(name);
+    }
 }

@@ -91,24 +91,28 @@ public class Camera implements TrackedWaypoint.Camera {
             float originalPitch = p_90577_.getViewXRot(p_90580_);
             this.rotationEvent = new EventRotation(originalYaw, originalPitch, p_90580_);
             EventRepo.call(this.rotationEvent);
-        } else {
-            this.rotationEvent = null;
         }
 
 
         float yaw;
         float pitch;
-        if (p_90578_) {
-            yaw = Mth.lerp(this.cameraTransition, this.previousYaw, p_90577_.getViewYRot(p_90580_));
-            pitch = Mth.lerp(this.cameraTransition, this.previousPitch, p_90577_.getViewXRot(p_90580_));
-        } else {
-            yaw = p_90577_.getViewYRot(p_90580_);
-            pitch = p_90577_.getViewXRot(p_90580_);
-        }
-
+        
+        // Get rotation from event first
+        float eventYaw = p_90577_.getViewYRot(p_90580_);
+        float eventPitch = p_90577_.getViewXRot(p_90580_);
+        
         if (this.rotationEvent != null && !this.rotationEvent.isCancelled()) {
-            yaw = this.rotationEvent.getYaw();
-            pitch = this.rotationEvent.getPitch();
+            eventYaw = this.rotationEvent.getYaw();
+            eventPitch = this.rotationEvent.getPitch();
+        }
+        
+        // Apply interpolation for detached camera (2nd/3rd person)
+        if (p_90578_) {
+            yaw = Mth.lerp(this.cameraTransition, this.previousYaw, eventYaw);
+            pitch = Mth.lerp(this.cameraTransition, this.previousPitch, eventPitch);
+        } else {
+            yaw = eventYaw;
+            pitch = eventPitch;
         }
 
         if (p_90577_.isPassenger()
@@ -155,8 +159,9 @@ public class Camera implements TrackedWaypoint.Camera {
             smoothCameraDistance(0.0F);
         }
 
-        this.previousYaw = yaw;
-        this.previousPitch = pitch;
+        // Store the target (non-interpolated) angles for next frame's lerp
+        this.previousYaw = eventYaw;
+        this.previousPitch = eventPitch;
         this.rotationEvent = null;
     }
 

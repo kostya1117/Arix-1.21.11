@@ -39,4 +39,8 @@ public class SelectSetting extends Setting {
     public boolean isSelected(String name) {
         return selected.equals(name);
     }
+
+    public boolean is(String name) {
+        return selected.equals(name);
+    }
 }

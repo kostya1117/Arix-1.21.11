@@ -20,6 +20,7 @@ import ru.arixcompany.features.file.exception.FileProcessingException;
 import ru.arixcompany.features.module.ModuleRepo;
 import ru.arixcompany.features.module.Theme;
 import ru.arixcompany.utils.IMinecraft;
+import ru.arixcompany.utils.aurautil.SystemManager;
 import ru.arixcompany.utils.render.RoundRectShader;
 import ru.arixcompany.utils.render.font.FontManager;
 
@@ -44,16 +45,22 @@ public class Arix implements IMinecraft {
     FileRepo fileRepo;
     @NonFinal
     CommandRepo commandRepo;
+    @NonFinal
+    SystemManager systemManager;
+
 
     public Arix(){
         instance = this;
         ViaMCP.create();
         ViaMCP.INSTANCE.initAsyncSlider();
         FontManager.init();
+
         RoundRectShader.init();
         moduleRepo = new ModuleRepo();
         commandRepo = new CommandRepo();
         commandRepo.setup();
+        systemManager = new SystemManager();
+        systemManager.init();
 
         initFileManager();
         tryAutoLogin();

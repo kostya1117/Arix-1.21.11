@@ -10,6 +10,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+
+import lombok.Getter;
 import net.minecraft.CrashReport;
 import net.minecraft.CrashReportCategory;
 import net.minecraft.ReportedException;
@@ -30,14 +32,19 @@ import org.joml.Vector2i;
 import org.jspecify.annotations.Nullable;
 import org.lwjgl.glfw.GLFWDropCallback;
 import org.slf4j.Logger;
+import ru.arixcompany.features.event.EventRepo;
+import ru.arixcompany.features.event.player.EventMouseLook;
 
 
 public class MouseHandler {
     private static final Logger LOGGER = LogUtils.getLogger();
     public static final long DOUBLE_CLICK_THRESHOLD_MS = 250L;
     private final Minecraft minecraft;
+    @Getter
     private boolean isLeftPressed;
+    @Getter
     private boolean isMiddlePressed;
+    @Getter
     private boolean isRightPressed;
     private double xpos;
     private double ypos;
@@ -55,6 +62,7 @@ public class MouseHandler {
     private double accumulatedDY;
     private final ScrollWheelHandler scrollWheelHandler;
     private double lastHandleMovementTime = Double.MIN_VALUE;
+    @Getter
     private boolean mouseGrabbed;
 
     public MouseHandler(Minecraft p_91522_) {
@@ -385,24 +393,15 @@ public class MouseHandler {
             d1 = this.accumulatedDY * d4;
         }
 
-        this.minecraft.getTutorial().onMouse(d0, d1);
-        if (this.minecraft.player != null) {
-            this.minecraft
-                .player
-                .turn(this.minecraft.options.invertMouseX().get() ? -d0 : d0, this.minecraft.options.invertMouseY().get() ? -d1 : d1);
+
+        EventMouseLook event = new EventMouseLook(this.minecraft.options.invertMouseX().get() ? -d0 : d0, this.minecraft.options.invertMouseY().get() ? -d1 : d1);
+        EventRepo.call(event);
+        if (!event.isCancelled()) {
+            this.minecraft.getTutorial().onMouse(event.getYaw(), event.getPitch());
+            if (this.minecraft.player != null) {
+                this.minecraft.player.turn(event.getYaw(), event.getPitch());
+            }
         }
-    }
-
-    public boolean isLeftPressed() {
-        return this.isLeftPressed;
-    }
-
-    public boolean isMiddlePressed() {
-        return this.isMiddlePressed;
-    }
-
-    public boolean isRightPressed() {
-        return this.isRightPressed;
     }
 
     public double xpos() {
@@ -415,10 +414,6 @@ public class MouseHandler {
 
     public void setIgnoreFirstMove() {
         this.ignoreFirstMove = true;
-    }
-
-    public boolean isMouseGrabbed() {
-        return this.mouseGrabbed;
     }
 
     public void grabMouse() {
