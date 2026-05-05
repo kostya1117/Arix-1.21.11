@@ -17,3 +17,4 @@
 /an221
 /warp pvp
 /an217
+/ah search алмазный меч

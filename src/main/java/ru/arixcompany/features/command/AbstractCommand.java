@@ -5,6 +5,7 @@ import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import lombok.Getter;
+import net.minecraft.client.multiplayer.ClientSuggestionProvider;
 import net.minecraft.commands.SharedSuggestionProvider;
 import org.jetbrains.annotations.NotNull;
 import ru.arixcompany.utils.IMinecraft;
@@ -20,13 +21,13 @@ public abstract class AbstractCommand implements IMinecraft {
         this.shortDesc = shortDesc;
     }
 
-    public abstract void build(LiteralArgumentBuilder<SharedSuggestionProvider> builder);
+    public abstract void build(LiteralArgumentBuilder<ClientSuggestionProvider > builder);
 
-    public static @NotNull LiteralArgumentBuilder<SharedSuggestionProvider> literal(final String name) {
+    public static @NotNull LiteralArgumentBuilder<ClientSuggestionProvider> literal(final String name) {
         return LiteralArgumentBuilder.literal(name);
     }
 
-    protected static <T> @NotNull RequiredArgumentBuilder<SharedSuggestionProvider, T> argument(final String name, final ArgumentType<T> type) {
+    protected static <T> @NotNull RequiredArgumentBuilder<ClientSuggestionProvider , T> argument(final String name, final ArgumentType<T> type) {
         return RequiredArgumentBuilder.argument(name, type);
     }
 

@@ -51,7 +51,10 @@ public class Arix implements IMinecraft {
         ViaMCP.INSTANCE.initAsyncSlider();
         FontManager.init();
         RoundRectShader.init();
+
         moduleRepo = new ModuleRepo();
+        moduleRepo.init();
+
         commandRepo = new CommandRepo();
         commandRepo.setup();
 

@@ -23,8 +23,8 @@ public class CommandRepo implements IMinecraft {
     public static String COMMAND_TARGET = ".";
     private final List<AbstractCommand> commandList = Lists.newArrayList();
 
-    private final CommandDispatcher<SharedSuggestionProvider> commandDispatcher = new CommandDispatcher<>();
-    private final SharedSuggestionProvider source = new ClientSuggestionProvider(null, mc, PermissionSet.ALL_PERMISSIONS);
+    private final CommandDispatcher<ClientSuggestionProvider> commandDispatcher = new CommandDispatcher<>();
+    private final ClientSuggestionProvider source = new ClientSuggestionProvider(null, mc, PermissionSet.ALL_PERMISSIONS);
 
     public CommandRepo() {
         EventRepo.register(this);
@@ -37,7 +37,7 @@ public class CommandRepo implements IMinecraft {
                 new WayPointCommand()
         ).forEach(command -> {
             commandList.add(command);
-            LiteralArgumentBuilder<SharedSuggestionProvider> builder = LiteralArgumentBuilder.literal(command.getName());
+            LiteralArgumentBuilder<ClientSuggestionProvider > builder = LiteralArgumentBuilder.literal(command.getName());
             command.build(builder);
             commandDispatcher.register(builder);
         });
