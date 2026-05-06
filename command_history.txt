@@ -23,3 +23,9 @@
 /kit start
 /an1001
 /skin set 1488
+/an1001
+/kit start
+/l 1
+/an1001
+/l 1
+/reg 1

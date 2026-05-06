@@ -26,15 +26,12 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.SmoothDouble;
 import net.minecraft.util.Util;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.joml.Vector2i;
 import org.jspecify.annotations.Nullable;
 import org.lwjgl.glfw.GLFWDropCallback;
 import org.slf4j.Logger;
 import ru.arixcompany.features.event.EventRepo;
-import ru.arixcompany.features.event.player.EventMouseLook;
-
+import ru.arixcompany.features.event.player.EventLook;
 
 public class MouseHandler {
     private static final Logger LOGGER = LogUtils.getLogger();
@@ -370,37 +367,25 @@ public class MouseHandler {
         return getScaledYPos(p_398224_, this.ypos);
     }
 
-    private void turnPlayer(double p_330750_) {
-        double d2 = this.minecraft.options.sensitivity().get() * 0.6F + 0.2F;
-        double d3 = d2 * d2 * d2;
-        double d4 = d3 * 8.0;
-        double d0;
-        double d1;
-        if (this.minecraft.options.smoothCamera) {
-            double d5 = this.smoothTurnX.getNewDeltaValue(this.accumulatedDX * d4, p_330750_ * d4);
-            double d6 = this.smoothTurnY.getNewDeltaValue(this.accumulatedDY * d4, p_330750_ * d4);
-            d0 = d5;
-            d1 = d6;
-        } else if (this.minecraft.options.getCameraType().isFirstPerson() && this.minecraft.player.isScoping()) {
-            this.smoothTurnX.reset();
-            this.smoothTurnY.reset();
-            d0 = this.accumulatedDX * d3;
-            d1 = this.accumulatedDY * d3;
-        } else {
-            this.smoothTurnX.reset();
-            this.smoothTurnY.reset();
-            d0 = this.accumulatedDX * d4;
-            d1 = this.accumulatedDY * d4;
-        }
+    private void turnPlayer(double deltaTime) {
+        double sensitivity = this.minecraft.options.sensitivity().get() * 0.6F + 0.2F;
+        double multiplier = sensitivity * sensitivity * sensitivity * 8.0;
 
+        double yawDelta = this.accumulatedDX * multiplier;
+        double pitchDelta = this.accumulatedDY * multiplier;
 
-        EventMouseLook event = new EventMouseLook(this.minecraft.options.invertMouseX().get() ? -d0 : d0, this.minecraft.options.invertMouseY().get() ? -d1 : d1);
+        if (this.minecraft.options.invertMouseX().get())
+            yawDelta = -yawDelta;
+
+        if (this.minecraft.options.invertMouseY().get())
+            pitchDelta = -pitchDelta;
+
+        EventLook event = new EventLook(yawDelta, pitchDelta);
         EventRepo.call(event);
-        if (!event.isCancelled()) {
+
+        if (!event.isCancelled() && this.minecraft.player != null) {
             this.minecraft.getTutorial().onMouse(event.getYaw(), event.getPitch());
-            if (this.minecraft.player != null) {
-                this.minecraft.player.turn(event.getYaw(), event.getPitch());
-            }
+            this.minecraft.player.turn(event.getYaw(), event.getPitch());
         }
     }
 

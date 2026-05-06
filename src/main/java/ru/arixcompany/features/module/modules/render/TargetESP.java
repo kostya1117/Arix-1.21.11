@@ -19,7 +19,7 @@ import ru.arixcompany.features.event.EventHandler;
 import ru.arixcompany.features.event.render.EventRender3D;
 import ru.arixcompany.features.module.Category;
 import ru.arixcompany.features.module.Module;
-import ru.arixcompany.features.module.modules.combat.KillAura;
+import ru.arixcompany.features.module.modules.combat.HitAura;
 import ru.arixcompany.ui.clickgui.Colors;
 import ru.arixcompany.utils.animation.Animation;
 import ru.arixcompany.utils.animation.Direction;
@@ -55,12 +55,12 @@ public class TargetESP extends Module {
     public void onRender(EventRender3D e) {
         if (mc.level == null || mc.player == null) return;
 
-        KillAura hitKillAura = (KillAura) Arix.getInstance()
-                .getModuleRepo().getModule(KillAura.class);
+        HitAura hitKillAura = (HitAura) Arix.getInstance()
+                .getModuleRepo().getModule(HitAura.class);
 
         if (hitKillAura == null) return;
 
-        LivingEntity target = KillAura.getTarget();
+        LivingEntity target = HitAura.getTarget();
 
         alpha.setDirection(target != null ? Direction.FORWARDS : Direction.BACKWARDS);
 

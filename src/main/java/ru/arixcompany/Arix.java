@@ -6,6 +6,7 @@ import lombok.Setter;
 import lombok.experimental.NonFinal;
 import net.minecraft.client.Minecraft;
 import org.lwjgl.glfw.GLFW;
+import ru.arixcompany.features.module.modules.combat.aura.rotation.ComponentRepo;
 import ru.arixcompany.features.repos.AltRepo;
 import ru.arixcompany.ui.alt.SessionUtil;
 import ru.arixcompany.ui.clickgui.Gui;
@@ -20,7 +21,6 @@ import ru.arixcompany.features.file.exception.FileProcessingException;
 import ru.arixcompany.features.module.ModuleRepo;
 import ru.arixcompany.features.module.Theme;
 import ru.arixcompany.utils.IMinecraft;
-import ru.arixcompany.features.module.modules.combat.aura.ComponentRepo;
 import ru.arixcompany.utils.render.RoundRectShader;
 import ru.arixcompany.utils.render.font.FontManager;
 
@@ -32,26 +32,6 @@ import java.io.File;
 // Работай на страх врагам,
 // Код православный!
 // Боже, Арикс, Арикс храни!
-
-//        Союз нерушимый республик свободных
-//        Сплотила навеки Великая Русь.
-//        Да здравствует созданный волей народов
-//        Единый, могучий Советский Союз!
-//
-//        Славься, Отечество наше свободное,
-//        Дружбы народов надёжный оплот!
-//        Партия Ленина — сила народная
-//        Нас к торжеству коммунизма ведёт!
-//
-//        Сквозь грозы сияло нам солнце свободы,
-//        И Ленин великий нам путь озарил:
-//        На правое дело он поднял народы,
-//        На труд и на подвиги нас вдохновил!
-//
-//        Славься, Отечество наше свободное,
-//        Дружбы народов надёжный оплот!
-//        Партия Ленина — сила народная
-//        Нас к торжеству коммунизма ведёт!
 
 @Getter
 public class Arix implements IMinecraft {
@@ -73,8 +53,7 @@ public class Arix implements IMinecraft {
     @NonFinal
     CommandRepo commandRepo;
     @NonFinal
-    ComponentRepo componentRepo;
-
+    public ComponentRepo componentRepo;
 
     public Arix(){
         instance = this;
@@ -89,6 +68,7 @@ public class Arix implements IMinecraft {
 
         commandRepo = new CommandRepo();
         commandRepo.setup();
+
         componentRepo = new ComponentRepo();
         componentRepo.init();
 
