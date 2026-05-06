@@ -9,6 +9,8 @@ import ru.arixcompany.features.module.modules.combat.KillAura;
 import ru.arixcompany.features.module.modules.combat.NoFriendDMG;
 import ru.arixcompany.features.module.modules.misc.AutoAccept;
 import ru.arixcompany.features.module.modules.misc.CameraTweaks;
+import ru.arixcompany.features.module.modules.misc.ClientSounds;
+import ru.arixcompany.features.module.modules.movement.AutoSprint;
 import ru.arixcompany.features.module.modules.player.TestModule;
 import ru.arixcompany.features.module.modules.render.HandView;
 import ru.arixcompany.features.module.modules.render.Nametags;
@@ -29,6 +31,8 @@ public class ModuleRepo implements IMinecraft {
        modules.add(new NoFriendDMG());
        modules.add(new AutoAccept());
        modules.add(new TargetESP());
+       modules.add(new AutoSprint());
+       modules.add(new ClientSounds());
    }
 
    public void init() {

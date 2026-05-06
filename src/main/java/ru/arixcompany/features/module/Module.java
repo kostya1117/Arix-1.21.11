@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import ru.arixcompany.features.event.EventRepo;
 import ru.arixcompany.features.module.setting.SettingAdder;
+import ru.arixcompany.features.repos.sound.SoundRepo;
 import ru.arixcompany.utils.IMinecraft;
 import ru.arixcompany.utils.animation.Animation;
 import ru.arixcompany.utils.animation.impl.EaseInOutQuad;
@@ -37,6 +38,8 @@ public class Module extends SettingAdder implements IMinecraft {
             return;
         }
 
+        SoundRepo.playOn();
+
 //        if (mc.player != null) {
 //            Main.getInstance().getNotificationRepo().success(this.name + " включен");
 //            SoundUtil.playSound_wav("on", 0.35F);
@@ -45,6 +48,8 @@ public class Module extends SettingAdder implements IMinecraft {
 
     public void deactivate() {
         EventRepo.unregister(this);
+
+        SoundRepo.playOff();
 
 //        if (mc.player != null) {
 //            Main.getInstance().getNotificationRepo().error(this.name + " выключен");

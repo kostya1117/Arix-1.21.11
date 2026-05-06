@@ -22,3 +22,4 @@
 /an103
 /kit start
 /an1001
+/skin set 1488

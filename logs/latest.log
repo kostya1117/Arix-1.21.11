@@ -1,31 +1,30 @@
-[21:33:10] [main/WARN]: Invalid registry value type detected for PerfOS counters. Should be REG_DWORD. Ignoring: HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\PerfOS\Performance\Disable Performance Counters.
-[21:33:11] [Datafixer Bootstrap/INFO]: 287 Datafixer optimizations took 1785 milliseconds
-[21:33:11] [main/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeEntity.canUpdate
-[21:33:11] [main/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.logging.CrashReportExtender
-[21:33:12] [main/INFO]: [OptiFine] (Reflector) Method not present: net.minecraft.tags.ItemTags.create
-[21:33:24] [main/INFO]: Completely ignored arguments: [--userProperties, {}]
-[21:33:24] [Render thread/INFO]: Environment: Environment[sessionHost=https://sessionserver.mojang.com, servicesHost=https://api.minecraftservices.com, profilesHost=https://api.mojang.com, name=PROD]
-[21:33:24] [Render thread/INFO]: Setting user: Player728
-[21:33:25] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.settings.KeyConflictContext
-[21:33:25] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraft.client.KeyMapping.getKeyModifier
-[21:33:25] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.settings.KeyModifier
-[21:33:25] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraft.launchwrapper.Launch
-[21:33:25] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.versions.forge.ForgeVersion
-[21:33:25] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.loading.ClientModLoader
-[21:33:25] [Render thread/INFO]: Backend library: LWJGL version 3.3.3+5
-[21:33:25] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.internal.BrandingControl
-[21:33:25] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.fml.loading.ImmediateWindowHandler
-[21:33:25] [Render thread/WARN]: [OptiFine] (Reflector) java.lang.ClassNotFoundException: sun.misc.SharedSecrets
-[21:33:25] [Render thread/WARN]: [OptiFine] (Reflector) java.lang.ClassNotFoundException: jdk.internal.misc.SharedSecrets
-[21:33:25] [Render thread/WARN]: [OptiFine] (Reflector) java.lang.ClassNotFoundException: sun.misc.VM
-[21:33:25] [Render thread/WARN]: [OptiFine] (Reflector) java.lang.reflect.InaccessibleObjectException: Unable to make public static long jdk.internal.misc.VM.maxDirectMemory() accessible: module java.base does not "exports jdk.internal.misc" to unnamed module @edf4efb
-[21:33:26] [Download-2/ERROR]: Failed to fetch user properties
+[08:44:12] [main/WARN]: Invalid registry value type detected for PerfOS counters. Should be REG_DWORD. Ignoring: HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\PerfOS\Performance\Disable Performance Counters.
+[08:44:14] [main/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeEntity.canUpdate
+[08:44:14] [main/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.logging.CrashReportExtender
+[08:44:15] [Datafixer Bootstrap/INFO]: 287 Datafixer optimizations took 3841 milliseconds
+[08:44:16] [main/INFO]: [OptiFine] (Reflector) Method not present: net.minecraft.tags.ItemTags.create
+[08:44:30] [main/INFO]: Completely ignored arguments: [--userProperties, {}]
+[08:44:31] [Render thread/INFO]: Environment: Environment[sessionHost=https://sessionserver.mojang.com, servicesHost=https://api.minecraftservices.com, profilesHost=https://api.mojang.com, name=PROD]
+[08:44:31] [Render thread/INFO]: Setting user: Player112
+[08:44:31] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.settings.KeyConflictContext
+[08:44:31] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraft.client.KeyMapping.getKeyModifier
+[08:44:31] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.settings.KeyModifier
+[08:44:31] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraft.launchwrapper.Launch
+[08:44:31] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.versions.forge.ForgeVersion
+[08:44:31] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.loading.ClientModLoader
+[08:44:31] [Render thread/INFO]: Backend library: LWJGL version 3.3.3+5
+[08:44:31] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.internal.BrandingControl
+[08:44:32] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.fml.loading.ImmediateWindowHandler
+[08:44:32] [Render thread/WARN]: [OptiFine] (Reflector) java.lang.ClassNotFoundException: sun.misc.SharedSecrets
+[08:44:32] [Render thread/WARN]: [OptiFine] (Reflector) java.lang.ClassNotFoundException: jdk.internal.misc.SharedSecrets
+[08:44:32] [Render thread/WARN]: [OptiFine] (Reflector) java.lang.ClassNotFoundException: sun.misc.VM
+[08:44:32] [Render thread/WARN]: [OptiFine] (Reflector) java.lang.reflect.InaccessibleObjectException: Unable to make public static long jdk.internal.misc.VM.maxDirectMemory() accessible: module java.base does not "exports jdk.internal.misc" to unnamed module @6973bf95
+[08:44:33] [Download-2/ERROR]: Failed to fetch user properties
 com.mojang.authlib.exceptions.InvalidCredentialsException: Status: 401
 	at com.mojang.authlib.exceptions.MinecraftClientHttpException.toAuthenticationException(MinecraftClientHttpException.java:59)
 	at com.mojang.authlib.yggdrasil.YggdrasilUserApiService.fetchProperties(YggdrasilUserApiService.java:150)
 	at net.minecraft.client.Minecraft.lambda$new$1(Minecraft.java:419)
-	at java.base/java.util.concurrent.CompletableFuture$AsyncSupply.run$$$capture(CompletableFuture.java:1768)
-	at java.base/java.util.concurrent.CompletableFuture$AsyncSupply.run(CompletableFuture.java)
+	at java.base/java.util.concurrent.CompletableFuture$AsyncSupply.run(CompletableFuture.java:1768)
 	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
 	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
 	at java.base/java.lang.Thread.run(Thread.java:1583)
@@ -33,274 +32,266 @@ Caused by: com.mojang.authlib.exceptions.MinecraftClientHttpException: Status: 4
 	at com.mojang.authlib.minecraft.client.MinecraftClient.readInputStream(MinecraftClient.java:103)
 	at com.mojang.authlib.minecraft.client.MinecraftClient.get(MinecraftClient.java:56)
 	at com.mojang.authlib.yggdrasil.YggdrasilUserApiService.fetchProperties(YggdrasilUserApiService.java:121)
-	... 6 more
-[21:33:26] [Render thread/INFO]: [OptiFine] 
-[21:33:26] [Render thread/INFO]: [OptiFine] OptiFine_1.21.11_HD_U_J9
-[21:33:26] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: optifine.OptiFineResourceLocator
-[21:33:26] [Render thread/INFO]: [OptiFine] Build: null
-[21:33:26] [Render thread/INFO]: [OptiFine] OS: Windows 10 (amd64) version 10.0
-[21:33:26] [Render thread/INFO]: [OptiFine] Java: 21.0.10, Microsoft
-[21:33:26] [Render thread/INFO]: [OptiFine] VM: OpenJDK 64-Bit Server VM (mixed mode, sharing), Microsoft
-[21:33:26] [Render thread/INFO]: [OptiFine] LWJGL: 3.4.0 Win32 WGL Null EGL OSMesa VisualC DLL
-[21:33:26] [Render thread/INFO]: [OptiFine] OpenGL: AMD Radeon(TM) Vega 3 Graphics , version 3.3.0 Core Profile Context 23.9.1.230821, ATI Technologies Inc.
-[21:33:26] [Render thread/INFO]: [OptiFine] OpenGL Version: 3.3.0
-[21:33:26] [Render thread/INFO]: [OptiFine] Maximum texture size: 16384x16384
-[21:33:26] [Render thread/INFO]: [Shaders] OpenGL Version: 3.3.0 Core Profile Context 23.9.1.230821
-[21:33:26] [Render thread/INFO]: [Shaders] Vendor:  ATI Technologies Inc.
-[21:33:26] [Render thread/INFO]: [Shaders] Renderer: AMD Radeon(TM) Vega 3 Graphics 
-[21:33:26] [Render thread/INFO]: [Shaders] Capabilities:  2.0  2.1  3.0  3.2  - 
-[21:33:26] [Render thread/INFO]: [Shaders] GL_MAX_DRAW_BUFFERS: 8
-[21:33:26] [Render thread/INFO]: [Shaders] GL_MAX_COLOR_ATTACHMENTS: 8
-[21:33:26] [Render thread/INFO]: [Shaders] GL_MAX_TEXTURE_IMAGE_UNITS: 32
-[21:33:26] [Render thread/INFO]: [Shaders] Load shaders configuration.
-[21:33:26] [Render thread/INFO]: [Shaders] No shaderpack loaded.
-[21:33:26] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.fml.ModList
-[21:33:26] [Render thread/INFO]: Using optional rendering extensions: GL_ARB_buffer_storage, GL_KHR_debug, GL_ARB_vertex_attrib_binding, GL_ARB_direct_state_access, GL_EXT_texture_filter_anisotropic
-[21:33:26] [VersionCheck/INFO]: [OptiFine] Checking for new version
-[21:33:26] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.common.MinecraftForge
-[21:33:27] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.ForgeHooksClient
-[21:33:27] [VersionCheck/INFO]: [OptiFine] Version found: J9
-[21:33:27] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.event.ForgeEventFactoryClient
-[21:33:27] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.gui.overlay.ForgeLayeredDraw
-[21:33:27] [Render thread/INFO]: Reloading ResourceManager: vanilla
-[21:33:27] [Render thread/INFO]: [OptiFine] *** Reloading resources ***
-[21:33:27] [Render thread/INFO]: [OptiFine] *** Reloading textures ***
-[21:33:27] [Worker-Main-2/WARN]: [OptiFine] Resource not found: minecraft:shaders/post/fxaa_of_2x.json
-[21:33:27] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.model.geometry.GeometryLoaderManager
-[21:33:27] [Worker-Main-2/WARN]: [OptiFine] Resource not found: minecraft:shaders/post/fxaa_of_4x.json
-[21:33:28] [Worker-Main-3/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/particles.png
-[21:33:28] [Worker-Main-3/INFO]: [OptiFine] Multitexture: false
-[21:33:28] [Worker-Main-1/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/decorated_pot.png
-[21:33:28] [Worker-Main-1/INFO]: [OptiFine] Multitexture: false
-[21:33:28] [Worker-Main-1/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/armor_trims.png
-[21:33:28] [Worker-Main-1/INFO]: [OptiFine] Multitexture: false
-[21:33:28] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_2, 3 -> 9
-[21:33:28] [Worker-Main-2/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/paintings.png
-[21:33:28] [Worker-Main-2/INFO]: [OptiFine] Multitexture: false
-[21:33:28] [Worker-Main-2/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/shield_patterns.png
-[21:33:28] [Worker-Main-2/INFO]: [OptiFine] Multitexture: false
-[21:33:28] [Worker-Main-1/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/chest.png
-[21:33:28] [Worker-Main-1/INFO]: [OptiFine] Multitexture: false
-[21:33:28] [Worker-Main-2/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/blocks.png
-[21:33:28] [Worker-Main-2/INFO]: [OptiFine] Multitexture: false
-[21:33:28] [Worker-Main-2/INFO]: [OptiFine] Register block sprites
-[21:33:28] [Worker-Main-2/INFO]: [OptiFine] BetterGrass: Parsing default configuration optifine/bettergrass.properties
-[21:33:28] [Worker-Main-1/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/celestials.png
-[21:33:28] [Worker-Main-1/INFO]: [OptiFine] Multitexture: false
-[21:33:28] [Worker-Main-1/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/banner_patterns.png
-[21:33:28] [Worker-Main-1/INFO]: [OptiFine] Multitexture: false
-[21:33:28] [Worker-Main-1/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/beds.png
-[21:33:28] [Worker-Main-1/INFO]: [OptiFine] Multitexture: false
-[21:33:28] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_1, 3 -> 9
-[21:33:28] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_0, 3 -> 9
-[21:33:28] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_11, 3 -> 9
-[21:33:28] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_10, 3 -> 9
-[21:33:28] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_9, 5 -> 10
-[21:33:28] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_8, 5 -> 10
-[21:33:28] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_3, 5 -> 10
-[21:33:28] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_2, 5 -> 10
-[21:33:28] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_1, 5 -> 10
-[21:33:28] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_0, 5 -> 10
-[21:33:28] [Worker-Main-1/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/items.png
-[21:33:28] [Worker-Main-1/INFO]: [OptiFine] Multitexture: false
-[21:33:28] [Worker-Main-1/INFO]: [OptiFine] Register item sprites
-[21:33:28] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_7, 5 -> 10
-[21:33:28] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_6, 5 -> 10
-[21:33:28] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_5, 5 -> 10
-[21:33:28] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_4, 5 -> 10
-[21:33:28] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_11, 5 -> 10
-[21:33:28] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_10, 5 -> 10
-[21:33:28] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:trial_omen, 5 -> 10
-[21:33:28] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:raid_omen, 5 -> 10
-[21:33:28] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_6, 3 -> 9
-[21:33:28] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_5, 3 -> 9
-[21:33:28] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_10, 5 -> 10
-[21:33:28] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_4, 3 -> 9
-[21:33:28] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_3, 3 -> 9
-[21:33:28] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_9, 3 -> 9
-[21:33:28] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_8, 3 -> 9
-[21:33:28] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_11, 5 -> 10
-[21:33:28] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_7, 3 -> 9
-[21:33:28] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_7, 5 -> 10
-[21:33:28] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_6, 5 -> 10
-[21:33:28] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_9, 5 -> 10
-[21:33:28] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_8, 5 -> 10
-[21:33:28] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_1, 5 -> 10
-[21:33:28] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_0, 5 -> 10
-[21:33:28] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_3, 5 -> 10
-[21:33:28] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_2, 5 -> 10
-[21:33:28] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_5, 5 -> 10
-[21:33:28] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_4, 5 -> 10
-[21:33:28] [Worker-Main-3/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/gui.png
-[21:33:28] [Worker-Main-3/INFO]: [OptiFine] Multitexture: false
-[21:33:29] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:container/bundle/bundle_progressbar_fill, 6 -> 12
-[21:33:29] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:widget/scroller_background, 6 -> 12
-[21:33:29] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:container/bundle/bundle_progressbar_full, 6 -> 12
-[21:33:29] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:hud/locator_bar_arrow_up, 7 -> 14
-[21:33:29] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:container/villager/scroller, 6 -> 12
-[21:33:29] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:widget/scroller, 6 -> 12
-[21:33:29] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:container/villager/scroller_disabled, 6 -> 12
-[21:33:29] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:hud/locator_bar_arrow_down, 7 -> 14
-[21:33:29] [Worker-Main-3/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/map_decorations.png
-[21:33:29] [Worker-Main-3/INFO]: [OptiFine] Multitexture: false
-[21:33:29] [Worker-Main-3/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/signs.png
-[21:33:29] [Worker-Main-3/INFO]: [OptiFine] Multitexture: false
-[21:33:29] [Worker-Main-3/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/shulker_boxes.png
-[21:33:29] [Worker-Main-3/INFO]: [OptiFine] Multitexture: false
-[21:33:29] [Worker-Main-3/INFO]: Found unifont_all_no_pua-17.0.01.hex, loading
-[21:33:29] [Render thread/INFO]: Loaded Platform ViaVersion
-[21:33:29] [Render thread/INFO]: Loading translations...
-[21:33:30] [Render thread/INFO]: Registering protocols...
-[21:33:30] [Worker-Main-2/INFO]: Found unifont_pua-17.0.01.hex, loading
-[21:33:30] [Worker-Main-3/INFO]: Found unifont_jp_patch-17.0.01.hex, loading
-[21:33:30] [Via-Mappingloader-1/INFO]: Loading block connection mappings ...
-[21:33:31] [Via-Mappingloader-1/INFO]: Using FastUtil Long2ObjectOpenHashMap for block connections
-[21:33:31] [Render thread/INFO]: Loaded Platform ViaBackwards
-[21:33:31] [Render thread/INFO]: Registering protocols...
-[21:33:31] [Render thread/INFO]: Loaded Platform ViaRewind
-[21:33:31] [Render thread/INFO]: ViaVersion detected lowest supported version by the proxy: 1.7.2-1.7.5 (4)
-[21:33:31] [Render thread/INFO]: Highest supported version by the proxy: 26.1-26.1.2 (775)
-[21:33:31] [Render thread/INFO]: ViaLoadingBase has loaded 3/3 platforms
-[21:33:33] [Worker-Main-1/INFO]: [OptiFine] Waiting for model sprites
-[21:33:34] [Via Async Scheduler 0/INFO]: Finished mapping loading, shutting down loader executor.
-[21:33:35] [Via Async Task 1/WARN]: There is a newer plugin version available: 5.9.1, you're on: 5.9.0
-[21:33:35] [Worker-Main-3/INFO]: [OptiFine] CustomItems: Collecting model sprites
-[21:33:35] [Worker-Main-1/INFO]: [OptiFine] CustomItems: Registering sprites
-[21:33:35] [Worker-Main-3/INFO]: [OptiFine] (Reflector) Method not present: net.minecraft.client.renderer.block.model.BlockElementFace.data
-[21:33:43] [Render thread/INFO]: OpenAL initialized on device OpenAL Soft on Наушники (Устройство с поддержкой High Definition Audio)
-[21:33:43] [Render thread/INFO]: Sound engine started
-[21:33:43] [Render thread/INFO]: Created: 512x256x0 minecraft:textures/atlas/particles.png-atlas
-[21:33:43] [Render thread/INFO]: [OptiFine] Animated sprites: 1
-[21:33:43] [Render thread/INFO]: Created: 128x128x0 minecraft:textures/atlas/decorated_pot.png-atlas
-[21:33:43] [Render thread/INFO]: [OptiFine] Animated sprites: 0
-[21:33:43] [Render thread/INFO]: Created: 2048x1024x0 minecraft:textures/atlas/armor_trims.png-atlas
-[21:33:43] [Render thread/INFO]: [OptiFine] Animated sprites: 0
-[21:33:43] [Render thread/INFO]: Created: 512x256x0 minecraft:textures/atlas/paintings.png-atlas
-[21:33:43] [Render thread/INFO]: [OptiFine] Animated sprites: 0
-[21:33:43] [Render thread/INFO]: Created: 1024x512x0 minecraft:textures/atlas/shield_patterns.png-atlas
-[21:33:43] [Render thread/INFO]: [OptiFine] Animated sprites: 0
-[21:33:43] [Render thread/INFO]: Created: 1024x1024x2 minecraft:textures/atlas/blocks.png-atlas
-[21:33:43] [Render thread/INFO]: [OptiFine] Update block sprites
-[21:33:43] [Render thread/INFO]: [OptiFine] Animated sprites: 56
-[21:33:43] [Render thread/INFO]: Created: 512x512x0 minecraft:textures/atlas/chest.png-atlas
-[21:33:43] [Render thread/INFO]: [OptiFine] Animated sprites: 0
-[21:33:43] [Render thread/INFO]: Created: 256x128x0 minecraft:textures/atlas/celestials.png-atlas
-[21:33:43] [Render thread/INFO]: [OptiFine] Animated sprites: 0
-[21:33:43] [Render thread/INFO]: Created: 1024x512x0 minecraft:textures/atlas/banner_patterns.png-atlas
-[21:33:43] [Render thread/INFO]: [OptiFine] Animated sprites: 0
-[21:33:43] [Render thread/INFO]: Created: 512x512x0 minecraft:textures/atlas/beds.png-atlas
-[21:33:43] [Render thread/INFO]: [OptiFine] Animated sprites: 0
-[21:33:43] [Render thread/INFO]: Created: 1024x512x0 minecraft:textures/atlas/items.png-atlas
-[21:33:43] [Render thread/INFO]: [OptiFine] Update item sprites
-[21:33:43] [Render thread/INFO]: [OptiFine] Animated sprites: 0
-[21:33:43] [Render thread/INFO]: Created: 1024x1024x0 minecraft:textures/atlas/gui.png-atlas
-[21:33:43] [Render thread/INFO]: [OptiFine] Animated sprites: 5
-[21:33:43] [Render thread/INFO]: Created: 128x64x0 minecraft:textures/atlas/map_decorations.png-atlas
-[21:33:43] [Render thread/INFO]: [OptiFine] Animated sprites: 0
-[21:33:43] [Render thread/INFO]: Created: 512x256x0 minecraft:textures/atlas/signs.png-atlas
-[21:33:43] [Render thread/INFO]: [OptiFine] Animated sprites: 0
-[21:33:43] [Render thread/INFO]: Created: 512x512x0 minecraft:textures/atlas/shulker_boxes.png-atlas
-[21:33:43] [Render thread/INFO]: [OptiFine] Animated sprites: 0
-[21:33:43] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/gui.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
-[21:33:43] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/beds.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
-[21:33:43] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/paintings.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
-[21:33:43] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/shulker_boxes.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
-[21:33:43] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/signs.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
-[21:33:43] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/chest.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
-[21:33:43] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/particles.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
-[21:33:43] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/celestials.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
-[21:33:43] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/shield_patterns.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
-[21:33:43] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/decorated_pot.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
-[21:33:43] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/map_decorations.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
-[21:33:43] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/blocks.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
-[21:33:43] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/banner_patterns.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
-[21:33:43] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/armor_trims.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
-[21:33:44] [Render thread/INFO]: [OptiFine] *** Reloading custom textures ***
-[21:33:49] [Render thread/INFO]: [OptiFine] Disable Forge light pipeline
-[21:33:49] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.gui.ModListScreen
-[21:33:49] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.gui.TitleScreenModUpdateIndicator
-[21:33:49] [Render thread/INFO]: [OptiFine] *** Reflector Forge ***
-[21:33:49] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.event.level.ChunkEvent$Load
-[21:33:49] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.event.level.ChunkEvent$Unload
-[21:33:49] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.ColorResolverManager
-[21:33:49] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.logging.CrashReportAnalyser
-[21:33:49] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.EntitySpectatorShaderManager
-[21:33:49] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.eventbus.api.bus.EventBus
-[21:33:49] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraft.world.entity.Entity.isInWaterOrSwimmable
-[21:33:49] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraft.world.entity.boss.enderdragon.EnderDragon.getParts
-[21:33:49] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeBlockState.getSoundType
-[21:33:49] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeBlockState.getStateAtViewpoint
-[21:33:49] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeBlockState.shouldDisplayFluidOverlay
-[21:33:49] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeEntity.getEyeInFluidType
-[21:33:49] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeEntity.getParts
-[21:33:49] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeEntity.hasCustomOutlineRendering
-[21:33:49] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeEntity.isMultipartEntity
-[21:33:49] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeEntity.onAddedToWorld
-[21:33:49] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeEntity.onRemovedFromWorld
-[21:33:49] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeEntity.shouldRiderSit
-[21:33:49] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.event.ForgeEventFactory
-[21:33:49] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.client.model.ForgeFaceData.calculateNormals
-[21:33:49] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.common.ForgeHooks
-[21:33:49] [Render thread/INFO]: [OptiFine] (Reflector) Field not present: net.minecraftforge.common.ForgeConfigSpec.childConfig
-[21:33:49] [Render thread/INFO]: [OptiFine] (Reflector) Field not present: net.minecraftforge.common.ForgeConfigSpec$ConfigValue.defaultSupplier
-[21:33:49] [Render thread/INFO]: [OptiFine] (Reflector) Field not present: net.minecraftforge.common.ForgeConfigSpec$ConfigValue.spec
-[21:33:49] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.ForgeConfigSpec$ConfigValue.get
-[21:33:49] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraft.world.level.chunk.ChunkAccess.getWorldForge
-[21:33:49] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.common.extensions.IForgeItemStack
-[21:33:49] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraft.client.renderer.ItemBlockRenderTypes.isFancy
-[21:33:49] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraft.client.KeyMapping.setKeyConflictContext
-[21:33:49] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraft.client.KeyMapping.setKeyModifierAndCode
-[21:33:49] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraft.client.particle.ParticleResources.getProvider
-[21:33:49] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeBlockEntity.getRenderBoundingBox
-[21:33:49] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.FramePassManager
-[21:33:49] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.ItemDecoratorHandler
-[21:33:49] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.fml.ModContainer
-[21:33:49] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.fml.ModLoader
-[21:33:49] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.event.PlayLevelSoundEvent
-[21:33:49] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.event.RenderBlockScreenEffectEvent$OverlayType
-[21:33:49] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.event.CustomizeGuiOverlayEvent$BossEventProgress
-[21:33:49] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.event.RenderNameTagEvent
-[21:33:49] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.event.RenderTooltipEvent
-[21:33:49] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.event.RenderTooltipEvent$Pre
-[21:33:49] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.event.ScreenshotEvent
-[21:33:49] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.server.ServerLifecycleHooks
-[21:33:49] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraft.client.particle.TerrainParticle.updateSprite
-[21:33:49] [Render thread/INFO]: [OptiFine] *** Reflector Vanilla ***
-[21:33:59] [Render thread/INFO]: [STDOUT]: Logged as: ProdLasiogg1fd
-[21:34:00] [Render thread/INFO]: Connecting to mc.funtime.su, 25565
-[21:34:01] [Download-2/ERROR]: Failed to retrieve profile key pair
+	... 5 more
+[08:44:33] [Render thread/INFO]: [OptiFine] 
+[08:44:33] [Render thread/INFO]: [OptiFine] OptiFine_1.21.11_HD_U_J9
+[08:44:33] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: optifine.OptiFineResourceLocator
+[08:44:33] [Render thread/INFO]: [OptiFine] Build: null
+[08:44:33] [Render thread/INFO]: [OptiFine] OS: Windows 10 (amd64) version 10.0
+[08:44:33] [Render thread/INFO]: [OptiFine] Java: 21.0.10, Microsoft
+[08:44:33] [Render thread/INFO]: [OptiFine] VM: OpenJDK 64-Bit Server VM (mixed mode, sharing), Microsoft
+[08:44:33] [Render thread/INFO]: [OptiFine] LWJGL: 3.4.0 Win32 WGL Null EGL OSMesa VisualC DLL
+[08:44:33] [Render thread/INFO]: [OptiFine] OpenGL: AMD Radeon(TM) Vega 3 Graphics , version 3.3.0 Core Profile Context 23.9.1.230821, ATI Technologies Inc.
+[08:44:33] [Render thread/INFO]: [OptiFine] OpenGL Version: 3.3.0
+[08:44:33] [Render thread/INFO]: [OptiFine] Maximum texture size: 16384x16384
+[08:44:33] [VersionCheck/INFO]: [OptiFine] Checking for new version
+[08:44:33] [Render thread/INFO]: [Shaders] OpenGL Version: 3.3.0 Core Profile Context 23.9.1.230821
+[08:44:33] [Render thread/INFO]: [Shaders] Vendor:  ATI Technologies Inc.
+[08:44:33] [Render thread/INFO]: [Shaders] Renderer: AMD Radeon(TM) Vega 3 Graphics 
+[08:44:33] [Render thread/INFO]: [Shaders] Capabilities:  2.0  2.1  3.0  3.2  - 
+[08:44:33] [Render thread/INFO]: [Shaders] GL_MAX_DRAW_BUFFERS: 8
+[08:44:33] [Render thread/INFO]: [Shaders] GL_MAX_COLOR_ATTACHMENTS: 8
+[08:44:33] [Render thread/INFO]: [Shaders] GL_MAX_TEXTURE_IMAGE_UNITS: 32
+[08:44:33] [Render thread/INFO]: [Shaders] Load shaders configuration.
+[08:44:33] [Render thread/INFO]: [Shaders] No shaderpack loaded.
+[08:44:33] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.fml.ModList
+[08:44:33] [Render thread/INFO]: Using optional rendering extensions: GL_ARB_buffer_storage, GL_KHR_debug, GL_ARB_vertex_attrib_binding, GL_ARB_direct_state_access, GL_EXT_texture_filter_anisotropic
+[08:44:33] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.common.MinecraftForge
+[08:44:33] [VersionCheck/INFO]: [OptiFine] Version found: J9
+[08:44:33] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.ForgeHooksClient
+[08:44:34] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.event.ForgeEventFactoryClient
+[08:44:34] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.gui.overlay.ForgeLayeredDraw
+[08:44:34] [Render thread/INFO]: Reloading ResourceManager: vanilla
+[08:44:34] [Render thread/INFO]: [OptiFine] *** Reloading resources ***
+[08:44:34] [Render thread/INFO]: [OptiFine] *** Reloading textures ***
+[08:44:34] [Worker-Main-2/WARN]: [OptiFine] Resource not found: minecraft:shaders/post/fxaa_of_2x.json
+[08:44:34] [Worker-Main-2/WARN]: [OptiFine] Resource not found: minecraft:shaders/post/fxaa_of_4x.json
+[08:44:34] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.model.geometry.GeometryLoaderManager
+[08:44:34] [Worker-Main-3/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/particles.png
+[08:44:34] [Worker-Main-3/INFO]: [OptiFine] Multitexture: false
+[08:44:34] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_2, 3 -> 9
+[08:44:34] [Worker-Main-1/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/decorated_pot.png
+[08:44:34] [Worker-Main-1/INFO]: [OptiFine] Multitexture: false
+[08:44:34] [Worker-Main-1/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/armor_trims.png
+[08:44:34] [Worker-Main-1/INFO]: [OptiFine] Multitexture: false
+[08:44:35] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_1, 3 -> 9
+[08:44:35] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_0, 3 -> 9
+[08:44:35] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_11, 3 -> 9
+[08:44:35] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_10, 3 -> 9
+[08:44:35] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_9, 5 -> 10
+[08:44:35] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_8, 5 -> 10
+[08:44:35] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_3, 5 -> 10
+[08:44:35] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_2, 5 -> 10
+[08:44:35] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_1, 5 -> 10
+[08:44:35] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_0, 5 -> 10
+[08:44:35] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_7, 5 -> 10
+[08:44:35] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_6, 5 -> 10
+[08:44:35] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_5, 5 -> 10
+[08:44:35] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_4, 5 -> 10
+[08:44:35] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_11, 5 -> 10
+[08:44:35] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_10, 5 -> 10
+[08:44:35] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:trial_omen, 5 -> 10
+[08:44:35] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:raid_omen, 5 -> 10
+[08:44:35] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_6, 3 -> 9
+[08:44:35] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_5, 3 -> 9
+[08:44:35] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_10, 5 -> 10
+[08:44:35] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_4, 3 -> 9
+[08:44:35] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_3, 3 -> 9
+[08:44:35] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_9, 3 -> 9
+[08:44:35] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_8, 3 -> 9
+[08:44:35] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_11, 5 -> 10
+[08:44:35] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_7, 3 -> 9
+[08:44:35] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_7, 5 -> 10
+[08:44:35] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_6, 5 -> 10
+[08:44:35] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_9, 5 -> 10
+[08:44:35] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_8, 5 -> 10
+[08:44:35] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_1, 5 -> 10
+[08:44:35] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_0, 5 -> 10
+[08:44:35] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_3, 5 -> 10
+[08:44:35] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_2, 5 -> 10
+[08:44:35] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_5, 5 -> 10
+[08:44:35] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_4, 5 -> 10
+[08:44:35] [Worker-Main-2/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/paintings.png
+[08:44:35] [Worker-Main-2/INFO]: [OptiFine] Multitexture: false
+[08:44:35] [Worker-Main-3/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/shield_patterns.png
+[08:44:35] [Worker-Main-3/INFO]: [OptiFine] Multitexture: false
+[08:44:35] [Worker-Main-1/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/chest.png
+[08:44:35] [Worker-Main-1/INFO]: [OptiFine] Multitexture: false
+[08:44:35] [Worker-Main-1/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/celestials.png
+[08:44:35] [Worker-Main-1/INFO]: [OptiFine] Multitexture: false
+[08:44:35] [Worker-Main-3/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/banner_patterns.png
+[08:44:35] [Worker-Main-3/INFO]: [OptiFine] Multitexture: false
+[08:44:35] [Worker-Main-1/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/beds.png
+[08:44:35] [Worker-Main-1/INFO]: [OptiFine] Multitexture: false
+[08:44:35] [Worker-Main-2/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/blocks.png
+[08:44:35] [Worker-Main-2/INFO]: [OptiFine] Multitexture: false
+[08:44:35] [Worker-Main-2/INFO]: [OptiFine] Register block sprites
+[08:44:35] [Worker-Main-3/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/gui.png
+[08:44:35] [Worker-Main-3/INFO]: [OptiFine] Multitexture: false
+[08:44:35] [Worker-Main-1/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/items.png
+[08:44:35] [Worker-Main-1/INFO]: [OptiFine] Multitexture: false
+[08:44:35] [Worker-Main-1/INFO]: [OptiFine] Register item sprites
+[08:44:35] [Worker-Main-2/INFO]: [OptiFine] BetterGrass: Parsing default configuration optifine/bettergrass.properties
+[08:44:36] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:container/bundle/bundle_progressbar_fill, 6 -> 12
+[08:44:36] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:widget/scroller_background, 6 -> 12
+[08:44:36] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:container/bundle/bundle_progressbar_full, 6 -> 12
+[08:44:36] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:hud/locator_bar_arrow_up, 7 -> 14
+[08:44:36] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:container/villager/scroller, 6 -> 12
+[08:44:36] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:widget/scroller, 6 -> 12
+[08:44:36] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:container/villager/scroller_disabled, 6 -> 12
+[08:44:36] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:hud/locator_bar_arrow_down, 7 -> 14
+[08:44:36] [Worker-Main-3/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/map_decorations.png
+[08:44:36] [Worker-Main-3/INFO]: [OptiFine] Multitexture: false
+[08:44:36] [Worker-Main-3/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/signs.png
+[08:44:36] [Worker-Main-3/INFO]: [OptiFine] Multitexture: false
+[08:44:36] [Worker-Main-3/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/shulker_boxes.png
+[08:44:36] [Worker-Main-3/INFO]: [OptiFine] Multitexture: false
+[08:44:36] [Worker-Main-3/INFO]: Found unifont_all_no_pua-17.0.01.hex, loading
+[08:44:36] [Worker-Main-2/INFO]: Found unifont_pua-17.0.01.hex, loading
+[08:44:37] [Worker-Main-3/INFO]: Found unifont_jp_patch-17.0.01.hex, loading
+[08:44:37] [Render thread/INFO]: Loaded Platform ViaVersion
+[08:44:37] [Render thread/INFO]: Loading translations...
+[08:44:37] [Render thread/INFO]: Registering protocols...
+[08:44:37] [Via-Mappingloader-1/INFO]: Loading block connection mappings ...
+[08:44:38] [Render thread/INFO]: Loaded Platform ViaBackwards
+[08:44:38] [Render thread/INFO]: Registering protocols...
+[08:44:38] [Render thread/INFO]: Loaded Platform ViaRewind
+[08:44:38] [Render thread/INFO]: ViaVersion detected lowest supported version by the proxy: 1.7.2-1.7.5 (4)
+[08:44:38] [Render thread/INFO]: Highest supported version by the proxy: 26.1-26.1.2 (775)
+[08:44:38] [Via-Mappingloader-1/INFO]: Using FastUtil Long2ObjectOpenHashMap for block connections
+[08:44:38] [Render thread/INFO]: ViaLoadingBase has loaded 3/3 platforms
+[08:44:39] [Via Async Scheduler 0/INFO]: Finished mapping loading, shutting down loader executor.
+[08:44:41] [Worker-Main-1/INFO]: [OptiFine] Waiting for model sprites
+[08:44:41] [Worker-Main-2/INFO]: [OptiFine] CustomItems: Collecting model sprites
+[08:44:41] [Worker-Main-1/INFO]: [OptiFine] CustomItems: Registering sprites
+[08:44:41] [Worker-Main-2/INFO]: [OptiFine] (Reflector) Method not present: net.minecraft.client.renderer.block.model.BlockElementFace.data
+[08:44:42] [Via Async Task 1/WARN]: There is a newer plugin version available: 5.9.1, you're on: 5.9.0
+[08:44:51] [Render thread/INFO]: OpenAL initialized on device OpenAL Soft on Наушники (Устройство с поддержкой High Definition Audio)
+[08:44:51] [Render thread/INFO]: Sound engine started
+[08:44:51] [Render thread/INFO]: Created: 512x256x0 minecraft:textures/atlas/particles.png-atlas
+[08:44:51] [Render thread/INFO]: [OptiFine] Animated sprites: 1
+[08:44:51] [Render thread/INFO]: Created: 128x128x0 minecraft:textures/atlas/decorated_pot.png-atlas
+[08:44:51] [Render thread/INFO]: [OptiFine] Animated sprites: 0
+[08:44:51] [Render thread/INFO]: Created: 2048x1024x0 minecraft:textures/atlas/armor_trims.png-atlas
+[08:44:51] [Render thread/INFO]: [OptiFine] Animated sprites: 0
+[08:44:51] [Render thread/INFO]: Created: 512x256x0 minecraft:textures/atlas/paintings.png-atlas
+[08:44:51] [Render thread/INFO]: [OptiFine] Animated sprites: 0
+[08:44:51] [Render thread/INFO]: Created: 1024x512x0 minecraft:textures/atlas/shield_patterns.png-atlas
+[08:44:51] [Render thread/INFO]: [OptiFine] Animated sprites: 0
+[08:44:51] [Render thread/INFO]: Created: 1024x1024x2 minecraft:textures/atlas/blocks.png-atlas
+[08:44:51] [Render thread/INFO]: [OptiFine] Update block sprites
+[08:44:51] [Render thread/INFO]: [OptiFine] Animated sprites: 56
+[08:44:51] [Render thread/INFO]: Created: 512x512x0 minecraft:textures/atlas/chest.png-atlas
+[08:44:51] [Render thread/INFO]: [OptiFine] Animated sprites: 0
+[08:44:51] [Render thread/INFO]: Created: 256x128x0 minecraft:textures/atlas/celestials.png-atlas
+[08:44:51] [Render thread/INFO]: [OptiFine] Animated sprites: 0
+[08:44:51] [Render thread/INFO]: Created: 1024x512x0 minecraft:textures/atlas/banner_patterns.png-atlas
+[08:44:51] [Render thread/INFO]: [OptiFine] Animated sprites: 0
+[08:44:51] [Render thread/INFO]: Created: 512x512x0 minecraft:textures/atlas/beds.png-atlas
+[08:44:51] [Render thread/INFO]: [OptiFine] Animated sprites: 0
+[08:44:51] [Render thread/INFO]: Created: 1024x512x0 minecraft:textures/atlas/items.png-atlas
+[08:44:52] [Render thread/INFO]: [OptiFine] Update item sprites
+[08:44:52] [Render thread/INFO]: [OptiFine] Animated sprites: 0
+[08:44:52] [Render thread/INFO]: Created: 1024x1024x0 minecraft:textures/atlas/gui.png-atlas
+[08:44:52] [Render thread/INFO]: [OptiFine] Animated sprites: 5
+[08:44:52] [Render thread/INFO]: Created: 128x64x0 minecraft:textures/atlas/map_decorations.png-atlas
+[08:44:52] [Render thread/INFO]: [OptiFine] Animated sprites: 0
+[08:44:52] [Render thread/INFO]: Created: 512x256x0 minecraft:textures/atlas/signs.png-atlas
+[08:44:52] [Render thread/INFO]: [OptiFine] Animated sprites: 0
+[08:44:52] [Render thread/INFO]: Created: 512x512x0 minecraft:textures/atlas/shulker_boxes.png-atlas
+[08:44:52] [Render thread/INFO]: [OptiFine] Animated sprites: 0
+[08:44:52] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/gui.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
+[08:44:52] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/beds.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
+[08:44:52] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/paintings.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
+[08:44:52] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/shulker_boxes.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
+[08:44:52] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/signs.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
+[08:44:52] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/chest.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
+[08:44:52] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/particles.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
+[08:44:52] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/celestials.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
+[08:44:52] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/shield_patterns.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
+[08:44:52] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/decorated_pot.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
+[08:44:52] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/map_decorations.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
+[08:44:52] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/blocks.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
+[08:44:52] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/banner_patterns.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
+[08:44:52] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/armor_trims.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
+[08:44:52] [Render thread/INFO]: [OptiFine] *** Reloading custom textures ***
+[08:44:55] [Render thread/INFO]: [OptiFine] Disable Forge light pipeline
+[08:44:55] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.gui.ModListScreen
+[08:44:55] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.gui.TitleScreenModUpdateIndicator
+[08:44:55] [Render thread/INFO]: [OptiFine] *** Reflector Forge ***
+[08:44:55] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.event.level.ChunkEvent$Load
+[08:44:55] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.event.level.ChunkEvent$Unload
+[08:44:55] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.ColorResolverManager
+[08:44:55] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.logging.CrashReportAnalyser
+[08:44:55] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.EntitySpectatorShaderManager
+[08:44:55] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.eventbus.api.bus.EventBus
+[08:44:55] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraft.world.entity.Entity.isInWaterOrSwimmable
+[08:44:55] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraft.world.entity.boss.enderdragon.EnderDragon.getParts
+[08:44:55] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeBlockState.getSoundType
+[08:44:55] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeBlockState.getStateAtViewpoint
+[08:44:55] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeBlockState.shouldDisplayFluidOverlay
+[08:44:55] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeEntity.getEyeInFluidType
+[08:44:55] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeEntity.getParts
+[08:44:55] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeEntity.hasCustomOutlineRendering
+[08:44:55] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeEntity.isMultipartEntity
+[08:44:55] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeEntity.onAddedToWorld
+[08:44:55] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeEntity.onRemovedFromWorld
+[08:44:55] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeEntity.shouldRiderSit
+[08:44:55] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.event.ForgeEventFactory
+[08:44:55] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.client.model.ForgeFaceData.calculateNormals
+[08:44:55] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.common.ForgeHooks
+[08:44:55] [Render thread/INFO]: [OptiFine] (Reflector) Field not present: net.minecraftforge.common.ForgeConfigSpec.childConfig
+[08:44:55] [Render thread/INFO]: [OptiFine] (Reflector) Field not present: net.minecraftforge.common.ForgeConfigSpec$ConfigValue.defaultSupplier
+[08:44:55] [Render thread/INFO]: [OptiFine] (Reflector) Field not present: net.minecraftforge.common.ForgeConfigSpec$ConfigValue.spec
+[08:44:55] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.ForgeConfigSpec$ConfigValue.get
+[08:44:55] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraft.world.level.chunk.ChunkAccess.getWorldForge
+[08:44:55] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.common.extensions.IForgeItemStack
+[08:44:55] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraft.client.renderer.ItemBlockRenderTypes.isFancy
+[08:44:55] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraft.client.KeyMapping.setKeyConflictContext
+[08:44:55] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraft.client.KeyMapping.setKeyModifierAndCode
+[08:44:55] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraft.client.particle.ParticleResources.getProvider
+[08:44:55] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeBlockEntity.getRenderBoundingBox
+[08:44:55] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.FramePassManager
+[08:44:55] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.ItemDecoratorHandler
+[08:44:55] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.fml.ModContainer
+[08:44:55] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.fml.ModLoader
+[08:44:55] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.event.PlayLevelSoundEvent
+[08:44:55] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.event.RenderBlockScreenEffectEvent$OverlayType
+[08:44:55] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.event.CustomizeGuiOverlayEvent$BossEventProgress
+[08:44:55] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.event.RenderNameTagEvent
+[08:44:55] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.event.RenderTooltipEvent
+[08:44:55] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.event.RenderTooltipEvent$Pre
+[08:44:55] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.event.ScreenshotEvent
+[08:44:55] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.server.ServerLifecycleHooks
+[08:44:55] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraft.client.particle.TerrainParticle.updateSprite
+[08:44:55] [Render thread/INFO]: [OptiFine] *** Reflector Vanilla ***
+[08:44:59] [Render thread/INFO]: [STDOUT]: Logged as: ProdLasiogg1fd
+[08:45:00] [Render thread/INFO]: Resizing Dynamic Transforms UBO, capacity limit of 2 reached during a single frame. New capacity will be 4.
+[08:45:01] [Render thread/INFO]: Connecting to mc.funtime.su, 25565
+[08:45:01] [Download-2/ERROR]: Failed to retrieve profile key pair
 com.mojang.authlib.exceptions.MinecraftClientHttpException: Status: 401
 	at com.mojang.authlib.minecraft.client.MinecraftClient.readInputStream(MinecraftClient.java:103)
 	at com.mojang.authlib.minecraft.client.MinecraftClient.post(MinecraftClient.java:64)
 	at com.mojang.authlib.yggdrasil.YggdrasilUserApiService.getKeyPair(YggdrasilUserApiService.java:61)
 	at net.minecraft.client.multiplayer.AccountProfileKeyPairManager.fetchProfileKeyPair(AccountProfileKeyPairManager.java:120)
 	at net.minecraft.client.multiplayer.AccountProfileKeyPairManager.lambda$readOrFetchProfileKeyPair$0(AccountProfileKeyPairManager.java:73)
-	at java.base/java.util.concurrent.CompletableFuture$AsyncSupply.run$$$capture(CompletableFuture.java:1768)
-	at java.base/java.util.concurrent.CompletableFuture$AsyncSupply.run(CompletableFuture.java)
+	at java.base/java.util.concurrent.CompletableFuture$AsyncSupply.run(CompletableFuture.java:1768)
 	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
 	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
 	at java.base/java.lang.Thread.run(Thread.java:1583)
-[21:34:03] [Render thread/INFO]: [System] [CHAT] [✾] Успешная авторизация! Приятной игры!
-[21:34:04] [Render thread/INFO]: [System] [CHAT] ╔═════ ★ FunTime.su ★ ═══╗
-[21:34:04] [Render thread/INFO]: [System] [CHAT] ║
-[21:34:04] [Render thread/INFO]: [System] [CHAT] ║ Добро пожаловать на FunTime
-[21:34:04] [Render thread/INFO]: [System] [CHAT] ║ Наши социальные сети – /links
-[21:34:04] [Render thread/INFO]: [System] [CHAT] ║ Приятной игры и новых побед!
-[21:34:04] [Render thread/INFO]: [System] [CHAT] ║
-[21:34:04] [Render thread/INFO]: [System] [CHAT] ╚═══════════════════╝
-[21:34:04] [Render thread/WARN]: Ignoring player info update for unknown player 914620b7-f474-3561-9f70-dd5757a1c3ca ([UPDATE_LATENCY])
-[21:34:04] [Render thread/WARN]: Ignoring player info update for unknown player d9786d81-0e08-3bc5-9a2f-0cd5b748edc5 ([UPDATE_LATENCY])
-[21:34:04] [Render thread/INFO]: Resizing Dynamic Transforms UBO, capacity limit of 2 reached during a single frame. New capacity will be 4.
-[21:34:04] [Render thread/WARN]: Ignoring player info update for unknown player d3f3432a-429c-39fc-a3d8-fe26f74b6ce8 ([UPDATE_LATENCY])
-[21:34:04] [Render thread/WARN]: Ignoring player info update for unknown player 8e7832e0-b78b-3f13-8fe7-2078fc5097fd ([UPDATE_LATENCY])
-[21:34:04] [Render thread/INFO]: Resizing Dynamic Transforms UBO, capacity limit of 4 reached during a single frame. New capacity will be 8.
-[21:34:04] [Render thread/WARN]: Ignoring player info update for unknown player 8517ff70-b348-3776-829c-e421776cbe48 ([UPDATE_LATENCY])
-[21:34:04] [Render thread/WARN]: Ignoring player info update for unknown player f7414200-c8c7-34bb-8d1b-c608cee2b004 ([UPDATE_LATENCY])
-[21:34:04] [Render thread/WARN]: Ignoring player info update for unknown player b7eebc34-37e4-38df-8a64-827194a2e01f ([UPDATE_LATENCY])
-[21:34:04] [Render thread/WARN]: Ignoring player info update for unknown player dc2637a6-7ac2-3db0-ae38-85c32ea17c89 ([UPDATE_LATENCY])
-[21:34:04] [Render thread/INFO]: Resizing Dynamic Transforms UBO, capacity limit of 8 reached during a single frame. New capacity will be 16.
-[21:34:04] [Render thread/INFO]: Resizing Chunk Sections UBO, capacity limit of 2 reached during a single frame. New capacity will be 4.
-[21:34:05] [Worker-Main-3/ERROR]: Failed to verify signature on property Property[name=textures, value=ewogICJ0aW1lc3RhbXAiIDogMTc1MDI3ODY0MTkwMCwKICAicHJvZmlsZUlkIiA6ICIxNzRjZmRiNGEzY2I0M2I1YmZjZGU0MjRjM2JiMmM2ZSIsCiAgInByb2ZpbGVOYW1lIiA6ICJtYXJhZWwxOCIsCiAgInNpZ25hdHVyZVJlcXVpcmVkIiA6IHRydWUsCiAgInRleHR1cmVzIiA6IHsKICAgICJTS0lOIiA6IHsKICAgICAgInVybCIgOiAiaHR0cDovL3RleHR1cmVzLm1pbmVjcmFmdC5uZXQvdGV4dHVyZS9lN2E3YWU3Y2RjZjYxNmU4YjdhNDIyMWE2MjFiMjQzNTc1M2M2MGVkNmEyNThlYTA2MGRhZTMwMDJmZmU5ZTI4IiwKICAgICAgIm1ldGFkYXRhIiA6IHsKICAgICAgICAibW9kZWwiIDogInNsaW0iCiAgICAgIH0KICAgIH0KICB9Cn0=, signature=]
+[08:45:04] [Render thread/INFO]: [System] [CHAT] [✾] Успешная авторизация! Приятной игры!
+[08:45:05] [Render thread/INFO]: [System] [CHAT] ╔═════ ★ FunTime.su ★ ═══╗
+[08:45:05] [Render thread/INFO]: [System] [CHAT] ║
+[08:45:05] [Render thread/INFO]: [System] [CHAT] ║ Добро пожаловать на FunTime
+[08:45:05] [Render thread/INFO]: [System] [CHAT] ║ Наши социальные сети – /links
+[08:45:05] [Render thread/INFO]: [System] [CHAT] ║ Приятной игры и новых побед!
+[08:45:05] [Render thread/INFO]: [System] [CHAT] ║
+[08:45:05] [Render thread/INFO]: [System] [CHAT] ╚═══════════════════╝
+[08:45:05] [Render thread/INFO]: Resizing Dynamic Transforms UBO, capacity limit of 4 reached during a single frame. New capacity will be 8.
+[08:45:05] [Render thread/INFO]: Resizing Chunk Sections UBO, capacity limit of 2 reached during a single frame. New capacity will be 4.
+[08:45:06] [Render thread/INFO]: Resizing Chunk Sections UBO, capacity limit of 4 reached during a single frame. New capacity will be 8.
+[08:45:06] [Render thread/INFO]: Resizing Chunk Sections UBO, capacity limit of 8 reached during a single frame. New capacity will be 16.
+[08:45:06] [Worker-Main-3/ERROR]: Failed to verify signature on property Property[name=textures, value=ewogICJ0aW1lc3RhbXAiIDogMTc1MDI3ODY0MTkwMCwKICAicHJvZmlsZUlkIiA6ICIxNzRjZmRiNGEzY2I0M2I1YmZjZGU0MjRjM2JiMmM2ZSIsCiAgInByb2ZpbGVOYW1lIiA6ICJtYXJhZWwxOCIsCiAgInNpZ25hdHVyZVJlcXVpcmVkIiA6IHRydWUsCiAgInRleHR1cmVzIiA6IHsKICAgICJTS0lOIiA6IHsKICAgICAgInVybCIgOiAiaHR0cDovL3RleHR1cmVzLm1pbmVjcmFmdC5uZXQvdGV4dHVyZS9lN2E3YWU3Y2RjZjYxNmU4YjdhNDIyMWE2MjFiMjQzNTc1M2M2MGVkNmEyNThlYTA2MGRhZTMwMDJmZmU5ZTI4IiwKICAgICAgIm1ldGFkYXRhIiA6IHsKICAgICAgICAibW9kZWwiIDogInNsaW0iCiAgICAgIH0KICAgIH0KICB9Cn0=, signature=]
 java.security.SignatureException: Bad signature length: got 0 but was expecting 512
 	at java.base/sun.security.rsa.RSASignature.engineVerify(RSASignature.java:212)
 	at java.base/java.security.Signature$Delegate.engineVerify(Signature.java:1422)
@@ -320,16 +311,14 @@ java.security.SignatureException: Bad signature length: got 0 but was expecting 
 	at com.mojang.authlib.yggdrasil.YggdrasilMinecraftSessionService.getPropertySignatureState(YggdrasilMinecraftSessionService.java:185)
 	at com.mojang.authlib.yggdrasil.YggdrasilMinecraftSessionService.unpackTextures(YggdrasilMinecraftSessionService.java:128)
 	at net.minecraft.client.resources.SkinManager$1.lambda$load$0(SkinManager.java:63)
-	at java.base/java.util.concurrent.CompletableFuture$AsyncSupply.run$$$capture(CompletableFuture.java:1768)
-	at java.base/java.util.concurrent.CompletableFuture$AsyncSupply.run(CompletableFuture.java)
+	at java.base/java.util.concurrent.CompletableFuture$AsyncSupply.run(CompletableFuture.java:1768)
 	at java.base/java.util.concurrent.CompletableFuture$AsyncSupply.exec(CompletableFuture.java:1760)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec$$$capture(ForkJoinTask.java:387)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:387)
 	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1312)
 	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1843)
 	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1808)
 	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:188)
-[21:34:05] [Worker-Main-3/ERROR]: Failed to verify signature on property Property[name=textures, value=ewogICJ0aW1lc3RhbXAiIDogMTc1MDI3ODY0MTkwMCwKICAicHJvZmlsZUlkIiA6ICIxNzRjZmRiNGEzY2I0M2I1YmZjZGU0MjRjM2JiMmM2ZSIsCiAgInByb2ZpbGVOYW1lIiA6ICJtYXJhZWwxOCIsCiAgInNpZ25hdHVyZVJlcXVpcmVkIiA6IHRydWUsCiAgInRleHR1cmVzIiA6IHsKICAgICJTS0lOIiA6IHsKICAgICAgInVybCIgOiAiaHR0cDovL3RleHR1cmVzLm1pbmVjcmFmdC5uZXQvdGV4dHVyZS9lN2E3YWU3Y2RjZjYxNmU4YjdhNDIyMWE2MjFiMjQzNTc1M2M2MGVkNmEyNThlYTA2MGRhZTMwMDJmZmU5ZTI4IiwKICAgICAgIm1ldGFkYXRhIiA6IHsKICAgICAgICAibW9kZWwiIDogInNsaW0iCiAgICAgIH0KICAgIH0KICB9Cn0=, signature=]
+[08:45:06] [Worker-Main-3/ERROR]: Failed to verify signature on property Property[name=textures, value=ewogICJ0aW1lc3RhbXAiIDogMTc1MDI3ODY0MTkwMCwKICAicHJvZmlsZUlkIiA6ICIxNzRjZmRiNGEzY2I0M2I1YmZjZGU0MjRjM2JiMmM2ZSIsCiAgInByb2ZpbGVOYW1lIiA6ICJtYXJhZWwxOCIsCiAgInNpZ25hdHVyZVJlcXVpcmVkIiA6IHRydWUsCiAgInRleHR1cmVzIiA6IHsKICAgICJTS0lOIiA6IHsKICAgICAgInVybCIgOiAiaHR0cDovL3RleHR1cmVzLm1pbmVjcmFmdC5uZXQvdGV4dHVyZS9lN2E3YWU3Y2RjZjYxNmU4YjdhNDIyMWE2MjFiMjQzNTc1M2M2MGVkNmEyNThlYTA2MGRhZTMwMDJmZmU5ZTI4IiwKICAgICAgIm1ldGFkYXRhIiA6IHsKICAgICAgICAibW9kZWwiIDogInNsaW0iCiAgICAgIH0KICAgIH0KICB9Cn0=, signature=]
 java.security.SignatureException: Bad signature length: got 0 but was expecting 512
 	at java.base/sun.security.rsa.RSASignature.engineVerify(RSASignature.java:212)
 	at java.base/java.security.Signature$Delegate.engineVerify(Signature.java:1422)
@@ -349,487 +338,183 @@ java.security.SignatureException: Bad signature length: got 0 but was expecting 
 	at com.mojang.authlib.yggdrasil.YggdrasilMinecraftSessionService.getPropertySignatureState(YggdrasilMinecraftSessionService.java:185)
 	at com.mojang.authlib.yggdrasil.YggdrasilMinecraftSessionService.unpackTextures(YggdrasilMinecraftSessionService.java:128)
 	at net.minecraft.client.resources.SkinManager$1.lambda$load$0(SkinManager.java:63)
-	at java.base/java.util.concurrent.CompletableFuture$AsyncSupply.run$$$capture(CompletableFuture.java:1768)
-	at java.base/java.util.concurrent.CompletableFuture$AsyncSupply.run(CompletableFuture.java)
+	at java.base/java.util.concurrent.CompletableFuture$AsyncSupply.run(CompletableFuture.java:1768)
 	at java.base/java.util.concurrent.CompletableFuture$AsyncSupply.exec(CompletableFuture.java:1760)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec$$$capture(ForkJoinTask.java:387)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:387)
 	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1312)
 	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1843)
 	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1808)
 	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:188)
-[21:34:05] [Worker-Main-3/WARN]: Profile contained invalid signature for textures property (profile id: 9231be8e-a7bb-4ae0-b8ca-01d9e9efe19b)
-[21:34:05] [Render thread/INFO]: [System] [CHAT] ** ! Внимание !\n** Чтобы ваш Аккаунт был в БЕЗОПАСНОСТИ!\n** Привяжите его к ВК: /vk \n** Или к Телеграм: /tg \n \n** ! Внимание !\n** Чтобы ваш Аккаунт был в БЕЗОПАСНОСТИ!\n** Привяжите его к ВК: /vk \n** Или к Телеграм: /tg 
-[21:34:05] [Render thread/INFO]: Resizing Chunk Sections UBO, capacity limit of 4 reached during a single frame. New capacity will be 8.
-[21:34:06] [Render thread/INFO]: Resizing Chunk Sections UBO, capacity limit of 8 reached during a single frame. New capacity will be 16.
-[21:34:11] [Render thread/INFO]: Resizing Chunk Sections UBO, capacity limit of 16 reached during a single frame. New capacity will be 32.
-[21:34:20] [Render thread/INFO]: Resizing Chunk Sections UBO, capacity limit of 32 reached during a single frame. New capacity will be 64.
-[21:34:27] [Render thread/INFO]: [System] [CHAT] \n ⚡ Наш Сайт FunTime.su\n
-[21:34:31] [Render thread/WARN]: Ignoring player info update for unknown player 18f9689c-7437-3385-8107-ea2515a517b1 ([UPDATE_LATENCY])
-[21:34:31] [Render thread/WARN]: Ignoring player info update for unknown player 8f6878f2-d40d-318d-b4df-ee9ea6d5c9a3 ([UPDATE_LATENCY])
-[21:34:31] [Render thread/WARN]: Ignoring player info update for unknown player d6952c15-bc46-3e2e-9eb1-e74c3be0b099 ([UPDATE_LATENCY])
-[21:34:46] [Render thread/WARN]: Ignoring player info update for unknown player f4a9885d-d8ab-37b3-95bc-fa7212d88fbe ([UPDATE_LATENCY])
-[21:34:47] [Render thread/WARN]: Ignoring player info update for unknown player 1c26c856-b4c5-33cd-b425-402cb1f3b24c ([UPDATE_LATENCY])
-[21:34:47] [Render thread/WARN]: Ignoring player info update for unknown player 765c7b62-5376-3464-b943-3d52da119fec ([UPDATE_LATENCY])
-[21:34:47] [Render thread/WARN]: Ignoring player info update for unknown player 93b98f8a-10e8-357e-a787-aaf3cba3837e ([UPDATE_LATENCY])
-[21:34:47] [Render thread/WARN]: Ignoring player info update for unknown player 64bd6717-7c69-37b3-ab3d-003da8c3dc6f ([UPDATE_LATENCY])
-[21:34:47] [Render thread/WARN]: Ignoring player info update for unknown player afbd3013-1db0-3a16-be57-3106013c2e8c ([UPDATE_LATENCY])
-[21:34:47] [Render thread/WARN]: Ignoring player info update for unknown player 592b80ff-3fd3-3759-b42a-b643fd9efb09 ([UPDATE_LATENCY])
-[21:34:48] [Render thread/WARN]: Ignoring player info update for unknown player 106642db-1d48-355a-ad28-37bd336551df ([UPDATE_LATENCY])
-[21:34:48] [Render thread/WARN]: Ignoring player info update for unknown player 6cf43d55-1da0-352f-a5ff-044618e8d198 ([UPDATE_LATENCY])
-[21:34:48] [Render thread/WARN]: Ignoring player info update for unknown player d4d331c3-4b59-38f7-b9e3-069f3b75bc51 ([UPDATE_LATENCY])
-[21:34:48] [Render thread/WARN]: Ignoring player info update for unknown player 0307d0f8-0712-3ea9-baa8-18a95ddad0ab ([UPDATE_LATENCY])
-[21:34:48] [Render thread/WARN]: Ignoring player info update for unknown player da1f5378-1e82-3d50-a1a4-82a291961339 ([UPDATE_LATENCY])
-[21:34:57] [Render thread/INFO]: [System] [CHAT] \n ⚡ Вы играете на FunTime! play.funtime.su\n
-[21:35:07] [Render thread/WARN]: Ignoring player info update for unknown player b6b9e2a2-b94c-3489-ac81-0a9303b9ae9c ([UPDATE_LATENCY])
-[21:35:07] [Render thread/WARN]: Ignoring player info update for unknown player e785e26a-28f7-3fa2-a1b2-6f06786ee2e8 ([UPDATE_LATENCY])
-[21:35:08] [Render thread/WARN]: Ignoring player info update for unknown player 093b1bdc-7cf8-3a9b-8023-4c78e7d4ab39 ([UPDATE_LATENCY])
-[21:35:08] [Render thread/WARN]: Ignoring player info update for unknown player 358a67ab-03d8-3c56-8db9-bd818a92b882 ([UPDATE_LATENCY])
-[21:35:09] [Render thread/WARN]: Ignoring player info update for unknown player f7414200-c8c7-34bb-8d1b-c608cee2b004 ([UPDATE_LATENCY])
-[21:35:09] [Render thread/WARN]: Ignoring player info update for unknown player dd8cffc8-f798-360e-86ac-5fcc21b1cb5c ([UPDATE_LATENCY])
-[21:35:27] [Render thread/INFO]: [System] [CHAT] \n ⚡ Наши сообщества и соц. сети /links\n
-[21:35:31] [Render thread/WARN]: Ignoring player info update for unknown player a79cd308-72a8-3509-9ca9-de0d6d05e4ca ([UPDATE_LATENCY])
-[21:35:31] [Render thread/WARN]: Ignoring player info update for unknown player 3e8a6d58-02c3-3d4d-a798-559a4bc0bc71 ([UPDATE_LATENCY])
-[21:35:32] [Render thread/WARN]: Ignoring player info update for unknown player f09ac4cf-c04d-3281-8b34-2a86594527b6 ([UPDATE_LATENCY])
-[21:35:32] [Render thread/WARN]: Ignoring player info update for unknown player 38167293-41fe-3e8b-8560-08a8c5053074 ([UPDATE_LATENCY])
-[21:35:52] [Render thread/WARN]: Ignoring player info update for unknown player f7414200-c8c7-34bb-8d1b-c608cee2b004 ([UPDATE_LATENCY])
-[21:35:52] [Render thread/WARN]: Ignoring player info update for unknown player 07c1a538-b4ad-354c-b477-90dde465c134 ([UPDATE_LATENCY])
-[21:35:52] [Render thread/WARN]: Ignoring player info update for unknown player 68b94208-68f5-34cc-aeea-58fde3fe2f77 ([UPDATE_LATENCY])
-[21:35:53] [Render thread/WARN]: Ignoring player info update for unknown player bc6b7c2a-b9df-3f85-991d-ce703e205235 ([UPDATE_LATENCY])
-[21:35:57] [Render thread/INFO]: [System] [CHAT] \n ⚡ Наша группа ВК vk.com/funtime\n
-[21:36:03] [Render thread/WARN]: Ignoring player info update for unknown player 093b1bdc-7cf8-3a9b-8023-4c78e7d4ab39 ([UPDATE_LATENCY])
-[21:36:03] [Render thread/WARN]: Ignoring player info update for unknown player 659d5c14-37f3-39a9-bc56-4d04f6b9c539 ([UPDATE_LATENCY])
-[21:36:04] [Render thread/WARN]: Ignoring player info update for unknown player dc053352-3fd7-38ba-a17b-669a3e7045b8 ([UPDATE_LATENCY])
-[21:36:04] [Render thread/WARN]: Ignoring player info update for unknown player b7e0f1ec-d7ef-3515-b9bd-b38ad3f54fa4 ([UPDATE_LATENCY])
-[21:36:04] [Render thread/WARN]: Ignoring player info update for unknown player ab5325d6-a7cb-3b09-a96e-5f8165f5adfa ([UPDATE_LATENCY])
-[21:36:05] [Render thread/WARN]: Ignoring player info update for unknown player c3d4003e-5036-38e8-9016-24ba2f9fa421 ([UPDATE_LATENCY])
-[21:36:06] [Render thread/WARN]: Ignoring player info update for unknown player 7fa4f313-3ffb-3784-b303-5c719523dfe4 ([UPDATE_LATENCY])
-[21:36:08] [Render thread/WARN]: Ignoring player info update for unknown player 38370af1-730f-35ab-8c54-cf6a5c5c22da ([UPDATE_LATENCY])
-[21:36:10] [Render thread/WARN]: Ignoring player info update for unknown player 39deab04-91bd-3280-af8a-8e4d0cbac2f6 ([UPDATE_LATENCY])
-[21:36:13] [Render thread/WARN]: Ignoring player info update for unknown player 9ef0f2fb-e0e2-38c6-873f-20fad2bb399c ([UPDATE_LATENCY])
-[21:36:14] [Render thread/WARN]: Ignoring player info update for unknown player 6cf82cd9-a874-333c-8e18-20a2e6875d7d ([UPDATE_LATENCY])
-[21:36:15] [Render thread/WARN]: Ignoring player info update for unknown player 9a9c42d1-d135-3758-8a7f-ca27c71f27cd ([UPDATE_LATENCY])
-[21:36:15] [Render thread/WARN]: Ignoring player info update for unknown player bad48c8d-000d-3ef6-851a-9910fab27bf5 ([UPDATE_LATENCY])
-[21:36:16] [Render thread/WARN]: Ignoring player info update for unknown player bc872b9b-8e5c-31a0-b39f-10eba0f4de88 ([UPDATE_LATENCY])
-[21:36:27] [Render thread/INFO]: [System] [CHAT] \n ⚡ Наш Телеграм t.me/funtime\n
-[21:36:31] [Render thread/WARN]: Ignoring player info update for unknown player 81acfaf3-dcec-37b8-800a-c83fac0fa5b6 ([UPDATE_LATENCY])
-[21:36:38] [Render thread/WARN]: Ignoring player info update for unknown player 73f548ac-89bc-3cbd-8885-b4db61e6de16 ([UPDATE_LATENCY])
-[21:36:38] [Render thread/WARN]: Ignoring player info update for unknown player ab1bbe2e-eadf-3065-9bcb-6e44505f00a0 ([UPDATE_LATENCY])
-[21:36:39] [Render thread/WARN]: Ignoring player info update for unknown player cf562f35-97f8-3729-85b1-fe01f7864bfc ([UPDATE_LATENCY])
-[21:36:39] [Render thread/WARN]: Ignoring player info update for unknown player ba45d4d0-8745-3ce9-be48-b823a45616da ([UPDATE_LATENCY])
-[21:36:40] [Render thread/WARN]: Ignoring player info update for unknown player 82f72394-3168-38f9-93d6-aa922c8039cf ([UPDATE_LATENCY])
-[21:36:40] [Render thread/WARN]: Ignoring player info update for unknown player 2fe81d0a-f0da-321c-8892-7031fe8bc5da ([UPDATE_LATENCY])
-[21:36:48] [Render thread/WARN]: Ignoring player info update for unknown player 25ce2598-ab19-35e9-b612-7d36629d829d ([UPDATE_LATENCY])
-[21:36:49] [Render thread/WARN]: Ignoring player info update for unknown player ac9c51d5-a7a3-3f57-9f1c-60cf08644edb ([UPDATE_LATENCY])
-[21:36:49] [Render thread/WARN]: Ignoring player info update for unknown player 620400d8-1322-3273-bf3f-22172bf0efe9 ([UPDATE_LATENCY])
-[21:36:49] [Render thread/WARN]: Ignoring player info update for unknown player 15076ddb-0464-3351-a0b6-3f1134a52ef3 ([UPDATE_LATENCY])
-[21:36:49] [Render thread/WARN]: Ignoring player info update for unknown player 08106a18-4772-3c37-a002-2ff924c0d7ed ([UPDATE_LATENCY])
-[21:36:49] [Render thread/WARN]: Ignoring player info update for unknown player cd954e20-5208-3a00-bcf1-1cba1e60928a ([UPDATE_LATENCY])
-[21:36:50] [Render thread/WARN]: Ignoring player info update for unknown player 17f54976-70c8-3e19-9245-ae121fb172a2 ([UPDATE_LATENCY])
-[21:36:57] [Render thread/INFO]: [System] [CHAT] \n ⚡ Наш Дискорд dd.FunTime.su\n
-[21:37:00] [Render thread/WARN]: Ignoring player info update for unknown player ff27068c-1ca6-3054-a088-c05653567d43 ([UPDATE_LATENCY])
-[21:37:01] [Render thread/WARN]: Ignoring player info update for unknown player e64bd548-a83b-3f09-b9e5-b6e4e69df344 ([UPDATE_LATENCY])
-[21:37:01] [Render thread/WARN]: Ignoring player info update for unknown player 639fc049-a3e3-3199-a53d-ac6a3db44c03 ([UPDATE_LATENCY])
-[21:37:01] [Render thread/WARN]: Ignoring player info update for unknown player 4ed00d9b-2e57-30e1-a519-2a894de840df ([UPDATE_LATENCY])
-[21:37:01] [Render thread/WARN]: Ignoring player info update for unknown player d4f3f3f3-c857-351b-a678-0306ce75f306 ([UPDATE_LATENCY])
-[21:37:02] [Render thread/WARN]: Ignoring player info update for unknown player bf425d6f-2998-3e69-9b77-914b5bc7eb09 ([UPDATE_LATENCY])
-[21:37:02] [Render thread/WARN]: Ignoring player info update for unknown player ca40e59f-c8f5-3d79-92d4-2e586e3771c5 ([UPDATE_LATENCY])
-[21:37:02] [Render thread/WARN]: Ignoring player info update for unknown player fe53f0ad-7f5d-3782-b006-81edd802ba43 ([UPDATE_LATENCY])
-[21:37:06] [Download-18/WARN]: Failed to load texture for profile 4754fcb0-328d-3c81-9c14-1ccb6b859552
-java.util.concurrent.CompletionException: java.io.UncheckedIOException: java.io.IOException: Failed to open http://textures.minecraft.net/texture/e514fcdd33735541e9398f5944382bb8a980ca5207ba4422e0d2e192ea65cbee, HTTP error code: 404
-	at java.base/java.util.concurrent.CompletableFuture.encodeThrowable(CompletableFuture.java:315)
-	at java.base/java.util.concurrent.CompletableFuture.completeThrowable(CompletableFuture.java:320)
-	at java.base/java.util.concurrent.CompletableFuture$AsyncSupply.run$$$capture(CompletableFuture.java:1770)
-	at java.base/java.util.concurrent.CompletableFuture$AsyncSupply.run(CompletableFuture.java)
-	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
-	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
-	at java.base/java.lang.Thread.run(Thread.java:1583)
-Caused by: java.io.UncheckedIOException: java.io.IOException: Failed to open http://textures.minecraft.net/texture/e514fcdd33735541e9398f5944382bb8a980ca5207ba4422e0d2e192ea65cbee, HTTP error code: 404
-	at net.minecraft.client.renderer.texture.SkinTextureDownloader.lambda$downloadAndRegisterSkin$0(SkinTextureDownloader.java:47)
-	at java.base/java.util.concurrent.CompletableFuture$AsyncSupply.run$$$capture(CompletableFuture.java:1768)
-	... 4 more
-Caused by: java.io.IOException: Failed to open http://textures.minecraft.net/texture/e514fcdd33735541e9398f5944382bb8a980ca5207ba4422e0d2e192ea65cbee, HTTP error code: 404
-	at net.minecraft.client.renderer.texture.SkinTextureDownloader.downloadSkin(SkinTextureDownloader.java:73)
-	at net.minecraft.client.renderer.texture.SkinTextureDownloader.lambda$downloadAndRegisterSkin$0(SkinTextureDownloader.java:45)
-	... 5 more
-[21:37:10] [Render thread/WARN]: Ignoring player info update for unknown player 8915ec10-1a41-3a8c-9588-5f6383e61bfb ([UPDATE_LATENCY])
-[21:37:19] [Render thread/WARN]: Ignoring player info update for unknown player f77ffc27-bec4-352e-93d4-843199d56f8b ([UPDATE_LATENCY])
-[21:37:19] [Render thread/WARN]: Ignoring player info update for unknown player a501a3cd-5cee-3252-b453-f5e56a002265 ([UPDATE_LATENCY])
-[21:37:19] [Render thread/WARN]: Ignoring player info update for unknown player ecc74c60-6501-3ecb-9cd8-f291df0311e4 ([UPDATE_LATENCY])
-[21:37:19] [Render thread/WARN]: Ignoring player info update for unknown player 710336a9-e813-3a6f-9e98-2920d0768879 ([UPDATE_LATENCY])
-[21:37:19] [Render thread/WARN]: Ignoring player info update for unknown player d191095a-d1af-3913-b7f4-a518bf3d226d ([UPDATE_LATENCY])
-[21:37:19] [Render thread/WARN]: Ignoring player info update for unknown player 81d1838b-003e-3675-bd8d-c17bfbabc433 ([UPDATE_LATENCY])
-[21:37:19] [Render thread/WARN]: Ignoring player info update for unknown player e4025007-eb63-34bd-8bc0-16dd765aebb4 ([UPDATE_LATENCY])
-[21:37:19] [Render thread/WARN]: Ignoring player info update for unknown player 57b76981-73a8-3ceb-9f4f-cee1221904db ([UPDATE_LATENCY])
-[21:37:19] [Render thread/WARN]: Ignoring player info update for unknown player 355203b5-d892-391a-9099-ede33d71141a ([UPDATE_LATENCY])
-[21:37:19] [Render thread/WARN]: Ignoring player info update for unknown player 28eb22c4-1202-3718-b81b-e8fb9b12b58c ([UPDATE_LATENCY])
-[21:37:19] [Render thread/WARN]: Ignoring player info update for unknown player 854d045d-dc34-3e8d-9715-1875f68cb0f8 ([UPDATE_LATENCY])
-[21:37:19] [Render thread/WARN]: Ignoring player info update for unknown player 0f63d145-6b68-3679-abee-5c3021b3d561 ([UPDATE_LATENCY])
-[21:37:20] [Render thread/WARN]: Ignoring player info update for unknown player de537775-6a67-3194-b103-9af7717203b8 ([UPDATE_LATENCY])
-[21:37:20] [Render thread/WARN]: Ignoring player info update for unknown player 715dad2d-107b-3c43-b967-e48e504cbdeb ([UPDATE_LATENCY])
-[21:37:20] [Render thread/WARN]: Ignoring player info update for unknown player 1bdb5e7b-ec1a-3ee2-88c8-8cbea17a30df ([UPDATE_LATENCY])
-[21:37:20] [Render thread/WARN]: Ignoring player info update for unknown player c2ac9734-cec3-384e-a899-d70304c87c92 ([UPDATE_LATENCY])
-[21:37:20] [Render thread/WARN]: Ignoring player info update for unknown player 83952c01-e0ae-3ded-b501-34fa8091bec7 ([UPDATE_LATENCY])
-[21:37:20] [Render thread/WARN]: Ignoring player info update for unknown player 0df24a7d-60a6-3c21-81ae-f0b4183801a6 ([UPDATE_LATENCY])
-[21:37:21] [Render thread/WARN]: Ignoring player info update for unknown player 49bcb4fa-67b1-3a97-b019-3f0d702b2ead ([UPDATE_LATENCY])
-[21:37:27] [Render thread/INFO]: [System] [CHAT] \n ⚡ Наш Сайт FunTime.su\n
-[21:37:35] [Render thread/WARN]: Ignoring player info update for unknown player fec4d315-f569-37be-9672-984c0ae2fb58 ([UPDATE_LATENCY])
-[21:37:36] [Render thread/WARN]: Ignoring player info update for unknown player 1ca8cdf0-443a-3b7b-a69a-1b4a5153d421 ([UPDATE_LATENCY])
-[21:37:43] [Render thread/WARN]: Ignoring player info update for unknown player fb0878a7-2463-3a70-a89a-b4fe6229b00b ([UPDATE_LATENCY])
-[21:37:43] [Render thread/WARN]: Ignoring player info update for unknown player 57b76981-73a8-3ceb-9f4f-cee1221904db ([UPDATE_LATENCY])
-[21:37:43] [Render thread/WARN]: Ignoring player info update for unknown player ffe82f8f-b097-3e5c-9a34-719a1529707d ([UPDATE_LATENCY])
-[21:37:43] [Render thread/WARN]: Ignoring player info update for unknown player 81acfaf3-dcec-37b8-800a-c83fac0fa5b6 ([UPDATE_LATENCY])
-[21:37:43] [Render thread/WARN]: Ignoring player info update for unknown player 09e15103-af2d-3ffb-9e43-fe6f88b65d16 ([UPDATE_LATENCY])
-[21:37:43] [Render thread/WARN]: Ignoring player info update for unknown player 4ed00d9b-2e57-30e1-a519-2a894de840df ([UPDATE_LATENCY])
-[21:37:43] [Render thread/WARN]: Ignoring player info update for unknown player faca07cc-fb7a-3080-b56a-b2c0123e2079 ([UPDATE_LATENCY])
-[21:37:44] [Render thread/WARN]: Ignoring player info update for unknown player cfdd4de5-3227-3b7c-846e-11ac321a6789 ([UPDATE_LATENCY])
-[21:37:44] [Render thread/WARN]: Ignoring player info update for unknown player 2075d5ec-e6f5-3e23-95d2-d114e30a7c8b ([UPDATE_LATENCY])
-[21:37:45] [Render thread/WARN]: Ignoring player info update for unknown player 859359fb-7089-3737-b6a6-f979e062e460 ([UPDATE_LATENCY])
-[21:37:45] [Render thread/WARN]: Ignoring player info update for unknown player 70eba14a-080d-3d8b-bf08-649863ae8e22 ([UPDATE_LATENCY])
-[21:37:45] [Render thread/WARN]: Ignoring player info update for unknown player 7fad5f57-7b95-357e-a584-fcac15a096f4 ([UPDATE_LATENCY])
-[21:37:45] [Render thread/WARN]: Ignoring player info update for unknown player edaa32da-3d26-3b34-ab10-3c674c961944 ([UPDATE_LATENCY])
-[21:37:45] [Render thread/WARN]: Ignoring player info update for unknown player 9be5e597-14ad-32bc-bf25-df721259c76b ([UPDATE_LATENCY])
-[21:37:45] [Render thread/WARN]: Ignoring player info update for unknown player cb4d6dae-f41a-337f-a107-4487b945e835 ([UPDATE_LATENCY])
-[21:37:45] [Render thread/WARN]: Ignoring player info update for unknown player b4c62859-af00-387d-afdf-225d6d43a551 ([UPDATE_LATENCY])
-[21:37:56] [Render thread/WARN]: Ignoring player info update for unknown player 940f8c76-0d87-3452-a7bd-9133538557f4 ([UPDATE_LATENCY])
-[21:37:56] [Render thread/WARN]: Ignoring player info update for unknown player c8c56c4c-831d-3945-8c0e-2fb1c2af0488 ([UPDATE_LATENCY])
-[21:37:56] [Render thread/WARN]: Ignoring player info update for unknown player e6cb54b2-111a-3780-ad08-f9dd5f70dd46 ([UPDATE_LATENCY])
-[21:37:56] [Render thread/WARN]: Ignoring player info update for unknown player 4423d1a3-6d63-36ab-bd6d-a4ea19444756 ([UPDATE_LATENCY])
-[21:37:56] [Render thread/WARN]: Ignoring player info update for unknown player ff3731b1-62d9-38aa-b522-08cfcbb0512b ([UPDATE_LATENCY])
-[21:37:56] [Render thread/WARN]: Ignoring player info update for unknown player f609e9d2-d409-349d-987e-12f4609d281b ([UPDATE_LATENCY])
-[21:37:57] [Render thread/WARN]: Ignoring player info update for unknown player e64bd548-a83b-3f09-b9e5-b6e4e69df344 ([UPDATE_LATENCY])
-[21:37:57] [Render thread/INFO]: [System] [CHAT] \n ⚡ Вы играете на FunTime! play.funtime.su\n
-[21:37:57] [Render thread/WARN]: Ignoring player info update for unknown player e04ac384-dd7b-3197-9461-18186aec717b ([UPDATE_LATENCY])
-[21:38:16] [Render thread/WARN]: Ignoring player info update for unknown player f7414200-c8c7-34bb-8d1b-c608cee2b004 ([UPDATE_LATENCY])
-[21:38:16] [Render thread/WARN]: Ignoring player info update for unknown player 9f1f2730-bcf0-30c3-a642-284362879dcb ([UPDATE_LATENCY])
-[21:38:24] [Render thread/WARN]: Ignoring player info update for unknown player 82b7debb-21b4-3c7c-a571-7e63a4d89371 ([UPDATE_LATENCY])
-[21:38:24] [Render thread/WARN]: Ignoring player info update for unknown player df265870-2612-3608-b998-1b5834d80d36 ([UPDATE_LATENCY])
-[21:38:24] [Render thread/WARN]: Ignoring player info update for unknown player 12c8ce65-c5b5-3c3d-863e-c99dce8a3e80 ([UPDATE_LATENCY])
-[21:38:24] [Render thread/WARN]: Ignoring player info update for unknown player 829e1fbc-1c05-399d-a73b-c472a1c8076b ([UPDATE_LATENCY])
-[21:38:25] [Render thread/WARN]: Ignoring player info update for unknown player d6b887cb-0f55-3bea-82e1-8a05eaaa4a92 ([UPDATE_LATENCY])
-[21:38:25] [Render thread/WARN]: Ignoring player info update for unknown player 8d61ff22-f2c2-3319-b510-3867e7c3a178 ([UPDATE_LATENCY])
-[21:38:27] [Render thread/INFO]: [System] [CHAT] \n ⚡ Наши сообщества и соц. сети /links\n
-[21:38:34] [Render thread/WARN]: Ignoring player info update for unknown player a83ba3e3-91a4-3141-9f39-5a909d792613 ([UPDATE_LATENCY])
-[21:38:34] [Render thread/WARN]: Ignoring player info update for unknown player 25f47e10-d05b-3267-9a8c-b3d7597e4b7a ([UPDATE_LATENCY])
-[21:38:34] [Render thread/WARN]: Ignoring player info update for unknown player 7dcae19b-7274-3e5c-9dd4-1e7f70fe582d ([UPDATE_LATENCY])
-[21:38:35] [Render thread/WARN]: Ignoring player info update for unknown player c176ffbe-f8c0-3cc9-8876-aeee0ebaa8d8 ([UPDATE_LATENCY])
-[21:38:35] [Render thread/WARN]: Ignoring player info update for unknown player 1f0172f2-689b-3e02-b49a-359280f76f56 ([UPDATE_LATENCY])
-[21:38:35] [Render thread/WARN]: Ignoring player info update for unknown player f7414200-c8c7-34bb-8d1b-c608cee2b004 ([UPDATE_LATENCY])
-[21:38:36] [Render thread/WARN]: Ignoring player info update for unknown player 60a5db69-c2d6-3f5f-827c-11b2cbd5c7a5 ([UPDATE_LATENCY])
-[21:38:37] [Render thread/INFO]: Loaded 0 advancements
-[21:38:37] [Render thread/WARN]: Ignoring player info update for unknown player d82ca74e-1192-3783-a03a-20dba979ed37 ([UPDATE_GAME_MODE])
-[21:38:37] [Render thread/WARN]: Ignoring player info update for unknown player bdc9d854-0f94-326e-9538-877a2b4e9497 ([UPDATE_GAME_MODE])
-[21:38:56] [Render thread/WARN]: Ignoring player info update for unknown player ddf765d2-f896-3424-beec-f93c3ea76797 ([UPDATE_GAME_MODE])
-[21:38:56] [Render thread/WARN]: Ignoring player info update for unknown player ddf765d2-f896-3424-beec-f93c3ea76797 ([UPDATE_GAME_MODE])
-[21:38:56] [Render thread/WARN]: Ignoring player info update for unknown player 25ce2598-ab19-35e9-b612-7d36629d829d ([UPDATE_GAME_MODE])
-[21:38:59] [Render thread/WARN]: Ignoring player info update for unknown player 30b935ff-34cc-3648-96ba-70cf1888b9d4 ([UPDATE_GAME_MODE])
-[21:38:59] [Render thread/WARN]: Ignoring player info update for unknown player 30b935ff-34cc-3648-96ba-70cf1888b9d4 ([UPDATE_GAME_MODE])
-[21:38:59] [Render thread/WARN]: Ignoring player info update for unknown player f37a8bf8-f61b-3ef7-b1bd-a05f6eb013a8 ([UPDATE_GAME_MODE])
-[21:38:59] [Render thread/WARN]: Ignoring player info update for unknown player f37a8bf8-f61b-3ef7-b1bd-a05f6eb013a8 ([UPDATE_GAME_MODE])
-[21:38:59] [Render thread/WARN]: Ignoring player info update for unknown player 7a7bd72d-d44a-3c28-992d-387aec5df8c6 ([UPDATE_GAME_MODE])
-[21:39:16] [Render thread/WARN]: Ignoring player info update for unknown player 32e058f0-cd57-3a06-8dc1-1240c50056bd ([UPDATE_GAME_MODE])
-[21:39:16] [Render thread/WARN]: Ignoring player info update for unknown player ad280d86-15f5-3b12-bc73-10a8d3aec469 ([UPDATE_GAME_MODE])
-[21:39:32] [Render thread/WARN]: Ignoring player info update for unknown player 66433d88-0865-3c50-908c-dc5d17d54742 ([UPDATE_GAME_MODE])
-[21:39:32] [Render thread/WARN]: Ignoring player info update for unknown player 66433d88-0865-3c50-908c-dc5d17d54742 ([UPDATE_GAME_MODE])
-[21:39:36] [Render thread/WARN]: Ignoring player info update for unknown player 804bfe30-87fd-3547-bf6f-3573336c191c ([UPDATE_GAME_MODE])
-[21:40:12] [Render thread/WARN]: Ignoring player info update for unknown player 7726c883-7695-33ed-80e6-6c5ffb468c7d ([UPDATE_GAME_MODE])
-[21:40:14] [Render thread/WARN]: Ignoring player info update for unknown player 1eab3463-8fa5-3494-9063-d6a790912bb5 ([UPDATE_GAME_MODE])
-[21:40:20] [Render thread/INFO]: [System] [CHAT] ╔═════ ★ FunTime.su ★ ═══╗
-[21:40:20] [Render thread/INFO]: [System] [CHAT] ║
-[21:40:20] [Render thread/INFO]: [System] [CHAT] ║ Добро пожаловать на FunTime
-[21:40:20] [Render thread/INFO]: [System] [CHAT] ║ Наши социальные сети – /links
-[21:40:20] [Render thread/INFO]: [System] [CHAT] ║ Приятной игры и новых побед!
-[21:40:20] [Render thread/INFO]: [System] [CHAT] ║
-[21:40:20] [Render thread/INFO]: [System] [CHAT] ╚═══════════════════╝
-[21:40:20] [Worker-Main-2/ERROR]: Failed to verify signature on property Property[name=textures, value=ewogICJ0aW1lc3RhbXAiIDogMTc1MDI3ODY0MTkwMCwKICAicHJvZmlsZUlkIiA6ICIxNzRjZmRiNGEzY2I0M2I1YmZjZGU0MjRjM2JiMmM2ZSIsCiAgInByb2ZpbGVOYW1lIiA6ICJtYXJhZWwxOCIsCiAgInNpZ25hdHVyZVJlcXVpcmVkIiA6IHRydWUsCiAgInRleHR1cmVzIiA6IHsKICAgICJTS0lOIiA6IHsKICAgICAgInVybCIgOiAiaHR0cDovL3RleHR1cmVzLm1pbmVjcmFmdC5uZXQvdGV4dHVyZS9lN2E3YWU3Y2RjZjYxNmU4YjdhNDIyMWE2MjFiMjQzNTc1M2M2MGVkNmEyNThlYTA2MGRhZTMwMDJmZmU5ZTI4IiwKICAgICAgIm1ldGFkYXRhIiA6IHsKICAgICAgICAibW9kZWwiIDogInNsaW0iCiAgICAgIH0KICAgIH0KICB9Cn0=, signature=]
-java.security.SignatureException: Bad signature length: got 0 but was expecting 512
-	at java.base/sun.security.rsa.RSASignature.engineVerify(RSASignature.java:212)
-	at java.base/java.security.Signature$Delegate.engineVerify(Signature.java:1422)
-	at java.base/java.security.Signature.verify(Signature.java:790)
-	at com.mojang.authlib.yggdrasil.YggdrasilServicesKeyInfo.validateProperty(YggdrasilServicesKeyInfo.java:165)
-	at com.mojang.authlib.yggdrasil.YggdrasilMinecraftSessionService.lambda$getPropertySignatureState$0(YggdrasilMinecraftSessionService.java:185)
-	at java.base/java.util.stream.MatchOps$1MatchSink.accept(MatchOps.java:90)
-	at java.base/java.util.AbstractList$RandomAccessSpliterator.tryAdvance(AbstractList.java:708)
-	at java.base/java.util.stream.ReferencePipeline.forEachWithCancel(ReferencePipeline.java:129)
-	at java.base/java.util.stream.AbstractPipeline.copyIntoWithCancel(AbstractPipeline.java:527)
-	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:513)
-	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499)
-	at java.base/java.util.stream.MatchOps$MatchOp.evaluateSequential(MatchOps.java:230)
-	at java.base/java.util.stream.MatchOps$MatchOp.evaluateSequential(MatchOps.java:196)
-	at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:234)
-	at java.base/java.util.stream.ReferencePipeline.noneMatch(ReferencePipeline.java:642)
-	at com.mojang.authlib.yggdrasil.YggdrasilMinecraftSessionService.getPropertySignatureState(YggdrasilMinecraftSessionService.java:185)
-	at com.mojang.authlib.yggdrasil.YggdrasilMinecraftSessionService.unpackTextures(YggdrasilMinecraftSessionService.java:128)
-	at net.minecraft.client.resources.SkinManager$1.lambda$load$0(SkinManager.java:63)
-	at java.base/java.util.concurrent.CompletableFuture$AsyncSupply.run$$$capture(CompletableFuture.java:1768)
-	at java.base/java.util.concurrent.CompletableFuture$AsyncSupply.run(CompletableFuture.java)
-	at java.base/java.util.concurrent.CompletableFuture$AsyncSupply.exec(CompletableFuture.java:1760)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec$$$capture(ForkJoinTask.java:387)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java)
-	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1312)
-	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1843)
-	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1808)
-	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:188)
-[21:40:20] [Worker-Main-2/ERROR]: Failed to verify signature on property Property[name=textures, value=ewogICJ0aW1lc3RhbXAiIDogMTc1MDI3ODY0MTkwMCwKICAicHJvZmlsZUlkIiA6ICIxNzRjZmRiNGEzY2I0M2I1YmZjZGU0MjRjM2JiMmM2ZSIsCiAgInByb2ZpbGVOYW1lIiA6ICJtYXJhZWwxOCIsCiAgInNpZ25hdHVyZVJlcXVpcmVkIiA6IHRydWUsCiAgInRleHR1cmVzIiA6IHsKICAgICJTS0lOIiA6IHsKICAgICAgInVybCIgOiAiaHR0cDovL3RleHR1cmVzLm1pbmVjcmFmdC5uZXQvdGV4dHVyZS9lN2E3YWU3Y2RjZjYxNmU4YjdhNDIyMWE2MjFiMjQzNTc1M2M2MGVkNmEyNThlYTA2MGRhZTMwMDJmZmU5ZTI4IiwKICAgICAgIm1ldGFkYXRhIiA6IHsKICAgICAgICAibW9kZWwiIDogInNsaW0iCiAgICAgIH0KICAgIH0KICB9Cn0=, signature=]
-java.security.SignatureException: Bad signature length: got 0 but was expecting 512
-	at java.base/sun.security.rsa.RSASignature.engineVerify(RSASignature.java:212)
-	at java.base/java.security.Signature$Delegate.engineVerify(Signature.java:1422)
-	at java.base/java.security.Signature.verify(Signature.java:790)
-	at com.mojang.authlib.yggdrasil.YggdrasilServicesKeyInfo.validateProperty(YggdrasilServicesKeyInfo.java:165)
-	at com.mojang.authlib.yggdrasil.YggdrasilMinecraftSessionService.lambda$getPropertySignatureState$0(YggdrasilMinecraftSessionService.java:185)
-	at java.base/java.util.stream.MatchOps$1MatchSink.accept(MatchOps.java:90)
-	at java.base/java.util.AbstractList$RandomAccessSpliterator.tryAdvance(AbstractList.java:708)
-	at java.base/java.util.stream.ReferencePipeline.forEachWithCancel(ReferencePipeline.java:129)
-	at java.base/java.util.stream.AbstractPipeline.copyIntoWithCancel(AbstractPipeline.java:527)
-	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:513)
-	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499)
-	at java.base/java.util.stream.MatchOps$MatchOp.evaluateSequential(MatchOps.java:230)
-	at java.base/java.util.stream.MatchOps$MatchOp.evaluateSequential(MatchOps.java:196)
-	at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:234)
-	at java.base/java.util.stream.ReferencePipeline.noneMatch(ReferencePipeline.java:642)
-	at com.mojang.authlib.yggdrasil.YggdrasilMinecraftSessionService.getPropertySignatureState(YggdrasilMinecraftSessionService.java:185)
-	at com.mojang.authlib.yggdrasil.YggdrasilMinecraftSessionService.unpackTextures(YggdrasilMinecraftSessionService.java:128)
-	at net.minecraft.client.resources.SkinManager$1.lambda$load$0(SkinManager.java:63)
-	at java.base/java.util.concurrent.CompletableFuture$AsyncSupply.run$$$capture(CompletableFuture.java:1768)
-	at java.base/java.util.concurrent.CompletableFuture$AsyncSupply.run(CompletableFuture.java)
-	at java.base/java.util.concurrent.CompletableFuture$AsyncSupply.exec(CompletableFuture.java:1760)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec$$$capture(ForkJoinTask.java:387)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java)
-	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1312)
-	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1843)
-	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1808)
-	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:188)
-[21:40:20] [Worker-Main-2/WARN]: Profile contained invalid signature for textures property (profile id: 0c23f188-f559-4664-8ed3-f1c993378634)
-[21:40:20] [Render thread/WARN]: Ignoring player info update for unknown player d160ded0-4324-3276-ab38-0906f024d974 ([UPDATE_LATENCY])
-[21:40:20] [Render thread/WARN]: Ignoring player info update for unknown player fc37fe00-0148-3c90-8090-3260affd0fe2 ([UPDATE_LATENCY])
-[21:40:26] [Render thread/INFO]: [System] [CHAT] \n ⚡ Наш Сайт FunTime.su\n
-[21:40:30] [Render thread/WARN]: Ignoring player info update for unknown player 90f91ae7-4d59-373e-8937-649f9e328cc3 ([UPDATE_LATENCY])
-[21:40:30] [Render thread/WARN]: Ignoring player info update for unknown player 568a60b5-3365-3caa-95f5-88a0d037364b ([UPDATE_LATENCY])
-[21:40:32] [Render thread/WARN]: Ignoring player info update for unknown player 2a098a93-603a-3abe-94d8-ff7ed6a71c6f ([UPDATE_LATENCY])
-[21:40:35] [Render thread/WARN]: Ignoring player info update for unknown player ecc66b36-da6d-3fc5-9aa4-7070eda8560d ([UPDATE_LATENCY])
-[21:40:36] [Render thread/WARN]: Ignoring player info update for unknown player aa93ba75-984e-3322-bbfa-2bc3de5fee0e ([UPDATE_LATENCY])
-[21:40:37] [Render thread/WARN]: Ignoring player info update for unknown player 5953f10e-6f9f-3e91-b5bb-b9a94f75d659 ([UPDATE_LATENCY])
-[21:40:43] [Render thread/WARN]: Ignoring player info update for unknown player f7414200-c8c7-34bb-8d1b-c608cee2b004 ([UPDATE_LATENCY])
-[21:40:43] [Render thread/WARN]: Ignoring player info update for unknown player c5c42b9c-0577-3c79-a954-300f995abc2c ([UPDATE_LATENCY])
-[21:40:43] [Render thread/WARN]: Ignoring player info update for unknown player 2494e003-6676-3a81-9607-24cc17308598 ([UPDATE_LATENCY])
-[21:40:44] [Render thread/WARN]: Ignoring player info update for unknown player 23a8bbee-fb58-3d8d-bbd4-4ff30de35b0f ([UPDATE_LATENCY])
-[21:40:44] [Render thread/WARN]: Ignoring player info update for unknown player b33b5435-8e7e-3038-9200-a4acd6b304f8 ([UPDATE_LATENCY])
-[21:40:44] [Render thread/WARN]: Ignoring player info update for unknown player 19b15ee9-65c2-31d8-8cd1-6f7deaf783f4 ([UPDATE_LATENCY])
-[21:40:44] [Render thread/WARN]: Ignoring player info update for unknown player 2a68f184-ded6-3aae-9a06-ad86ba7b8bac ([UPDATE_LATENCY])
-[21:40:45] [Render thread/WARN]: Ignoring player info update for unknown player d605ed92-3e35-3d33-9eba-1023c3b6348c ([UPDATE_LATENCY])
-[21:40:51] [Render thread/WARN]: Ignoring player info update for unknown player 78bdf872-2027-3466-b9cb-18beb0b960f8 ([UPDATE_LATENCY])
-[21:40:51] [Render thread/WARN]: Ignoring player info update for unknown player 1e7a79f6-6863-3cce-abf1-c0c15160a8f2 ([UPDATE_LATENCY])
-[21:40:51] [Render thread/WARN]: Ignoring player info update for unknown player 3d452095-e7d5-3bfb-a708-1406c4f6cef6 ([UPDATE_LATENCY])
-[21:40:52] [Render thread/WARN]: Ignoring player info update for unknown player d875c851-e342-3d5d-a3e1-0eec906b4a9b ([UPDATE_LATENCY])
-[21:40:52] [Render thread/WARN]: Ignoring player info update for unknown player 4ed00d9b-2e57-30e1-a519-2a894de840df ([UPDATE_LATENCY])
-[21:40:52] [Render thread/WARN]: Ignoring player info update for unknown player b6fc68ab-4a28-3184-b0f2-4ebd2121d4ab ([UPDATE_LATENCY])
-[21:40:53] [Render thread/WARN]: Ignoring player info update for unknown player d605ed92-3e35-3d33-9eba-1023c3b6348c ([UPDATE_LATENCY])
-[21:40:53] [Render thread/WARN]: Ignoring player info update for unknown player 4412b6c6-03a4-3e93-b7a5-a668356e45da ([UPDATE_LATENCY])
-[21:40:53] [Render thread/WARN]: Ignoring player info update for unknown player 1eab3463-8fa5-3494-9063-d6a790912bb5 ([UPDATE_LATENCY])
-[21:40:56] [Render thread/INFO]: [System] [CHAT] \n ⚡ Вы играете на FunTime! play.funtime.su\n
-[21:41:04] [Render thread/WARN]: Ignoring player info update for unknown player 85e2fc3d-bcdb-3e89-b7a3-35206690221a ([UPDATE_LATENCY])
-[21:41:04] [Render thread/WARN]: Ignoring player info update for unknown player a83ba3e3-91a4-3141-9f39-5a909d792613 ([UPDATE_LATENCY])
-[21:41:04] [Render thread/WARN]: Ignoring player info update for unknown player 15e72e34-8a5e-3347-8e36-f40b921611e4 ([UPDATE_LATENCY])
-[21:41:04] [Render thread/WARN]: Ignoring player info update for unknown player f22afc6d-e0fb-3e84-9275-8bf692be9af1 ([UPDATE_LATENCY])
-[21:41:05] [Render thread/WARN]: Ignoring player info update for unknown player 5bbff237-c835-31e4-b81a-b5b24557d414 ([UPDATE_LATENCY])
-[21:41:14] [Render thread/WARN]: Ignoring player info update for unknown player e0575dc3-fbbb-3c1b-9a7d-62e494614b8e ([UPDATE_LATENCY])
-[21:41:14] [Render thread/WARN]: Ignoring player info update for unknown player 12840861-dd49-3145-9ae4-7991774077df ([UPDATE_LATENCY])
-[21:41:15] [Render thread/WARN]: Ignoring player info update for unknown player 8a3e6f55-146c-33c9-be29-404909482634 ([UPDATE_LATENCY])
-[21:41:15] [Render thread/WARN]: Ignoring player info update for unknown player a4c73dbc-1383-3974-aeef-32113bf9c4e9 ([UPDATE_LATENCY])
-[21:41:16] [Render thread/WARN]: Ignoring player info update for unknown player 81acfaf3-dcec-37b8-800a-c83fac0fa5b6 ([UPDATE_LATENCY])
-[21:41:16] [Render thread/WARN]: Ignoring player info update for unknown player bc189df6-9b33-31f6-b1c6-895579d5ffca ([UPDATE_LATENCY])
-[21:41:16] [Render thread/WARN]: Ignoring player info update for unknown player 0ce5aa18-30e5-3a40-98cc-20622070889a ([UPDATE_LATENCY])
-[21:41:16] [Render thread/WARN]: Ignoring player info update for unknown player 7c15ddd2-23ce-3860-a295-bed10c714e38 ([UPDATE_LATENCY])
-[21:41:17] [Render thread/WARN]: Ignoring player info update for unknown player 28bd1cae-cf48-30a0-9dfb-1f611d08a9e0 ([UPDATE_LATENCY])
-[21:41:17] [Render thread/WARN]: Ignoring player info update for unknown player 266f3fe2-446b-3333-a613-43306ab47a0c ([UPDATE_LATENCY])
-[21:41:25] [Render thread/WARN]: Ignoring player info update for unknown player ac330671-206f-30f3-8d58-09ebdcb1bf0b ([UPDATE_LATENCY])
-[21:41:26] [Render thread/INFO]: [System] [CHAT] \n ⚡ Наши сообщества и соц. сети /links\n
-[21:41:28] [Render thread/WARN]: Ignoring player info update for unknown player 6526f48d-549e-3d04-859d-6e2a656aae96 ([UPDATE_LATENCY])
-[21:41:33] [Render thread/WARN]: Ignoring player info update for unknown player 1591c4a1-ebf7-3748-93df-35774af843fb ([UPDATE_LATENCY])
-[21:41:33] [Render thread/WARN]: Ignoring player info update for unknown player 1c8a14bd-9cf1-3ad1-a3a0-b72a750f1187 ([UPDATE_LATENCY])
-[21:41:33] [Render thread/WARN]: Ignoring player info update for unknown player 8a3e6f55-146c-33c9-be29-404909482634 ([UPDATE_LATENCY])
-[21:41:33] [Render thread/WARN]: Ignoring player info update for unknown player cb204c02-2e02-38ca-802c-37e5d50ce9ae ([UPDATE_LATENCY])
-[21:41:34] [Render thread/WARN]: Ignoring player info update for unknown player a2777ec2-1341-3155-a628-1d81c029513d ([UPDATE_LATENCY])
-[21:41:34] [Render thread/WARN]: Ignoring player info update for unknown player eaf5cdb7-cb54-3bca-b36a-7718d2c37295 ([UPDATE_LATENCY])
-[21:41:34] [Render thread/WARN]: Ignoring player info update for unknown player 9bd9294a-4460-3c5f-8af9-b026ca5881ea ([UPDATE_LATENCY])
-[21:41:34] [Render thread/WARN]: Ignoring player info update for unknown player 29d070b4-e2d6-3eb1-8466-e1d85683076d ([UPDATE_LATENCY])
-[21:41:34] [Render thread/WARN]: Ignoring player info update for unknown player 3b0461a0-0951-3812-98bf-e9d7d7523ef1 ([UPDATE_LATENCY])
-[21:41:35] [Render thread/WARN]: Ignoring player info update for unknown player 481fe50a-9443-392b-9a95-c81b210df137 ([UPDATE_LATENCY])
-[21:41:54] [Render thread/WARN]: Ignoring player info update for unknown player 8f139c2d-91b7-32e1-8447-5348975afa05 ([UPDATE_LATENCY])
-[21:41:54] [Render thread/WARN]: Ignoring player info update for unknown player 9d339a88-88ba-31a6-90d8-4526216cd403 ([UPDATE_LATENCY])
-[21:41:54] [Render thread/WARN]: Ignoring player info update for unknown player b4ccb52a-d1c6-39a1-93e9-dc0037360d14 ([UPDATE_LATENCY])
-[21:41:54] [Render thread/WARN]: Ignoring player info update for unknown player 6ae26af0-6900-3c30-835a-20dec2baf763 ([UPDATE_LATENCY])
-[21:41:54] [Render thread/WARN]: Ignoring player info update for unknown player f7414200-c8c7-34bb-8d1b-c608cee2b004 ([UPDATE_LATENCY])
-[21:41:55] [Render thread/WARN]: Ignoring player info update for unknown player 78fa2fb2-4f6d-3a63-8583-0f7fa9a944be ([UPDATE_LATENCY])
-[21:41:55] [Render thread/WARN]: Ignoring player info update for unknown player 4113f68a-dee6-3a48-a139-290c90010630 ([UPDATE_LATENCY])
-[21:41:56] [Render thread/WARN]: Ignoring player info update for unknown player 59498763-0d79-3b29-9abb-2ba135ba60e0 ([UPDATE_LATENCY])
-[21:41:56] [Render thread/INFO]: [System] [CHAT] \n ⚡ Наша группа ВК vk.com/funtime\n
-[21:41:57] [Render thread/WARN]: Ignoring player info update for unknown player 917922e2-b599-33d0-a5c5-8811cad13d82 ([UPDATE_LATENCY])
-[21:42:13] [Render thread/WARN]: Ignoring player info update for unknown player 82108dfe-16fe-3aa3-84e4-032c2aa23656 ([UPDATE_LATENCY])
-[21:42:13] [Render thread/WARN]: Ignoring player info update for unknown player e47b3e67-bc7b-3243-aa56-7d0e7e22a589 ([UPDATE_LATENCY])
-[21:42:13] [Render thread/WARN]: Ignoring player info update for unknown player f7414200-c8c7-34bb-8d1b-c608cee2b004 ([UPDATE_LATENCY])
-[21:42:13] [Render thread/WARN]: Ignoring player info update for unknown player 0da07f8e-6d1c-3477-ba24-eb55894aa0ea ([UPDATE_LATENCY])
-[21:42:13] [Render thread/WARN]: Ignoring player info update for unknown player a153a578-a7f7-3c41-91a2-9fe5b637a8d8 ([UPDATE_LATENCY])
-[21:42:13] [Render thread/WARN]: Ignoring player info update for unknown player e0c7ae33-9d42-3a83-ae9e-e3fc4d1f4656 ([UPDATE_LATENCY])
-[21:42:13] [Render thread/WARN]: Ignoring player info update for unknown player a905330d-cf5a-3b7f-a26e-a16685f0428e ([UPDATE_LATENCY])
-[21:42:13] [Render thread/WARN]: Ignoring player info update for unknown player 7e543158-a161-34d3-8545-f080a873958b ([UPDATE_LATENCY])
-[21:42:13] [Render thread/WARN]: Ignoring player info update for unknown player c67b595b-15e8-3d00-a74f-8a5bb54a1fba ([UPDATE_LATENCY])
-[21:42:14] [Render thread/WARN]: Ignoring player info update for unknown player 33bd2b44-6de2-3fe0-b986-662d26b91ce0 ([UPDATE_LATENCY])
-[21:42:14] [Render thread/WARN]: Ignoring player info update for unknown player e2d5d339-8a3b-3f71-b2d6-7d004561d03b ([UPDATE_LATENCY])
-[21:42:14] [Render thread/WARN]: Ignoring player info update for unknown player cbf72331-00a0-31f7-b8d2-8a594d31a206 ([UPDATE_LATENCY])
-[21:42:26] [Render thread/INFO]: [System] [CHAT] \n ⚡ Наш Телеграм t.me/funtime\n
-[21:42:34] [Render thread/WARN]: Ignoring player info update for unknown player d73a268b-160f-3f2f-b8d9-6ec6a82eb6c0 ([UPDATE_LATENCY])
-[21:42:34] [Render thread/WARN]: Ignoring player info update for unknown player 52c16c60-57c4-31fb-adea-01cd391280ff ([UPDATE_LATENCY])
-[21:42:35] [Render thread/WARN]: Ignoring player info update for unknown player 4ed00d9b-2e57-30e1-a519-2a894de840df ([UPDATE_LATENCY])
-[21:42:35] [Render thread/WARN]: Ignoring player info update for unknown player d447e921-c337-3f40-b8bc-85f3bb8e2578 ([UPDATE_LATENCY])
-[21:42:35] [Render thread/WARN]: Ignoring player info update for unknown player ac3b1330-6d53-34d0-8436-0bf83810fe93 ([UPDATE_LATENCY])
-[21:42:46] [Render thread/WARN]: Ignoring player info update for unknown player af072b7b-dfe1-3128-ae88-cc9cf00505ad ([UPDATE_LATENCY])
-[21:42:49] [Render thread/WARN]: Ignoring player info update for unknown player 4ed00d9b-2e57-30e1-a519-2a894de840df ([UPDATE_LATENCY])
-[21:42:49] [Render thread/WARN]: Ignoring player info update for unknown player 6f1c7ad7-d087-383e-ab52-d98268119bdf ([UPDATE_LATENCY])
-[21:42:50] [Render thread/WARN]: Ignoring player info update for unknown player aa63a94d-5e76-3a91-adb1-56d0cdcc7ebf ([UPDATE_LATENCY])
-[21:42:50] [Render thread/WARN]: Ignoring player info update for unknown player e0415193-d514-30ff-90b1-cb70877a4eac ([UPDATE_LATENCY])
-[21:42:50] [Render thread/WARN]: Ignoring player info update for unknown player d82ca74e-1192-3783-a03a-20dba979ed37 ([UPDATE_LATENCY])
-[21:42:50] [Render thread/WARN]: Ignoring player info update for unknown player f14b0e20-2956-3cca-aff1-9084266cde9f ([UPDATE_LATENCY])
-[21:42:50] [Render thread/WARN]: Ignoring player info update for unknown player 0ae7a1ce-d983-35be-a454-f7081138fa03 ([UPDATE_LATENCY])
-[21:42:56] [Render thread/INFO]: [System] [CHAT] \n ⚡ Наш Дискорд dd.FunTime.su\n
-[21:43:03] [Render thread/WARN]: Ignoring player info update for unknown player 70325be6-9a28-33e0-8792-84b1574dbe55 ([UPDATE_LATENCY])
-[21:43:03] [Render thread/WARN]: Ignoring player info update for unknown player 5a99ba1d-47e4-38e1-a0b9-035215eb2405 ([UPDATE_LATENCY])
-[21:43:03] [Render thread/WARN]: Ignoring player info update for unknown player 4ed00d9b-2e57-30e1-a519-2a894de840df ([UPDATE_LATENCY])
-[21:43:03] [Render thread/WARN]: Ignoring player info update for unknown player 5b9547fb-6906-3b53-bc72-03911c840e9d ([UPDATE_LATENCY])
-[21:43:04] [Render thread/WARN]: Ignoring player info update for unknown player 68e767bc-718e-3cbd-9ac0-0d5c78fb888a ([UPDATE_LATENCY])
-[21:43:04] [Render thread/WARN]: Ignoring player info update for unknown player d55cb818-c8f2-3ab6-a2e0-8859eec27c6c ([UPDATE_LATENCY])
-[21:43:05] [Render thread/WARN]: Ignoring player info update for unknown player e7a332f7-4bf8-33a7-ae6b-c53ebb7abb24 ([UPDATE_LATENCY])
-[21:43:05] [Render thread/WARN]: Ignoring player info update for unknown player 651dbcca-c9b8-32df-85bb-f539affb1b33 ([UPDATE_LATENCY])
-[21:43:07] [Render thread/WARN]: Ignoring player info update for unknown player ee9b2521-87b1-305c-b546-9ce1b5bf0409 ([UPDATE_LATENCY])
-[21:43:21] [Render thread/WARN]: Ignoring player info update for unknown player 077be51e-f02e-3c52-8b0c-d18032b80fdd ([UPDATE_LATENCY])
-[21:43:21] [Render thread/WARN]: Ignoring player info update for unknown player 5ca5173d-fcc0-36c9-8160-b449c8e8cfb7 ([UPDATE_LATENCY])
-[21:43:21] [Render thread/WARN]: Ignoring player info update for unknown player b1a6dfb6-dafd-3f68-99c8-4eba65eb0fc3 ([UPDATE_LATENCY])
-[21:43:21] [Render thread/WARN]: Ignoring player info update for unknown player f0b2c849-8433-3b91-b9bb-4ce7d2cb5d3a ([UPDATE_LATENCY])
-[21:43:21] [Render thread/WARN]: Ignoring player info update for unknown player 5650a502-27f3-3c3c-9367-9288835059e9 ([UPDATE_LATENCY])
-[21:43:22] [Render thread/WARN]: Ignoring player info update for unknown player d92962d3-5c09-3789-b6e2-3cc72561dea8 ([UPDATE_LATENCY])
-[21:43:22] [Render thread/WARN]: Ignoring player info update for unknown player 14bd4da1-80d7-3fa5-8589-f9c025f25492 ([UPDATE_LATENCY])
-[21:43:26] [Render thread/INFO]: [System] [CHAT] \n ⚡ Наш Сайт FunTime.su\n
-[21:43:36] [Render thread/WARN]: Ignoring player info update for unknown player 4d617c79-7902-3c9e-b088-6a9dac02793f ([UPDATE_LATENCY])
-[21:43:37] [Render thread/WARN]: Ignoring player info update for unknown player 9bd9294a-4460-3c5f-8af9-b026ca5881ea ([UPDATE_GAME_MODE])
-[21:43:37] [Render thread/WARN]: Ignoring player info update for unknown player 66460dbb-7af3-31b8-a077-f3e69c24ca80 ([UPDATE_GAME_MODE])
-[21:43:37] [Render thread/WARN]: Ignoring player info update for unknown player 66460dbb-7af3-31b8-a077-f3e69c24ca80 ([UPDATE_GAME_MODE])
-[21:43:37] [Render thread/INFO]: Loaded 0 advancements
-[21:43:47] [Render thread/WARN]: Ignoring player info update for unknown player ed5fd0d0-361d-3ffd-b306-7b931e29d4df ([UPDATE_GAME_MODE])
-[21:43:47] [Render thread/WARN]: Ignoring player info update for unknown player ed5fd0d0-361d-3ffd-b306-7b931e29d4df ([UPDATE_GAME_MODE])
-[21:43:48] [Render thread/WARN]: Ignoring player info update for unknown player fe8ebc2f-192d-3bda-ae56-a2adc57e65c1 ([UPDATE_GAME_MODE])
-[21:43:48] [Render thread/WARN]: Ignoring player info update for unknown player fe8ebc2f-192d-3bda-ae56-a2adc57e65c1 ([UPDATE_GAME_MODE])
-[21:43:48] [Render thread/WARN]: Ignoring player info update for unknown player 8eb60719-a6ad-3137-99bc-a3542edd8840 ([UPDATE_GAME_MODE])
-[21:43:48] [Render thread/WARN]: Ignoring player info update for unknown player 8eb60719-a6ad-3137-99bc-a3542edd8840 ([UPDATE_GAME_MODE])
-[21:43:58] [Render thread/WARN]: Ignoring player info update for unknown player 31f519ba-24dc-3d87-932b-c88d4171faa5 ([UPDATE_GAME_MODE])
-[21:44:07] [Render thread/WARN]: Ignoring player info update for unknown player 861e3126-277e-3b02-a39f-6e7e6fe49b25 ([UPDATE_GAME_MODE])
-[21:44:07] [Render thread/WARN]: Ignoring player info update for unknown player 74c372c7-9c47-35d4-ba55-94325567d9be ([UPDATE_GAME_MODE])
-[21:44:07] [Render thread/WARN]: Ignoring player info update for unknown player 74c372c7-9c47-35d4-ba55-94325567d9be ([UPDATE_GAME_MODE])
-[21:44:07] [Render thread/WARN]: Ignoring player info update for unknown player 22fa3163-5a14-3269-8552-80a96cb6e12d ([UPDATE_GAME_MODE])
-[21:44:07] [Render thread/WARN]: Ignoring player info update for unknown player 22fa3163-5a14-3269-8552-80a96cb6e12d ([UPDATE_GAME_MODE])
-[21:44:07] [Render thread/WARN]: Ignoring player info update for unknown player 5724456a-03bb-3ec3-a425-54f759fb2b4e ([UPDATE_GAME_MODE])
-[21:44:07] [Render thread/WARN]: Ignoring player info update for unknown player 5724456a-03bb-3ec3-a425-54f759fb2b4e ([UPDATE_GAME_MODE])
-[21:44:07] [Render thread/WARN]: Ignoring player info update for unknown player 4e5f1221-cb3b-33bb-bc38-e49517863095 ([UPDATE_GAME_MODE])
-[21:44:11] [Render thread/INFO]: [System] [CHAT] ╔═════ ★ FunTime.su ★ ═══╗
-[21:44:11] [Render thread/INFO]: [System] [CHAT] ║
-[21:44:11] [Render thread/INFO]: [System] [CHAT] ║ Добро пожаловать на FunTime
-[21:44:11] [Render thread/INFO]: [System] [CHAT] ║ Наши социальные сети – /links
-[21:44:11] [Render thread/INFO]: [System] [CHAT] ║ Приятной игры и новых побед!
-[21:44:11] [Render thread/INFO]: [System] [CHAT] ║
-[21:44:11] [Render thread/INFO]: [System] [CHAT] ╚═══════════════════╝
-[21:44:11] [Worker-Main-4/ERROR]: Failed to verify signature on property Property[name=textures, value=ewogICJ0aW1lc3RhbXAiIDogMTc1MDI3ODY0MTkwMCwKICAicHJvZmlsZUlkIiA6ICIxNzRjZmRiNGEzY2I0M2I1YmZjZGU0MjRjM2JiMmM2ZSIsCiAgInByb2ZpbGVOYW1lIiA6ICJtYXJhZWwxOCIsCiAgInNpZ25hdHVyZVJlcXVpcmVkIiA6IHRydWUsCiAgInRleHR1cmVzIiA6IHsKICAgICJTS0lOIiA6IHsKICAgICAgInVybCIgOiAiaHR0cDovL3RleHR1cmVzLm1pbmVjcmFmdC5uZXQvdGV4dHVyZS9lN2E3YWU3Y2RjZjYxNmU4YjdhNDIyMWE2MjFiMjQzNTc1M2M2MGVkNmEyNThlYTA2MGRhZTMwMDJmZmU5ZTI4IiwKICAgICAgIm1ldGFkYXRhIiA6IHsKICAgICAgICAibW9kZWwiIDogInNsaW0iCiAgICAgIH0KICAgIH0KICB9Cn0=, signature=]
-java.security.SignatureException: Bad signature length: got 0 but was expecting 512
-	at java.base/sun.security.rsa.RSASignature.engineVerify(RSASignature.java:212)
-	at java.base/java.security.Signature$Delegate.engineVerify(Signature.java:1422)
-	at java.base/java.security.Signature.verify(Signature.java:790)
-	at com.mojang.authlib.yggdrasil.YggdrasilServicesKeyInfo.validateProperty(YggdrasilServicesKeyInfo.java:165)
-	at com.mojang.authlib.yggdrasil.YggdrasilMinecraftSessionService.lambda$getPropertySignatureState$0(YggdrasilMinecraftSessionService.java:185)
-	at java.base/java.util.stream.MatchOps$1MatchSink.accept(MatchOps.java:90)
-	at java.base/java.util.AbstractList$RandomAccessSpliterator.tryAdvance(AbstractList.java:708)
-	at java.base/java.util.stream.ReferencePipeline.forEachWithCancel(ReferencePipeline.java:129)
-	at java.base/java.util.stream.AbstractPipeline.copyIntoWithCancel(AbstractPipeline.java:527)
-	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:513)
-	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499)
-	at java.base/java.util.stream.MatchOps$MatchOp.evaluateSequential(MatchOps.java:230)
-	at java.base/java.util.stream.MatchOps$MatchOp.evaluateSequential(MatchOps.java:196)
-	at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:234)
-	at java.base/java.util.stream.ReferencePipeline.noneMatch(ReferencePipeline.java:642)
-	at com.mojang.authlib.yggdrasil.YggdrasilMinecraftSessionService.getPropertySignatureState(YggdrasilMinecraftSessionService.java:185)
-	at com.mojang.authlib.yggdrasil.YggdrasilMinecraftSessionService.unpackTextures(YggdrasilMinecraftSessionService.java:128)
-	at net.minecraft.client.resources.SkinManager$1.lambda$load$0(SkinManager.java:63)
-	at java.base/java.util.concurrent.CompletableFuture$AsyncSupply.run$$$capture(CompletableFuture.java:1768)
-	at java.base/java.util.concurrent.CompletableFuture$AsyncSupply.run(CompletableFuture.java)
-	at java.base/java.util.concurrent.CompletableFuture$AsyncSupply.exec(CompletableFuture.java:1760)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec$$$capture(ForkJoinTask.java:387)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java)
-	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1312)
-	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1843)
-	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1808)
-	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:188)
-[21:44:11] [Worker-Main-4/ERROR]: Failed to verify signature on property Property[name=textures, value=ewogICJ0aW1lc3RhbXAiIDogMTc1MDI3ODY0MTkwMCwKICAicHJvZmlsZUlkIiA6ICIxNzRjZmRiNGEzY2I0M2I1YmZjZGU0MjRjM2JiMmM2ZSIsCiAgInByb2ZpbGVOYW1lIiA6ICJtYXJhZWwxOCIsCiAgInNpZ25hdHVyZVJlcXVpcmVkIiA6IHRydWUsCiAgInRleHR1cmVzIiA6IHsKICAgICJTS0lOIiA6IHsKICAgICAgInVybCIgOiAiaHR0cDovL3RleHR1cmVzLm1pbmVjcmFmdC5uZXQvdGV4dHVyZS9lN2E3YWU3Y2RjZjYxNmU4YjdhNDIyMWE2MjFiMjQzNTc1M2M2MGVkNmEyNThlYTA2MGRhZTMwMDJmZmU5ZTI4IiwKICAgICAgIm1ldGFkYXRhIiA6IHsKICAgICAgICAibW9kZWwiIDogInNsaW0iCiAgICAgIH0KICAgIH0KICB9Cn0=, signature=]
-java.security.SignatureException: Bad signature length: got 0 but was expecting 512
-	at java.base/sun.security.rsa.RSASignature.engineVerify(RSASignature.java:212)
-	at java.base/java.security.Signature$Delegate.engineVerify(Signature.java:1422)
-	at java.base/java.security.Signature.verify(Signature.java:790)
-	at com.mojang.authlib.yggdrasil.YggdrasilServicesKeyInfo.validateProperty(YggdrasilServicesKeyInfo.java:165)
-	at com.mojang.authlib.yggdrasil.YggdrasilMinecraftSessionService.lambda$getPropertySignatureState$0(YggdrasilMinecraftSessionService.java:185)
-	at java.base/java.util.stream.MatchOps$1MatchSink.accept(MatchOps.java:90)
-	at java.base/java.util.AbstractList$RandomAccessSpliterator.tryAdvance(AbstractList.java:708)
-	at java.base/java.util.stream.ReferencePipeline.forEachWithCancel(ReferencePipeline.java:129)
-	at java.base/java.util.stream.AbstractPipeline.copyIntoWithCancel(AbstractPipeline.java:527)
-	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:513)
-	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499)
-	at java.base/java.util.stream.MatchOps$MatchOp.evaluateSequential(MatchOps.java:230)
-	at java.base/java.util.stream.MatchOps$MatchOp.evaluateSequential(MatchOps.java:196)
-	at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:234)
-	at java.base/java.util.stream.ReferencePipeline.noneMatch(ReferencePipeline.java:642)
-	at com.mojang.authlib.yggdrasil.YggdrasilMinecraftSessionService.getPropertySignatureState(YggdrasilMinecraftSessionService.java:185)
-	at com.mojang.authlib.yggdrasil.YggdrasilMinecraftSessionService.unpackTextures(YggdrasilMinecraftSessionService.java:128)
-	at net.minecraft.client.resources.SkinManager$1.lambda$load$0(SkinManager.java:63)
-	at java.base/java.util.concurrent.CompletableFuture$AsyncSupply.run$$$capture(CompletableFuture.java:1768)
-	at java.base/java.util.concurrent.CompletableFuture$AsyncSupply.run(CompletableFuture.java)
-	at java.base/java.util.concurrent.CompletableFuture$AsyncSupply.exec(CompletableFuture.java:1760)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec$$$capture(ForkJoinTask.java:387)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java)
-	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1312)
-	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1843)
-	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1808)
-	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:188)
-[21:44:11] [Worker-Main-4/WARN]: Profile contained invalid signature for textures property (profile id: 9231be8e-a7bb-4ae0-b8ca-01d9e9efe19b)
-[21:44:11] [Render thread/WARN]: Ignoring player info update for unknown player 9db9d6d1-dedb-3567-b38d-993facb6a4b8 ([UPDATE_LATENCY])
-[21:44:11] [Render thread/WARN]: Ignoring player info update for unknown player 747e9c7c-11da-3244-8187-ca56b3bf4404 ([UPDATE_LATENCY])
-[21:44:18] [Render thread/INFO]: Resizing Dynamic Transforms UBO, capacity limit of 16 reached during a single frame. New capacity will be 32.
-[21:44:18] [Render thread/INFO]: Resizing Dynamic Transforms UBO, capacity limit of 32 reached during a single frame. New capacity will be 64.
-[21:44:26] [Render thread/WARN]: Ignoring player info update for unknown player 6fb07022-83e5-3115-a9a9-91fa851a8e4d ([UPDATE_LATENCY])
-[21:44:28] [Render thread/WARN]: Ignoring player info update for unknown player 10fcf9b3-b614-383f-847d-31ea80edd894 ([UPDATE_LATENCY])
-[21:44:28] [Render thread/INFO]: [System] [CHAT] \n ⚡ Наши сообщества и соц. сети /links\n
-[21:44:29] [Render thread/WARN]: Ignoring player info update for unknown player 653ff51d-c9b9-3638-89a6-08249ece0403 ([UPDATE_LATENCY])
-[21:44:29] [Render thread/WARN]: Ignoring player info update for unknown player 11d07d1a-aef8-3ffb-b473-5c2d56dd99ee ([UPDATE_LATENCY])
-[21:44:31] [Render thread/WARN]: Ignoring player info update for unknown player b4ccb52a-d1c6-39a1-93e9-dc0037360d14 ([UPDATE_LATENCY])
-[21:44:36] [Render thread/WARN]: Ignoring player info update for unknown player c2388834-feea-35c6-9dae-04be2cb8e812 ([UPDATE_LATENCY])
-[21:44:36] [Render thread/WARN]: Ignoring player info update for unknown player 861e3126-277e-3b02-a39f-6e7e6fe49b25 ([UPDATE_LATENCY])
-[21:44:36] [Render thread/WARN]: Ignoring player info update for unknown player a45da5a6-0d52-3456-9fce-6cca5140fac2 ([UPDATE_LATENCY])
-[21:44:37] [Render thread/WARN]: Ignoring player info update for unknown player a52ccb81-6ca3-374e-a879-02ca1ef0b6f2 ([UPDATE_LATENCY])
-[21:44:37] [Render thread/WARN]: Ignoring player info update for unknown player c28dd928-e9ec-31a0-b381-d69a229511d5 ([UPDATE_LATENCY])
-[21:44:37] [Render thread/WARN]: Ignoring player info update for unknown player 5a6d1913-c81c-318b-b5ee-aae9fe88e2c3 ([UPDATE_LATENCY])
-[21:44:37] [Render thread/WARN]: Ignoring player info update for unknown player 53c98f47-2101-32de-872f-f3a0155372bd ([UPDATE_LATENCY])
-[21:44:37] [Render thread/WARN]: Ignoring player info update for unknown player 3082b2f3-e8f1-31cd-bc09-6f6effba765d ([UPDATE_LATENCY])
-[21:44:37] [Render thread/WARN]: Ignoring player info update for unknown player ceca9c6d-7756-3375-99c8-1cc61bde3e26 ([UPDATE_LATENCY])
-[21:44:48] [Render thread/WARN]: Ignoring player info update for unknown player 4d0b7c24-dc1a-3d1b-8f3a-bac83211a4ce ([UPDATE_LATENCY])
-[21:44:49] [Render thread/WARN]: Ignoring player info update for unknown player 92857c1c-8bb7-3b8b-8bc8-5eabfb21c884 ([UPDATE_LATENCY])
-[21:44:49] [Render thread/WARN]: Ignoring player info update for unknown player 3f635f5d-29ce-3d03-b681-8581847cc27f ([UPDATE_LATENCY])
-[21:44:49] [Render thread/WARN]: Ignoring player info update for unknown player ad306cbc-c943-31bc-a82c-75b4d3e805e9 ([UPDATE_LATENCY])
-[21:44:49] [Render thread/WARN]: Ignoring player info update for unknown player 720c9310-bf3f-32e2-8c37-a01392d5b198 ([UPDATE_LATENCY])
-[21:44:49] [Render thread/WARN]: Ignoring player info update for unknown player 18e1b185-c1f3-3e43-b00c-1f7d8a3f14b2 ([UPDATE_LATENCY])
-[21:44:49] [Render thread/WARN]: Ignoring player info update for unknown player 271d42b2-94a9-3999-93ee-1b9485b3de3a ([UPDATE_LATENCY])
-[21:44:50] [Render thread/WARN]: Ignoring player info update for unknown player 34ee89d2-b18f-39af-ab79-73e3aa48e851 ([UPDATE_LATENCY])
-[21:44:50] [Render thread/WARN]: Ignoring player info update for unknown player 710336a9-e813-3a6f-9e98-2920d0768879 ([UPDATE_LATENCY])
-[21:44:50] [Render thread/WARN]: Ignoring player info update for unknown player 4ce96f2c-72cc-38e4-8b5c-d55a29beeff9 ([UPDATE_LATENCY])
-[21:44:50] [Render thread/WARN]: Ignoring player info update for unknown player 286987fd-a504-3d2e-ab29-1eb5f88dc437 ([UPDATE_LATENCY])
-[21:44:50] [Render thread/WARN]: Ignoring player info update for unknown player e9da10d4-1163-3b03-aac5-36176e53503f ([UPDATE_LATENCY])
-[21:44:50] [Render thread/WARN]: Ignoring player info update for unknown player f68cef64-32d0-3b52-942e-8f90f2ee4964 ([UPDATE_LATENCY])
-[21:44:50] [Render thread/WARN]: Ignoring player info update for unknown player 23a47d10-372c-3eaa-9543-5d8ab0ca62b9 ([UPDATE_LATENCY])
-[21:44:51] [Render thread/WARN]: Ignoring player info update for unknown player dcfeb5fb-b381-3b83-ad83-d3f829f14cf1 ([UPDATE_LATENCY])
-[21:44:51] [Render thread/WARN]: Ignoring player info update for unknown player f854ac50-fb27-3db4-b626-3d18b675b4c3 ([UPDATE_LATENCY])
-[21:44:51] [Render thread/WARN]: Ignoring player info update for unknown player da779f2d-6cb4-3614-b584-15667d2a3b99 ([UPDATE_LATENCY])
-[21:44:58] [Render thread/INFO]: [System] [CHAT] \n ⚡ Наша группа ВК vk.com/funtime\n
-[21:45:02] [Render thread/INFO]: Stopping!
+[08:45:06] [Worker-Main-3/WARN]: Profile contained invalid signature for textures property (profile id: 90a4ac55-d9c2-4741-b190-f0477917ffe6)
+[08:45:06] [Render thread/INFO]: Resizing Dynamic Transforms UBO, capacity limit of 8 reached during a single frame. New capacity will be 16.
+[08:45:07] [Render thread/INFO]: [System] [CHAT] ** ! Внимание !\n** Чтобы ваш Аккаунт был в БЕЗОПАСНОСТИ!\n** Привяжите его к ВК: /vk \n** Или к Телеграм: /tg \n \n** ! Внимание !\n** Чтобы ваш Аккаунт был в БЕЗОПАСНОСТИ!\n** Привяжите его к ВК: /vk \n** Или к Телеграм: /tg 
+[08:45:10] [Render thread/INFO]: Resizing Dynamic Transforms UBO, capacity limit of 16 reached during a single frame. New capacity will be 32.
+[08:45:10] [Render thread/INFO]: Resizing Dynamic Transforms UBO, capacity limit of 32 reached during a single frame. New capacity will be 64.
+[08:45:12] [Render thread/WARN]: Ignoring player info update for unknown player 24d3e009-7b8f-364d-88fe-5ce5cbcea1c9 ([UPDATE_LATENCY])
+[08:45:13] [Render thread/WARN]: Ignoring player info update for unknown player 5eb2551e-307b-32cb-8a11-94c301ea67a2 ([UPDATE_LATENCY])
+[08:45:14] [Render thread/INFO]: Resizing Chunk Sections UBO, capacity limit of 16 reached during a single frame. New capacity will be 32.
+[08:45:14] [Render thread/WARN]: Ignoring player info update for unknown player 6b17f9ad-257b-3253-89d2-b56d22d258de ([UPDATE_LATENCY])
+[08:45:14] [Render thread/WARN]: Ignoring player info update for unknown player a5ce7850-b208-34ae-8fe1-06c871e472bc ([UPDATE_LATENCY])
+[08:45:15] [Render thread/WARN]: Ignoring player info update for unknown player d7dd0e3d-313f-3d57-88e3-062b69ba7cc9 ([UPDATE_LATENCY])
+[08:45:22] [Render thread/INFO]: [System] [CHAT] \n ⚡ Наш Сайт FunTime.su\n
+[08:45:23] [Render thread/WARN]: Ignoring player info update for unknown player 0bac970a-f3ad-313e-9b4c-8f482bc29ce3 ([UPDATE_LATENCY])
+[08:45:24] [Render thread/WARN]: Ignoring player info update for unknown player 74ee4f25-6350-3a6c-9679-6a966031b0d4 ([UPDATE_LATENCY])
+[08:45:24] [Render thread/WARN]: Ignoring player info update for unknown player f7414200-c8c7-34bb-8d1b-c608cee2b004 ([UPDATE_LATENCY])
+[08:45:24] [Render thread/WARN]: Ignoring player info update for unknown player eaaeb7ee-350a-39ea-9e24-c31e2db73cea ([UPDATE_LATENCY])
+[08:45:25] [Render thread/WARN]: Ignoring player info update for unknown player 82a72d36-5091-301d-9e99-2ff86c14a11a ([UPDATE_LATENCY])
+[08:45:25] [Render thread/WARN]: Ignoring player info update for unknown player d066a829-2dd7-3509-a3f3-8e5d50841a16 ([UPDATE_LATENCY])
+[08:45:30] [Render thread/WARN]: Ignoring player info update for unknown player 81ac3c28-1354-3a4c-bf93-d02078c2db2a ([UPDATE_LATENCY])
+[08:45:30] [Render thread/WARN]: Ignoring player info update for unknown player 7959a9c7-1e23-305f-8392-e08fce63bff7 ([UPDATE_LATENCY])
+[08:45:31] [Render thread/WARN]: Ignoring player info update for unknown player a29c4f34-6810-3240-ab5e-1777cabcf318 ([UPDATE_LATENCY])
+[08:45:31] [Render thread/WARN]: Ignoring player info update for unknown player 246882d9-3754-3bc3-b42f-fb5d03460044 ([UPDATE_LATENCY])
+[08:45:37] [Render thread/INFO]: Resizing Chunk Sections UBO, capacity limit of 32 reached during a single frame. New capacity will be 64.
+[08:45:37] [Render thread/WARN]: Ignoring player info update for unknown player 30beb590-90a0-325a-b6ef-1b747320dadc ([UPDATE_LATENCY])
+[08:45:37] [Render thread/WARN]: Ignoring player info update for unknown player 49616852-fb6c-3d80-a972-e9fc61416767 ([UPDATE_LATENCY])
+[08:45:38] [Render thread/WARN]: Ignoring player info update for unknown player 7b0f5a55-cee5-33eb-ace3-2a76cb4cd2d9 ([UPDATE_LATENCY])
+[08:45:39] [Render thread/WARN]: Ignoring player info update for unknown player 587bc6f7-1595-34bd-b5cc-2a9f585a364a ([UPDATE_LATENCY])
+[08:45:40] [Render thread/WARN]: Ignoring player info update for unknown player 600aae0e-3cdc-3c03-96d3-ce6086a9dfab ([UPDATE_LATENCY])
+[08:45:51] [Render thread/WARN]: Ignoring player info update for unknown player c2243ad1-b3b5-3d5c-bd3b-6e7d90ae4522 ([UPDATE_LATENCY])
+[08:45:52] [Render thread/WARN]: Ignoring player info update for unknown player 4ed00d9b-2e57-30e1-a519-2a894de840df ([UPDATE_LATENCY])
+[08:45:52] [Render thread/INFO]: [System] [CHAT] \n ⚡ Вы играете на FunTime! play.funtime.su\n
+[08:45:52] [Render thread/WARN]: Ignoring player info update for unknown player f7414200-c8c7-34bb-8d1b-c608cee2b004 ([UPDATE_LATENCY])
+[08:46:06] [Render thread/WARN]: Ignoring player info update for unknown player e3a8e977-1bc1-3e20-b146-b3d8721787d6 ([UPDATE_LATENCY])
+[08:46:06] [Render thread/WARN]: Ignoring player info update for unknown player 4ed00d9b-2e57-30e1-a519-2a894de840df ([UPDATE_LATENCY])
+[08:46:07] [Render thread/WARN]: Ignoring player info update for unknown player a9bc10df-fec6-37ee-876b-7563c85f62ea ([UPDATE_LATENCY])
+[08:46:07] [Render thread/WARN]: Ignoring player info update for unknown player 927b9536-9bc3-3537-9cb6-b25135272ac7 ([UPDATE_LATENCY])
+[08:46:08] [Render thread/WARN]: Ignoring player info update for unknown player e2a87363-0a76-3f1c-99bd-084ba41011dd ([UPDATE_LATENCY])
+[08:46:19] [Render thread/WARN]: Ignoring player info update for unknown player 31f3d245-2e2a-3deb-9414-8b12912104af ([UPDATE_LATENCY])
+[08:46:22] [Render thread/INFO]: [System] [CHAT] \n ⚡ Наши сообщества и соц. сети /links\n
+[08:46:25] [Render thread/WARN]: Ignoring player info update for unknown player 673ff3c5-36c9-3004-a61f-6b4291ac8374 ([UPDATE_LATENCY])
+[08:46:25] [Render thread/WARN]: Ignoring player info update for unknown player 60921d06-8c0d-3868-8309-de0d628de4cb ([UPDATE_LATENCY])
+[08:46:25] [Render thread/WARN]: Ignoring player info update for unknown player afe2b500-674e-3734-91a9-9d0c7851d008 ([UPDATE_LATENCY])
+[08:46:25] [Render thread/WARN]: Ignoring player info update for unknown player b0db6f4a-0068-3288-a4c0-ca33fc0e78f0 ([UPDATE_LATENCY])
+[08:46:26] [Render thread/WARN]: Ignoring player info update for unknown player d40d0963-3e06-3eee-8e33-03b854698bec ([UPDATE_LATENCY])
+[08:46:27] [Render thread/WARN]: Ignoring player info update for unknown player f4254bee-cceb-302a-96d9-36de495cb51f ([UPDATE_LATENCY])
+[08:46:40] [Render thread/WARN]: Ignoring player info update for unknown player c02608ae-98e2-3682-acaa-eba1735d2cb3 ([UPDATE_LATENCY])
+[08:46:40] [Render thread/WARN]: Ignoring player info update for unknown player 486c8cab-0521-37a7-8192-01be4e2d12ff ([UPDATE_LATENCY])
+[08:46:40] [Render thread/WARN]: Ignoring player info update for unknown player 3cf392ec-7092-3a51-8f18-6ae9b59b5edc ([UPDATE_LATENCY])
+[08:46:41] [Render thread/WARN]: Ignoring player info update for unknown player 342da8b8-7bec-3f84-9b7e-fa0532cd53bf ([UPDATE_LATENCY])
+[08:46:42] [Render thread/WARN]: Ignoring player info update for unknown player db645ceb-728f-3017-924a-52f8fcfbe939 ([UPDATE_LATENCY])
+[08:46:42] [Render thread/WARN]: Ignoring player info update for unknown player adef930e-c8de-35b5-9d97-166b68c68543 ([UPDATE_LATENCY])
+[08:46:42] [Render thread/WARN]: Ignoring player info update for unknown player b6510a8c-a7e3-33b7-bb96-5560ee5f3222 ([UPDATE_LATENCY])
+[08:46:42] [Render thread/WARN]: Ignoring player info update for unknown player 1f63d053-35d8-3f77-8205-3bb4c9647a72 ([UPDATE_LATENCY])
+[08:46:51] [Render thread/WARN]: Ignoring player info update for unknown player 1bf239f3-1faa-3cb4-9677-4af107c9fd19 ([UPDATE_LATENCY])
+[08:46:52] [Render thread/WARN]: Ignoring player info update for unknown player 17f54976-70c8-3e19-9245-ae121fb172a2 ([UPDATE_LATENCY])
+[08:46:52] [Render thread/INFO]: [System] [CHAT] \n ⚡ Наша группа ВК vk.com/funtime\n
+[08:46:52] [Render thread/WARN]: Ignoring player info update for unknown player e6b5b735-5d8d-3e68-b889-f1169d22d563 ([UPDATE_LATENCY])
+[08:46:53] [Render thread/WARN]: Ignoring player info update for unknown player c92f09f9-f508-3d48-9923-01566477704e ([UPDATE_LATENCY])
+[08:46:53] [Render thread/WARN]: Ignoring player info update for unknown player 3dfe34a0-5916-3cae-a86f-c1eeaef0faf4 ([UPDATE_LATENCY])
+[08:46:53] [Render thread/WARN]: Ignoring player info update for unknown player 7d5352c9-b35f-3815-bf22-07fdd597666b ([UPDATE_LATENCY])
+[08:46:53] [Render thread/WARN]: Ignoring player info update for unknown player 0c89f09b-249d-3a1f-8153-7f673da61b4b ([UPDATE_LATENCY])
+[08:47:07] [Render thread/WARN]: Ignoring player info update for unknown player ba12246c-a91f-3cf5-868e-c45d42db1188 ([UPDATE_LATENCY])
+[08:47:10] [Render thread/WARN]: Ignoring player info update for unknown player 09fdc8e2-a8a4-3cda-b490-9b622e9bc196 ([UPDATE_LATENCY])
+[08:47:15] [Render thread/WARN]: Ignoring player info update for unknown player 97bf81d7-cbe3-3af1-93dd-0c3ca56bc00b ([UPDATE_LATENCY])
+[08:47:17] [Render thread/WARN]: Ignoring player info update for unknown player 3649f100-a4f9-35ce-84cc-0ba940e7c9e8 ([UPDATE_LATENCY])
+[08:47:22] [Render thread/INFO]: [System] [CHAT] \n ⚡ Наш Телеграм t.me/funtime\n
+[08:47:43] [Render thread/WARN]: Ignoring player info update for unknown player e43416b5-be6d-31a8-8083-46559fb67591 ([UPDATE_LATENCY])
+[08:47:44] [Render thread/WARN]: Ignoring player info update for unknown player 58f44abe-34ff-3a79-bcae-a16d181b6f0b ([UPDATE_LATENCY])
+[08:47:52] [Render thread/INFO]: [System] [CHAT] \n ⚡ Наш Дискорд dd.FunTime.su\n
+[08:47:59] [Render thread/WARN]: Ignoring player info update for unknown player ed1a2ae5-2ce4-386d-9943-bb518b559e34 ([UPDATE_LATENCY])
+[08:48:15] [Render thread/INFO]: [System] [CHAT] [♧] Скачиваем скин...
+[08:48:15] [Render thread/INFO]: [System] [CHAT] [♧] Ваш скин был изменён. Перезайдите, чтобы увидеть изменения.
+[08:48:22] [Render thread/INFO]: [System] [CHAT] \n ⚡ Наш Сайт FunTime.su\n
+[08:48:45] [Render thread/WARN]: Ignoring player info update for unknown player 8a2bbef3-9acb-3088-a6c4-32eacb8e3da6 ([UPDATE_LATENCY])
+[08:48:46] [Render thread/WARN]: Ignoring player info update for unknown player 3b77a125-ffdd-3a57-9cb0-7af1e6a7ac13 ([UPDATE_LATENCY])
+[08:48:52] [Render thread/INFO]: [System] [CHAT] \n ⚡ Вы играете на FunTime! play.funtime.su\n
+[08:48:54] [Render thread/INFO]: [System] [CHAT] [Отладка]: Хитбоксы: вкл.
+[08:49:01] [Render thread/INFO]: [System] [CHAT] [Отладка]: Хитбоксы: выкл.
+[08:49:11] [Render thread/WARN]: Ignoring player info update for unknown player f5df138a-12b1-3355-a281-b48253b0b4bd ([UPDATE_LATENCY])
+[08:49:11] [Render thread/WARN]: Ignoring player info update for unknown player 2f9fd1f6-4a27-3489-a902-25c52814d320 ([UPDATE_LATENCY])
+[08:49:13] [Render thread/WARN]: Ignoring player info update for unknown player a099ec35-fe85-3088-b8fb-dd724c3d6623 ([UPDATE_LATENCY])
+[08:49:22] [Render thread/INFO]: [System] [CHAT] \n ⚡ Наши сообщества и соц. сети /links\n
+[08:49:26] [Render thread/WARN]: Ignoring player info update for unknown player c1257433-b731-308a-a9b3-c7b9febc56da ([UPDATE_LATENCY])
+[08:49:26] [Render thread/WARN]: Ignoring player info update for unknown player c57b54d9-1cbb-3a10-9927-80c8d04f6776 ([UPDATE_LATENCY])
+[08:49:41] [Render thread/INFO]: [STDERR]: java.lang.NullPointerException: Cannot read field "horizontalCollision" because "ru.arixcompany.features.module.modules.movement.AutoSprint.mc.player" is null
+[08:49:41] [Render thread/INFO]: [STDERR]: 	at ru.arixcompany.features.module.modules.movement.AutoSprint.onTick(AutoSprint.java:24)
+[08:49:41] [Render thread/INFO]: [STDERR]: 	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+[08:49:41] [Render thread/INFO]: [STDERR]: 	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+[08:49:41] [Render thread/INFO]: [STDERR]: 	at ru.arixcompany.features.event.EventRepo.invoke(EventRepo.java:78)
+[08:49:41] [Render thread/INFO]: [STDERR]: 	at ru.arixcompany.features.event.EventRepo.call(EventRepo.java:70)
+[08:49:41] [Render thread/INFO]: [STDERR]: 	at net.minecraft.client.Minecraft.tick(Minecraft.java:1850)
+[08:49:41] [Render thread/INFO]: [STDERR]: 	at net.minecraft.client.Minecraft.runTick(Minecraft.java:1245)
+[08:49:41] [Render thread/INFO]: [STDERR]: 	at net.minecraft.client.Minecraft.run(Minecraft.java:877)
+[08:49:41] [Render thread/INFO]: [STDERR]: 	at net.minecraft.client.main.Main.main(Main.java:223)
+[08:49:41] [Render thread/INFO]: [STDERR]: 	at mcp.client.Start.main(Start.java:20)
+[08:49:41] [Render thread/INFO]: [STDERR]: java.lang.NullPointerException: Cannot read field "horizontalCollision" because "ru.arixcompany.features.module.modules.movement.AutoSprint.mc.player" is null
+[08:49:41] [Render thread/INFO]: [STDERR]: 	at ru.arixcompany.features.module.modules.movement.AutoSprint.onTick(AutoSprint.java:24)
+[08:49:41] [Render thread/INFO]: [STDERR]: 	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+[08:49:41] [Render thread/INFO]: [STDERR]: 	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+[08:49:41] [Render thread/INFO]: [STDERR]: 	at ru.arixcompany.features.event.EventRepo.invoke(EventRepo.java:78)
+[08:49:41] [Render thread/INFO]: [STDERR]: 	at ru.arixcompany.features.event.EventRepo.call(EventRepo.java:70)
+[08:49:41] [Render thread/INFO]: [STDERR]: 	at net.minecraft.client.Minecraft.tick(Minecraft.java:1850)
+[08:49:41] [Render thread/INFO]: [STDERR]: 	at net.minecraft.client.Minecraft.runTick(Minecraft.java:1245)
+[08:49:41] [Render thread/INFO]: [STDERR]: 	at net.minecraft.client.Minecraft.run(Minecraft.java:877)
+[08:49:41] [Render thread/INFO]: [STDERR]: 	at net.minecraft.client.main.Main.main(Main.java:223)
+[08:49:41] [Render thread/INFO]: [STDERR]: 	at mcp.client.Start.main(Start.java:20)
+[08:49:41] [Render thread/INFO]: [STDERR]: java.lang.NullPointerException: Cannot read field "horizontalCollision" because "ru.arixcompany.features.module.modules.movement.AutoSprint.mc.player" is null
+[08:49:41] [Render thread/INFO]: [STDERR]: 	at ru.arixcompany.features.module.modules.movement.AutoSprint.onTick(AutoSprint.java:24)
+[08:49:41] [Render thread/INFO]: [STDERR]: 	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+[08:49:41] [Render thread/INFO]: [STDERR]: 	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+[08:49:41] [Render thread/INFO]: [STDERR]: 	at ru.arixcompany.features.event.EventRepo.invoke(EventRepo.java:78)
+[08:49:41] [Render thread/INFO]: [STDERR]: 	at ru.arixcompany.features.event.EventRepo.call(EventRepo.java:70)
+[08:49:41] [Render thread/INFO]: [STDERR]: 	at net.minecraft.client.Minecraft.tick(Minecraft.java:1850)
+[08:49:41] [Render thread/INFO]: [STDERR]: 	at net.minecraft.client.Minecraft.runTick(Minecraft.java:1245)
+[08:49:41] [Render thread/INFO]: [STDERR]: 	at net.minecraft.client.Minecraft.run(Minecraft.java:877)
+[08:49:41] [Render thread/INFO]: [STDERR]: 	at net.minecraft.client.main.Main.main(Main.java:223)
+[08:49:41] [Render thread/INFO]: [STDERR]: 	at mcp.client.Start.main(Start.java:20)
+[08:49:41] [Render thread/INFO]: [STDERR]: java.lang.NullPointerException: Cannot read field "horizontalCollision" because "ru.arixcompany.features.module.modules.movement.AutoSprint.mc.player" is null
+[08:49:41] [Render thread/INFO]: [STDERR]: 	at ru.arixcompany.features.module.modules.movement.AutoSprint.onTick(AutoSprint.java:24)
+[08:49:41] [Render thread/INFO]: [STDERR]: 	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+[08:49:41] [Render thread/INFO]: [STDERR]: 	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+[08:49:41] [Render thread/INFO]: [STDERR]: 	at ru.arixcompany.features.event.EventRepo.invoke(EventRepo.java:78)
+[08:49:41] [Render thread/INFO]: [STDERR]: 	at ru.arixcompany.features.event.EventRepo.call(EventRepo.java:70)
+[08:49:41] [Render thread/INFO]: [STDERR]: 	at net.minecraft.client.Minecraft.tick(Minecraft.java:1850)
+[08:49:41] [Render thread/INFO]: [STDERR]: 	at net.minecraft.client.Minecraft.runTick(Minecraft.java:1245)
+[08:49:41] [Render thread/INFO]: [STDERR]: 	at net.minecraft.client.Minecraft.run(Minecraft.java:877)
+[08:49:41] [Render thread/INFO]: [STDERR]: 	at net.minecraft.client.main.Main.main(Main.java:223)
+[08:49:41] [Render thread/INFO]: [STDERR]: 	at mcp.client.Start.main(Start.java:20)
+[08:49:41] [Render thread/INFO]: [STDERR]: java.lang.NullPointerException: Cannot read field "horizontalCollision" because "ru.arixcompany.features.module.modules.movement.AutoSprint.mc.player" is null
+[08:49:41] [Render thread/INFO]: [STDERR]: 	at ru.arixcompany.features.module.modules.movement.AutoSprint.onTick(AutoSprint.java:24)
+[08:49:41] [Render thread/INFO]: [STDERR]: 	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+[08:49:41] [Render thread/INFO]: [STDERR]: 	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+[08:49:41] [Render thread/INFO]: [STDERR]: 	at ru.arixcompany.features.event.EventRepo.invoke(EventRepo.java:78)
+[08:49:41] [Render thread/INFO]: [STDERR]: 	at ru.arixcompany.features.event.EventRepo.call(EventRepo.java:70)
+[08:49:41] [Render thread/INFO]: [STDERR]: 	at net.minecraft.client.Minecraft.tick(Minecraft.java:1850)
+[08:49:41] [Render thread/INFO]: [STDERR]: 	at net.minecraft.client.Minecraft.runTick(Minecraft.java:1245)
+[08:49:41] [Render thread/INFO]: [STDERR]: 	at net.minecraft.client.Minecraft.run(Minecraft.java:877)
+[08:49:41] [Render thread/INFO]: [STDERR]: 	at net.minecraft.client.main.Main.main(Main.java:223)
+[08:49:41] [Render thread/INFO]: [STDERR]: 	at mcp.client.Start.main(Start.java:20)
+[08:49:41] [Render thread/INFO]: [STDERR]: java.lang.NullPointerException: Cannot read field "horizontalCollision" because "ru.arixcompany.features.module.modules.movement.AutoSprint.mc.player" is null
+[08:49:41] [Render thread/INFO]: [STDERR]: 	at ru.arixcompany.features.module.modules.movement.AutoSprint.onTick(AutoSprint.java:24)
+[08:49:41] [Render thread/INFO]: [STDERR]: 	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+[08:49:41] [Render thread/INFO]: [STDERR]: 	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+[08:49:41] [Render thread/INFO]: [STDERR]: 	at ru.arixcompany.features.event.EventRepo.invoke(EventRepo.java:78)
+[08:49:41] [Render thread/INFO]: [STDERR]: 	at ru.arixcompany.features.event.EventRepo.call(EventRepo.java:70)
+[08:49:41] [Render thread/INFO]: [STDERR]: 	at net.minecraft.client.Minecraft.tick(Minecraft.java:1850)
+[08:49:41] [Render thread/INFO]: [STDERR]: 	at net.minecraft.client.Minecraft.runTick(Minecraft.java:1245)
+[08:49:41] [Render thread/INFO]: [STDERR]: 	at net.minecraft.client.Minecraft.run(Minecraft.java:877)
+[08:49:41] [Render thread/INFO]: [STDERR]: 	at net.minecraft.client.main.Main.main(Main.java:223)
+[08:49:41] [Render thread/INFO]: [STDERR]: 	at mcp.client.Start.main(Start.java:20)
+[08:49:41] [Render thread/INFO]: [STDERR]: java.lang.NullPointerException: Cannot read field "horizontalCollision" because "ru.arixcompany.features.module.modules.movement.AutoSprint.mc.player" is null
+[08:49:41] [Render thread/INFO]: [STDERR]: 	at ru.arixcompany.features.module.modules.movement.AutoSprint.onTick(AutoSprint.java:24)
+[08:49:41] [Render thread/INFO]: [STDERR]: 	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+[08:49:41] [Render thread/INFO]: [STDERR]: 	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+[08:49:41] [Render thread/INFO]: [STDERR]: 	at ru.arixcompany.features.event.EventRepo.invoke(EventRepo.java:78)
+[08:49:41] [Render thread/INFO]: [STDERR]: 	at ru.arixcompany.features.event.EventRepo.call(EventRepo.java:70)
+[08:49:41] [Render thread/INFO]: [STDERR]: 	at net.minecraft.client.Minecraft.tick(Minecraft.java:1850)
+[08:49:41] [Render thread/INFO]: [STDERR]: 	at net.minecraft.client.Minecraft.runTick(Minecraft.java:1245)
+[08:49:41] [Render thread/INFO]: [STDERR]: 	at net.minecraft.client.Minecraft.run(Minecraft.java:877)
+[08:49:41] [Render thread/INFO]: [STDERR]: 	at net.minecraft.client.main.Main.main(Main.java:223)
+[08:49:41] [Render thread/INFO]: [STDERR]: 	at mcp.client.Start.main(Start.java:20)
+[08:49:41] [Render thread/INFO]: [STDERR]: java.lang.NullPointerException: Cannot read field "horizontalCollision" because "ru.arixcompany.features.module.modules.movement.AutoSprint.mc.player" is null
+[08:49:41] [Render thread/INFO]: [STDERR]: 	at ru.arixcompany.features.module.modules.movement.AutoSprint.onTick(AutoSprint.java:24)
+[08:49:41] [Render thread/INFO]: [STDERR]: 	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+[08:49:41] [Render thread/INFO]: [STDERR]: 	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+[08:49:41] [Render thread/INFO]: [STDERR]: 	at ru.arixcompany.features.event.EventRepo.invoke(EventRepo.java:78)
+[08:49:41] [Render thread/INFO]: [STDERR]: 	at ru.arixcompany.features.event.EventRepo.call(EventRepo.java:70)
+[08:49:41] [Render thread/INFO]: [STDERR]: 	at net.minecraft.client.Minecraft.tick(Minecraft.java:1850)
+[08:49:41] [Render thread/INFO]: [STDERR]: 	at net.minecraft.client.Minecraft.runTick(Minecraft.java:1245)
+[08:49:41] [Render thread/INFO]: [STDERR]: 	at net.minecraft.client.Minecraft.run(Minecraft.java:877)
+[08:49:41] [Render thread/INFO]: [STDERR]: 	at net.minecraft.client.main.Main.main(Main.java:223)
+[08:49:41] [Render thread/INFO]: [STDERR]: 	at mcp.client.Start.main(Start.java:20)
+[08:49:41] [Render thread/INFO]: Stopping!

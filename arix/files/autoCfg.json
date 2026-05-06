@@ -16,10 +16,10 @@
       "Текст Сеттинг": ""
     },
     "cameratweaks": {
-      "bind": 82,
+      "bind": -1,
       "state": true,
       "Приближение": 1.0,
-      "Камера через стенки": false
+      "Камера через стенки": true
     },
     "nametags": {
       "bind": -1,
@@ -63,6 +63,17 @@
     "targetesp": {
       "bind": -1,
       "state": true
+    },
+    "autosprint": {
+      "bind": -1,
+      "state": true,
+      "Игнорировать эффект": "Слепота"
+    },
+    "clientsounds": {
+      "bind": -1,
+      "state": true,
+      "Громкость": 0.54,
+      "Тон": 1.0
     }
   },
   "misc": {
