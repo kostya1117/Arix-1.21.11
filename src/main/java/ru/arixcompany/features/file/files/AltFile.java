@@ -58,33 +58,29 @@ public class AltFile extends ClientFile {
 
     @Override
     public void loadFromFile(File path) throws FileLoadException {
-
         if (path == null) return;
 
         File file = new File(path, getName() + ".json");
 
         if (!file.exists()) return;
-
         try {
             List<String> raw = Files.readAllLines(file.toPath(), StandardCharsets.UTF_8);
-
             AltRepo.clear();
-            AltRepo.setLastAlt(null);
+            String lastAlt = null;
 
             for (String line : raw) {
-
-                if (line.isBlank()) continue;
-
+                if (line == null) continue;
                 line = line.trim();
+                if (line.isEmpty()) continue;
 
                 if (line.startsWith("last=")) {
-                    AltRepo.setLastAlt(line.substring(6).trim());
+                    lastAlt = line.substring(5).trim();
                     continue;
                 }
-
                 AltRepo.add(new AltRepo.Alt(line));
             }
 
+            AltRepo.setLastAlt(lastAlt);
         } catch (IOException e) {
             throw new FileLoadException("Failed to load alts", e);
         }

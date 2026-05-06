@@ -29,3 +29,22 @@
 /an1001
 /l 1
 /reg 1
+/an220
+/piona
+/ah search Обсидиан
+/ah sell 99999
+/ah
+/ah sell 79999
+/an221
+/an220
+/ah sell 300000
+/ah
+/ah sell 249999
+/ah sell 30000
+/ah search Ключ испытаний
+/ah sell 400000
+/ah search Ключ испытаний
+/ah sell 349999
+/ah search Ключ испытаний
+/ah search Сатира
+/balance

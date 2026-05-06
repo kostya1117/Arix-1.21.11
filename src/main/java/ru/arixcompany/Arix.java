@@ -108,7 +108,6 @@ public class Arix implements IMinecraft {
     }
 
     private void tryAutoLogin() {
-
         String last = AltRepo.getLastAlt();
 
         if (last == null) return;

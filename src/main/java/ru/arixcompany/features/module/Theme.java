@@ -142,6 +142,15 @@ public enum Theme {
             new Color(255, 195, 50),
             new Color(255, 245, 200),
             new Color(190, 160, 90)
+    ),
+
+    CUSTOM(
+            new Color(176, 102, 255), // Дефолтные значения, будут заменены из CustomThemePanel
+            new Color(18, 14, 28),
+            new Color(26, 20, 38),
+            new Color(176, 102, 255),
+            new Color(235, 220, 255),
+            new Color(140, 120, 180)
     );
 
     public Animation animation = new EaseInOutQuad(300, 1.0);
@@ -160,5 +169,48 @@ public enum Theme {
         this.outline = outline;
         this.text = text;
         this.text2 = text2;
+    }
+
+    /**
+     * Обновить цвета кастомной темы
+     */
+    public static void updateCustomTheme(Color main, Color bg, Color bg2, Color outline, Color text, Color text2) {
+        if (CUSTOM != null) {
+            // Используем рефлексию для обновления final полей
+            try {
+                java.lang.reflect.Field mainField = Theme.class.getDeclaredField("main");
+                mainField.setAccessible(true);
+                mainField.set(CUSTOM, main);
+
+                java.lang.reflect.Field bgField = Theme.class.getDeclaredField("bg");
+                bgField.setAccessible(true);
+                bgField.set(CUSTOM, bg);
+
+                java.lang.reflect.Field bg2Field = Theme.class.getDeclaredField("bg2");
+                bg2Field.setAccessible(true);
+                bg2Field.set(CUSTOM, bg2);
+
+                java.lang.reflect.Field outlineField = Theme.class.getDeclaredField("outline");
+                outlineField.setAccessible(true);
+                outlineField.set(CUSTOM, outline);
+
+                java.lang.reflect.Field textField = Theme.class.getDeclaredField("text");
+                textField.setAccessible(true);
+                textField.set(CUSTOM, text);
+
+                java.lang.reflect.Field text2Field = Theme.class.getDeclaredField("text2");
+                text2Field.setAccessible(true);
+                text2Field.set(CUSTOM, text2);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * Проверить, является ли тема кастомной
+     */
+    public boolean isCustom() {
+        return this == CUSTOM;
     }
 }
