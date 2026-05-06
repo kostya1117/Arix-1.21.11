@@ -21,8 +21,11 @@ public class AutoSprint extends Module {
 
     @EventHandler
     public void onTick(EventTick e) {
+        if (mc.player == null) return;
+
         boolean horizontal = mc.player.horizontalCollision && !mc.player.minorHorizontalCollision;
         boolean sneaking = mc.player.isShiftKeyDown() && !mc.player.isSwimming();
+
         if (!(settings.isSelected("Слепота") && mc.player.hasEffect(MobEffects.BLINDNESS))
                 && !(settings.isSelected("Замедление") && mc.player.hasEffect(MobEffects.SLOWNESS))
                 && tickStop > 0 || sneaking) {
