@@ -49,10 +49,10 @@ public class FunTimeRotation implements AbstractRotation, IMinecraft {
         float baseYaw = FreeLookUtil.freeYaw;
 
         if (isAttack && AuraUtil.getStrictDistance(target) < attackDistance && !check) {
-            tick = randomLerp(10.0F, 15.0F);
+            tick = MathUtils.randomValue(20.0F, 25.0F);
         }
 
-        float yawChangeSpeed   = randomLerp(15.0F, 25.0F);
+        float yawChangeSpeed   = randomLerp(25.0F, 35.0F);
         float pitchChangeSpeed = randomLerp(0.0F,  3.5F);
         float randomAttackShift = 0.0F;
 
@@ -60,9 +60,9 @@ public class FunTimeRotation implements AbstractRotation, IMinecraft {
         float waveB = (float) Math.sin(now / 70.0);
 
         if (tick > 0.0F) {
-            yawChangeSpeed = randomLerp(25.0F, 40.0F);
+            yawChangeSpeed = randomLerp(40.0F, 55.0F);
             baseYaw = (float) Math.toDegrees(Math.atan2(-directionVec.x, directionVec.z));
-            randomAttackShift = (waveA + waveB) * randomLerp(1.0F, 2.0F);
+            randomAttackShift = randomLerp(2.0F, 4.0F);
             tick--;
         }
 
@@ -71,8 +71,8 @@ public class FunTimeRotation implements AbstractRotation, IMinecraft {
                 -90.0, 90.0
         );
 
-        float yawJitter   = waveA * randomLerp(11.0F, 14.0F) + randomAttackShift;
-        float pitchJitter = waveB * randomLerp(4.0F,  7.0F)  + randomAttackShift;
+        float yawJitter   = waveA * randomLerp(9.0F, 11.0F) + randomAttackShift;
+        float pitchJitter = waveB * randomLerp(5.0F,  6.0F)  + randomAttackShift;
 
         float finalPitch = HitAura.isLookingUp
                 ? -randomLerp(85.0F, 90.0F)
@@ -80,16 +80,16 @@ public class FunTimeRotation implements AbstractRotation, IMinecraft {
 
         float pitchSpeed = HitAura.isLookingUp || fastspeed
                 ? randomLerp(60.0F, 90.0F)
-                : randomLerp(6.0F, 8.0F);
+                : randomLerp(9.0F, 12.0F);
 
         RotationRepo.update(
                 new Rotation(baseYaw + yawJitter, finalPitch + pitchJitter),
                 yawChangeSpeed,
                 pitchSpeed,
-                25.0F,
-                25.0F,
+                8.0F,
+                8.0F,
                 0,
-                15,
+                2,
                 false
         );
     }

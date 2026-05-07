@@ -48,7 +48,6 @@ public class Nametags extends Module {
         for (Player player : mc.level.players()) {
 
             if (player == mc.player) continue;
-            if (player.isInvisible()) continue;
 
             double x = Mth.lerp(e.getTickDelta(), player.xo, player.getX());
             double y = Mth.lerp(e.getTickDelta(), player.yo, player.getY());
