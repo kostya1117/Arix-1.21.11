@@ -1898,6 +1898,9 @@ public abstract class Entity implements SyncedDataHolder, DebugValueSource, Name
         double d2 = Mth.lerp(p_20319_, this.zo, this.getZ());
         return new Vec3(d0, d1, d2);
     }
+    public Vec3 getPosPlayer() {
+        return new Vec3(this.getX(), this.getY(), this.getZ());
+    }
 
     public HitResult pick(double p_19908_, float p_19909_, boolean p_19910_) {
         Vec3 vec3 = this.getEyePosition(p_19909_);

@@ -49,20 +49,18 @@ public class FunTimeRotation implements AbstractRotation, IMinecraft {
         float baseYaw = FreeLookUtil.freeYaw;
 
         if (isAttack && AuraUtil.getStrictDistance(target) < attackDistance && !check) {
-            tick = randomLerp(6.0F, 7.0F);
+            tick = randomLerp(10.0F, 15.0F);
         }
 
-        float fov = (float) AuraUtil.calculateFOVFromCamera(target);
-
-        float yawChangeSpeed   = randomLerp(22.0F, 29.0F);
+        float yawChangeSpeed   = randomLerp(15.0F, 25.0F);
         float pitchChangeSpeed = randomLerp(0.0F,  3.5F);
         float randomAttackShift = 0.0F;
 
         float waveA = (float) Math.cos(now / 40.0);
         float waveB = (float) Math.sin(now / 70.0);
 
-        if (tick > 0.0F && Math.abs(fov) < 360.0F) {
-            yawChangeSpeed = randomLerp(90.0F, 120.0F);
+        if (tick > 0.0F) {
+            yawChangeSpeed = randomLerp(25.0F, 40.0F);
             baseYaw = (float) Math.toDegrees(Math.atan2(-directionVec.x, directionVec.z));
             randomAttackShift = (waveA + waveB) * randomLerp(1.0F, 2.0F);
             tick--;
@@ -81,7 +79,7 @@ public class FunTimeRotation implements AbstractRotation, IMinecraft {
                 : basePitch;
 
         float pitchSpeed = HitAura.isLookingUp || fastspeed
-                ? randomLerp(120.0F, 170.0F)
+                ? randomLerp(60.0F, 90.0F)
                 : randomLerp(6.0F, 8.0F);
 
         RotationRepo.update(

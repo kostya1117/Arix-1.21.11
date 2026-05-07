@@ -3,6 +3,7 @@ package ru.arixcompany.features.module.modules.combat.aura.rotation.impl;
 import net.minecraft.util.Mth;
 import ru.arixcompany.features.event.EventHandler;
 import ru.arixcompany.features.event.render.EventRender3D;
+import ru.arixcompany.features.event.world.EventGameTick;
 import ru.arixcompany.features.event.world.EventTick;
 import ru.arixcompany.features.module.modules.combat.aura.rotation.Component;
 import ru.arixcompany.utils.player.PlayerUtil;
@@ -23,15 +24,15 @@ public class RotationRepo extends Component {
         return currentTask != RotationTask.IDLE;
     }
 
-    @EventHandler
-    public void onEvent(EventRender3D event) {
-        if (mc.player != null && isRotating()) {
-            mc.player.yBodyRot = PlayerUtil.calculateCorrectYawOffset(mc.player.getYRot());
-        }
-    }
+//    @EventHandler
+//    public void onEvent(EventRender3D event) {
+//        if (mc.player != null && isRotating()) {
+//            mc.player.yBodyRot = PlayerUtil.calculateCorrectYawOffset(mc.player.getYRot());
+//        }
+//    }
 
     @EventHandler
-    public void onEvent(EventTick event) {
+    public void onEvent(EventGameTick event) {
         if (currentTask == RotationTask.AIM && idleTicks > currentTimeout) {
             currentTask = RotationTask.RESET;
         }
@@ -98,14 +99,10 @@ public class RotationRepo extends Component {
         float yawStep   = getSensitivity(Mth.clamp(yawDelta,   -clampedYaw,   clampedYaw));
         float pitchStep = getSensitivity(Mth.clamp(pitchDelta, -clampedPitch, clampedPitch));
 
-        if (yawStep   == 0.0F && Math.abs(yawDelta)   > 0.01F) yawStep   = yawDelta   > 0 ? 0.05F : -0.05F;
-        if (pitchStep == 0.0F && Math.abs(pitchDelta) > 0.01F) pitchStep = pitchDelta > 0 ? 0.05F : -0.05F;
-
         float finalYaw   = mc.player.getYRot() + yawStep;
         float finalPitch = Mth.clamp(mc.player.getXRot() + pitchStep, -90.0F, 90.0F);
 
         mc.player.setYRot(finalYaw);
-        mc.player.yHeadRot = finalYaw;
         mc.player.setXRot(finalPitch);
 
         idleTicks = 0;

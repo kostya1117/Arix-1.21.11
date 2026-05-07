@@ -61,15 +61,13 @@ public class ModuleRepo implements IMinecraft {
       }
    }
 
-   public Module getModule(Class<?> class1) {
-      for (Module module1 : this.modules) {
-         if (module1.getClass() == class1) {
-            return module1;
-         }
-      }
-
-      return null;
-   }
+    public <T extends Module> T getModule(Class<T> clazz) {
+        for (Module module : this.modules) {
+            if (!clazz.isInstance(module)) continue;
+            return clazz.cast(module);
+        }
+        return null;
+    }
 
    public ArrayList<Module> getModule(Category category) {
       ArrayList<Module> modules = new ArrayList<>();

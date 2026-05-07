@@ -15,7 +15,7 @@ public final class ComponentRepo extends HashMap<Class<? extends Component>, Com
 
    public void add(Component... components) {
       for (Component component : components) {
-         this.put((Class<? extends Component>)component.getClass(), component);
+         this.put(component.getClass(), component);
       }
    }
 

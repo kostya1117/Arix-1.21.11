@@ -6,12 +6,15 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ShieldItem;
 import net.minecraft.world.phys.Vec3;
 import ru.arixcompany.features.event.EventHandler;
+import ru.arixcompany.features.event.player.EventInput;
+import ru.arixcompany.features.event.world.EventGameTick;
 import ru.arixcompany.features.event.world.EventTick;
 import ru.arixcompany.features.event.world.EventUpdate;
 import ru.arixcompany.features.module.Category;
 import ru.arixcompany.features.module.Module;
 import ru.arixcompany.features.module.modules.combat.aura.AttackHandler;
 import ru.arixcompany.features.module.modules.combat.aura.TargetHandler;
+import ru.arixcompany.features.module.modules.combat.aura.rotation.impl.FreeLookUtil;
 import ru.arixcompany.features.module.modules.combat.aura.rotation.rotations.FunTimeRotation;
 import ru.arixcompany.features.module.modules.combat.aura.rotation.rotations.SnapRotation;
 import ru.arixcompany.features.module.setting.implement.ListSetting;
@@ -59,7 +62,8 @@ public class HitAura extends Module {
                             "Бить только оружием",
                             "Не бить если кушаеш",
                             "Не атакавать в контейнере",
-                            "Райкаст"
+                            "Райкаст",
+                            "Продвинутый райкаст"
                     );
 
     public static final ListSetting extraSettings =
@@ -74,7 +78,6 @@ public class HitAura extends Module {
     public static LivingEntity target;
     private final TargetHandler targetHandler = new TargetHandler();
 
-    public static boolean canSwap = false;
     public static long lastLookUpTime = 0L;
     public static long nextLookUpDelay =
             ThreadLocalRandom.current().nextLong(90000L, 180000L);
@@ -98,11 +101,20 @@ public class HitAura extends Module {
     }
 
    @EventHandler
-   public void onEvent(EventTick e) {
+   public void onEvent(EventGameTick e) {
       if (target != null && mc.player != null && mc.level != null) {
          this.updateRotation();
       }
    }
+
+    @EventHandler
+    public void onEvent(EventInput e) {
+        if (target != null && mc.player != null && mc.level != null) {
+            if (motion.isSelected("Свободная")) {
+                MoveUtils.fixMovement(e, FreeLookUtil.freeYaw);
+            }
+        }
+    }
 
    @EventHandler
    public void onEvent(EventUpdate e) {
@@ -113,28 +125,18 @@ public class HitAura extends Module {
           target = targetHandler.getTarget();
 
          if (target != null && mc.player != null && mc.level != null) {
-            if (motion.isSelected("Свободная") && !canSwap) {
-               MoveUtils.fixMovement(mc.gameRenderer.getMainCamera().xRot());
-            }
-
-            if (motion.isSelected("Сфокусированная") && !canSwap) {
-               MoveUtils.targetMovement(mc.player.getXRot(), new Vec3(target.getX(), target.getY(), target.getZ()));
-            }
 
             if (AttackHandler.resetSprintTick(target, getRanges())) {
-               mc.player.setSprinting(false);
                mc.options.keySprint.setDown(false);
             }
 
-             if (!this.checkToAttack()) {
-                 float[] ranges = getRanges();
-                 ranges = new float[]{ranges[0], ranges[1], ranges[0] + ranges[1]};
 
+             if (!this.checkToAttack()) {
                  AttackHandler.performAttack(
                          target,
                          misc.isSelected("Райкаст"),
                          extraSettings.isSelected("Легитный спринт"),
-                         ranges
+                         getRanges()
                  );
              }
          } else {
@@ -151,11 +153,7 @@ public class HitAura extends Module {
     private final FunTimeRotation funTimeRotation = new FunTimeRotation();
     private final SnapRotation snapRotation = new SnapRotation();
     private void updateRotation() {
-
         if (target == null) return;
-
-        float[] ranges = getRanges();
-        ranges = new float[]{ranges[0], ranges[1], ranges[0] + ranges[1]};
 
         boolean shouldAttack =
                 AttackHandler.shouldAttack(
@@ -164,7 +162,7 @@ public class HitAura extends Module {
                         true,
                         true,
                         -50L,
-                        ranges
+                        getRanges()
                 );
 
         switch (rotationType.getSelected()) {
@@ -194,7 +192,6 @@ public class HitAura extends Module {
 
    private void reset() {
       target = null;
-      MoveUtils.unlockMovement("Aura");
       if (mc.player != null) {
          isLookingUp = false;
          lookUpStartTime = 0L;

@@ -1,44 +1,3 @@
-/login Player9
-/reg AutisMoregzs
-/hub
-/time set day
-/reg 1
-/l 1
-/reg
-/reg 1
-/an221
-/set-skin 1488
-/hub
-/an217
-/an221
-/an217
-/an221
-/reg 1
-/an221
-/warp pvp
-/an217
-/ah search алмазный меч
-/an101
-/an103
-/kit start
-/an1001
-/skin set 1488
-/an1001
-/kit start
-/l 1
-/an1001
-/l 1
-/reg 1
-/an220
-/piona
-/ah search Обсидиан
-/ah sell 99999
-/ah
-/ah sell 79999
-/an221
-/an220
-/ah sell 300000
-/ah
 /ah sell 249999
 /ah sell 30000
 /ah search Ключ испытаний
@@ -48,3 +7,44 @@
 /ah search Ключ испытаний
 /ah search Сатира
 /balance
+/login Arixxx
+/ah
+/hub
+/piona
+/warp case
+/ah search Эндер-сундук
+/ah sell 800,000
+/login Arixxx
+/kit dragon
+/fly
+/codes
+/rtpnear
+/near
+/fly
+/near
+/rtp
+/fix all
+/rtp
+/near
+/fly
+/ah search яйцо призыва всполоха
+/ah sell 60,000
+/ah search незеритовая лопата
+/ah sell 500,000
+/ah
+/bp
+/tpa ProdikLa1
+/event delay
+/ah search Хлопушка
+/event mo
+/clan money
+/clan home v
+/clan home b
+/clan home v
+/clan storage
+/hub
+/an5009
+/clan home b
+/clan invest 250000
+/clan home v
+/reg NOTBANNED404
