@@ -144,13 +144,16 @@ public class AutoBuy extends Module {
         addTargetLore("sphere_titan", "Сфера Титана", Items.PLAYER_HEAD, List.of("Мощь Титанов крепка"), 0);
 
         // Талисманы (по лору)
+
         addTargetLore("talisman_demon", "Талисман Демона", Items.TOTEM_OF_UNDYING,
                 List.of("Печать разжигает ярость", "Ускоряя удары сердца", "И силу каждой атаки."), 0);
         addTargetLore("talisman_discord", "Талисман Раздора", Items.TOTEM_OF_UNDYING,
                 List.of("Раздор жаждет хаоса", "Даруя безумный темп", "Но разрушая броню."), 0);
         addTargetLore("talisman_rage", "Талисман Ярости", Items.TOTEM_OF_UNDYING, List.of("Чистая, дикая агрессия"), 0);
         addTargetLore("talisman_crusher", "Талисман Крушителя", Items.TOTEM_OF_UNDYING, List.of("Легендарный символ"), 0);
-        addTargetLore("talisman_tyrant", "Талисман Тирана", Items.TOTEM_OF_UNDYING, List.of("Тиран подавляет слабых"), 0);
+        addTargetLore("talisman_vixr", "Талисман Вихря", Items.TOTEM_OF_UNDYING, List.of("Вихрь не знает покоя"), 0);
+        addTargetLore("talisman_tiran", "Талисман Тирана", Items.TOTEM_OF_UNDYING, List.of("Тиран подавляет слабых"), 0);
+        addTargetLore("talisman_mraka", "Талисман Мрака", Items.TOTEM_OF_UNDYING, List.of("Мрак сгущается рядом"), 0);
 
         // Зелья (по названию)
         addTargetName("potion_assassin", "[★] Зелье Ассасина", Items.SPLASH_POTION, 0);
@@ -160,13 +163,6 @@ public class AutoBuy extends Module {
         addTargetName("potion_clapper", "[★] Хлопушка", Items.SPLASH_POTION, 0);
         addTargetName("potion_wrath", "[★] Зелье Гнева", Items.SPLASH_POTION, 0);
         addTargetName("potion_radiation", "[★] Зелье Радиации", Items.SPLASH_POTION, 0);
-
-        // Броня Крушителя (по названию)
-        addTargetName("crusher_pickaxe", "Кирка Крушителя", Items.NETHERITE_PICKAXE, 0);
-        addTargetName("crusher_leggings", "Поножи Крушителя", Items.NETHERITE_LEGGINGS, 0);
-        addTargetName("crusher_chestplate", "Нагрудник Крушителя", Items.NETHERITE_CHESTPLATE, 0);
-        addTargetName("crusher_helmet", "Шлем Крушителя", Items.NETHERITE_HELMET, 0);
-        addTargetName("crusher_boots", "Ботинки Крушителя", Items.NETHERITE_BOOTS, 0);
     }
 
     private void addTargetItem(String id, String displayName, Item item, int buyPrice) {
@@ -346,7 +342,7 @@ public class AutoBuy extends Module {
         if (totalPrice <= 0) return;
 
         int count = stack.getCount();
-        // Используем утилку вместо ручного деления
+
         int pricePerItem = FuntimeComponentParser.getPricePerItem(stack);
         if (pricePerItem <= 0) return;
 

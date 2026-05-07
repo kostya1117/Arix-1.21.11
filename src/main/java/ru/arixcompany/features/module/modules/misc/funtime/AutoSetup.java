@@ -91,16 +91,18 @@ public class AutoSetup extends Module implements IMinecraft {
         itemSearchList.add(new ItemSearchData("talisman_discord", "раздор"));
         itemSearchList.add(new ItemSearchData("talisman_rage", "ярость"));
         itemSearchList.add(new ItemSearchData("talisman_tyrant", "тирана"));
+        itemSearchList.add(new ItemSearchData("talisman_crusher", "талисман крушителя"));
+        itemSearchList.add(new ItemSearchData("talisman_vixr", "талисман вихря"));
+        itemSearchList.add(new ItemSearchData("talisman_tiran", "талисман тирана"));
+        itemSearchList.add(new ItemSearchData("talisman_mraka", "талисман мрака"));
 
-        itemSearchList.add(new ItemSearchData("potion_assassin", "Зелье Ассасина"));
+        itemSearchList.add(new ItemSearchData("potion_assassin", "зелье Ассасина"));
         itemSearchList.add(new ItemSearchData("potion_holy_water", "Святая вода"));
-        itemSearchList.add(new ItemSearchData("potion_paladin", "Зелье Палладина"));
+        itemSearchList.add(new ItemSearchData("potion_paladin", "зелье Палладина"));
         itemSearchList.add(new ItemSearchData("potion_sleeping", "Снотворное"));
         itemSearchList.add(new ItemSearchData("potion_clapper", "Хлопушка"));
-        itemSearchList.add(new ItemSearchData("potion_wrath", "Зелье Гнева"));
-        itemSearchList.add(new ItemSearchData("potion_radiation", "Зелье Радиации"));
-
-
+        itemSearchList.add(new ItemSearchData("potion_wrath", "зелье Гнева"));
+        itemSearchList.add(new ItemSearchData("potion_radiation", "зелье Радиации"));
     }
 
     @Override
