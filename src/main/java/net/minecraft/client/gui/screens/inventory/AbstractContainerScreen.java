@@ -28,6 +28,8 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.joml.Vector2i;
 import org.jspecify.annotations.Nullable;
+import ru.arixcompany.features.event.EventRepo;
+import ru.arixcompany.features.event.render.EventHandledScreen;
 
 
 public abstract class AbstractContainerScreen<T extends AbstractContainerMenu> extends Screen implements MenuAccess<T> {
@@ -96,6 +98,15 @@ public abstract class AbstractContainerScreen<T extends AbstractContainerMenu> e
         this.renderContents(p_283479_, p_283661_, p_281248_, p_281886_);
         this.renderCarriedItem(p_283479_, p_283661_, p_281248_);
         this.renderSnapbackItem(p_283479_);
+
+        EventRepo.call(
+                new EventHandledScreen(
+                        p_283479_,
+                        this.imageWidth,
+                        this.imageHeight,
+                        this.hoveredSlot
+                )
+        );
     }
 
     public void renderContents(GuiGraphics p_409971_, int p_409213_, int p_408205_, float p_408282_) {

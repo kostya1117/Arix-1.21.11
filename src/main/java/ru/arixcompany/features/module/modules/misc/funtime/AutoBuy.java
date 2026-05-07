@@ -28,7 +28,9 @@ import ru.arixcompany.features.event.world.EventPacket;
 import ru.arixcompany.features.event.world.EventTick;
 import ru.arixcompany.features.module.Category;
 import ru.arixcompany.features.module.Module;
+import ru.arixcompany.features.module.modules.misc.funtime.utils.FuntimeComponentParser;
 import ru.arixcompany.features.module.setting.implement.BindSetting;
+import ru.arixcompany.features.module.setting.implement.BooleanSetting;
 import ru.arixcompany.features.module.setting.implement.ValueSetting;
 import ru.arixcompany.ui.clickgui.Colors;
 import ru.arixcompany.utils.IMinecraft;
@@ -53,10 +55,10 @@ public class AutoBuy extends Module {
 
     final BindSetting menuKey = new BindSetting("Открыть меню");
     final BindSetting autoBuyBind = new BindSetting("Включить AutoBuy" ).setKey(GLFW.GLFW_KEY_UNKNOWN);
-    final ValueSetting updateDelay = new ValueSetting("Задержка обновления (мс)").setValue(500).range(100, 2000);
-    final ValueSetting anarchyChangeDelay = new ValueSetting("Менять анархию каждые (мин)").setValue(5).range(3, 10);
-    final ValueSetting clickDelay = new ValueSetting("Задержка между кликами (мс)").setValue(200).range(50, 500);
-    final BooleanSet
+    final ValueSetting updateDelay = new ValueSetting("Задержка обновления (мс)").setValue(500).range(100, 2000).step(100);
+    final ValueSetting anarchyChangeDelay = new ValueSetting("Менять анархию каждые (мин)").setValue(5).range(3, 10).step(1);
+    final ValueSetting clickDelay = new ValueSetting("Задержка между кликами (мс)").setValue(200).range(50, 500).step(50);
+    final BooleanSetting checkBalance = new BooleanSetting("Проверка баланса");
 
     boolean autoBuyEnabled = false;
     final Map<String, ItemTarget> targets = new LinkedHashMap<>();
@@ -71,13 +73,16 @@ public class AutoBuy extends Module {
     final Timer clickCooldown = new Timer();
     ContainerScreen currentAuctionScreen = null;
 
+    private int currentBalance = -1;
+    private boolean waitingForBalance = false;
+
     final List<Integer> allAnarchies = new ArrayList<>();
 
     static final Pattern PRICE_PATTERN = Pattern.compile("Цен[аaAАыЫ]?:?\\s*([\\d,\\s\\.]+)", Pattern.CASE_INSENSITIVE);
 
     public AutoBuy() {
         super("AutoBuy", Category.Misc);
-        setup(menuKey, autoBuyBind, updateDelay, anarchyChangeDelay, clickDelay);
+        setup(menuKey, autoBuyBind, updateDelay, anarchyChangeDelay, clickDelay,checkBalance);
         initAllAnarchies();
         initDefaultTargets();
         instance = this;
@@ -181,6 +186,7 @@ public class AutoBuy extends Module {
         super.activate();
         anarchyWatch.reset();
         clickCooldown.reset();
+        requestBalance();
     }
 
     @Override
@@ -203,6 +209,7 @@ public class AutoBuy extends Module {
                 autoBuyEnabled = true;
                 waitingForPurchaseConfirm = false;
                 isBuying = false;
+                requestBalance();
                 print("§aAutoBuy включен");
             }
         }
@@ -219,8 +226,8 @@ public class AutoBuy extends Module {
                     isBuying = false;
                     hasClickedThisTick = false;
                     print("§aПокупка подтверждена!");
+                    requestBalance();
 
-                    // Закрываем меню после успешной покупки
                     new Thread(() -> {
                         try {
                             Thread.sleep(500);
@@ -259,6 +266,21 @@ public class AutoBuy extends Module {
                     }).start();
                 }
             }
+
+            if (waitingForBalance && message.contains("Ваш баланс")) {
+                Matcher m = Pattern.compile("\\$(\\d[\\d,]*)").matcher(message);
+
+                if (m.find()) {
+                    try {
+                        String balanceStr = m.group(1).replaceAll("[^0-9]", "");
+                        currentBalance = Integer.parseInt(balanceStr);
+
+                        print("§eБаланс: " + formatPrice(currentBalance));
+                    } catch (Exception ignored) {}
+                }
+
+                waitingForBalance = false;
+            }
         }
     }
 
@@ -266,7 +288,6 @@ public class AutoBuy extends Module {
     public void onTick(EventTick e) {
         if (!autoBuyEnabled) return;
 
-        // Меняем анархию только если автобай включен и не в процессе покупки
         if (autoBuyEnabled && !isBuying && !waitingForPurchaseConfirm && anarchyWatch.finished((long) anarchyChangeDelay.getValue() * 60 * 1000)) {
             changeRandomAnarchy();
             anarchyWatch.reset();
@@ -314,17 +335,21 @@ public class AutoBuy extends Module {
             if (stack.isEmpty() || isRefreshButton(stack)) continue;
 
             analyzeAndBuyItem(slot, stack);
-            if (isBuying) break; // Прерываем сканирование если начали покупку
+            if (isBuying) break;
         }
     }
 
     private void analyzeAndBuyItem(Slot slot, ItemStack stack) {
         List<String> lore = getLore(stack);
-        int totalPrice = parsePriceFromLore(lore);
+
+        int totalPrice = FuntimeComponentParser.getPrice(stack);
         if (totalPrice <= 0) return;
 
         int count = stack.getCount();
-        int pricePerItem = totalPrice / count;
+        // Используем утилку вместо ручного деления
+        int pricePerItem = FuntimeComponentParser.getPricePerItem(stack);
+        if (pricePerItem <= 0) return;
+
         String itemName = ChatFormatting.stripFormatting(stack.getHoverName().getString()).toLowerCase();
 
         for (ItemTarget target : targets.values()) {
@@ -346,10 +371,29 @@ public class AutoBuy extends Module {
             }
 
             if (matches && pricePerItem <= target.buyPrice) {
+
+                if (checkBalance.isValue()) {
+                    if (currentBalance == -1) {
+                        requestBalance();
+                        return;
+                    }
+                    if (currentBalance < totalPrice) {
+                        print("§cНедостаточно денег: " + formatPrice(totalPrice));
+                        return;
+                    }
+                }
+
                 performPurchase(slot, target, totalPrice, pricePerItem, count);
                 break;
             }
         }
+    }
+
+    private void requestBalance() {
+        if (mc.player == null) return;
+
+        waitingForBalance = true;
+        mc.player.connection.sendCommand("balance");
     }
 
     private boolean checkLoreFullMatch(List<String> itemLore, List<String> targetLore) {
@@ -396,21 +440,6 @@ public class AutoBuy extends Module {
                 }
             } catch (Exception ignored) {}
         }).start();
-    }
-
-    private int parsePriceFromLore(List<String> lore) {
-        for (String line : lore) {
-            String clean = ChatFormatting.stripFormatting(line);
-            if (clean == null) continue;
-            Matcher m = PRICE_PATTERN.matcher(clean);
-            if (m.find()) {
-                try {
-                    String priceStr = m.group(1).replaceAll("[,\\s\\.]", "");
-                    return Integer.parseInt(priceStr);
-                } catch (Exception ignored) {}
-            }
-        }
-        return 0;
     }
 
     private boolean isRefreshButton(ItemStack stack) {
@@ -521,8 +550,6 @@ public class AutoBuy extends Module {
 
             super.render(g, mouseX, mouseY, delta);
         }
-
-        // ================= INPUT =================
 
         @Override
         public boolean mouseClicked(MouseButtonEvent event, boolean handled) {
