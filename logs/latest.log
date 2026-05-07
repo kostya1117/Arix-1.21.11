@@ -1,25 +1,21 @@
-[14:19:15] [main/WARN]: Invalid registry value type detected for PerfOS counters. Should be REG_DWORD. Ignoring: HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\PerfOS\Performance\Disable Performance Counters.
-[14:19:15] [Datafixer Bootstrap/INFO]: 287 Datafixer optimizations took 1269 milliseconds
-[14:19:15] [main/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeEntity.canUpdate
-[14:19:15] [main/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.logging.CrashReportExtender
-[14:19:16] [main/INFO]: [OptiFine] (Reflector) Method not present: net.minecraft.tags.ItemTags.create
-[14:19:25] [main/INFO]: Completely ignored arguments: [--userProperties, {}]
-[14:19:25] [Render thread/INFO]: Environment: Environment[sessionHost=https://sessionserver.mojang.com, servicesHost=https://api.minecraftservices.com, profilesHost=https://api.mojang.com, name=PROD]
-[14:19:25] [Render thread/INFO]: Setting user: Player536
-[14:19:25] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.settings.KeyConflictContext
-[14:19:25] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraft.client.KeyMapping.getKeyModifier
-[14:19:25] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.settings.KeyModifier
-[14:19:25] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraft.launchwrapper.Launch
-[14:19:25] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.versions.forge.ForgeVersion
-[14:19:25] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.loading.ClientModLoader
-[14:19:25] [Render thread/INFO]: Backend library: LWJGL version 3.3.3+5
-[14:19:25] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.internal.BrandingControl
-[14:19:25] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.fml.loading.ImmediateWindowHandler
-[14:19:26] [Render thread/WARN]: [OptiFine] (Reflector) java.lang.ClassNotFoundException: sun.misc.SharedSecrets
-[14:19:26] [Render thread/WARN]: [OptiFine] (Reflector) java.lang.ClassNotFoundException: jdk.internal.misc.SharedSecrets
-[14:19:26] [Render thread/WARN]: [OptiFine] (Reflector) java.lang.ClassNotFoundException: sun.misc.VM
-[14:19:26] [Render thread/WARN]: [OptiFine] (Reflector) java.lang.reflect.InaccessibleObjectException: Unable to make public static long jdk.internal.misc.VM.maxDirectMemory() accessible: module java.base does not "exports jdk.internal.misc" to unnamed module @6973bf95
-[14:19:26] [Download-2/ERROR]: Failed to fetch user properties
+[08:21:47] [main/WARN]: Invalid registry value type detected for PerfOS counters. Should be REG_DWORD. Ignoring: HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\PerfOS\Performance\Disable Performance Counters.
+[08:21:48] [Datafixer Bootstrap/INFO]: 287 Datafixer optimizations took 2225 milliseconds
+[08:21:48] [main/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeEntity.canUpdate
+[08:21:48] [main/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.logging.CrashReportExtender
+[08:21:51] [main/INFO]: [OptiFine] (Reflector) Method not present: net.minecraft.tags.ItemTags.create
+[08:22:06] [main/INFO]: Completely ignored arguments: [--userProperties, {}]
+[08:22:06] [Render thread/INFO]: Environment: Environment[sessionHost=https://sessionserver.mojang.com, servicesHost=https://api.minecraftservices.com, profilesHost=https://api.mojang.com, name=PROD]
+[08:22:06] [Render thread/INFO]: Setting user: Player306
+[08:22:07] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.settings.KeyConflictContext
+[08:22:07] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraft.client.KeyMapping.getKeyModifier
+[08:22:07] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.settings.KeyModifier
+[08:22:07] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraft.launchwrapper.Launch
+[08:22:07] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.versions.forge.ForgeVersion
+[08:22:07] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.loading.ClientModLoader
+[08:22:07] [Render thread/INFO]: Backend library: LWJGL version 3.3.3+5
+[08:22:07] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.internal.BrandingControl
+[08:22:07] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.fml.loading.ImmediateWindowHandler
+[08:22:08] [Download-2/ERROR]: Failed to fetch user properties
 com.mojang.authlib.exceptions.InvalidCredentialsException: Status: 401
 	at com.mojang.authlib.exceptions.MinecraftClientHttpException.toAuthenticationException(MinecraftClientHttpException.java:59)
 	at com.mojang.authlib.yggdrasil.YggdrasilUserApiService.fetchProperties(YggdrasilUserApiService.java:150)
@@ -33,241 +29,245 @@ Caused by: com.mojang.authlib.exceptions.MinecraftClientHttpException: Status: 4
 	at com.mojang.authlib.minecraft.client.MinecraftClient.get(MinecraftClient.java:56)
 	at com.mojang.authlib.yggdrasil.YggdrasilUserApiService.fetchProperties(YggdrasilUserApiService.java:121)
 	... 5 more
-[14:19:28] [Render thread/INFO]: [OptiFine] 
-[14:19:28] [Render thread/INFO]: [OptiFine] OptiFine_1.21.11_HD_U_J9
-[14:19:28] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: optifine.OptiFineResourceLocator
-[14:19:28] [Render thread/INFO]: [OptiFine] Build: null
-[14:19:28] [Render thread/INFO]: [OptiFine] OS: Windows 10 (amd64) version 10.0
-[14:19:28] [Render thread/INFO]: [OptiFine] Java: 21.0.10, Microsoft
-[14:19:28] [Render thread/INFO]: [OptiFine] VM: OpenJDK 64-Bit Server VM (mixed mode, sharing), Microsoft
-[14:19:28] [Render thread/INFO]: [OptiFine] LWJGL: 3.4.0 Win32 WGL Null EGL OSMesa VisualC DLL
-[14:19:28] [Render thread/INFO]: [OptiFine] OpenGL: AMD Radeon(TM) Vega 3 Graphics , version 3.3.0 Core Profile Context 23.9.1.230821, ATI Technologies Inc.
-[14:19:28] [Render thread/INFO]: [OptiFine] OpenGL Version: 3.3.0
-[14:19:28] [Render thread/INFO]: [OptiFine] Maximum texture size: 16384x16384
-[14:19:28] [Render thread/INFO]: [Shaders] OpenGL Version: 3.3.0 Core Profile Context 23.9.1.230821
-[14:19:28] [Render thread/INFO]: [Shaders] Vendor:  ATI Technologies Inc.
-[14:19:28] [Render thread/INFO]: [Shaders] Renderer: AMD Radeon(TM) Vega 3 Graphics 
-[14:19:28] [Render thread/INFO]: [Shaders] Capabilities:  2.0  2.1  3.0  3.2  - 
-[14:19:28] [VersionCheck/INFO]: [OptiFine] Checking for new version
-[14:19:28] [Render thread/INFO]: [Shaders] GL_MAX_DRAW_BUFFERS: 8
-[14:19:28] [Render thread/INFO]: [Shaders] GL_MAX_COLOR_ATTACHMENTS: 8
-[14:19:28] [Render thread/INFO]: [Shaders] GL_MAX_TEXTURE_IMAGE_UNITS: 32
-[14:19:28] [Render thread/INFO]: [Shaders] Load shaders configuration.
-[14:19:28] [Render thread/INFO]: [Shaders] No shaderpack loaded.
-[14:19:28] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.fml.ModList
-[14:19:28] [Render thread/INFO]: Using optional rendering extensions: GL_ARB_buffer_storage, GL_KHR_debug, GL_ARB_vertex_attrib_binding, GL_ARB_direct_state_access, GL_EXT_texture_filter_anisotropic
-[14:19:28] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.common.MinecraftForge
-[14:19:28] [VersionCheck/INFO]: [OptiFine] Version found: J9
-[14:19:28] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.ForgeHooksClient
-[14:19:29] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.event.ForgeEventFactoryClient
-[14:19:29] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.gui.overlay.ForgeLayeredDraw
-[14:19:29] [Render thread/INFO]: Reloading ResourceManager: vanilla
-[14:19:29] [Render thread/INFO]: [OptiFine] *** Reloading resources ***
-[14:19:29] [Render thread/INFO]: [OptiFine] *** Reloading textures ***
-[14:19:29] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.model.geometry.GeometryLoaderManager
-[14:19:29] [Worker-Main-3/WARN]: [OptiFine] Resource not found: minecraft:shaders/post/fxaa_of_2x.json
-[14:19:29] [Worker-Main-3/WARN]: [OptiFine] Resource not found: minecraft:shaders/post/fxaa_of_4x.json
-[14:19:29] [Worker-Main-2/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/particles.png
-[14:19:29] [Worker-Main-2/INFO]: [OptiFine] Multitexture: false
-[14:19:29] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_2, 3 -> 9
-[14:19:29] [Worker-Main-3/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/decorated_pot.png
-[14:19:29] [Worker-Main-3/INFO]: [OptiFine] Multitexture: false
-[14:19:30] [Worker-Main-3/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/armor_trims.png
-[14:19:30] [Worker-Main-3/INFO]: [OptiFine] Multitexture: false
-[14:19:30] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_1, 3 -> 9
-[14:19:30] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_0, 3 -> 9
-[14:19:30] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_11, 3 -> 9
-[14:19:30] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_10, 3 -> 9
-[14:19:30] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_9, 5 -> 10
-[14:19:30] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_8, 5 -> 10
-[14:19:30] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_3, 5 -> 10
-[14:19:30] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_2, 5 -> 10
-[14:19:30] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_1, 5 -> 10
-[14:19:30] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_0, 5 -> 10
-[14:19:30] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_7, 5 -> 10
-[14:19:30] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_6, 5 -> 10
-[14:19:30] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_5, 5 -> 10
-[14:19:30] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_4, 5 -> 10
-[14:19:30] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_11, 5 -> 10
-[14:19:30] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_10, 5 -> 10
-[14:19:30] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:trial_omen, 5 -> 10
-[14:19:30] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:raid_omen, 5 -> 10
-[14:19:30] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_6, 3 -> 9
-[14:19:30] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_5, 3 -> 9
-[14:19:30] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_10, 5 -> 10
-[14:19:30] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_4, 3 -> 9
-[14:19:30] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_3, 3 -> 9
-[14:19:30] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_9, 3 -> 9
-[14:19:30] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_8, 3 -> 9
-[14:19:30] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_11, 5 -> 10
-[14:19:30] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_7, 3 -> 9
-[14:19:30] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_7, 5 -> 10
-[14:19:30] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_6, 5 -> 10
-[14:19:30] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_9, 5 -> 10
-[14:19:30] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_8, 5 -> 10
-[14:19:30] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_1, 5 -> 10
-[14:19:30] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_0, 5 -> 10
-[14:19:30] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_3, 5 -> 10
-[14:19:30] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_2, 5 -> 10
-[14:19:30] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_5, 5 -> 10
-[14:19:30] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_4, 5 -> 10
-[14:19:30] [Worker-Main-2/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/paintings.png
-[14:19:30] [Worker-Main-2/INFO]: [OptiFine] Multitexture: false
-[14:19:30] [Worker-Main-1/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/shield_patterns.png
-[14:19:30] [Worker-Main-1/INFO]: [OptiFine] Multitexture: false
-[14:19:30] [Worker-Main-2/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/chest.png
-[14:19:30] [Worker-Main-2/INFO]: [OptiFine] Multitexture: false
-[14:19:30] [Worker-Main-1/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/celestials.png
-[14:19:30] [Worker-Main-1/INFO]: [OptiFine] Multitexture: false
-[14:19:30] [Worker-Main-2/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/banner_patterns.png
-[14:19:30] [Worker-Main-2/INFO]: [OptiFine] Multitexture: false
-[14:19:30] [Worker-Main-1/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/beds.png
-[14:19:30] [Worker-Main-1/INFO]: [OptiFine] Multitexture: false
-[14:19:30] [Worker-Main-2/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/gui.png
-[14:19:30] [Worker-Main-2/INFO]: [OptiFine] Multitexture: false
-[14:19:30] [Worker-Main-1/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/items.png
-[14:19:30] [Worker-Main-1/INFO]: [OptiFine] Multitexture: false
-[14:19:30] [Worker-Main-1/INFO]: [OptiFine] Register item sprites
-[14:19:30] [Worker-Main-3/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/blocks.png
-[14:19:30] [Worker-Main-3/INFO]: [OptiFine] Multitexture: false
-[14:19:30] [Worker-Main-3/INFO]: [OptiFine] Register block sprites
-[14:19:30] [Worker-Main-3/INFO]: [OptiFine] BetterGrass: Parsing default configuration optifine/bettergrass.properties
-[14:19:31] [Via-Mappingloader-1/INFO]: Loading block connection mappings ...
-[14:19:31] [Via-Mappingloader-1/INFO]: Using FastUtil Long2ObjectOpenHashMap for block connections
-[14:19:31] [Render thread/INFO]: Loaded Platform ViaVersion
-[14:19:31] [Render thread/INFO]: Loading translations...
-[14:19:31] [Render thread/INFO]: Registering protocols...
-[14:19:31] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:container/bundle/bundle_progressbar_fill, 6 -> 12
-[14:19:31] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:widget/scroller_background, 6 -> 12
-[14:19:31] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:container/bundle/bundle_progressbar_full, 6 -> 12
-[14:19:31] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:hud/locator_bar_arrow_up, 7 -> 14
-[14:19:31] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:container/villager/scroller, 6 -> 12
-[14:19:31] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:widget/scroller, 6 -> 12
-[14:19:31] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:container/villager/scroller_disabled, 6 -> 12
-[14:19:31] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:hud/locator_bar_arrow_down, 7 -> 14
-[14:19:31] [Worker-Main-2/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/map_decorations.png
-[14:19:31] [Worker-Main-2/INFO]: [OptiFine] Multitexture: false
-[14:19:31] [Worker-Main-2/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/signs.png
-[14:19:31] [Worker-Main-2/INFO]: [OptiFine] Multitexture: false
-[14:19:31] [Worker-Main-2/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/shulker_boxes.png
-[14:19:31] [Worker-Main-2/INFO]: [OptiFine] Multitexture: false
-[14:19:32] [Worker-Main-2/INFO]: Found unifont_all_no_pua-17.0.01.hex, loading
-[14:19:32] [Render thread/INFO]: Loaded Platform ViaBackwards
-[14:19:32] [Render thread/INFO]: Registering protocols...
-[14:19:32] [Render thread/INFO]: Loaded Platform ViaRewind
-[14:19:32] [Render thread/INFO]: ViaVersion detected lowest supported version by the proxy: 1.7.2-1.7.5 (4)
-[14:19:32] [Render thread/INFO]: Highest supported version by the proxy: 26.1-26.1.2 (775)
-[14:19:32] [Render thread/INFO]: ViaLoadingBase has loaded 3/3 platforms
-[14:19:32] [Via Async Scheduler 0/INFO]: Finished mapping loading, shutting down loader executor.
-[14:19:32] [Worker-Main-2/INFO]: Found unifont_jp_patch-17.0.01.hex, loading
-[14:19:32] [Worker-Main-2/INFO]: Found unifont_pua-17.0.01.hex, loading
-[14:19:34] [Via Async Task 1/WARN]: There is a newer plugin version available: 5.9.1, you're on: 5.9.0
-[14:19:35] [Worker-Main-1/INFO]: [OptiFine] Waiting for model sprites
-[14:19:36] [Worker-Main-2/INFO]: [OptiFine] CustomItems: Collecting model sprites
-[14:19:36] [Worker-Main-1/INFO]: [OptiFine] CustomItems: Registering sprites
-[14:19:36] [Worker-Main-3/INFO]: [OptiFine] (Reflector) Method not present: net.minecraft.client.renderer.block.model.BlockElementFace.data
-[14:19:44] [Render thread/INFO]: [STDOUT]: Logged as: clutchyyprod
-[14:19:46] [Render thread/INFO]: OpenAL initialized on device OpenAL Soft on Наушники (Устройство с поддержкой High Definition Audio)
-[14:19:46] [Render thread/INFO]: Sound engine started
-[14:19:46] [Render thread/INFO]: Created: 512x256x0 minecraft:textures/atlas/particles.png-atlas
-[14:19:46] [Render thread/INFO]: [OptiFine] Animated sprites: 1
-[14:19:46] [Render thread/INFO]: Created: 128x128x0 minecraft:textures/atlas/decorated_pot.png-atlas
-[14:19:46] [Render thread/INFO]: [OptiFine] Animated sprites: 0
-[14:19:46] [Render thread/INFO]: Created: 2048x1024x0 minecraft:textures/atlas/armor_trims.png-atlas
-[14:19:46] [Render thread/INFO]: [OptiFine] Animated sprites: 0
-[14:19:46] [Render thread/INFO]: Created: 512x256x0 minecraft:textures/atlas/paintings.png-atlas
-[14:19:46] [Render thread/INFO]: [OptiFine] Animated sprites: 0
-[14:19:46] [Render thread/INFO]: Created: 1024x512x0 minecraft:textures/atlas/shield_patterns.png-atlas
-[14:19:46] [Render thread/INFO]: [OptiFine] Animated sprites: 0
-[14:19:46] [Render thread/INFO]: Created: 1024x1024x2 minecraft:textures/atlas/blocks.png-atlas
-[14:19:46] [Render thread/INFO]: [OptiFine] Update block sprites
-[14:19:46] [Render thread/INFO]: [OptiFine] Animated sprites: 56
-[14:19:46] [Render thread/INFO]: Created: 512x512x0 minecraft:textures/atlas/chest.png-atlas
-[14:19:46] [Render thread/INFO]: [OptiFine] Animated sprites: 0
-[14:19:46] [Render thread/INFO]: Created: 256x128x0 minecraft:textures/atlas/celestials.png-atlas
-[14:19:46] [Render thread/INFO]: [OptiFine] Animated sprites: 0
-[14:19:46] [Render thread/INFO]: Created: 1024x512x0 minecraft:textures/atlas/banner_patterns.png-atlas
-[14:19:46] [Render thread/INFO]: [OptiFine] Animated sprites: 0
-[14:19:46] [Render thread/INFO]: Created: 512x512x0 minecraft:textures/atlas/beds.png-atlas
-[14:19:46] [Render thread/INFO]: [OptiFine] Animated sprites: 0
-[14:19:46] [Render thread/INFO]: Created: 1024x512x0 minecraft:textures/atlas/items.png-atlas
-[14:19:46] [Render thread/INFO]: [OptiFine] Update item sprites
-[14:19:46] [Render thread/INFO]: [OptiFine] Animated sprites: 0
-[14:19:46] [Render thread/INFO]: Created: 1024x1024x0 minecraft:textures/atlas/gui.png-atlas
-[14:19:46] [Render thread/INFO]: [OptiFine] Animated sprites: 5
-[14:19:46] [Render thread/INFO]: Created: 128x64x0 minecraft:textures/atlas/map_decorations.png-atlas
-[14:19:46] [Render thread/INFO]: [OptiFine] Animated sprites: 0
-[14:19:46] [Render thread/INFO]: Created: 512x256x0 minecraft:textures/atlas/signs.png-atlas
-[14:19:46] [Render thread/INFO]: [OptiFine] Animated sprites: 0
-[14:19:46] [Render thread/INFO]: Created: 512x512x0 minecraft:textures/atlas/shulker_boxes.png-atlas
-[14:19:46] [Render thread/INFO]: [OptiFine] Animated sprites: 0
-[14:19:46] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/gui.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
-[14:19:46] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/beds.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
-[14:19:46] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/paintings.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
-[14:19:46] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/shulker_boxes.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
-[14:19:46] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/signs.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
-[14:19:46] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/chest.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
-[14:19:46] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/particles.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
-[14:19:46] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/celestials.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
-[14:19:46] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/shield_patterns.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
-[14:19:46] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/decorated_pot.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
-[14:19:46] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/map_decorations.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
-[14:19:46] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/blocks.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
-[14:19:46] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/banner_patterns.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
-[14:19:46] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/armor_trims.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
-[14:19:47] [Render thread/INFO]: [OptiFine] *** Reloading custom textures ***
-[14:19:50] [Render thread/INFO]: [OptiFine] Disable Forge light pipeline
-[14:19:50] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.gui.ModListScreen
-[14:19:50] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.gui.TitleScreenModUpdateIndicator
-[14:19:50] [Render thread/INFO]: [OptiFine] *** Reflector Forge ***
-[14:19:50] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.event.level.ChunkEvent$Load
-[14:19:50] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.event.level.ChunkEvent$Unload
-[14:19:50] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.ColorResolverManager
-[14:19:50] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.logging.CrashReportAnalyser
-[14:19:50] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.EntitySpectatorShaderManager
-[14:19:50] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.eventbus.api.bus.EventBus
-[14:19:50] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraft.world.entity.Entity.isInWaterOrSwimmable
-[14:19:50] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraft.world.entity.boss.enderdragon.EnderDragon.getParts
-[14:19:50] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeBlockState.getSoundType
-[14:19:50] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeBlockState.getStateAtViewpoint
-[14:19:50] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeBlockState.shouldDisplayFluidOverlay
-[14:19:50] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeEntity.getEyeInFluidType
-[14:19:50] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeEntity.getParts
-[14:19:50] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeEntity.hasCustomOutlineRendering
-[14:19:50] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeEntity.isMultipartEntity
-[14:19:50] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeEntity.onAddedToWorld
-[14:19:50] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeEntity.onRemovedFromWorld
-[14:19:50] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeEntity.shouldRiderSit
-[14:19:50] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.event.ForgeEventFactory
-[14:19:50] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.client.model.ForgeFaceData.calculateNormals
-[14:19:50] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.common.ForgeHooks
-[14:19:50] [Render thread/INFO]: [OptiFine] (Reflector) Field not present: net.minecraftforge.common.ForgeConfigSpec.childConfig
-[14:19:50] [Render thread/INFO]: [OptiFine] (Reflector) Field not present: net.minecraftforge.common.ForgeConfigSpec$ConfigValue.defaultSupplier
-[14:19:50] [Render thread/INFO]: [OptiFine] (Reflector) Field not present: net.minecraftforge.common.ForgeConfigSpec$ConfigValue.spec
-[14:19:50] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.ForgeConfigSpec$ConfigValue.get
-[14:19:50] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraft.world.level.chunk.ChunkAccess.getWorldForge
-[14:19:50] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.common.extensions.IForgeItemStack
-[14:19:50] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraft.client.renderer.ItemBlockRenderTypes.isFancy
-[14:19:50] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraft.client.KeyMapping.setKeyConflictContext
-[14:19:50] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraft.client.KeyMapping.setKeyModifierAndCode
-[14:19:50] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraft.client.particle.ParticleResources.getProvider
-[14:19:50] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeBlockEntity.getRenderBoundingBox
-[14:19:50] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.FramePassManager
-[14:19:50] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.ItemDecoratorHandler
-[14:19:50] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.fml.ModContainer
-[14:19:50] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.fml.ModLoader
-[14:19:50] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.event.PlayLevelSoundEvent
-[14:19:50] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.event.RenderBlockScreenEffectEvent$OverlayType
-[14:19:50] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.event.CustomizeGuiOverlayEvent$BossEventProgress
-[14:19:50] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.event.RenderNameTagEvent
-[14:19:50] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.event.RenderTooltipEvent
-[14:19:50] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.event.RenderTooltipEvent$Pre
-[14:19:50] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.event.ScreenshotEvent
-[14:19:50] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.server.ServerLifecycleHooks
-[14:19:50] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraft.client.particle.TerrainParticle.updateSprite
-[14:19:50] [Render thread/INFO]: [OptiFine] *** Reflector Vanilla ***
-[14:19:54] [Render thread/INFO]: Connecting to mc.funtime.su, 25565
-[14:19:55] [Download-2/ERROR]: Failed to retrieve profile key pair
+[08:22:08] [Render thread/WARN]: [OptiFine] (Reflector) java.lang.ClassNotFoundException: sun.misc.SharedSecrets
+[08:22:08] [Render thread/WARN]: [OptiFine] (Reflector) java.lang.ClassNotFoundException: jdk.internal.misc.SharedSecrets
+[08:22:08] [Render thread/WARN]: [OptiFine] (Reflector) java.lang.ClassNotFoundException: sun.misc.VM
+[08:22:08] [Render thread/WARN]: [OptiFine] (Reflector) java.lang.reflect.InaccessibleObjectException: Unable to make public static long jdk.internal.misc.VM.maxDirectMemory() accessible: module java.base does not "exports jdk.internal.misc" to unnamed module @6973bf95
+[08:22:10] [Render thread/INFO]: [OptiFine] 
+[08:22:10] [Render thread/INFO]: [OptiFine] OptiFine_1.21.11_HD_U_J9
+[08:22:10] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: optifine.OptiFineResourceLocator
+[08:22:10] [Render thread/INFO]: [OptiFine] Build: null
+[08:22:10] [Render thread/INFO]: [OptiFine] OS: Windows 10 (amd64) version 10.0
+[08:22:10] [Render thread/INFO]: [OptiFine] Java: 21.0.10, Microsoft
+[08:22:10] [Render thread/INFO]: [OptiFine] VM: OpenJDK 64-Bit Server VM (mixed mode, sharing), Microsoft
+[08:22:10] [Render thread/INFO]: [OptiFine] LWJGL: 3.4.0 Win32 WGL Null EGL OSMesa VisualC DLL
+[08:22:10] [Render thread/INFO]: [OptiFine] OpenGL: AMD Radeon(TM) Vega 3 Graphics , version 3.3.0 Core Profile Context 23.9.1.230821, ATI Technologies Inc.
+[08:22:10] [Render thread/INFO]: [OptiFine] OpenGL Version: 3.3.0
+[08:22:10] [Render thread/INFO]: [OptiFine] Maximum texture size: 16384x16384
+[08:22:10] [VersionCheck/INFO]: [OptiFine] Checking for new version
+[08:22:10] [Render thread/INFO]: [Shaders] OpenGL Version: 3.3.0 Core Profile Context 23.9.1.230821
+[08:22:10] [Render thread/INFO]: [Shaders] Vendor:  ATI Technologies Inc.
+[08:22:10] [Render thread/INFO]: [Shaders] Renderer: AMD Radeon(TM) Vega 3 Graphics 
+[08:22:10] [Render thread/INFO]: [Shaders] Capabilities:  2.0  2.1  3.0  3.2  - 
+[08:22:10] [Render thread/INFO]: [Shaders] GL_MAX_DRAW_BUFFERS: 8
+[08:22:10] [Render thread/INFO]: [Shaders] GL_MAX_COLOR_ATTACHMENTS: 8
+[08:22:10] [Render thread/INFO]: [Shaders] GL_MAX_TEXTURE_IMAGE_UNITS: 32
+[08:22:10] [Render thread/INFO]: [Shaders] Load shaders configuration.
+[08:22:10] [Render thread/INFO]: [Shaders] No shaderpack loaded.
+[08:22:10] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.fml.ModList
+[08:22:10] [Render thread/INFO]: Using optional rendering extensions: GL_ARB_buffer_storage, GL_KHR_debug, GL_ARB_vertex_attrib_binding, GL_ARB_direct_state_access, GL_EXT_texture_filter_anisotropic
+[08:22:11] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.common.MinecraftForge
+[08:22:11] [VersionCheck/INFO]: [OptiFine] Version found: J9
+[08:22:11] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.ForgeHooksClient
+[08:22:11] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.event.ForgeEventFactoryClient
+[08:22:11] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.gui.overlay.ForgeLayeredDraw
+[08:22:11] [Render thread/INFO]: Reloading ResourceManager: vanilla
+[08:22:11] [Render thread/INFO]: [OptiFine] *** Reloading resources ***
+[08:22:11] [Render thread/INFO]: [OptiFine] *** Reloading textures ***
+[08:22:11] [Worker-Main-3/WARN]: [OptiFine] Resource not found: minecraft:shaders/post/fxaa_of_2x.json
+[08:22:11] [Worker-Main-3/WARN]: [OptiFine] Resource not found: minecraft:shaders/post/fxaa_of_4x.json
+[08:22:11] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.model.geometry.GeometryLoaderManager
+[08:22:12] [Worker-Main-2/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/particles.png
+[08:22:12] [Worker-Main-2/INFO]: [OptiFine] Multitexture: false
+[08:22:12] [Worker-Main-3/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/decorated_pot.png
+[08:22:12] [Worker-Main-3/INFO]: [OptiFine] Multitexture: false
+[08:22:12] [Worker-Main-1/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/armor_trims.png
+[08:22:12] [Worker-Main-1/INFO]: [OptiFine] Multitexture: false
+[08:22:12] [Worker-Main-3/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/paintings.png
+[08:22:12] [Worker-Main-3/INFO]: [OptiFine] Multitexture: false
+[08:22:12] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_2, 3 -> 9
+[08:22:12] [Worker-Main-3/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/shield_patterns.png
+[08:22:12] [Worker-Main-3/INFO]: [OptiFine] Multitexture: false
+[08:22:12] [Worker-Main-1/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/chest.png
+[08:22:12] [Worker-Main-1/INFO]: [OptiFine] Multitexture: false
+[08:22:12] [Worker-Main-1/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/celestials.png
+[08:22:12] [Worker-Main-1/INFO]: [OptiFine] Multitexture: false
+[08:22:12] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_1, 3 -> 9
+[08:22:12] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_0, 3 -> 9
+[08:22:12] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_11, 3 -> 9
+[08:22:12] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_10, 3 -> 9
+[08:22:12] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_9, 5 -> 10
+[08:22:12] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_8, 5 -> 10
+[08:22:12] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_3, 5 -> 10
+[08:22:12] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_2, 5 -> 10
+[08:22:12] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_1, 5 -> 10
+[08:22:12] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_0, 5 -> 10
+[08:22:12] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_7, 5 -> 10
+[08:22:12] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_6, 5 -> 10
+[08:22:12] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_5, 5 -> 10
+[08:22:12] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_4, 5 -> 10
+[08:22:12] [Worker-Main-1/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/banner_patterns.png
+[08:22:12] [Worker-Main-1/INFO]: [OptiFine] Multitexture: false
+[08:22:12] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_11, 5 -> 10
+[08:22:12] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_10, 5 -> 10
+[08:22:12] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:trial_omen, 5 -> 10
+[08:22:12] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:raid_omen, 5 -> 10
+[08:22:12] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_6, 3 -> 9
+[08:22:12] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_5, 3 -> 9
+[08:22:12] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_10, 5 -> 10
+[08:22:12] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_4, 3 -> 9
+[08:22:12] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_3, 3 -> 9
+[08:22:12] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_9, 3 -> 9
+[08:22:12] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_8, 3 -> 9
+[08:22:12] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_11, 5 -> 10
+[08:22:12] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_7, 3 -> 9
+[08:22:12] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_7, 5 -> 10
+[08:22:12] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_6, 5 -> 10
+[08:22:12] [Worker-Main-3/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/blocks.png
+[08:22:12] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_9, 5 -> 10
+[08:22:12] [Worker-Main-3/INFO]: [OptiFine] Multitexture: false
+[08:22:12] [Worker-Main-3/INFO]: [OptiFine] Register block sprites
+[08:22:12] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_8, 5 -> 10
+[08:22:12] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_1, 5 -> 10
+[08:22:12] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_0, 5 -> 10
+[08:22:12] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_3, 5 -> 10
+[08:22:12] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_2, 5 -> 10
+[08:22:12] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_5, 5 -> 10
+[08:22:12] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_4, 5 -> 10
+[08:22:12] [Worker-Main-3/INFO]: [OptiFine] BetterGrass: Parsing default configuration optifine/bettergrass.properties
+[08:22:12] [Worker-Main-2/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/beds.png
+[08:22:12] [Worker-Main-2/INFO]: [OptiFine] Multitexture: false
+[08:22:12] [Worker-Main-1/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/items.png
+[08:22:12] [Worker-Main-1/INFO]: [OptiFine] Multitexture: false
+[08:22:12] [Worker-Main-1/INFO]: [OptiFine] Register item sprites
+[08:22:12] [Worker-Main-2/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/gui.png
+[08:22:12] [Worker-Main-2/INFO]: [OptiFine] Multitexture: false
+[08:22:13] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:container/bundle/bundle_progressbar_fill, 6 -> 12
+[08:22:13] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:widget/scroller_background, 6 -> 12
+[08:22:13] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:container/bundle/bundle_progressbar_full, 6 -> 12
+[08:22:13] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:hud/locator_bar_arrow_up, 7 -> 14
+[08:22:13] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:container/villager/scroller, 6 -> 12
+[08:22:13] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:widget/scroller, 6 -> 12
+[08:22:13] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:container/villager/scroller_disabled, 6 -> 12
+[08:22:13] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:hud/locator_bar_arrow_down, 7 -> 14
+[08:22:13] [Worker-Main-2/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/map_decorations.png
+[08:22:13] [Worker-Main-2/INFO]: [OptiFine] Multitexture: false
+[08:22:13] [Worker-Main-2/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/signs.png
+[08:22:13] [Worker-Main-2/INFO]: [OptiFine] Multitexture: false
+[08:22:13] [Worker-Main-2/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/shulker_boxes.png
+[08:22:13] [Worker-Main-2/INFO]: [OptiFine] Multitexture: false
+[08:22:13] [Worker-Main-2/INFO]: Found unifont_all_no_pua-17.0.01.hex, loading
+[08:22:14] [Via-Mappingloader-1/INFO]: Loading block connection mappings ...
+[08:22:14] [Worker-Main-2/INFO]: Found unifont_jp_patch-17.0.01.hex, loading
+[08:22:14] [Worker-Main-2/INFO]: Found unifont_pua-17.0.01.hex, loading
+[08:22:14] [Via-Mappingloader-1/INFO]: Using FastUtil Long2ObjectOpenHashMap for block connections
+[08:22:14] [Render thread/INFO]: Loaded Platform ViaVersion
+[08:22:14] [Render thread/INFO]: Loading translations...
+[08:22:14] [Render thread/INFO]: Registering protocols...
+[08:22:15] [Render thread/INFO]: Loaded Platform ViaBackwards
+[08:22:15] [Render thread/INFO]: Registering protocols...
+[08:22:15] [Render thread/INFO]: Loaded Platform ViaRewind
+[08:22:15] [Render thread/INFO]: ViaVersion detected lowest supported version by the proxy: 1.7.2-1.7.5 (4)
+[08:22:15] [Render thread/INFO]: Highest supported version by the proxy: 26.1-26.1.2 (775)
+[08:22:15] [Render thread/INFO]: ViaLoadingBase has loaded 3/3 platforms
+[08:22:19] [Worker-Main-1/INFO]: [OptiFine] Waiting for model sprites
+[08:22:19] [Worker-Main-2/INFO]: [OptiFine] CustomItems: Collecting model sprites
+[08:22:19] [Worker-Main-1/INFO]: [OptiFine] CustomItems: Registering sprites
+[08:22:19] [Via Async Scheduler 0/INFO]: Finished mapping loading, shutting down loader executor.
+[08:22:19] [Worker-Main-3/INFO]: [OptiFine] (Reflector) Method not present: net.minecraft.client.renderer.block.model.BlockElementFace.data
+[08:22:21] [Via Async Task 1/WARN]: There is a newer plugin version available: 5.9.1, you're on: 5.9.0
+[08:22:30] [Render thread/INFO]: [STDOUT]: Logged as: clutchyyprod
+[08:22:31] [Render thread/INFO]: OpenAL initialized on device OpenAL Soft on Наушники (Устройство с поддержкой High Definition Audio)
+[08:22:31] [Render thread/INFO]: Sound engine started
+[08:22:31] [Render thread/INFO]: Created: 512x256x0 minecraft:textures/atlas/particles.png-atlas
+[08:22:31] [Render thread/INFO]: [OptiFine] Animated sprites: 1
+[08:22:31] [Render thread/INFO]: Created: 128x128x0 minecraft:textures/atlas/decorated_pot.png-atlas
+[08:22:31] [Render thread/INFO]: [OptiFine] Animated sprites: 0
+[08:22:31] [Render thread/INFO]: Created: 2048x1024x0 minecraft:textures/atlas/armor_trims.png-atlas
+[08:22:31] [Render thread/INFO]: [OptiFine] Animated sprites: 0
+[08:22:31] [Render thread/INFO]: Created: 512x256x0 minecraft:textures/atlas/paintings.png-atlas
+[08:22:31] [Render thread/INFO]: [OptiFine] Animated sprites: 0
+[08:22:31] [Render thread/INFO]: Created: 1024x512x0 minecraft:textures/atlas/shield_patterns.png-atlas
+[08:22:31] [Render thread/INFO]: [OptiFine] Animated sprites: 0
+[08:22:31] [Render thread/INFO]: Created: 1024x1024x2 minecraft:textures/atlas/blocks.png-atlas
+[08:22:32] [Render thread/INFO]: [OptiFine] Update block sprites
+[08:22:32] [Render thread/INFO]: [OptiFine] Animated sprites: 56
+[08:22:32] [Render thread/INFO]: Created: 512x512x0 minecraft:textures/atlas/chest.png-atlas
+[08:22:32] [Render thread/INFO]: [OptiFine] Animated sprites: 0
+[08:22:32] [Render thread/INFO]: Created: 256x128x0 minecraft:textures/atlas/celestials.png-atlas
+[08:22:32] [Render thread/INFO]: [OptiFine] Animated sprites: 0
+[08:22:32] [Render thread/INFO]: Created: 1024x512x0 minecraft:textures/atlas/banner_patterns.png-atlas
+[08:22:32] [Render thread/INFO]: [OptiFine] Animated sprites: 0
+[08:22:32] [Render thread/INFO]: Created: 512x512x0 minecraft:textures/atlas/beds.png-atlas
+[08:22:32] [Render thread/INFO]: [OptiFine] Animated sprites: 0
+[08:22:32] [Render thread/INFO]: Created: 1024x512x0 minecraft:textures/atlas/items.png-atlas
+[08:22:32] [Render thread/INFO]: [OptiFine] Update item sprites
+[08:22:32] [Render thread/INFO]: [OptiFine] Animated sprites: 0
+[08:22:32] [Render thread/INFO]: Created: 1024x1024x0 minecraft:textures/atlas/gui.png-atlas
+[08:22:32] [Render thread/INFO]: [OptiFine] Animated sprites: 5
+[08:22:32] [Render thread/INFO]: Created: 128x64x0 minecraft:textures/atlas/map_decorations.png-atlas
+[08:22:32] [Render thread/INFO]: [OptiFine] Animated sprites: 0
+[08:22:32] [Render thread/INFO]: Created: 512x256x0 minecraft:textures/atlas/signs.png-atlas
+[08:22:32] [Render thread/INFO]: [OptiFine] Animated sprites: 0
+[08:22:32] [Render thread/INFO]: Created: 512x512x0 minecraft:textures/atlas/shulker_boxes.png-atlas
+[08:22:32] [Render thread/INFO]: [OptiFine] Animated sprites: 0
+[08:22:32] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/gui.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
+[08:22:32] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/beds.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
+[08:22:32] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/paintings.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
+[08:22:32] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/shulker_boxes.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
+[08:22:32] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/signs.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
+[08:22:32] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/chest.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
+[08:22:32] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/particles.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
+[08:22:32] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/celestials.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
+[08:22:32] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/shield_patterns.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
+[08:22:32] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/decorated_pot.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
+[08:22:32] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/map_decorations.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
+[08:22:32] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/blocks.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
+[08:22:32] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/banner_patterns.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
+[08:22:32] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/armor_trims.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
+[08:22:34] [Render thread/INFO]: [OptiFine] *** Reloading custom textures ***
+[08:22:38] [Render thread/INFO]: [OptiFine] Disable Forge light pipeline
+[08:22:38] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.gui.ModListScreen
+[08:22:38] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.gui.TitleScreenModUpdateIndicator
+[08:22:38] [Render thread/INFO]: [OptiFine] *** Reflector Forge ***
+[08:22:38] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.event.level.ChunkEvent$Load
+[08:22:38] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.event.level.ChunkEvent$Unload
+[08:22:38] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.ColorResolverManager
+[08:22:38] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.logging.CrashReportAnalyser
+[08:22:38] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.EntitySpectatorShaderManager
+[08:22:38] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.eventbus.api.bus.EventBus
+[08:22:38] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraft.world.entity.Entity.isInWaterOrSwimmable
+[08:22:38] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraft.world.entity.boss.enderdragon.EnderDragon.getParts
+[08:22:38] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeBlockState.getSoundType
+[08:22:38] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeBlockState.getStateAtViewpoint
+[08:22:38] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeBlockState.shouldDisplayFluidOverlay
+[08:22:38] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeEntity.getEyeInFluidType
+[08:22:38] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeEntity.getParts
+[08:22:38] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeEntity.hasCustomOutlineRendering
+[08:22:38] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeEntity.isMultipartEntity
+[08:22:38] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeEntity.onAddedToWorld
+[08:22:38] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeEntity.onRemovedFromWorld
+[08:22:38] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeEntity.shouldRiderSit
+[08:22:38] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.event.ForgeEventFactory
+[08:22:38] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.client.model.ForgeFaceData.calculateNormals
+[08:22:38] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.common.ForgeHooks
+[08:22:38] [Render thread/INFO]: [OptiFine] (Reflector) Field not present: net.minecraftforge.common.ForgeConfigSpec.childConfig
+[08:22:38] [Render thread/INFO]: [OptiFine] (Reflector) Field not present: net.minecraftforge.common.ForgeConfigSpec$ConfigValue.defaultSupplier
+[08:22:38] [Render thread/INFO]: [OptiFine] (Reflector) Field not present: net.minecraftforge.common.ForgeConfigSpec$ConfigValue.spec
+[08:22:38] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.ForgeConfigSpec$ConfigValue.get
+[08:22:38] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraft.world.level.chunk.ChunkAccess.getWorldForge
+[08:22:38] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.common.extensions.IForgeItemStack
+[08:22:38] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraft.client.renderer.ItemBlockRenderTypes.isFancy
+[08:22:38] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraft.client.KeyMapping.setKeyConflictContext
+[08:22:38] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraft.client.KeyMapping.setKeyModifierAndCode
+[08:22:38] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraft.client.particle.ParticleResources.getProvider
+[08:22:38] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeBlockEntity.getRenderBoundingBox
+[08:22:38] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.FramePassManager
+[08:22:38] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.ItemDecoratorHandler
+[08:22:38] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.fml.ModContainer
+[08:22:38] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.fml.ModLoader
+[08:22:38] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.event.PlayLevelSoundEvent
+[08:22:38] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.event.RenderBlockScreenEffectEvent$OverlayType
+[08:22:38] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.event.CustomizeGuiOverlayEvent$BossEventProgress
+[08:22:38] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.event.RenderNameTagEvent
+[08:22:38] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.event.RenderTooltipEvent
+[08:22:38] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.event.RenderTooltipEvent$Pre
+[08:22:38] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.event.ScreenshotEvent
+[08:22:38] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.server.ServerLifecycleHooks
+[08:22:38] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraft.client.particle.TerrainParticle.updateSprite
+[08:22:38] [Render thread/INFO]: [OptiFine] *** Reflector Vanilla ***
+[08:22:42] [Render thread/INFO]: Connecting to mc.funtime.su, 25565
+[08:22:43] [Download-1/ERROR]: Failed to retrieve profile key pair
 com.mojang.authlib.exceptions.MinecraftClientHttpException: Status: 401
 	at com.mojang.authlib.minecraft.client.MinecraftClient.readInputStream(MinecraftClient.java:103)
 	at com.mojang.authlib.minecraft.client.MinecraftClient.post(MinecraftClient.java:64)
@@ -278,18 +278,18 @@ com.mojang.authlib.exceptions.MinecraftClientHttpException: Status: 401
 	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
 	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
 	at java.base/java.lang.Thread.run(Thread.java:1583)
-[14:19:58] [Render thread/INFO]: [System] [CHAT] [✾] Успешная авторизация! Приятной игры!
-[14:19:59] [Render thread/INFO]: [System] [CHAT] ╔═════ ★ FunTime.su ★ ═══╗
-[14:19:59] [Render thread/INFO]: [System] [CHAT] ║
-[14:19:59] [Render thread/INFO]: [System] [CHAT] ║ Добро пожаловать на FunTime
-[14:19:59] [Render thread/INFO]: [System] [CHAT] ║ Наши социальные сети – /links
-[14:19:59] [Render thread/INFO]: [System] [CHAT] ║ Приятной игры и новых побед!
-[14:19:59] [Render thread/INFO]: [System] [CHAT] ║
-[14:19:59] [Render thread/INFO]: [System] [CHAT] ╚═══════════════════╝
-[14:19:59] [Render thread/INFO]: Resizing Dynamic Transforms UBO, capacity limit of 2 reached during a single frame. New capacity will be 4.
-[14:19:59] [Render thread/INFO]: Resizing Dynamic Transforms UBO, capacity limit of 4 reached during a single frame. New capacity will be 8.
-[14:19:59] [Render thread/INFO]: Resizing Chunk Sections UBO, capacity limit of 2 reached during a single frame. New capacity will be 4.
-[14:19:59] [Worker-Main-1/ERROR]: Failed to verify signature on property Property[name=textures, value=ewogICJ0aW1lc3RhbXAiIDogMTc1MDI3ODY0MTkwMCwKICAicHJvZmlsZUlkIiA6ICIxNzRjZmRiNGEzY2I0M2I1YmZjZGU0MjRjM2JiMmM2ZSIsCiAgInByb2ZpbGVOYW1lIiA6ICJtYXJhZWwxOCIsCiAgInNpZ25hdHVyZVJlcXVpcmVkIiA6IHRydWUsCiAgInRleHR1cmVzIiA6IHsKICAgICJTS0lOIiA6IHsKICAgICAgInVybCIgOiAiaHR0cDovL3RleHR1cmVzLm1pbmVjcmFmdC5uZXQvdGV4dHVyZS9lN2E3YWU3Y2RjZjYxNmU4YjdhNDIyMWE2MjFiMjQzNTc1M2M2MGVkNmEyNThlYTA2MGRhZTMwMDJmZmU5ZTI4IiwKICAgICAgIm1ldGFkYXRhIiA6IHsKICAgICAgICAibW9kZWwiIDogInNsaW0iCiAgICAgIH0KICAgIH0KICB9Cn0=, signature=]
+[08:22:45] [Render thread/INFO]: [System] [CHAT] [✾] Успешная авторизация! Приятной игры!
+[08:22:46] [Render thread/INFO]: [System] [CHAT] ╔═════ ★ FunTime.su ★ ═══╗
+[08:22:46] [Render thread/INFO]: [System] [CHAT] ║
+[08:22:46] [Render thread/INFO]: [System] [CHAT] ║ Добро пожаловать на FunTime
+[08:22:46] [Render thread/INFO]: [System] [CHAT] ║ Наши социальные сети – /links
+[08:22:46] [Render thread/INFO]: [System] [CHAT] ║ Приятной игры и новых побед!
+[08:22:46] [Render thread/INFO]: [System] [CHAT] ║
+[08:22:46] [Render thread/INFO]: [System] [CHAT] ╚═══════════════════╝
+[08:22:47] [Render thread/INFO]: Resizing Dynamic Transforms UBO, capacity limit of 2 reached during a single frame. New capacity will be 4.
+[08:22:47] [Render thread/INFO]: Resizing Dynamic Transforms UBO, capacity limit of 4 reached during a single frame. New capacity will be 8.
+[08:22:48] [Render thread/INFO]: Resizing Chunk Sections UBO, capacity limit of 2 reached during a single frame. New capacity will be 4.
+[08:22:48] [Worker-Main-1/ERROR]: Failed to verify signature on property Property[name=textures, value=ewogICJ0aW1lc3RhbXAiIDogMTc1MDI3ODY0MTkwMCwKICAicHJvZmlsZUlkIiA6ICIxNzRjZmRiNGEzY2I0M2I1YmZjZGU0MjRjM2JiMmM2ZSIsCiAgInByb2ZpbGVOYW1lIiA6ICJtYXJhZWwxOCIsCiAgInNpZ25hdHVyZVJlcXVpcmVkIiA6IHRydWUsCiAgInRleHR1cmVzIiA6IHsKICAgICJTS0lOIiA6IHsKICAgICAgInVybCIgOiAiaHR0cDovL3RleHR1cmVzLm1pbmVjcmFmdC5uZXQvdGV4dHVyZS9lN2E3YWU3Y2RjZjYxNmU4YjdhNDIyMWE2MjFiMjQzNTc1M2M2MGVkNmEyNThlYTA2MGRhZTMwMDJmZmU5ZTI4IiwKICAgICAgIm1ldGFkYXRhIiA6IHsKICAgICAgICAibW9kZWwiIDogInNsaW0iCiAgICAgIH0KICAgIH0KICB9Cn0=, signature=]
 java.security.SignatureException: Bad signature length: got 0 but was expecting 512
 	at java.base/sun.security.rsa.RSASignature.engineVerify(RSASignature.java:212)
 	at java.base/java.security.Signature$Delegate.engineVerify(Signature.java:1422)
@@ -316,7 +316,7 @@ java.security.SignatureException: Bad signature length: got 0 but was expecting 
 	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1843)
 	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1808)
 	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:188)
-[14:19:59] [Worker-Main-1/ERROR]: Failed to verify signature on property Property[name=textures, value=ewogICJ0aW1lc3RhbXAiIDogMTc1MDI3ODY0MTkwMCwKICAicHJvZmlsZUlkIiA6ICIxNzRjZmRiNGEzY2I0M2I1YmZjZGU0MjRjM2JiMmM2ZSIsCiAgInByb2ZpbGVOYW1lIiA6ICJtYXJhZWwxOCIsCiAgInNpZ25hdHVyZVJlcXVpcmVkIiA6IHRydWUsCiAgInRleHR1cmVzIiA6IHsKICAgICJTS0lOIiA6IHsKICAgICAgInVybCIgOiAiaHR0cDovL3RleHR1cmVzLm1pbmVjcmFmdC5uZXQvdGV4dHVyZS9lN2E3YWU3Y2RjZjYxNmU4YjdhNDIyMWE2MjFiMjQzNTc1M2M2MGVkNmEyNThlYTA2MGRhZTMwMDJmZmU5ZTI4IiwKICAgICAgIm1ldGFkYXRhIiA6IHsKICAgICAgICAibW9kZWwiIDogInNsaW0iCiAgICAgIH0KICAgIH0KICB9Cn0=, signature=]
+[08:22:48] [Worker-Main-1/ERROR]: Failed to verify signature on property Property[name=textures, value=ewogICJ0aW1lc3RhbXAiIDogMTc1MDI3ODY0MTkwMCwKICAicHJvZmlsZUlkIiA6ICIxNzRjZmRiNGEzY2I0M2I1YmZjZGU0MjRjM2JiMmM2ZSIsCiAgInByb2ZpbGVOYW1lIiA6ICJtYXJhZWwxOCIsCiAgInNpZ25hdHVyZVJlcXVpcmVkIiA6IHRydWUsCiAgInRleHR1cmVzIiA6IHsKICAgICJTS0lOIiA6IHsKICAgICAgInVybCIgOiAiaHR0cDovL3RleHR1cmVzLm1pbmVjcmFmdC5uZXQvdGV4dHVyZS9lN2E3YWU3Y2RjZjYxNmU4YjdhNDIyMWE2MjFiMjQzNTc1M2M2MGVkNmEyNThlYTA2MGRhZTMwMDJmZmU5ZTI4IiwKICAgICAgIm1ldGFkYXRhIiA6IHsKICAgICAgICAibW9kZWwiIDogInNsaW0iCiAgICAgIH0KICAgIH0KICB9Cn0=, signature=]
 java.security.SignatureException: Bad signature length: got 0 but was expecting 512
 	at java.base/sun.security.rsa.RSASignature.engineVerify(RSASignature.java:212)
 	at java.base/java.security.Signature$Delegate.engineVerify(Signature.java:1422)
@@ -343,456 +343,541 @@ java.security.SignatureException: Bad signature length: got 0 but was expecting 
 	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1843)
 	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1808)
 	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:188)
-[14:19:59] [Worker-Main-1/WARN]: Profile contained invalid signature for textures property (profile id: 6241921f-a4f9-473d-ad5e-80ad35f03c3f)
-[14:19:59] [Render thread/INFO]: Resizing Dynamic Transforms UBO, capacity limit of 8 reached during a single frame. New capacity will be 16.
-[14:20:00] [Render thread/INFO]: Resizing Chunk Sections UBO, capacity limit of 4 reached during a single frame. New capacity will be 8.
-[14:20:00] [Render thread/INFO]: Resizing Chunk Sections UBO, capacity limit of 8 reached during a single frame. New capacity will be 16.
-[14:20:00] [Render thread/INFO]: [System] [CHAT] ** ! Внимание !\n** Чтобы ваш Аккаунт был в БЕЗОПАСНОСТИ!\n** Привяжите его к ВК: /vk \n** Или к Телеграм: /tg \n \n** ! Внимание !\n** Чтобы ваш Аккаунт был в БЕЗОПАСНОСТИ!\n** Привяжите его к ВК: /vk \n** Или к Телеграм: /tg 
-[14:20:01] [Render thread/INFO]: Resizing Chunk Sections UBO, capacity limit of 16 reached during a single frame. New capacity will be 32.
-[14:20:03] [Download-4/INFO]: Returning cached file since actual hash matches requested
-[14:20:03] [Render thread/INFO]: Reloading ResourceManager: vanilla, server/00000000/f81d4fae-7dec-11d0-a765-00a0c91e6bf6
-[14:20:03] [Render thread/INFO]: [OptiFine] *** Reloading resources ***
-[14:20:03] [Render thread/INFO]: [OptiFine] *** Reloading textures ***
-[14:20:03] [Render thread/INFO]: [OptiFine] EmissiveTextures: Loading optifine/emissive.properties
-[14:20:03] [Render thread/INFO]: [OptiFine] Loading optifine/color.properties
-[14:20:03] [Render thread/INFO]: [OptiFine] screen.loading = 080808
-[14:20:03] [Render thread/INFO]: [OptiFine] screen.loading.outline = ffffff
-[14:20:03] [Render thread/INFO]: [OptiFine] screen.loading.bar = 300000
-[14:20:03] [Render thread/INFO]: [OptiFine] screen.loading.progress = ff2121
-[14:20:03] [Worker-Main-1/WARN]: [OptiFine] Resource not found: minecraft:shaders/post/fxaa_of_2x.json
-[14:20:03] [Worker-Main-1/WARN]: [OptiFine] Resource not found: minecraft:shaders/post/fxaa_of_4x.json
-[14:20:03] [Worker-Main-2/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/particles.png
-[14:20:03] [Worker-Main-2/INFO]: [OptiFine] Multitexture: false
-[14:20:03] [Worker-Main-1/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/decorated_pot.png
-[14:20:03] [Worker-Main-1/INFO]: [OptiFine] Multitexture: false
-[14:20:03] [Worker-Main-1/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/armor_trims.png
-[14:20:03] [Worker-Main-1/INFO]: [OptiFine] Multitexture: false
-[14:20:03] [Worker-Main-3/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/paintings.png
-[14:20:03] [Worker-Main-3/INFO]: [OptiFine] Multitexture: false
-[14:20:03] [Worker-Main-3/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/shield_patterns.png
-[14:20:03] [Worker-Main-3/INFO]: [OptiFine] Multitexture: false
-[14:20:03] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_2, 3 -> 9
-[14:20:03] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_1, 3 -> 9
-[14:20:03] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_0, 3 -> 9
-[14:20:03] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_11, 3 -> 9
-[14:20:03] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_10, 3 -> 9
-[14:20:03] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_9, 5 -> 10
-[14:20:03] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_8, 5 -> 10
-[14:20:03] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_3, 5 -> 10
-[14:20:03] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_2, 5 -> 10
-[14:20:03] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_1, 5 -> 10
-[14:20:03] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_0, 5 -> 10
-[14:20:03] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_7, 5 -> 10
-[14:20:03] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_6, 5 -> 10
-[14:20:03] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_5, 5 -> 10
-[14:20:03] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_4, 5 -> 10
-[14:20:03] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_11, 5 -> 10
-[14:20:03] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_10, 5 -> 10
-[14:20:03] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:trial_omen, 5 -> 10
-[14:20:03] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:raid_omen, 5 -> 10
-[14:20:03] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_6, 3 -> 9
-[14:20:03] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_5, 3 -> 9
-[14:20:03] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_10, 5 -> 10
-[14:20:03] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_4, 3 -> 9
-[14:20:03] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_3, 3 -> 9
-[14:20:03] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_9, 3 -> 9
-[14:20:03] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_8, 3 -> 9
-[14:20:03] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_11, 5 -> 10
-[14:20:03] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_7, 3 -> 9
-[14:20:03] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_7, 5 -> 10
-[14:20:03] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_6, 5 -> 10
-[14:20:03] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_9, 5 -> 10
-[14:20:03] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_8, 5 -> 10
-[14:20:03] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_1, 5 -> 10
-[14:20:03] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_0, 5 -> 10
-[14:20:03] [Worker-Main-3/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/blocks.png
-[14:20:03] [Worker-Main-3/INFO]: [OptiFine] Multitexture: false
-[14:20:03] [Worker-Main-3/INFO]: [OptiFine] Register block sprites
-[14:20:03] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_3, 5 -> 10
-[14:20:03] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_2, 5 -> 10
-[14:20:03] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_5, 5 -> 10
-[14:20:03] [Worker-Main-3/INFO]: [OptiFine] BetterGrass: Parsing default configuration optifine/bettergrass.properties
-[14:20:03] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_4, 5 -> 10
-[14:20:03] [Worker-Main-2/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/chest.png
-[14:20:03] [Worker-Main-2/INFO]: [OptiFine] Multitexture: false
-[14:20:03] [Worker-Main-1/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/celestials.png
-[14:20:03] [Worker-Main-1/INFO]: [OptiFine] Multitexture: false
-[14:20:03] [Worker-Main-1/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/banner_patterns.png
-[14:20:03] [Worker-Main-1/INFO]: [OptiFine] Multitexture: false
-[14:20:03] [Worker-Main-2/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/beds.png
-[14:20:03] [Worker-Main-2/INFO]: [OptiFine] Multitexture: false
-[14:20:03] [Worker-Main-2/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/items.png
-[14:20:03] [Worker-Main-2/INFO]: [OptiFine] Multitexture: false
-[14:20:03] [Worker-Main-2/INFO]: [OptiFine] Register item sprites
-[14:20:03] [Worker-Main-1/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/gui.png
-[14:20:03] [Worker-Main-1/INFO]: [OptiFine] Multitexture: false
-[14:20:04] [Worker-Main-1/INFO]: [OptiFine] Scaled non power of 2: minecraft:container/bundle/bundle_progressbar_fill, 6 -> 12
-[14:20:04] [Worker-Main-1/INFO]: [OptiFine] Scaled non power of 2: minecraft:widget/scroller_background, 6 -> 12
-[14:20:04] [Worker-Main-1/INFO]: [OptiFine] Scaled non power of 2: minecraft:container/bundle/bundle_progressbar_full, 6 -> 12
-[14:20:04] [Worker-Main-1/INFO]: [OptiFine] Scaled non power of 2: minecraft:hud/locator_bar_arrow_up, 7 -> 14
-[14:20:04] [Worker-Main-1/INFO]: [OptiFine] Scaled non power of 2: minecraft:container/villager/scroller, 6 -> 12
-[14:20:04] [Worker-Main-1/INFO]: [OptiFine] Scaled non power of 2: minecraft:widget/scroller, 6 -> 12
-[14:20:04] [Worker-Main-1/INFO]: [OptiFine] Scaled non power of 2: minecraft:container/villager/scroller_disabled, 6 -> 12
-[14:20:04] [Worker-Main-1/INFO]: [OptiFine] Scaled non power of 2: minecraft:hud/locator_bar_arrow_down, 7 -> 14
-[14:20:04] [Worker-Main-1/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/map_decorations.png
-[14:20:04] [Worker-Main-1/INFO]: [OptiFine] Multitexture: false
-[14:20:04] [Worker-Main-1/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/signs.png
-[14:20:04] [Worker-Main-1/INFO]: [OptiFine] Multitexture: false
-[14:20:04] [Worker-Main-1/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/shulker_boxes.png
-[14:20:04] [Worker-Main-1/INFO]: [OptiFine] Multitexture: false
-[14:20:04] [Worker-Main-1/INFO]: Found unifont_all_no_pua-17.0.01.hex, loading
-[14:20:04] [Worker-Main-3/INFO]: Found unifont_pua-17.0.01.hex, loading
-[14:20:04] [Worker-Main-1/INFO]: Found unifont_jp_patch-17.0.01.hex, loading
-[14:20:06] [Worker-Main-1/INFO]: [OptiFine] CustomItems: Collecting model sprites
-[14:20:06] [Worker-Main-2/INFO]: [OptiFine] CustomItems: Registering sprites
-[14:20:07] [Worker-Main-3/WARN]: Missing textures in model minecraft:ui/buttons/info_repair: minecraft:block_or_item:minecraft:item/funtime/buttons/info_repair
-[14:20:07] [Worker-Main-3/WARN]: Missing texture references in model minecraft:ui/buttons/auction_arrow_right: particle
-[14:20:07] [Worker-Main-3/WARN]: Missing texture references in model minecraft:ui/buttons/auction_accept: particle
-[14:20:07] [Worker-Main-3/WARN]: Missing texture references in model minecraft:ui/buttons/lottery_plus_1: particle
-[14:20:07] [Worker-Main-3/WARN]: Missing texture references in model minecraft:ui/buttons/auction_refresh: particle
-[14:20:07] [Worker-Main-3/WARN]: Missing texture references in model minecraft:ui/buttons/auction_rent: particle
-[14:20:07] [Worker-Main-3/WARN]: Missing texture references in model minecraft:ui/icons/emerald: particle
-[14:20:07] [Worker-Main-3/WARN]: Missing texture references in model minecraft:ui/buttons/auction_arrow_left: particle
-[14:20:07] [Worker-Main-3/WARN]: Missing texture references in model minecraft:ui/icons/donate_chest: particle
-[14:20:07] [Worker-Main-3/WARN]: Missing texture references in model minecraft:ui/icons/back_shadow: particle
-[14:20:07] [Worker-Main-3/WARN]: Missing texture references in model minecraft:ui/buttons/lottery_arrow_right: particle
-[14:20:07] [Worker-Main-3/WARN]: Missing texture references in model minecraft:ui/icons/info_small: particle
-[14:20:07] [Worker-Main-3/WARN]: Missing texture references in model minecraft:ui/icons/coins: particle
-[14:20:07] [Worker-Main-3/WARN]: Missing texture references in model minecraft:funtime/new_year/santa_hat: particle
-[14:20:07] [Worker-Main-3/WARN]: Missing texture references in model minecraft:ui/icons/craft_back: particle
-[14:20:07] [Worker-Main-3/WARN]: Missing texture references in model minecraft:ui/buttons/auction_categories: particle
-[14:20:07] [Worker-Main-3/WARN]: Missing texture references in model minecraft:funtime/misc/maslenitsa_hat: particle
-[14:20:07] [Worker-Main-3/WARN]: Missing texture references in model minecraft:ui/buttons/auction_update: particle
-[14:20:07] [Worker-Main-3/WARN]: Missing texture references in model minecraft:ui/icons/donate_coins: particle
-[14:20:07] [Worker-Main-3/WARN]: Missing texture references in model minecraft:ui/buttons/plus: particle
-[14:20:07] [Worker-Main-3/WARN]: Missing texture references in model minecraft:ui/buttons/lock: particle
-[14:20:07] [Worker-Main-3/WARN]: Missing texture references in model minecraft:ui/buttons/auction_arrow_left_active: particle
-[14:20:07] [Worker-Main-3/WARN]: Missing texture references in model minecraft:ui/buttons/lottery_minus_1: particle
-[14:20:07] [Worker-Main-3/WARN]: Missing texture references in model minecraft:ui/icons/donate_book: particle
-[14:20:07] [Worker-Main-3/WARN]: Missing texture references in model minecraft:ui/buttons/auction_back: particle
-[14:20:07] [Worker-Main-3/WARN]: Missing texture references in model minecraft:ui/icons/back_shadow_2: particle
-[14:20:07] [Worker-Main-3/WARN]: Missing texture references in model minecraft:ui/buttons/auction_arrow_right_active: particle
-[14:20:07] [Worker-Main-3/WARN]: Missing texture references in model minecraft:ui/buttons/lottery_minus_10: particle
-[14:20:07] [Worker-Main-3/WARN]: Missing texture references in model minecraft:ui/buttons/lottery_plus_10: particle
-[14:20:07] [Worker-Main-3/WARN]: Missing texture references in model minecraft:ui/buttons/auction_vault: particle
-[14:20:07] [Worker-Main-3/WARN]: Missing texture references in model minecraft:ui/icons/info_shadow: particle
-[14:20:07] [Worker-Main-3/WARN]: Missing texture references in model minecraft:ui/buttons/lottery_arrow_left: particle
-[14:20:07] [Render thread/INFO]: OpenAL initialized on device OpenAL Soft on Наушники (Устройство с поддержкой High Definition Audio)
-[14:20:07] [Render thread/INFO]: Sound engine started
-[14:20:07] [Render thread/INFO]: Created: 512x256x0 minecraft:textures/atlas/particles.png-atlas
-[14:20:07] [Render thread/INFO]: [OptiFine] Animated sprites: 1
-[14:20:07] [Render thread/INFO]: Created: 128x128x0 minecraft:textures/atlas/decorated_pot.png-atlas
-[14:20:07] [Render thread/INFO]: [OptiFine] Animated sprites: 0
-[14:20:07] [Render thread/INFO]: Created: 2048x1024x0 minecraft:textures/atlas/armor_trims.png-atlas
-[14:20:07] [Render thread/INFO]: [OptiFine] Animated sprites: 0
-[14:20:07] [Render thread/INFO]: Created: 512x256x0 minecraft:textures/atlas/paintings.png-atlas
-[14:20:07] [Render thread/INFO]: [OptiFine] Animated sprites: 0
-[14:20:07] [Render thread/INFO]: Created: 1024x512x0 minecraft:textures/atlas/shield_patterns.png-atlas
-[14:20:07] [Render thread/INFO]: [OptiFine] Animated sprites: 0
-[14:20:07] [Render thread/INFO]: Created: 1024x1024x2 minecraft:textures/atlas/blocks.png-atlas
-[14:20:07] [Render thread/INFO]: [OptiFine] Update block sprites
-[14:20:07] [Render thread/INFO]: [OptiFine] Animated sprites: 57
-[14:20:07] [Render thread/INFO]: Created: 512x512x0 minecraft:textures/atlas/chest.png-atlas
-[14:20:08] [Render thread/INFO]: [OptiFine] Animated sprites: 0
-[14:20:08] [Render thread/INFO]: Created: 256x128x0 minecraft:textures/atlas/celestials.png-atlas
-[14:20:08] [Render thread/INFO]: [OptiFine] Animated sprites: 0
-[14:20:08] [Render thread/INFO]: Created: 1024x512x0 minecraft:textures/atlas/banner_patterns.png-atlas
-[14:20:08] [Render thread/INFO]: [OptiFine] Animated sprites: 0
-[14:20:08] [Render thread/INFO]: Created: 512x512x0 minecraft:textures/atlas/beds.png-atlas
-[14:20:08] [Render thread/INFO]: [OptiFine] Animated sprites: 0
-[14:20:08] [Render thread/INFO]: Created: 1024x512x0 minecraft:textures/atlas/items.png-atlas
-[14:20:08] [Render thread/INFO]: [OptiFine] Update item sprites
-[14:20:08] [Render thread/INFO]: [OptiFine] Animated sprites: 1
-[14:20:08] [Render thread/INFO]: Created: 1024x1024x0 minecraft:textures/atlas/gui.png-atlas
-[14:20:08] [Render thread/INFO]: [OptiFine] Animated sprites: 5
-[14:20:08] [Render thread/INFO]: Created: 128x64x0 minecraft:textures/atlas/map_decorations.png-atlas
-[14:20:08] [Render thread/INFO]: [OptiFine] Animated sprites: 0
-[14:20:08] [Render thread/INFO]: Created: 512x256x0 minecraft:textures/atlas/signs.png-atlas
-[14:20:08] [Render thread/INFO]: [OptiFine] Animated sprites: 0
-[14:20:08] [Render thread/INFO]: Created: 512x512x0 minecraft:textures/atlas/shulker_boxes.png-atlas
-[14:20:08] [Render thread/INFO]: [OptiFine] Animated sprites: 0
-[14:20:08] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/gui.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
-[14:20:08] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/beds.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
-[14:20:08] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/paintings.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
-[14:20:08] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/shulker_boxes.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
-[14:20:08] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/signs.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
-[14:20:08] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/chest.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
-[14:20:08] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/particles.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
-[14:20:08] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/celestials.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
-[14:20:08] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/shield_patterns.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
-[14:20:08] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/decorated_pot.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
-[14:20:08] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/map_decorations.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
-[14:20:08] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/blocks.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
-[14:20:08] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/banner_patterns.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
-[14:20:08] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/armor_trims.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
-[14:20:08] [Render thread/INFO]: [OptiFine] *** Reloading custom textures ***
-[14:20:08] [Render thread/INFO]: [OptiFine] CustomColors: palette.format=grid
-[14:20:08] [Render thread/INFO]: [OptiFine] CustomColors: Loading optifine/color.properties
-[14:20:10] [Render thread/INFO]: [OptiFine] Disable Forge light pipeline
-[14:20:12] [Render thread/INFO]: Resizing Dynamic Transforms UBO, capacity limit of 16 reached during a single frame. New capacity will be 32.
-[14:20:13] [Render thread/INFO]: Resizing Dynamic Transforms UBO, capacity limit of 32 reached during a single frame. New capacity will be 64.
-[14:20:15] [Render thread/INFO]: [System] [CHAT] (Arix) ->  Запущена автонастройка цен...
-[14:20:15] [Render thread/INFO]: [System] [CHAT] [☃] После входа на режим необходимо немного подождать перед использованием аукциона. Подождите 6 сек.
-[14:20:17] [Render thread/INFO]: Resizing Chunk Sections UBO, capacity limit of 32 reached during a single frame. New capacity will be 64.
-[14:20:26] [Render thread/INFO]: [System] [CHAT] (Arix) ->  Запущена автонастройка цен...
-[14:20:26] [Render thread/INFO]: [System] [CHAT] (Arix) ->  Меню открыто, начинаю сканирование...
-[14:20:46] [Render thread/INFO]: [System] [CHAT] Ⓛ [Игрок] LotusBlad  ⇨ доигрался я
-[14:20:50] [Render thread/INFO]: [System] [CHAT] Ⓛ <мопс> [Принц] sypro_TV  ⇨ ага
-[14:21:09] [Render thread/INFO]: [System] [CHAT] (Arix) ->  Запущена автонастройка цен...
-[14:21:10] [Render thread/INFO]: [System] [CHAT] (Arix) ->  Меню открыто, начинаю сканирование...
-[14:21:10] [Render thread/INFO]: [System] [CHAT] Ⓛ <чоо> [Игрок] wef_  ⇨ чекай
-[14:21:12] [Render thread/INFO]: [System] [CHAT] Ⓛ <кирил> [Элита] wqwq12x  ⇨ &
-[14:21:13] [Render thread/INFO]: [System] [CHAT] Ⓛ <PENIS> [Игрок] _Peppinez_  ⇨ чё
-[14:21:13] [Render thread/INFO]: [System] [CHAT] Ⓛ [Игрок] LotusBlad  ⇨ чай
-[14:21:14] [Render thread/INFO]: [System] [CHAT] Ⓛ <кирил> [Элита] wqwq12x  ⇨ ?
-[14:21:18] [Render thread/INFO]: [System] [CHAT] Ⓛ <kkd> [Барон] sciletkil56  ⇨ дай редстоун
-[14:21:20] [Render thread/INFO]: [System] [CHAT] (Arix) ->  §aЦена для Золотое яблоко установлена: 30,0K
-[14:21:20] [Render thread/INFO]: [System] [CHAT] (Arix) ->  Установлена цена 30,0K для golden_apple
-[14:21:21] [Render thread/INFO]: [System] [CHAT] (Arix) ->  Меню открыто, начинаю сканирование...
-[14:21:23] [Render thread/INFO]: [System] [CHAT] Ⓛ <чоо> [Игрок] wef_  ⇨ чай написал
-[14:21:24] [Render thread/INFO]: [System] [CHAT] Ⓛ <кирил> [Элита] wqwq12x  ⇨ все что есь
-[14:21:31] [Render thread/INFO]: [System] [CHAT] Ⓛ <kkd> [Барон] sciletkil56  ⇨ спастюо
-[14:21:32] [Render thread/INFO]: [System] [CHAT] (Arix) ->  §aЦена для Зач. яблоко установлена: 113,4K
-[14:21:32] [Render thread/INFO]: [System] [CHAT] (Arix) ->  Установлена цена 113,4K для enchanted_golden_apple
-[14:21:32] [Render thread/INFO]: [System] [CHAT] (Arix) ->  Меню открыто, начинаю сканирование...
-[14:21:36] [Render thread/INFO]: [System] [CHAT] ⦏Объявление⦐  all кто обмен тп дам тал карателя за спавнер или что то из вещей круша (я первый тал кидаю) [Автор: livebarxat]
-[14:21:43] [Render thread/INFO]: [System] [CHAT] (Arix) ->  §aЦена для Элитры установлена: 69,8K
-[14:21:43] [Render thread/INFO]: [System] [CHAT] (Arix) ->  Установлена цена 69,8K для elytra
-[14:21:44] [Render thread/INFO]: [System] [CHAT] (Arix) ->  Меню открыто, начинаю сканирование...
-[14:21:45] [Render thread/INFO]: [System] [CHAT] Ⓛ <kkd> [Барон] sciletkil56  ⇨ дай редстоун
-[14:21:53] [Render thread/INFO]: [System] [CHAT] Ⓛ [Титан] X_KA3Hb_X  ⇨ нету
-[14:21:54] [Render thread/INFO]: [System] [CHAT] (Arix) ->  §aЦена для Незерит слиток установлена: 260,9K
-[14:21:54] [Render thread/INFO]: [System] [CHAT] (Arix) ->  Установлена цена 260,9K для netherite_ingot
-[14:21:55] [Render thread/INFO]: [System] [CHAT] Ⓛ [Игрок] LotusBlad  ⇨ спс
-[14:21:55] [Render thread/INFO]: [System] [CHAT] (Arix) ->  Меню открыто, начинаю сканирование...
-[14:21:57] [Render thread/INFO]: [System] [CHAT] Ⓖ <xxt> [Игрок] dimoshka129  ⇨ 1Cocosik1 в самый низ копайся там она на сланцевой высоте
-[14:22:00] [Render thread/INFO]: [System] [CHAT] ⦏Объявление⦐  all кто обмен тп дам тал карателя за спавнер или что то из вещей круша (я первый тал кидаю) [Автор: livebarxat]
-[14:22:02] [Render thread/INFO]: [System] [CHAT] Ⓖ <Kokos> [Герой] 1Cocosik1  ⇨  jr
-[14:22:06] [Render thread/INFO]: [System] [CHAT] (Arix) ->  §aЦена для Спавнер установлена: 7,0M
-[14:22:06] [Render thread/INFO]: [System] [CHAT] (Arix) ->  Установлена цена 7,0M для spawner
-[14:22:06] [Render thread/INFO]: [System] [CHAT] (Arix) ->  Меню открыто, начинаю сканирование...
-[14:22:15] [Render thread/INFO]: [System] [CHAT] Ⓛ <kkd> [Барон] sciletkil56  ⇨ дай редстоун
-[14:22:17] [Render thread/INFO]: [System] [CHAT] (Arix) ->  §aЦена для Алмаз установлена: 2,3K
-[14:22:17] [Render thread/INFO]: [System] [CHAT] (Arix) ->  Установлена цена 2,3K для diamond
-[14:22:18] [Render thread/INFO]: [System] [CHAT] Ⓛ <kkd> [Барон] sciletkil56  ⇨ дай редстоун
-[14:22:18] [Render thread/INFO]: [System] [CHAT] (Arix) ->  Меню открыто, начинаю сканирование...
-[14:22:28] [Render thread/INFO]: [System] [CHAT] Ⓛ <kkd> [Барон] sciletkil56  ⇨ дай редстоун
-[14:22:28] [Render thread/INFO]: [System] [CHAT] (Arix) ->  §aЦена для Маяк установлена: 872,5K
-[14:22:28] [Render thread/INFO]: [System] [CHAT] (Arix) ->  Установлена цена 872,5K для beacon
-[14:22:29] [Render thread/INFO]: [System] [CHAT] (Arix) ->  Меню открыто, начинаю сканирование...
-[14:22:37] [Render thread/INFO]: [System] [CHAT] Ⓛ <kkd> [Барон] sciletkil56  ⇨ спс
-[14:22:37] [Render thread/INFO]: [System] [CHAT] ⦏Объявление⦐  all кто обмен тп дам тал карателя за спавнер или что то из вещей круша (я первый тал кидаю) [Автор: livebarxat]
-[14:22:40] [Render thread/INFO]: [System] [CHAT] (Arix) ->  §aЦена для Яйцо нюхача установлена: 872,5K
-[14:22:40] [Render thread/INFO]: [System] [CHAT] (Arix) ->  Установлена цена 872,5K для sniffer_egg
-[14:22:40] [Render thread/INFO]: [System] [CHAT] (Arix) ->  Меню открыто, начинаю сканирование...
-[14:22:44] [Render thread/INFO]: [System] [CHAT] Ⓖ <sadd> [Игрок] mestb1  ⇨ ez
-[14:22:48] [Render thread/INFO]: [System] [CHAT] Ⓖ <sadd> [Аспид] messtb  ⇨ ez
-[14:22:51] [Render thread/INFO]: [System] [CHAT] (Arix) ->  §aЦена для Ключ испытаний установлена: 218,1K
-[14:22:51] [Render thread/INFO]: [System] [CHAT] (Arix) ->  Установлена цена 218,1K для trial_key
-[14:22:52] [Render thread/INFO]: [System] [CHAT] (Arix) ->  Меню открыто, начинаю сканирование...
-[14:23:02] [Render thread/INFO]: [System] [CHAT] (Arix) ->  §aЦена для Голова дракона установлена: 375,2K
-[14:23:02] [Render thread/INFO]: [System] [CHAT] (Arix) ->  Установлена цена 375,2K для dragon_head
-[14:23:03] [Render thread/INFO]: [System] [CHAT] ╔
-[14:23:03] [Render thread/INFO]: [System] [CHAT] ╠ Подписывайтесь на наш Телеграм - t.me/funtime
-[14:23:03] [Render thread/INFO]: [System] [CHAT] ╚
-[14:23:03] [Render thread/INFO]: [System] [CHAT] (Arix) ->  Меню открыто, начинаю сканирование...
-[14:23:14] [Render thread/INFO]: [System] [CHAT] (Arix) ->  §aЦена для Яйцо крестьянина установлена: 296,2K
-[14:23:14] [Render thread/INFO]: [System] [CHAT] (Arix) ->  Установлена цена 296,2K для villager_spawn_egg
-[14:23:15] [Render thread/INFO]: [System] [CHAT] (Arix) ->  Меню открыто, начинаю сканирование...
-[14:23:25] [Render thread/INFO]: [System] [CHAT] (Arix) ->  §aЦена для Динамит BLACK установлена: 523,5K
-[14:23:25] [Render thread/INFO]: [System] [CHAT] (Arix) ->  Установлена цена 523,5K для dynamite_black
-[14:23:26] [Render thread/INFO]: [System] [CHAT] (Arix) ->  Меню открыто, начинаю сканирование...
-[14:23:30] [Render thread/INFO]: [System] [CHAT] ⦏Объявление⦐  all кто обмен тп дам тал карателя за спавнер или что то из вещей круша (я первый тал кидаю) [Автор: livebarxat]
-[14:23:37] [Render thread/INFO]: [System] [CHAT] (Arix) ->  §aЦена для Динамит WHITE установлена: 96,9K
-[14:23:37] [Render thread/INFO]: [System] [CHAT] (Arix) ->  Установлена цена 96,9K для dynamite_white
-[14:23:38] [Render thread/INFO]: [System] [CHAT] (Arix) ->  Меню открыто, начинаю сканирование...
-[14:23:44] [Render thread/INFO]: [System] [CHAT] Ⓖ <gays> [Князь] buttcher  ⇨  на моем ах много разного.Чекните его!
-[14:23:49] [Render thread/INFO]: [System] [CHAT] (Arix) ->  §aЦена для Серебро установлена: 6,2K
-[14:23:49] [Render thread/INFO]: [System] [CHAT] (Arix) ->  Установлена цена 6,2K для silver
-[14:23:49] [Render thread/INFO]: [System] [CHAT] (Arix) ->  Меню открыто, начинаю сканирование...
-[14:24:00] [Render thread/INFO]: [System] [CHAT] (Arix) ->  §aЦена для Трапка установлена: 248,7K
-[14:24:00] [Render thread/INFO]: [System] [CHAT] (Arix) ->  Установлена цена 248,7K для trapka
-[14:24:01] [Render thread/INFO]: [System] [CHAT] (Arix) ->  Меню открыто, начинаю сканирование...
-[14:24:12] [Render thread/INFO]: [System] [CHAT] (Arix) ->  §aЦена для Сфера Бестии установлена: 1,2M
-[14:24:12] [Render thread/INFO]: [System] [CHAT] (Arix) ->  Установлена цена 1,2M для sphere_beast
-[14:24:13] [Render thread/INFO]: [System] [CHAT] (Arix) ->  Меню открыто, начинаю сканирование...
-[14:24:23] [Render thread/INFO]: [System] [CHAT] (Arix) ->  §aЦена для Сфера Сатира установлена: 431,9K
-[14:24:23] [Render thread/INFO]: [System] [CHAT] (Arix) ->  Установлена цена 431,9K для sphere_satyr
-[14:24:24] [Render thread/INFO]: [System] [CHAT] (Arix) ->  Меню открыто, начинаю сканирование...
-[14:24:35] [Render thread/INFO]: [System] [CHAT] (Arix) ->  §aЦена для Сфера Хаоса установлена: 1,4M
-[14:24:35] [Render thread/INFO]: [System] [CHAT] (Arix) ->  Установлена цена 1,4M для sphere_chaos
-[14:24:36] [Render thread/INFO]: [System] [CHAT] (Arix) ->  Меню открыто, начинаю сканирование...
-[14:24:46] [Render thread/INFO]: [System] [CHAT] ⦏Объявление⦐ на моем много разного. Чекните его! [Автор: buttcher]
-[14:24:47] [Render thread/INFO]: [System] [CHAT] (Arix) ->  §aЦена для Сфера Ареса установлена: 1,7M
-[14:24:47] [Render thread/INFO]: [System] [CHAT] (Arix) ->  Установлена цена 1,7M для sphere_ares
-[14:24:48] [Render thread/INFO]: [System] [CHAT] (Arix) ->  Меню открыто, начинаю сканирование...
-[14:24:58] [Render thread/INFO]: [System] [CHAT] (Arix) ->  §aЦена для Сфера Гидры установлена: 3,8M
-[14:24:58] [Render thread/INFO]: [System] [CHAT] (Arix) ->  Установлена цена 3,8M для sphere_hydra
-[14:24:59] [Render thread/INFO]: [System] [CHAT] Ⓛ [Игрок] LotusBlad  ⇨ пр
-[14:24:59] [Render thread/INFO]: [System] [CHAT] (Arix) ->  Меню открыто, начинаю сканирование...
-[14:25:10] [Render thread/INFO]: [System] [CHAT] (Arix) ->  §aЦена для Сфера Титана установлена: 20,9M
-[14:25:10] [Render thread/INFO]: [System] [CHAT] (Arix) ->  Установлена цена 20,9M для sphere_titan
-[14:25:11] [Render thread/INFO]: [System] [CHAT] (Arix) ->  Автонастройка завершена.
-[14:25:12] [Render thread/INFO]: [System] [CHAT] Ⓛ [Игрок] LotusBlad  ⇨ что то надо было?
-[14:25:22] [Render thread/INFO]: [System] [CHAT] (Arix) ->  §aAutoBuy включен
-[14:25:22] [Render thread/INFO]: [System] [CHAT] (Arix) ->  §eСмена анархии на /an218
-[14:25:24] [Render thread/INFO]: [System] [CHAT] Ⓛ <антон> [Аспид] KOHTOP  ⇨ дешевые зачарованные золотые яблоки на /ah KOHTOP
-[14:25:36] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
-[14:25:38] [Render thread/INFO]: [System] [CHAT] Ⓛ <антон> [Аспид] KOHTOP  ⇨ дешевые зачарованные золотые яблоки на /ah KOHTOP
-[14:25:42] [Render thread/INFO]: Resizing Dynamic Transforms UBO, capacity limit of 64 reached during a single frame. New capacity will be 128.
-[14:25:46] [Render thread/INFO]: [System] [CHAT] (Arix) ->  §aAutoBuy включен
-[14:25:47] [Render thread/INFO]: [System] [CHAT] (Arix) ->  §eПокупка: Незерит слиток x2 за 489998$
-[14:25:47] [Netty NIO IO #2/INFO]: [System] [CHAT] (Arix) ->  §cНе хватает денег!
-[14:25:47] [Render thread/INFO]: [System] [CHAT] [✘] Ошибка! У Вас не хватает Монет!
-[14:25:47] [Render thread/INFO]: [System] [CHAT] (Arix) ->  §eПокупка: Незерит слиток x2 за 489998$
-[14:25:47] [Netty NIO IO #2/INFO]: [System] [CHAT] (Arix) ->  §cНе хватает денег!
-[14:25:47] [Render thread/INFO]: [System] [CHAT] [✘] Ошибка! У Вас не хватает Монет!
-[14:25:48] [Render thread/INFO]: [System] [CHAT] Ⓖ [Игрок] s_nyla_k_dka  ⇨  /feed please
-[14:25:50] [Render thread/INFO]: [System] [CHAT] (Arix) ->  §eПокупка: Незерит слиток x1 за 255000$
-[14:25:53] [Render thread/INFO]: [System] [CHAT] [♨] FRAZYONLINE забанен [Подробнее]
-[14:25:54] [Render thread/INFO]: [System] [CHAT] (Arix) ->  §cТаймаут покупки
-[14:25:56] [Render thread/INFO]: [System] [CHAT] ✞ XSoiller покинул игру во время PvP и был убит.
-[14:25:58] [Render thread/INFO]: [System] [CHAT] (Arix) ->  §eПокупка: Сфера Сатира x1 за 420000$
-[14:25:58] [Netty NIO IO #2/INFO]: [System] [CHAT] (Arix) ->  §cНе хватает денег!
-[14:25:58] [Render thread/INFO]: [System] [CHAT] [✘] Ошибка! У Вас не хватает Монет!
-[14:25:58] [Render thread/INFO]: [System] [CHAT] (Arix) ->  §eПокупка: Сфера Сатира x1 за 420000$
-[14:25:58] [Netty NIO IO #2/INFO]: [System] [CHAT] (Arix) ->  §cНе хватает денег!
-[14:25:58] [Render thread/INFO]: [System] [CHAT] [✘] Ошибка! У Вас не хватает Монет!
-[14:26:00] [Render thread/INFO]: [System] [CHAT] (Arix) ->  §eПокупка: Динамит BLACK x1 за 270000$
-[14:26:05] [Render thread/INFO]: [System] [CHAT] (Arix) ->  §cТаймаут покупки
-[14:26:06] [Render thread/INFO]: [System] [CHAT] (Arix) ->  §aAutoBuy включен
-[14:26:07] [Render thread/INFO]: [System] [CHAT] Ⓖ <5digits> ﴾Герцог﴿ ti_pahnesh Тян ⇨ /ah ti_pahnesh
-[14:26:08] [Render thread/INFO]: [System] [CHAT] Ⓛ <антон> [Аспид] KOHTOP  ⇨ дешевые зачарованные золотые яблоки на /ah KOHTOP
-[14:26:10] [Render thread/INFO]: [System] [CHAT] Ⓖ [Герой] hahachipsi223  ⇨ ti_pahnesh qwawww пока вышел он сказал потом вернет
-[14:26:11] [Render thread/INFO]: [System] [CHAT] (Arix) ->  §eПокупка: Незерит слиток x1 за 227049$
-[14:26:11] [Netty NIO IO #2/INFO]: [System] [CHAT] (Arix) ->  §aПокупка подтверждена!
-[14:26:11] [Render thread/INFO]: [System] [CHAT] [☃] Вы успешно купили Незеритовый слиток за $227,049!
-[14:26:13] [Render thread/INFO]: [System] [CHAT] (Arix) ->  Запущена автонастройка цен...
-[14:26:13] [Render thread/INFO]: [System] [CHAT] (Arix) ->  Меню открыто, начинаю сканирование...
-[14:26:14] [Render thread/INFO]: [System] [CHAT] (Arix) ->  §eПокупка: Незерит слиток x1 за 244998$
-[14:26:18] [Render thread/INFO]: [System] [CHAT] (Arix) ->  §cТаймаут покупки
-[14:26:25] [Render thread/INFO]: [System] [CHAT] [☃] Предмет Незеритовый слиток выставлен на продажу за $300,000!
-[14:26:25] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете использовать это в этом месте!
-[14:26:27] [Render thread/INFO]: [System] [CHAT] ✞ XSoiller покинул игру во время PvP и был убит.
-[14:26:30] [Render thread/INFO]: [System] [CHAT] Ⓛ <антон> [Аспид] KOHTOP  ⇨ дешевые зачарованные золотые яблоки на /ah KOHTOP
-[14:26:30] [Render thread/INFO]: [System] [CHAT] Ⓛ <дщияш> [Титан] 4erepashka_play  ⇨ ah
-[14:26:32] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете ломать блоки в этом месте!
-[14:26:33] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
-[14:26:33] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
-[14:26:34] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
-[14:26:38] [Render thread/INFO]: [System] [CHAT] (Arix) ->  §aAutoBuy включен
-[14:26:39] [Render thread/INFO]: [System] [CHAT] (Arix) ->  §aAutoBuy включен
-[14:26:40] [Render thread/INFO]: [System] [CHAT] (Arix) ->  §aAutoBuy включен
-[14:26:51] [Render thread/INFO]: [System] [CHAT] (Arix) ->  §eПокупка: Яйцо крестьянина x1 за 250000$
-[14:26:53] [Render thread/INFO]: [System] [CHAT] [☃] Вы убрали предмет с продажи!
-[14:26:58] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете использовать это в этом месте!
-[14:27:21] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете ломать блоки в этом месте!
-[14:27:26] [Render thread/INFO]: [System] [CHAT] [☃] Предмет Незеритовый слиток выставлен на продажу за $249,999!
-[14:27:27] [Render thread/INFO]: [System] [CHAT] [☃] У Вас купили Незеритовый слиток за $249,999 на /ah
-[14:27:31] [Render thread/INFO]: [System] [CHAT] [✘] Внимание! Предмет Шалкер хранится в хранилище меньше, чем остальные предметы!
-[14:27:31] [Render thread/INFO]: [System] [CHAT] [☃] Предмет Шалкер выставлен на продажу за $30,000!
-[14:27:33] [Render thread/INFO]: [System] [CHAT] [☃] У Вас купили Шалкер за $30,000 на /ah
-[14:27:35] [Render thread/INFO]: [System] [CHAT] (Arix) ->  §aAutoBuy включен
-[14:27:35] [Render thread/INFO]: [System] [CHAT] Ⓛ <антон> [Аспид] KOHTOP  ⇨ дешевые зачарованные золотые яблоки на /ah KOHTOP
-[14:27:37] [Render thread/INFO]: [System] [CHAT] (Arix) ->  §eПокупка: Незерит слиток x3 за 620000$
-[14:27:41] [Render thread/INFO]: [System] [CHAT] ╔
-[14:27:41] [Render thread/INFO]: [System] [CHAT] ╠ Подписывайтесь на наш Телеграм - t.me/funtime
-[14:27:41] [Render thread/INFO]: [System] [CHAT] ╚
-[14:27:44] [Render thread/INFO]: [System] [CHAT] (Arix) ->  §cТаймаут покупки
-[14:27:48] [Render thread/INFO]: [System] [CHAT] (Arix) ->  §eПокупка: Сфера Сатира x1 за 400000$
-[14:27:55] [Render thread/INFO]: [System] [CHAT] (Arix) ->  §cТаймаут покупки
-[14:27:57] [Render thread/INFO]: [System] [CHAT] (Arix) ->  §eПокупка: Ключ испытаний x3 за 300000$
-[14:27:57] [Netty NIO IO #2/INFO]: [System] [CHAT] (Arix) ->  §aПокупка подтверждена!
-[14:27:57] [Render thread/INFO]: [System] [CHAT] [☃] Вы успешно купили Ключ испытаний x3 за $300,000!
-[14:27:57] [Render thread/INFO]: [System] [CHAT] (Arix) ->  §eПокупка: Алмаз x28 за 32000$
-[14:27:57] [Netty NIO IO #2/INFO]: [System] [CHAT] (Arix) ->  §cНе хватает денег!
-[14:27:57] [Render thread/INFO]: [System] [CHAT] [✘] Ошибка! У Вас не хватает Монет!
-[14:27:58] [Render thread/INFO]: [System] [CHAT] (Arix) ->  §eПокупка: Алмаз x28 за 32000$
-[14:28:01] [Render thread/INFO]: [System] [CHAT] (Arix) ->  §aAutoBuy включен
-[14:28:02] [Render thread/INFO]: [System] [CHAT] (Arix) ->  §eПокупка: Незерит слиток x1 за 247498$
-[14:28:04] [Render thread/INFO]: Resizing Chunk Sections UBO, capacity limit of 64 reached during a single frame. New capacity will be 128.
-[14:28:10] [Render thread/INFO]: [System] [CHAT] Ⓖ <5digits> ﴾Герцог﴿ ti_pahnesh Тян ⇨ /ah ti_pahnesh
-[14:28:21] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете использовать это в этом месте!
-[14:28:22] [Render thread/INFO]: [System] [CHAT] Ⓖ <5digits> ﴾Герцог﴿ AlexSuss Нуб ⇨ /ah AlexSuss талы ЯРОСТИ, булавы КРУШИТЕЛЯ
-[14:28:23] [Render thread/INFO]: [System] [CHAT] Ⓖ <11010> [Игрок] gazantop6752  ⇨ ti_pahnech qq
-[14:28:27] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
-[14:28:29] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
-[14:28:32] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете ломать блоки в этом месте!
-[14:28:32] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете ломать блоки в этом месте!
-[14:28:43] [Render thread/INFO]: [System] [CHAT] 
-[14:28:43] [Render thread/INFO]: [System] [CHAT] [❖] Реклама ⇨ AlexSuss qq (Noks_forever)
-[14:28:43] [Render thread/INFO]: [System] [CHAT] 
-[14:28:46] [Render thread/INFO]: [System] [CHAT] ⦏Объявление⦐ qq [Автор: AlexSuss]
-[14:28:53] [Render thread/INFO]: [System] [CHAT] Ⓖ <5digits> ﴾Герцог﴿ ti_pahnesh Тян ⇨ кто такой ти пахнеч
-[14:28:57] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
-[14:28:58] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
-[14:28:58] [Render thread/INFO]: [System] [CHAT] Ⓖ <pulsu> [Герой] RedPr1ne  ⇨ ALL на моём ах инвизки по лоу прайс
-[14:29:00] [Render thread/INFO]: [System] [CHAT] Ⓖ [Игрок] zxcnetrya5ka  ⇨ езка
-[14:29:02] [Render thread/INFO]: [System] [CHAT] Ⓖ <11010> [Игрок] gazantop6752  ⇨ ti_pahnech qq
-[14:29:02] [Render thread/INFO]: [System] [CHAT] ✞ XSoiller покинул игру во время PvP и был убит.
-[14:29:05] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете ломать блоки в этом месте!
-[14:29:06] [Render thread/INFO]: [System] [CHAT] Ⓖ <Xrono> ﴾Принц﴿ Craint2056 ЧСВ! ⇨ крутой пасанчек
-[14:29:06] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете ломать блоки в этом месте!
-[14:29:06] [Render thread/INFO]: [System] [CHAT] Ⓖ [Герой] hahachipsi223  ⇨ ti_pahnesh qwawww пока вышел он сказал потом вернет
-[14:29:08] [Render thread/INFO]: [System] [CHAT] Ⓖ <5digits> ﴾Герцог﴿ ti_pahnesh Тян ⇨ кто такой ти пахнеч
-[14:29:14] [Render thread/INFO]: [System] [CHAT] Ⓖ <Xrono> ﴾Принц﴿ Craint2056 ЧСВ! ⇨ крутой пасанчек
-[14:29:19] [Render thread/INFO]: [System] [CHAT] Ⓖ [Игрок] zxcnetrya5ka  ⇨  ti_pahnesh это ванючка не моеца
-[14:29:22] [Render thread/INFO]: [System] [CHAT] Ⓖ <Xrono> ﴾Принц﴿ Craint2056 ЧСВ! ⇨ крутой пасанчек
-[14:29:23] [Render thread/INFO]: [System] [CHAT] [☃] Предмет Ключ испытаний выставлен на продажу за $400,000!
-[14:29:24] [Render thread/INFO]: [System] [CHAT] Ⓖ <5digits> ﴾Герцог﴿ ti_pahnesh Тян ⇨ а мой тим
-[14:29:24] [Render thread/INFO]: [System] [CHAT] Ⓖ <5digits> ﴾Герцог﴿ AlexSuss Нуб ⇨ ti_pinaesh qq
-[14:29:24] [Render thread/INFO]: [System] [CHAT] [☃] Предмет Ключ испытаний выставлен на продажу за $400,000!
-[14:29:27] [Render thread/INFO]: [System] [CHAT] [☃] Предмет Ключ испытаний выставлен на продажу за $400,000!
-[14:29:27] [Render thread/INFO]: [System] [CHAT] Ⓖ <5digits> ﴾Герцог﴿ ti_pahnesh Тян ⇨ ти кто
-[14:29:31] [Render thread/INFO]: [System] [CHAT] [☃] Вы убрали предмет с продажи!
-[14:29:31] [Render thread/INFO]: [System] [CHAT] [☃] Вы убрали предмет с продажи!
-[14:29:31] [Render thread/INFO]: [System] [CHAT] [☃] Вы убрали предмет с продажи!
-[14:29:40] [Render thread/INFO]: [System] [CHAT] Ⓖ <5digits> ﴾Герцог﴿ ti_pahnesh Тян ⇨ /ah ti_pahnesh
-[14:29:40] [Render thread/INFO]: [System] [CHAT] [☃] Предмет Ключ испытаний выставлен на продажу за $349,999!
-[14:29:42] [Render thread/INFO]: [System] [CHAT] [☃] Предмет Ключ испытаний выставлен на продажу за $349,999!
-[14:29:44] [Render thread/INFO]: [System] [CHAT] [☃] Предмет Ключ испытаний выставлен на продажу за $349,999!
-[14:29:45] [Render thread/INFO]: [System] [CHAT] ✞ XSoiller покинул игру во время PvP и был убит.
-[14:29:52] [Render thread/INFO]: [System] [CHAT] Ⓖ <5digits> ﴾Герцог﴿ AlexSuss Нуб ⇨ /ah AlexSuss талы ЯРОСТИ, булавы КРУШИТЕЛЯ
-[14:29:55] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете ломать блоки в этом месте!
-[14:30:02] [Render thread/INFO]: [System] [CHAT] [✔] Предметы успешно перевыставлены!
-[14:30:09] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете ломать блоки в этом месте!
-[14:30:10] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете ломать блоки в этом месте!
-[14:30:11] [Render thread/INFO]: [System] [CHAT] ✞ corvyn покинул игру во время PvP и был убит.
-[14:30:17] [Render thread/INFO]: [System] [CHAT] Ⓖ [Герой] hahachipsi223  ⇨ ti_pahnesh qwawww пока вышел он сказал потом вернет
-[14:30:17] [Render thread/INFO]: [System] [CHAT] [☃] У Вас купили Ключ испытаний за $349,999 на /ah
-[14:30:18] [Render thread/INFO]: [System] [CHAT] [☃] У Вас купили Ключ испытаний за $349,999 на /ah
-[14:30:27] [Render thread/INFO]: [System] [CHAT] (Arix) ->  §aAutoBuy включен
-[14:30:30] [Render thread/INFO]: [System] [CHAT] (Arix) ->  §eПокупка: Незерит слиток x1 за 249999$
-[14:30:30] [Netty NIO IO #2/INFO]: [System] [CHAT] (Arix) ->  §aПокупка подтверждена!
-[14:30:30] [Render thread/INFO]: [System] [CHAT] [☃] Вы успешно купили Незеритовый слиток за $249,999!
-[14:30:32] [Render thread/INFO]: [System] [CHAT] ✞ RealJohnPork52 покинул игру во время PvP и был убит.
-[14:30:33] [Render thread/INFO]: [System] [CHAT] ✞ corvyn покинул игру во время PvP и был убит.
-[14:30:36] [Render thread/INFO]: [System] [CHAT] (Arix) ->  §eПокупка: Динамит BLACK x1 за 250000$
-[14:30:37] [Render thread/INFO]: [System] [CHAT] (Arix) ->  §cТаймаут покупки
-[14:30:39] [Render thread/INFO]: [System] [CHAT] (Arix) ->  §eПокупка: Сфера Сатира x1 за 415000$
-[14:30:39] [Netty NIO IO #2/INFO]: [System] [CHAT] (Arix) ->  §aПокупка подтверждена!
-[14:30:39] [Render thread/INFO]: [System] [CHAT] [☃] Вы успешно купили Сфера Сатира за $415,000!
-[14:30:41] [Render thread/INFO]: [System] [CHAT] (Arix) ->  §eПокупка: Незерит слиток x1 за 247499$
-[14:30:46] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете ломать блоки в этом месте!
-[14:30:46] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете ломать блоки в этом месте!
-[14:30:53] [Render thread/INFO]: [System] [CHAT] Ⓖ <MYST> ⊰Князь⊱ tarakan333456  ⇨  перевидите опыта пж
-[14:30:55] [Render thread/INFO]: [System] [CHAT] (Arix) ->  Запущена автонастройка цен...
-[14:30:55] [Render thread/INFO]: [System] [CHAT] (Arix) ->  Меню открыто, начинаю сканирование...
-[14:30:58] [Render thread/INFO]: [System] [CHAT] (Arix) ->  Меню открыто, начинаю сканирование...
-[14:30:59] [Render thread/INFO]: [System] [CHAT] (Arix) ->  §aAutoBuy включен
-[14:31:06] [Render thread/INFO]: [System] [CHAT] (Arix) ->  Запущена автонастройка цен...
-[14:31:06] [Render thread/INFO]: [System] [CHAT] (Arix) ->  Меню открыто, начинаю сканирование...
-[14:31:10] [Render thread/INFO]: [System] [CHAT] Ⓖ <5digits> ﴾Герцог﴿ ti_pahnesh Тян ⇨ /ah ti_pahnesh
-[14:31:15] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете ломать блоки в этом месте!
-[14:31:22] [Render thread/INFO]: [System] [CHAT] Ⓖ <5digits> ﴾Герцог﴿ AlexSuss Нуб ⇨ /ah AlexSuss талы ЯРОСТИ, булавы КРУШИТЕЛЯ
-[14:31:23] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете ломать блоки в этом месте!
-[14:31:23] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете ломать блоки в этом месте!
-[14:31:25] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете ломать блоки в этом месте!
-[14:31:35] [Render thread/INFO]: [System] [CHAT] [☃] У Вас купили Ключ испытаний за $349,999 на /ah
-[14:31:42] [Render thread/INFO]: [System] [CHAT] Ⓖ <puls1> [Князь] kst_124 Дура ⇨  fixer_ е****е бичуганское животное которое б***ь аирдроп бахает и получает анпочинку без чарок б***ь,чучело е****е
-[14:31:44] [Render thread/INFO]: [System] [CHAT] [$] Ваш баланс: $387,945
-[14:31:46] [Render thread/INFO]: [System] [CHAT] Ⓖ <pulsu> [Герой] RedPr1ne  ⇨ ALL на моём ах инвизки по лоу прайс
-[14:31:53] [Render thread/INFO]: [System] [CHAT] Ⓖ <puls1> [Князь] kst_124 Дура ⇨  у меня б***ь даже донки не было
-[14:31:55] [Render thread/INFO]: [System] [CHAT] ✞ viblaniBan4562 покинул игру во время PvP и был убит.
-[14:31:58] [Render thread/INFO]: [System] [CHAT] Ⓖ <puls1> [Князь] kst_124 Дура ⇨  чучело е****е
-[14:32:07] [Render thread/INFO]: [System] [CHAT] [$] Ваш баланс: $387,945
+[08:22:48] [Worker-Main-1/WARN]: Profile contained invalid signature for textures property (profile id: 0e9c1cef-1018-4f4b-8357-0c44045db9fb)
+[08:22:48] [Render thread/INFO]: Resizing Dynamic Transforms UBO, capacity limit of 8 reached during a single frame. New capacity will be 16.
+[08:22:48] [Render thread/INFO]: [System] [CHAT] ** ! Внимание !\n** Чтобы ваш Аккаунт был в БЕЗОПАСНОСТИ!\n** Привяжите его к ВК: /vk \n** Или к Телеграм: /tg \n \n** ! Внимание !\n** Чтобы ваш Аккаунт был в БЕЗОПАСНОСТИ!\n** Привяжите его к ВК: /vk \n** Или к Телеграм: /tg 
+[08:22:48] [Render thread/INFO]: Resizing Chunk Sections UBO, capacity limit of 4 reached during a single frame. New capacity will be 8.
+[08:22:49] [Render thread/INFO]: Resizing Chunk Sections UBO, capacity limit of 8 reached during a single frame. New capacity will be 16.
+[08:22:57] [Render thread/INFO]: Resizing Chunk Sections UBO, capacity limit of 16 reached during a single frame. New capacity will be 32.
+[08:23:00] [Render thread/INFO]: Resizing Chunk Sections UBO, capacity limit of 32 reached during a single frame. New capacity will be 64.
+[08:23:01] [Render thread/INFO]: Resizing Dynamic Transforms UBO, capacity limit of 16 reached during a single frame. New capacity will be 32.
+[08:23:01] [Render thread/INFO]: Resizing Dynamic Transforms UBO, capacity limit of 32 reached during a single frame. New capacity will be 64.
+[08:23:09] [Render thread/INFO]: Loaded 0 advancements
+[08:23:15] [Render thread/INFO]: [System] [CHAT] [☃] После входа на режим необходимо немного подождать перед использованием аукциона. Подождите 4 сек.
+[08:23:16] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
+[08:23:17] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
+[08:23:17] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
+[08:23:18] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
+[08:23:42] [Render thread/INFO]: Resizing Chunk Sections UBO, capacity limit of 64 reached during a single frame. New capacity will be 128.
+[08:23:42] [Render thread/INFO]: [System] [CHAT] [⚠] Данной команды не существует!
+[08:25:23] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
+[08:25:35] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
+[08:25:35] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
+[08:25:40] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете использовать это в этом месте!
+[08:25:42] [Download-15/WARN]: Couldn't find profile with name: wet_ant8
+com.mojang.authlib.exceptions.MinecraftClientHttpException: Couldn't find any profile with name wet_ant8
+	at com.mojang.authlib.minecraft.client.MinecraftClient.readInputStream(MinecraftClient.java:103)
+	at com.mojang.authlib.minecraft.client.MinecraftClient.get(MinecraftClient.java:56)
+	at com.mojang.authlib.yggdrasil.YggdrasilGameProfileRepository.findProfileByName(YggdrasilGameProfileRepository.java:110)
+	at net.minecraft.server.players.CachedUserNameToIdResolver.lookupGameProfile(CachedUserNameToIdResolver.java:68)
+	at net.minecraft.server.players.CachedUserNameToIdResolver.get(CachedUserNameToIdResolver.java:118)
+	at net.minecraft.server.players.ProfileResolver$Cached$2.load(ProfileResolver.java:43)
+	at net.minecraft.server.players.ProfileResolver$Cached$2.load(ProfileResolver.java:41)
+	at com.google.common.cache.LocalCache$LoadingValueReference.loadFuture(LocalCache.java:3556)
+	at com.google.common.cache.LocalCache$Segment.loadSync(LocalCache.java:2307)
+	at com.google.common.cache.LocalCache$Segment.lockedGetOrLoad(LocalCache.java:2180)
+	at com.google.common.cache.LocalCache$Segment.get(LocalCache.java:2071)
+	at com.google.common.cache.LocalCache.get(LocalCache.java:3985)
+	at com.google.common.cache.LocalCache.getOrLoad(LocalCache.java:4006)
+	at com.google.common.cache.LocalCache$LocalLoadingCache.get(LocalCache.java:4946)
+	at com.google.common.cache.LocalCache$LocalLoadingCache.getUnchecked(LocalCache.java:4953)
+	at net.minecraft.server.players.ProfileResolver$Cached.fetchByName(ProfileResolver.java:50)
+	at net.minecraft.client.player.LocalPlayerResolver.fetchByName(LocalPlayerResolver.java:33)
+	at com.mojang.datafixers.util.Either$Left.map(Either.java:38)
+	at net.minecraft.server.players.ProfileResolver.fetchByNameOrId(ProfileResolver.java:21)
+	at net.minecraft.world.item.component.ResolvableProfile$Dynamic.lambda$resolveProfile$0(ResolvableProfile.java:130)
+	at java.base/java.util.concurrent.CompletableFuture$AsyncSupply.run(CompletableFuture.java:1768)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+[08:25:46] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
+[08:25:46] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
+[08:25:47] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
+[08:25:48] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
+[08:25:48] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
+[08:26:05] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете использовать это в этом месте!
+[08:26:08] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
+[08:26:09] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
+[08:26:10] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
+[08:26:20] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
+[08:26:21] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
+[08:26:22] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
+[08:26:22] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
+[08:26:23] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
+[08:26:24] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
+[08:26:42] [Render thread/INFO]: [System] [CHAT] Ⓛ <dffsf> [Игрок] hostfd  ⇨ у меня все закончилось
+[08:26:48] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
+[08:26:49] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
+[08:26:49] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
+[08:26:50] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
+[08:26:51] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
+[08:26:51] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
+[08:26:52] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
+[08:26:55] [Render thread/INFO]: [System] [CHAT] ╔
+[08:26:55] [Render thread/INFO]: [System] [CHAT] ╠ Токены можно приобрести на сайте FunTime.su
+[08:26:55] [Render thread/INFO]: [System] [CHAT] ╚
+[08:26:57] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
+[08:26:58] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
+[08:26:58] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
+[08:26:59] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
+[08:26:59] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
+[08:27:02] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
+[08:27:03] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
+[08:27:04] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
+[08:27:04] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
+[08:27:05] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
+[08:27:05] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
+[08:27:06] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
+[08:27:06] [Render thread/INFO]: [System] [CHAT] Ⓛ [Игрок] NEZAVISIMO  ⇨ all на ахе инвиз 25к
+[08:27:07] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
+[08:27:07] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
+[08:27:08] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
+[08:27:08] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
+[08:27:09] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
+[08:27:10] [Render thread/INFO]: [System] [CHAT] Ⓛ <dffsf> [Игрок] hostfd  ⇨ а гэпл есть
+[08:27:12] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
+[08:27:17] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
+[08:27:18] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
+[08:27:30] [Download-15/INFO]: Returning cached file since actual hash matches requested
+[08:27:30] [Render thread/INFO]: Reloading ResourceManager: vanilla, server/00000000/f81d4fae-7dec-11d0-a765-00a0c91e6bf6
+[08:27:30] [Render thread/INFO]: [OptiFine] *** Reloading resources ***
+[08:27:30] [Render thread/INFO]: [OptiFine] *** Reloading textures ***
+[08:27:30] [Render thread/INFO]: [OptiFine] EmissiveTextures: Loading optifine/emissive.properties
+[08:27:30] [Render thread/INFO]: [OptiFine] Loading optifine/color.properties
+[08:27:30] [Render thread/INFO]: [OptiFine] screen.loading = 080808
+[08:27:30] [Render thread/INFO]: [OptiFine] screen.loading.outline = ffffff
+[08:27:30] [Render thread/INFO]: [OptiFine] screen.loading.bar = 300000
+[08:27:30] [Render thread/INFO]: [OptiFine] screen.loading.progress = ff2121
+[08:27:30] [Worker-Main-3/WARN]: [OptiFine] Resource not found: minecraft:shaders/post/fxaa_of_2x.json
+[08:27:30] [Worker-Main-3/WARN]: [OptiFine] Resource not found: minecraft:shaders/post/fxaa_of_4x.json
+[08:27:30] [Worker-Main-2/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/particles.png
+[08:27:30] [Worker-Main-2/INFO]: [OptiFine] Multitexture: false
+[08:27:30] [Worker-Main-3/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/decorated_pot.png
+[08:27:30] [Worker-Main-3/INFO]: [OptiFine] Multitexture: false
+[08:27:30] [Worker-Main-1/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/paintings.png
+[08:27:30] [Worker-Main-1/INFO]: [OptiFine] Multitexture: false
+[08:27:30] [Worker-Main-3/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/armor_trims.png
+[08:27:30] [Worker-Main-3/INFO]: [OptiFine] Multitexture: false
+[08:27:30] [Worker-Main-1/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/shield_patterns.png
+[08:27:30] [Worker-Main-1/INFO]: [OptiFine] Multitexture: false
+[08:27:30] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_2, 3 -> 9
+[08:27:30] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_1, 3 -> 9
+[08:27:30] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_0, 3 -> 9
+[08:27:30] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_11, 3 -> 9
+[08:27:30] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_10, 3 -> 9
+[08:27:30] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_9, 5 -> 10
+[08:27:30] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_8, 5 -> 10
+[08:27:30] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_3, 5 -> 10
+[08:27:30] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_2, 5 -> 10
+[08:27:30] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_1, 5 -> 10
+[08:27:30] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_0, 5 -> 10
+[08:27:30] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_7, 5 -> 10
+[08:27:30] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_6, 5 -> 10
+[08:27:30] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_5, 5 -> 10
+[08:27:30] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_4, 5 -> 10
+[08:27:30] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_11, 5 -> 10
+[08:27:30] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_10, 5 -> 10
+[08:27:30] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:trial_omen, 5 -> 10
+[08:27:30] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:raid_omen, 5 -> 10
+[08:27:30] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_6, 3 -> 9
+[08:27:30] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_5, 3 -> 9
+[08:27:30] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_10, 5 -> 10
+[08:27:30] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_4, 3 -> 9
+[08:27:30] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_3, 3 -> 9
+[08:27:30] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_9, 3 -> 9
+[08:27:30] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_8, 3 -> 9
+[08:27:30] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_11, 5 -> 10
+[08:27:30] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_7, 3 -> 9
+[08:27:30] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_7, 5 -> 10
+[08:27:30] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_6, 5 -> 10
+[08:27:30] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_9, 5 -> 10
+[08:27:30] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_8, 5 -> 10
+[08:27:30] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_1, 5 -> 10
+[08:27:30] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_0, 5 -> 10
+[08:27:30] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_3, 5 -> 10
+[08:27:30] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_2, 5 -> 10
+[08:27:30] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_5, 5 -> 10
+[08:27:30] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_4, 5 -> 10
+[08:27:30] [Worker-Main-2/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/chest.png
+[08:27:30] [Worker-Main-2/INFO]: [OptiFine] Multitexture: false
+[08:27:30] [Worker-Main-2/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/celestials.png
+[08:27:30] [Worker-Main-2/INFO]: [OptiFine] Multitexture: false
+[08:27:30] [Worker-Main-2/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/banner_patterns.png
+[08:27:30] [Worker-Main-2/INFO]: [OptiFine] Multitexture: false
+[08:27:31] [Worker-Main-1/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/blocks.png
+[08:27:31] [Worker-Main-1/INFO]: [OptiFine] Multitexture: false
+[08:27:31] [Worker-Main-1/INFO]: [OptiFine] Register block sprites
+[08:27:31] [Worker-Main-1/INFO]: [OptiFine] BetterGrass: Parsing default configuration optifine/bettergrass.properties
+[08:27:31] [Worker-Main-2/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/beds.png
+[08:27:31] [Worker-Main-2/INFO]: [OptiFine] Multitexture: false
+[08:27:31] [Worker-Main-2/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/items.png
+[08:27:31] [Worker-Main-2/INFO]: [OptiFine] Multitexture: false
+[08:27:31] [Worker-Main-2/INFO]: [OptiFine] Register item sprites
+[08:27:31] [Worker-Main-3/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/gui.png
+[08:27:31] [Worker-Main-3/INFO]: [OptiFine] Multitexture: false
+[08:27:31] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:container/bundle/bundle_progressbar_fill, 6 -> 12
+[08:27:31] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:widget/scroller_background, 6 -> 12
+[08:27:31] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:container/bundle/bundle_progressbar_full, 6 -> 12
+[08:27:31] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:hud/locator_bar_arrow_up, 7 -> 14
+[08:27:31] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:container/villager/scroller, 6 -> 12
+[08:27:31] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:widget/scroller, 6 -> 12
+[08:27:31] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:container/villager/scroller_disabled, 6 -> 12
+[08:27:31] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:hud/locator_bar_arrow_down, 7 -> 14
+[08:27:31] [Worker-Main-3/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/map_decorations.png
+[08:27:31] [Worker-Main-3/INFO]: [OptiFine] Multitexture: false
+[08:27:31] [Worker-Main-3/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/signs.png
+[08:27:31] [Worker-Main-3/INFO]: [OptiFine] Multitexture: false
+[08:27:31] [Worker-Main-3/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/shulker_boxes.png
+[08:27:31] [Worker-Main-3/INFO]: [OptiFine] Multitexture: false
+[08:27:32] [Worker-Main-3/INFO]: Found unifont_all_no_pua-17.0.01.hex, loading
+[08:27:32] [Worker-Main-1/INFO]: Found unifont_pua-17.0.01.hex, loading
+[08:27:33] [Worker-Main-3/INFO]: Found unifont_jp_patch-17.0.01.hex, loading
+[08:27:35] [Worker-Main-3/INFO]: [OptiFine] CustomItems: Collecting model sprites
+[08:27:35] [Worker-Main-2/INFO]: [OptiFine] CustomItems: Registering sprites
+[08:27:36] [Worker-Main-1/WARN]: Missing textures in model minecraft:ui/buttons/info_repair: minecraft:block_or_item:minecraft:item/funtime/buttons/info_repair
+[08:27:36] [Worker-Main-1/WARN]: Missing texture references in model minecraft:ui/buttons/auction_arrow_right: particle
+[08:27:36] [Worker-Main-1/WARN]: Missing texture references in model minecraft:ui/buttons/auction_accept: particle
+[08:27:36] [Worker-Main-1/WARN]: Missing texture references in model minecraft:ui/buttons/lottery_plus_1: particle
+[08:27:36] [Worker-Main-1/WARN]: Missing texture references in model minecraft:ui/buttons/auction_refresh: particle
+[08:27:36] [Worker-Main-1/WARN]: Missing texture references in model minecraft:ui/buttons/auction_rent: particle
+[08:27:36] [Worker-Main-1/WARN]: Missing texture references in model minecraft:ui/icons/emerald: particle
+[08:27:36] [Worker-Main-1/WARN]: Missing texture references in model minecraft:ui/buttons/auction_arrow_left: particle
+[08:27:36] [Worker-Main-1/WARN]: Missing texture references in model minecraft:ui/icons/donate_chest: particle
+[08:27:36] [Worker-Main-1/WARN]: Missing texture references in model minecraft:ui/icons/back_shadow: particle
+[08:27:36] [Worker-Main-1/WARN]: Missing texture references in model minecraft:ui/buttons/lottery_arrow_right: particle
+[08:27:36] [Worker-Main-1/WARN]: Missing texture references in model minecraft:ui/icons/info_small: particle
+[08:27:36] [Worker-Main-1/WARN]: Missing texture references in model minecraft:ui/icons/coins: particle
+[08:27:36] [Worker-Main-1/WARN]: Missing texture references in model minecraft:funtime/new_year/santa_hat: particle
+[08:27:36] [Worker-Main-1/WARN]: Missing texture references in model minecraft:ui/icons/craft_back: particle
+[08:27:36] [Worker-Main-1/WARN]: Missing texture references in model minecraft:ui/buttons/auction_categories: particle
+[08:27:36] [Worker-Main-1/WARN]: Missing texture references in model minecraft:funtime/misc/maslenitsa_hat: particle
+[08:27:36] [Worker-Main-1/WARN]: Missing texture references in model minecraft:ui/buttons/auction_update: particle
+[08:27:36] [Worker-Main-1/WARN]: Missing texture references in model minecraft:ui/icons/donate_coins: particle
+[08:27:36] [Worker-Main-1/WARN]: Missing texture references in model minecraft:ui/buttons/plus: particle
+[08:27:36] [Worker-Main-1/WARN]: Missing texture references in model minecraft:ui/buttons/lock: particle
+[08:27:36] [Worker-Main-1/WARN]: Missing texture references in model minecraft:ui/buttons/auction_arrow_left_active: particle
+[08:27:36] [Worker-Main-1/WARN]: Missing texture references in model minecraft:ui/buttons/lottery_minus_1: particle
+[08:27:36] [Worker-Main-1/WARN]: Missing texture references in model minecraft:ui/icons/donate_book: particle
+[08:27:36] [Worker-Main-1/WARN]: Missing texture references in model minecraft:ui/buttons/auction_back: particle
+[08:27:36] [Worker-Main-1/WARN]: Missing texture references in model minecraft:ui/icons/back_shadow_2: particle
+[08:27:36] [Worker-Main-1/WARN]: Missing texture references in model minecraft:ui/buttons/auction_arrow_right_active: particle
+[08:27:36] [Worker-Main-1/WARN]: Missing texture references in model minecraft:ui/buttons/lottery_minus_10: particle
+[08:27:36] [Worker-Main-1/WARN]: Missing texture references in model minecraft:ui/buttons/lottery_plus_10: particle
+[08:27:36] [Worker-Main-1/WARN]: Missing texture references in model minecraft:ui/buttons/auction_vault: particle
+[08:27:36] [Worker-Main-1/WARN]: Missing texture references in model minecraft:ui/icons/info_shadow: particle
+[08:27:36] [Worker-Main-1/WARN]: Missing texture references in model minecraft:ui/buttons/lottery_arrow_left: particle
+[08:27:37] [Render thread/INFO]: OpenAL initialized on device OpenAL Soft on Наушники (Устройство с поддержкой High Definition Audio)
+[08:27:37] [Render thread/INFO]: Sound engine started
+[08:27:37] [Render thread/INFO]: Created: 512x256x0 minecraft:textures/atlas/particles.png-atlas
+[08:27:37] [Render thread/INFO]: [OptiFine] Animated sprites: 1
+[08:27:37] [Render thread/INFO]: Created: 128x128x0 minecraft:textures/atlas/decorated_pot.png-atlas
+[08:27:37] [Render thread/INFO]: [OptiFine] Animated sprites: 0
+[08:27:37] [Render thread/INFO]: Created: 2048x1024x0 minecraft:textures/atlas/armor_trims.png-atlas
+[08:27:37] [Render thread/INFO]: [OptiFine] Animated sprites: 0
+[08:27:37] [Render thread/INFO]: Created: 512x256x0 minecraft:textures/atlas/paintings.png-atlas
+[08:27:37] [Render thread/INFO]: [OptiFine] Animated sprites: 0
+[08:27:37] [Render thread/INFO]: Created: 1024x512x0 minecraft:textures/atlas/shield_patterns.png-atlas
+[08:27:37] [Render thread/INFO]: [OptiFine] Animated sprites: 0
+[08:27:37] [Render thread/INFO]: Created: 1024x1024x2 minecraft:textures/atlas/blocks.png-atlas
+[08:27:37] [Render thread/INFO]: [OptiFine] Update block sprites
+[08:27:37] [Render thread/INFO]: [OptiFine] Animated sprites: 57
+[08:27:37] [Render thread/INFO]: Created: 512x512x0 minecraft:textures/atlas/chest.png-atlas
+[08:27:37] [Render thread/INFO]: [OptiFine] Animated sprites: 0
+[08:27:37] [Render thread/INFO]: Created: 256x128x0 minecraft:textures/atlas/celestials.png-atlas
+[08:27:37] [Render thread/INFO]: [OptiFine] Animated sprites: 0
+[08:27:37] [Render thread/INFO]: Created: 1024x512x0 minecraft:textures/atlas/banner_patterns.png-atlas
+[08:27:37] [Render thread/INFO]: [OptiFine] Animated sprites: 0
+[08:27:37] [Render thread/INFO]: Created: 512x512x0 minecraft:textures/atlas/beds.png-atlas
+[08:27:37] [Render thread/INFO]: [OptiFine] Animated sprites: 0
+[08:27:37] [Render thread/INFO]: Created: 1024x512x0 minecraft:textures/atlas/items.png-atlas
+[08:27:37] [Render thread/INFO]: [OptiFine] Update item sprites
+[08:27:37] [Render thread/INFO]: [OptiFine] Animated sprites: 1
+[08:27:37] [Render thread/INFO]: Created: 1024x1024x0 minecraft:textures/atlas/gui.png-atlas
+[08:27:37] [Render thread/INFO]: [OptiFine] Animated sprites: 5
+[08:27:37] [Render thread/INFO]: Created: 128x64x0 minecraft:textures/atlas/map_decorations.png-atlas
+[08:27:37] [Render thread/INFO]: [OptiFine] Animated sprites: 0
+[08:27:37] [Render thread/INFO]: Created: 512x256x0 minecraft:textures/atlas/signs.png-atlas
+[08:27:37] [Render thread/INFO]: [OptiFine] Animated sprites: 0
+[08:27:37] [Render thread/INFO]: Created: 512x512x0 minecraft:textures/atlas/shulker_boxes.png-atlas
+[08:27:37] [Render thread/INFO]: [OptiFine] Animated sprites: 0
+[08:27:37] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/gui.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
+[08:27:37] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/beds.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
+[08:27:37] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/paintings.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
+[08:27:37] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/shulker_boxes.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
+[08:27:37] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/signs.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
+[08:27:37] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/chest.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
+[08:27:37] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/particles.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
+[08:27:37] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/celestials.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
+[08:27:37] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/shield_patterns.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
+[08:27:37] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/decorated_pot.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
+[08:27:37] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/map_decorations.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
+[08:27:37] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/blocks.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
+[08:27:37] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/banner_patterns.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
+[08:27:37] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/armor_trims.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
+[08:27:37] [Render thread/INFO]: [OptiFine] *** Reloading custom textures ***
+[08:27:37] [Render thread/INFO]: [OptiFine] CustomColors: palette.format=grid
+[08:27:37] [Render thread/INFO]: [OptiFine] CustomColors: Loading optifine/color.properties
+[08:27:41] [Render thread/INFO]: [OptiFine] Disable Forge light pipeline
+[08:27:49] [Render thread/INFO]: [System] [CHAT] [☃] После входа на режим необходимо немного подождать перед использованием аукциона. Подождите 2 сек.
+[08:27:56] [Render thread/INFO]: [System] [CHAT] Ⓛ <zxcSQ> [Игрок] zxc_shooter  ⇨ и еще я даже критами не проношу тебе ты софт
+[08:28:01] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
+[08:28:01] [Download-18/WARN]: Couldn't find profile with name: _mayusha__v121
+com.mojang.authlib.exceptions.MinecraftClientHttpException: Couldn't find any profile with name _mayusha__v121
+	at com.mojang.authlib.minecraft.client.MinecraftClient.readInputStream(MinecraftClient.java:103)
+	at com.mojang.authlib.minecraft.client.MinecraftClient.get(MinecraftClient.java:56)
+	at com.mojang.authlib.yggdrasil.YggdrasilGameProfileRepository.findProfileByName(YggdrasilGameProfileRepository.java:110)
+	at net.minecraft.server.players.CachedUserNameToIdResolver.lookupGameProfile(CachedUserNameToIdResolver.java:68)
+	at net.minecraft.server.players.CachedUserNameToIdResolver.get(CachedUserNameToIdResolver.java:118)
+	at net.minecraft.server.players.ProfileResolver$Cached$2.load(ProfileResolver.java:43)
+	at net.minecraft.server.players.ProfileResolver$Cached$2.load(ProfileResolver.java:41)
+	at com.google.common.cache.LocalCache$LoadingValueReference.loadFuture(LocalCache.java:3556)
+	at com.google.common.cache.LocalCache$Segment.loadSync(LocalCache.java:2307)
+	at com.google.common.cache.LocalCache$Segment.lockedGetOrLoad(LocalCache.java:2180)
+	at com.google.common.cache.LocalCache$Segment.get(LocalCache.java:2071)
+	at com.google.common.cache.LocalCache.get(LocalCache.java:3985)
+	at com.google.common.cache.LocalCache.getOrLoad(LocalCache.java:4006)
+	at com.google.common.cache.LocalCache$LocalLoadingCache.get(LocalCache.java:4946)
+	at com.google.common.cache.LocalCache$LocalLoadingCache.getUnchecked(LocalCache.java:4953)
+	at net.minecraft.server.players.ProfileResolver$Cached.fetchByName(ProfileResolver.java:50)
+	at net.minecraft.client.player.LocalPlayerResolver.fetchByName(LocalPlayerResolver.java:33)
+	at com.mojang.datafixers.util.Either$Left.map(Either.java:38)
+	at net.minecraft.server.players.ProfileResolver.fetchByNameOrId(ProfileResolver.java:21)
+	at net.minecraft.world.item.component.ResolvableProfile$Dynamic.lambda$resolveProfile$0(ResolvableProfile.java:130)
+	at java.base/java.util.concurrent.CompletableFuture$AsyncSupply.run(CompletableFuture.java:1768)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+[08:28:02] [Download-15/WARN]: Couldn't find profile with name: noarelli
+com.mojang.authlib.exceptions.MinecraftClientHttpException: Couldn't find any profile with name noarelli
+	at com.mojang.authlib.minecraft.client.MinecraftClient.readInputStream(MinecraftClient.java:103)
+	at com.mojang.authlib.minecraft.client.MinecraftClient.get(MinecraftClient.java:56)
+	at com.mojang.authlib.yggdrasil.YggdrasilGameProfileRepository.findProfileByName(YggdrasilGameProfileRepository.java:110)
+	at net.minecraft.server.players.CachedUserNameToIdResolver.lookupGameProfile(CachedUserNameToIdResolver.java:68)
+	at net.minecraft.server.players.CachedUserNameToIdResolver.get(CachedUserNameToIdResolver.java:118)
+	at net.minecraft.server.players.ProfileResolver$Cached$2.load(ProfileResolver.java:43)
+	at net.minecraft.server.players.ProfileResolver$Cached$2.load(ProfileResolver.java:41)
+	at com.google.common.cache.LocalCache$LoadingValueReference.loadFuture(LocalCache.java:3556)
+	at com.google.common.cache.LocalCache$Segment.loadSync(LocalCache.java:2307)
+	at com.google.common.cache.LocalCache$Segment.lockedGetOrLoad(LocalCache.java:2180)
+	at com.google.common.cache.LocalCache$Segment.get(LocalCache.java:2071)
+	at com.google.common.cache.LocalCache.get(LocalCache.java:3985)
+	at com.google.common.cache.LocalCache.getOrLoad(LocalCache.java:4006)
+	at com.google.common.cache.LocalCache$LocalLoadingCache.get(LocalCache.java:4946)
+	at com.google.common.cache.LocalCache$LocalLoadingCache.getUnchecked(LocalCache.java:4953)
+	at net.minecraft.server.players.ProfileResolver$Cached.fetchByName(ProfileResolver.java:50)
+	at net.minecraft.client.player.LocalPlayerResolver.fetchByName(LocalPlayerResolver.java:33)
+	at com.mojang.datafixers.util.Either$Left.map(Either.java:38)
+	at net.minecraft.server.players.ProfileResolver.fetchByNameOrId(ProfileResolver.java:21)
+	at net.minecraft.world.item.component.ResolvableProfile$Dynamic.lambda$resolveProfile$0(ResolvableProfile.java:130)
+	at java.base/java.util.concurrent.CompletableFuture$AsyncSupply.run(CompletableFuture.java:1768)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+[08:28:04] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
+[08:28:27] [Render thread/INFO]: [System] [CHAT] Ⓛ <zxcSQ> [Игрок] zxc_shooter  ⇨ плюс зелька нету
+[08:29:00] [Render thread/INFO]: [System] [CHAT] [Отладка]: Хитбоксы: вкл.
+[08:29:17] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
+[08:29:17] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
+[08:29:18] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
+[08:29:18] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
+[08:29:19] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
+[08:29:20] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
+[08:29:20] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
+[08:29:21] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
+[08:29:21] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
+[08:29:22] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
+[08:29:23] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
+[08:29:23] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
+[08:29:24] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
+[08:29:26] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
+[08:29:26] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
+[08:29:27] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
+[08:29:28] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
+[08:29:30] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
+[08:29:30] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
+[08:29:31] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
+[08:29:32] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
+[08:29:36] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
+[08:29:37] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
+[08:29:41] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
+[08:29:42] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
+[08:29:43] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
+[08:29:45] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
+[08:29:45] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
+[08:29:46] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
+[08:29:47] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
+[08:29:48] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
+[08:29:48] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
+[08:29:52] [Render thread/INFO]: [System] [CHAT] [Отладка]: Хитбоксы: выкл.
+[08:29:55] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
+[08:29:57] [Download-21/WARN]: Couldn't find profile with name: kronosgr11
+com.mojang.authlib.exceptions.MinecraftClientHttpException: Couldn't find any profile with name kronosgr11
+	at com.mojang.authlib.minecraft.client.MinecraftClient.readInputStream(MinecraftClient.java:103)
+	at com.mojang.authlib.minecraft.client.MinecraftClient.get(MinecraftClient.java:56)
+	at com.mojang.authlib.yggdrasil.YggdrasilGameProfileRepository.findProfileByName(YggdrasilGameProfileRepository.java:110)
+	at net.minecraft.server.players.CachedUserNameToIdResolver.lookupGameProfile(CachedUserNameToIdResolver.java:68)
+	at net.minecraft.server.players.CachedUserNameToIdResolver.get(CachedUserNameToIdResolver.java:118)
+	at net.minecraft.server.players.ProfileResolver$Cached$2.load(ProfileResolver.java:43)
+	at net.minecraft.server.players.ProfileResolver$Cached$2.load(ProfileResolver.java:41)
+	at com.google.common.cache.LocalCache$LoadingValueReference.loadFuture(LocalCache.java:3556)
+	at com.google.common.cache.LocalCache$Segment.loadSync(LocalCache.java:2307)
+	at com.google.common.cache.LocalCache$Segment.lockedGetOrLoad(LocalCache.java:2180)
+	at com.google.common.cache.LocalCache$Segment.get(LocalCache.java:2071)
+	at com.google.common.cache.LocalCache.get(LocalCache.java:3985)
+	at com.google.common.cache.LocalCache.getOrLoad(LocalCache.java:4006)
+	at com.google.common.cache.LocalCache$LocalLoadingCache.get(LocalCache.java:4946)
+	at com.google.common.cache.LocalCache$LocalLoadingCache.getUnchecked(LocalCache.java:4953)
+	at net.minecraft.server.players.ProfileResolver$Cached.fetchByName(ProfileResolver.java:50)
+	at net.minecraft.client.player.LocalPlayerResolver.fetchByName(LocalPlayerResolver.java:33)
+	at com.mojang.datafixers.util.Either$Left.map(Either.java:38)
+	at net.minecraft.server.players.ProfileResolver.fetchByNameOrId(ProfileResolver.java:21)
+	at net.minecraft.world.item.component.ResolvableProfile$Dynamic.lambda$resolveProfile$0(ResolvableProfile.java:130)
+	at java.base/java.util.concurrent.CompletableFuture$AsyncSupply.run(CompletableFuture.java:1768)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+[08:29:57] [Download-18/WARN]: Couldn't find profile with name: ne_zaglotyc
+com.mojang.authlib.exceptions.MinecraftClientHttpException: Couldn't find any profile with name ne_zaglotyc
+	at com.mojang.authlib.minecraft.client.MinecraftClient.readInputStream(MinecraftClient.java:103)
+	at com.mojang.authlib.minecraft.client.MinecraftClient.get(MinecraftClient.java:56)
+	at com.mojang.authlib.yggdrasil.YggdrasilGameProfileRepository.findProfileByName(YggdrasilGameProfileRepository.java:110)
+	at net.minecraft.server.players.CachedUserNameToIdResolver.lookupGameProfile(CachedUserNameToIdResolver.java:68)
+	at net.minecraft.server.players.CachedUserNameToIdResolver.get(CachedUserNameToIdResolver.java:118)
+	at net.minecraft.server.players.ProfileResolver$Cached$2.load(ProfileResolver.java:43)
+	at net.minecraft.server.players.ProfileResolver$Cached$2.load(ProfileResolver.java:41)
+	at com.google.common.cache.LocalCache$LoadingValueReference.loadFuture(LocalCache.java:3556)
+	at com.google.common.cache.LocalCache$Segment.loadSync(LocalCache.java:2307)
+	at com.google.common.cache.LocalCache$Segment.lockedGetOrLoad(LocalCache.java:2180)
+	at com.google.common.cache.LocalCache$Segment.get(LocalCache.java:2071)
+	at com.google.common.cache.LocalCache.get(LocalCache.java:3985)
+	at com.google.common.cache.LocalCache.getOrLoad(LocalCache.java:4006)
+	at com.google.common.cache.LocalCache$LocalLoadingCache.get(LocalCache.java:4946)
+	at com.google.common.cache.LocalCache$LocalLoadingCache.getUnchecked(LocalCache.java:4953)
+	at net.minecraft.server.players.ProfileResolver$Cached.fetchByName(ProfileResolver.java:50)
+	at net.minecraft.client.player.LocalPlayerResolver.fetchByName(LocalPlayerResolver.java:33)
+	at com.mojang.datafixers.util.Either$Left.map(Either.java:38)
+	at net.minecraft.server.players.ProfileResolver.fetchByNameOrId(ProfileResolver.java:21)
+	at net.minecraft.world.item.component.ResolvableProfile$Dynamic.lambda$resolveProfile$0(ResolvableProfile.java:130)
+	at java.base/java.util.concurrent.CompletableFuture$AsyncSupply.run(CompletableFuture.java:1768)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+[08:29:58] [Download-22/WARN]: Couldn't find profile with name: lapsha_tb
+com.mojang.authlib.exceptions.MinecraftClientHttpException: Couldn't find any profile with name lapsha_tb
+	at com.mojang.authlib.minecraft.client.MinecraftClient.readInputStream(MinecraftClient.java:103)
+	at com.mojang.authlib.minecraft.client.MinecraftClient.get(MinecraftClient.java:56)
+	at com.mojang.authlib.yggdrasil.YggdrasilGameProfileRepository.findProfileByName(YggdrasilGameProfileRepository.java:110)
+	at net.minecraft.server.players.CachedUserNameToIdResolver.lookupGameProfile(CachedUserNameToIdResolver.java:68)
+	at net.minecraft.server.players.CachedUserNameToIdResolver.get(CachedUserNameToIdResolver.java:118)
+	at net.minecraft.server.players.ProfileResolver$Cached$2.load(ProfileResolver.java:43)
+	at net.minecraft.server.players.ProfileResolver$Cached$2.load(ProfileResolver.java:41)
+	at com.google.common.cache.LocalCache$LoadingValueReference.loadFuture(LocalCache.java:3556)
+	at com.google.common.cache.LocalCache$Segment.loadSync(LocalCache.java:2307)
+	at com.google.common.cache.LocalCache$Segment.lockedGetOrLoad(LocalCache.java:2180)
+	at com.google.common.cache.LocalCache$Segment.get(LocalCache.java:2071)
+	at com.google.common.cache.LocalCache.get(LocalCache.java:3985)
+	at com.google.common.cache.LocalCache.getOrLoad(LocalCache.java:4006)
+	at com.google.common.cache.LocalCache$LocalLoadingCache.get(LocalCache.java:4946)
+	at com.google.common.cache.LocalCache$LocalLoadingCache.getUnchecked(LocalCache.java:4953)
+	at net.minecraft.server.players.ProfileResolver$Cached.fetchByName(ProfileResolver.java:50)
+	at net.minecraft.client.player.LocalPlayerResolver.fetchByName(LocalPlayerResolver.java:33)
+	at com.mojang.datafixers.util.Either$Left.map(Either.java:38)
+	at net.minecraft.server.players.ProfileResolver.fetchByNameOrId(ProfileResolver.java:21)
+	at net.minecraft.world.item.component.ResolvableProfile$Dynamic.lambda$resolveProfile$0(ResolvableProfile.java:130)
+	at java.base/java.util.concurrent.CompletableFuture$AsyncSupply.run(CompletableFuture.java:1768)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+[08:30:02] [Render thread/INFO]: [System] [CHAT] [❌] Вы не можете драться в этом месте!
+[08:30:14] [Render thread/INFO]: Reloading ResourceManager: vanilla
+[08:30:14] [Render thread/INFO]: [OptiFine] *** Reloading resources ***
+[08:30:14] [Render thread/INFO]: [OptiFine] *** Reloading textures ***
+[08:30:14] [Worker-Main-2/WARN]: Missing resource minecraft:textures/entity/equipment/humanoid/diamond_20.png referenced from minecraft:textures/entity/equipment/humanoid/diamond_20.png
+[08:30:14] [Worker-Main-3/WARN]: Missing resource minecraft:textures/entity/equipment/humanoid/diamond_25.png referenced from minecraft:textures/entity/equipment/humanoid/diamond_25.png
+[08:30:14] [Worker-Main-1/WARN]: [OptiFine] Resource not found: minecraft:shaders/post/fxaa_of_2x.json
+[08:30:14] [Worker-Main-1/WARN]: [OptiFine] Resource not found: minecraft:shaders/post/fxaa_of_4x.json
+[08:30:14] [Worker-Main-3/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/particles.png
+[08:30:14] [Worker-Main-3/INFO]: [OptiFine] Multitexture: false
+[08:30:14] [Worker-Main-1/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/decorated_pot.png
+[08:30:14] [Worker-Main-1/INFO]: [OptiFine] Multitexture: false
+[08:30:14] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_2, 3 -> 9
+[08:30:14] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_1, 3 -> 9
+[08:30:14] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_0, 3 -> 9
+[08:30:14] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_11, 3 -> 9
+[08:30:14] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_10, 3 -> 9
+[08:30:14] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_9, 5 -> 10
+[08:30:14] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_8, 5 -> 10
+[08:30:14] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_3, 5 -> 10
+[08:30:14] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_2, 5 -> 10
+[08:30:14] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_1, 5 -> 10
+[08:30:14] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_0, 5 -> 10
+[08:30:14] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_7, 5 -> 10
+[08:30:14] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_6, 5 -> 10
+[08:30:14] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_5, 5 -> 10
+[08:30:14] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_4, 5 -> 10
+[08:30:14] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_11, 5 -> 10
+[08:30:14] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_10, 5 -> 10
+[08:30:14] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:trial_omen, 5 -> 10
+[08:30:14] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:raid_omen, 5 -> 10
+[08:30:14] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_6, 3 -> 9
+[08:30:14] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_5, 3 -> 9
+[08:30:14] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_10, 5 -> 10
+[08:30:14] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_4, 3 -> 9
+[08:30:14] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_3, 3 -> 9
+[08:30:14] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_9, 3 -> 9
+[08:30:14] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_8, 3 -> 9
+[08:30:14] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_11, 5 -> 10
+[08:30:14] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_7, 3 -> 9
+[08:30:14] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_7, 5 -> 10
+[08:30:14] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_6, 5 -> 10
+[08:30:14] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_9, 5 -> 10
+[08:30:14] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_8, 5 -> 10
+[08:30:14] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_1, 5 -> 10
+[08:30:14] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_0, 5 -> 10
+[08:30:14] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_3, 5 -> 10
+[08:30:14] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_2, 5 -> 10
+[08:30:14] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_5, 5 -> 10
+[08:30:14] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_4, 5 -> 10
+[08:30:14] [Worker-Main-1/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/armor_trims.png
+[08:30:14] [Worker-Main-1/INFO]: [OptiFine] Multitexture: false
+[08:30:14] [Worker-Main-3/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/paintings.png
+[08:30:14] [Worker-Main-3/INFO]: [OptiFine] Multitexture: false
+[08:30:14] [Worker-Main-2/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/shield_patterns.png
+[08:30:14] [Worker-Main-2/INFO]: [OptiFine] Multitexture: false
+[08:30:14] [Worker-Main-2/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/chest.png
+[08:30:14] [Worker-Main-2/INFO]: [OptiFine] Multitexture: false
+[08:30:14] [Worker-Main-3/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/celestials.png
+[08:30:14] [Worker-Main-3/INFO]: [OptiFine] Multitexture: false
+[08:30:14] [Worker-Main-1/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/blocks.png
+[08:30:14] [Worker-Main-1/INFO]: [OptiFine] Multitexture: false
+[08:30:14] [Worker-Main-1/INFO]: [OptiFine] Register block sprites
+[08:30:14] [Worker-Main-1/INFO]: [OptiFine] BetterGrass: Parsing default configuration optifine/bettergrass.properties
+[08:30:14] [Worker-Main-2/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/banner_patterns.png
+[08:30:14] [Worker-Main-2/INFO]: [OptiFine] Multitexture: false
+[08:30:14] [Worker-Main-3/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/beds.png
+[08:30:14] [Worker-Main-3/INFO]: [OptiFine] Multitexture: false
+[08:30:14] [Worker-Main-3/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/items.png
+[08:30:14] [Worker-Main-3/INFO]: [OptiFine] Multitexture: false
+[08:30:14] [Worker-Main-3/INFO]: [OptiFine] Register item sprites
+[08:30:14] [Worker-Main-2/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/gui.png
+[08:30:14] [Worker-Main-2/INFO]: [OptiFine] Multitexture: false
+[08:30:14] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:container/bundle/bundle_progressbar_fill, 6 -> 12
+[08:30:14] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:widget/scroller_background, 6 -> 12
+[08:30:14] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:container/bundle/bundle_progressbar_full, 6 -> 12
+[08:30:14] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:hud/locator_bar_arrow_up, 7 -> 14
+[08:30:14] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:container/villager/scroller, 6 -> 12
+[08:30:14] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:widget/scroller, 6 -> 12
+[08:30:14] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:container/villager/scroller_disabled, 6 -> 12
+[08:30:14] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:hud/locator_bar_arrow_down, 7 -> 14
+[08:30:14] [Worker-Main-2/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/map_decorations.png
+[08:30:14] [Worker-Main-2/INFO]: [OptiFine] Multitexture: false
+[08:30:15] [Render thread/INFO]: Stopping!
+[08:30:15] [Worker-Main-2/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/signs.png
+[08:30:15] [Worker-Main-2/INFO]: [OptiFine] Multitexture: false
+[08:30:15] [Worker-Main-2/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/shulker_boxes.png
+[08:30:15] [Worker-Main-2/INFO]: [OptiFine] Multitexture: false
+[08:30:15] [Worker-Main-2/INFO]: Found unifont_all_no_pua-17.0.01.hex, loading
+[08:30:15] [Worker-Main-2/INFO]: Found unifont_jp_patch-17.0.01.hex, loading
+[08:30:15] [Worker-Main-1/INFO]: Found unifont_pua-17.0.01.hex, loading
+[08:30:16] [Worker-Main-2/INFO]: [OptiFine] CustomItems: Collecting model sprites
+[08:30:16] [Worker-Main-3/INFO]: [OptiFine] CustomItems: Registering sprites
