@@ -15,5 +15,7 @@ public class EventHandledScreen extends Event {
     GuiGraphics guiGraphics;
     int backgroundWidth;
     int backgroundHeight;
-    private final Slot slotHover;
+    final Slot slotHover;
+    int mouseX;
+    int mouseY;
 }

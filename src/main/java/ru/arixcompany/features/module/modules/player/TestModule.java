@@ -12,7 +12,7 @@ import ru.arixcompany.features.event.EventHandler;
 import ru.arixcompany.features.event.render.EventHandledScreen;
 import ru.arixcompany.features.module.Category;
 import ru.arixcompany.features.module.Module;
-import ru.arixcompany.features.module.modules.misc.funtime.utils.FuntimeComponentParser;
+import ru.arixcompany.features.module.modules.misc.funtime.utils.FuntimeUtil;
 import ru.arixcompany.features.module.setting.implement.*;
 
 import java.awt.*;
@@ -63,8 +63,8 @@ public class TestModule extends Module {
             }
 
             // Цена
-            int price = FuntimeComponentParser.getPrice(stack);
-            int pricePerItem = FuntimeComponentParser.getPricePerItem(stack);
+            int price = FuntimeUtil.getPrice(stack);
+            int pricePerItem = FuntimeUtil.getPricePerItem(stack);
 
             // Вывод
             System.out.println("========================================");

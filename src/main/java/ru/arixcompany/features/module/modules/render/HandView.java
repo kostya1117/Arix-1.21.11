@@ -16,9 +16,6 @@ public class HandView extends Module {
     private final BooleanSetting skipSwapping =
             new BooleanSetting("Пропуск смены");
 
-    private final BooleanSetting disableFoodAnimation =
-            new BooleanSetting("Без анимации еды");
-
     private final ValueSetting scale =
             new ValueSetting("Масштаб").range(0.1f, 3f).setValue(1f).setStep(0.1f);
 
@@ -65,7 +62,6 @@ public class HandView extends Module {
         super("HandView", Category.Render);
         setup(
                 skipSwapping,
-                disableFoodAnimation,
                 scale,
                 rightPosX, rightPosY, rightPosZ,
                 leftPosX, leftPosY, leftPosZ,
@@ -231,9 +227,5 @@ public class HandView extends Module {
 
     public boolean skipSwapping() {
         return isState() && skipSwapping.isValue();
-    }
-
-    public boolean disableFoodAnimation() {
-        return isState() && disableFoodAnimation.isValue();
     }
 }

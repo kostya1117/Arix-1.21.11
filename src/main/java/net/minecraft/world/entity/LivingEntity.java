@@ -31,6 +31,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import net.minecraft.advancements.CriteriaTriggers;
+import net.minecraft.client.Minecraft;
 import net.minecraft.commands.arguments.EntityAnchorArgument;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -142,6 +143,8 @@ import net.minecraft.world.waypoints.WaypointTransmitter;
 import org.jetbrains.annotations.Contract;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
+import ru.arixcompany.Arix;
+import ru.arixcompany.features.module.modules.render.NoRender;
 
 public abstract class LivingEntity extends Entity implements Attackable, WaypointTransmitter {
     private static final Logger LOGGER = LogUtils.getLogger();
@@ -962,8 +965,20 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
         return this.activeEffects;
     }
 
-    public boolean hasEffect(Holder<MobEffect> p_329256_) {
-        return this.activeEffects.containsKey(p_329256_);
+    public boolean hasEffect(Holder<MobEffect> effect) {
+        LivingEntity self = (LivingEntity) (Object) this;
+        Minecraft client = Minecraft.getInstance();
+
+        if (client != null && client.player != null && self == client.player) {
+            if (effect != null && effect.value() == MobEffects.WITHER.value()) {
+                NoRender noRender = (NoRender) Arix.getInstance().getModuleRepo().getModule(NoRender.class);
+                if (noRender != null && noRender.noBadEffects()) {
+                    return false;
+                }
+            }
+        }
+
+        return this.activeEffects.containsKey(effect);
     }
 
     public  MobEffectInstance getEffect(Holder<MobEffect> p_328338_) {

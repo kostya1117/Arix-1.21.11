@@ -304,10 +304,6 @@ public class ItemInHandRenderer {
     }
 
     private void applyEatTransform(PoseStack p_109331_, float p_109332_, HumanoidArm p_109333_, ItemStack p_109334_, Player p_343800_) {
-        HandView mod = getHandView();
-        if (mod != null && mod.disableFoodAnimation() && mod.isState()) {
-            return;
-        }
         float f = p_343800_.getUseItemRemainingTicks() - p_109332_ + 1.0F;
         float f1 = f / p_109334_.getUseDuration(p_343800_);
         if (f1 < 0.8F) {

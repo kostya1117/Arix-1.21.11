@@ -152,6 +152,8 @@ import net.minecraft.world.waypoints.WaypointTransmitter;
 import org.jetbrains.annotations.Contract;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
+import ru.arixcompany.Arix;
+import ru.arixcompany.features.module.modules.render.NoRender;
 
 public abstract class Entity implements SyncedDataHolder, DebugValueSource, Nameable, ItemOwner, SlotProvider, EntityAccess, ScoreHolder, DataComponentGetter {
     private static final Logger LOGGER = LogUtils.getLogger();
@@ -2668,6 +2670,10 @@ public abstract class Entity implements SyncedDataHolder, DebugValueSource, Name
     }
 
     public boolean isCurrentlyGlowing() {
+        NoRender mod = (NoRender) Arix.getInstance().getModuleRepo().getModule(NoRender.class);
+        if (mod != null && mod.state && mod.noGlowing.isValue()) {
+            return false;
+        }
         return this.level().isClientSide() ? this.getSharedFlag(6) : this.hasGlowingTag;
     }
 
