@@ -16,6 +16,7 @@ import ru.arixcompany.features.module.modules.combat.aura.AttackHandler;
 import ru.arixcompany.features.module.modules.combat.aura.TargetHandler;
 import ru.arixcompany.features.module.modules.combat.aura.rotation.impl.FreeLookUtil;
 import ru.arixcompany.features.module.modules.combat.aura.rotation.rotations.FunTimeRotation;
+import ru.arixcompany.features.module.modules.combat.aura.rotation.rotations.FuntimeRot;
 import ru.arixcompany.features.module.modules.combat.aura.rotation.rotations.SnapRotation;
 import ru.arixcompany.features.module.setting.implement.ListSetting;
 import ru.arixcompany.features.module.setting.implement.SelectSetting;
@@ -39,7 +40,7 @@ public class HitAura extends Module {
 
     public static final SelectSetting rotationType =
             new SelectSetting("Режим ротации")
-                    .value("Funtime", "Snap");
+                    .value("Funtime","FuntimeRot", "Snap");
 
     public static final SelectSetting snapSetting =
             new SelectSetting("Режим снапа")
@@ -84,6 +85,7 @@ public class HitAura extends Module {
     public static boolean isLookingUp = false;
     public static long lookUpStartTime = 0L;
     public static int lookUpDuration = 0;
+    public int count;
 
     public HitAura() {
         super("HitAura", Category.Combat);
@@ -107,15 +109,6 @@ public class HitAura extends Module {
       }
    }
 
-    @EventHandler
-    public void onEvent(EventInput e) {
-        if (target != null && mc.player != null && mc.level != null) {
-            if (motion.isSelected("Свободная")) {
-                MoveUtils.fixMovement(e, FreeLookUtil.freeYaw);
-            }
-        }
-    }
-
    @EventHandler
    public void onEvent(EventUpdate e) {
       if (!mc.player.isAlive()) {
@@ -126,9 +119,9 @@ public class HitAura extends Module {
 
          if (target != null && mc.player != null && mc.level != null) {
 
-            if (AttackHandler.resetSprintTick(target, getRanges())) {
-               mc.options.keySprint.setDown(false);
-            }
+//            if (AttackHandler.resetSprintTick(target, getRanges())) {
+//               mc.options.keySprint.setDown(false);
+//            }
 
 
              if (!this.checkToAttack()) {
@@ -151,6 +144,7 @@ public class HitAura extends Module {
 
 
     private final FunTimeRotation funTimeRotation = new FunTimeRotation();
+    private final FuntimeRot funTimeRot = new FuntimeRot();
     private final SnapRotation snapRotation = new SnapRotation();
     private void updateRotation() {
         if (target == null) return;
@@ -169,6 +163,14 @@ public class HitAura extends Module {
 
             case "Funtime":
                 funTimeRotation.rotate(
+                        target,
+                        shouldAttack,
+                        attackRange.getValue(),
+                        this.checkToAttack()
+                );
+                break;
+            case "FuntimeRot":
+                funTimeRot.rotate(
                         target,
                         shouldAttack,
                         attackRange.getValue(),
@@ -195,6 +197,7 @@ public class HitAura extends Module {
       if (mc.player != null) {
          isLookingUp = false;
          lookUpStartTime = 0L;
+         count = 0;
       }
    }
 

@@ -2,10 +2,12 @@ package ru.arixcompany.features.module.modules.combat.aura.rotation.impl;
 
 import net.minecraft.util.Mth;
 import ru.arixcompany.features.event.EventHandler;
+import ru.arixcompany.features.event.player.EventInput;
 import ru.arixcompany.features.event.render.EventRender3D;
 import ru.arixcompany.features.event.world.EventGameTick;
 import ru.arixcompany.features.event.world.EventTick;
 import ru.arixcompany.features.module.modules.combat.aura.rotation.Component;
+import ru.arixcompany.utils.player.MoveUtils;
 import ru.arixcompany.utils.player.PlayerUtil;
 
 public class RotationRepo extends Component {
@@ -22,6 +24,12 @@ public class RotationRepo extends Component {
 
     public static boolean isRotating() {
         return currentTask != RotationTask.IDLE;
+    }
+    @EventHandler
+    public void onEvent(EventInput event) {
+        if (isRotating()) {
+            MoveUtils.fixMovement(event, Mth.wrapDegrees(mc.player.getYRot()));
+        }
     }
 
 //    @EventHandler

@@ -103,6 +103,7 @@ import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import ru.arixcompany.features.event.EventRepo;
 import ru.arixcompany.features.event.world.EventUpdate;
+import ru.arixcompany.features.module.modules.combat.aura.rotation.impl.FreeLookUtil;
 
 
 public class LocalPlayer extends AbstractClientPlayer {
@@ -675,8 +676,15 @@ public class LocalPlayer extends AbstractClientPlayer {
             this.jumping = this.input.keyPresses.jump();
             this.yBobO = this.yBob;
             this.xBobO = this.xBob;
-            this.xBob = this.xBob + (this.getXRot() - this.xBob) * 0.5F;
-            this.yBob = this.yBob + (this.getYRot() - this.yBob) * 0.5F;
+//            this.xBob = this.xBob + (this.getXRot() - this.xBob) * 0.5F;
+//            this.yBob = this.yBob + (this.getYRot() - this.yBob) * 0.5F;
+            if (FreeLookUtil.active) {
+                this.xBob = (float) ((double) this.xBob + (double) (minecraft.gameRenderer.getMainCamera().xRot() - this.xBob) * 0.5D);
+                this.yBob = (float) ((double) this.yBob + (double) (minecraft.gameRenderer.getMainCamera().yRot() - this.yBob) * 0.5D);
+            } else {
+                this.xBob = (float) ((double) this.xBob + (double) (getXRot() - this.xBob) * 0.5D);
+                this.yBob = (float) ((double) this.yBob + (double) (getYRot() - this.yBob) * 0.5D);
+            }
         } else {
             super.applyInput();
         }

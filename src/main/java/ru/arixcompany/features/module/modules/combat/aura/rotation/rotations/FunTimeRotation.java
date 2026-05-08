@@ -43,8 +43,12 @@ public class FunTimeRotation implements AbstractRotation, IMinecraft {
 
         boolean fastspeed = now - HitAura.lookUpStartTime >= HitAura.lookUpDuration + 60L;
 
-        Vec3 directionVec = UBoxPoints.getBestVector3dOnEntityBox(target.getBoundingBox())
-                .subtract(mc.player.getEyePosition());
+        Vec3 targetPos = getTargetPoint(target);
+        double maxHeight = (AuraUtil.getStrictDistance(target) / attackDistance);
+        Vec3 directionVec = targetPos
+                .add(0, Mth.clamp(mc.player.getEyePosition().y - target.getY(), 0, maxHeight), 0)
+                .subtract(mc.player.getEyePosition())
+                .normalize();
 
         float baseYaw = FreeLookUtil.freeYaw;
 
@@ -53,14 +57,13 @@ public class FunTimeRotation implements AbstractRotation, IMinecraft {
         }
 
         float yawChangeSpeed   = randomLerp(25.0F, 35.0F);
-        float pitchChangeSpeed = randomLerp(0.0F,  3.5F);
         float randomAttackShift = 0.0F;
 
         float waveA = (float) Math.cos(now / 40.0);
         float waveB = (float) Math.sin(now / 70.0);
 
         if (tick > 0.0F) {
-            yawChangeSpeed = randomLerp(40.0F, 55.0F);
+            yawChangeSpeed = randomLerp(55.0F, 65.0F);
             baseYaw = (float) Math.toDegrees(Math.atan2(-directionVec.x, directionVec.z));
             randomAttackShift = randomLerp(2.0F, 4.0F);
             tick--;
@@ -74,9 +77,7 @@ public class FunTimeRotation implements AbstractRotation, IMinecraft {
         float yawJitter   = waveA * randomLerp(9.0F, 11.0F) + randomAttackShift;
         float pitchJitter = waveB * randomLerp(5.0F,  6.0F)  + randomAttackShift;
 
-        float finalPitch = HitAura.isLookingUp
-                ? -randomLerp(85.0F, 90.0F)
-                : basePitch;
+        float finalPitch = basePitch;
 
         float pitchSpeed = HitAura.isLookingUp || fastspeed
                 ? randomLerp(60.0F, 90.0F)
@@ -92,5 +93,9 @@ public class FunTimeRotation implements AbstractRotation, IMinecraft {
                 2,
                 false
         );
+    }
+    private Vec3 getTargetPoint(LivingEntity entity) {
+        double lengthY = entity.getBoundingBox().getYsize();
+        return entity.getPosPlayer().add(0, lengthY * 0.5, 0);
     }
 }

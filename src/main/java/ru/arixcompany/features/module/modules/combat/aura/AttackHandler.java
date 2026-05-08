@@ -13,6 +13,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import ru.arixcompany.Arix;
 import ru.arixcompany.features.module.modules.combat.HitAura;
 import ru.arixcompany.features.module.modules.combat.aura.utils.AuraUtil;
 import ru.arixcompany.features.module.modules.combat.aura.utils.RayTraceUtil;
@@ -136,7 +137,9 @@ public final class AttackHandler implements IMinecraft {
     ) {
         if (target != null && mc.gameMode != null && mc.player != null) {
             mc.gameMode.attack(mc.player, target);
-            if (hand != null) mc.player.swing(hand);
+            if (hand != null)
+                mc.player.swing(hand);
+            Arix.getInstance().getModuleRepo().getModule(HitAura.class).count = (Arix.getInstance().getModuleRepo().getModule(HitAura.class).count + 1) % 2; // Update count for FunTime rotation
 
             cooldownTimer.reset();
         }
@@ -157,6 +160,7 @@ public final class AttackHandler implements IMinecraft {
     public boolean msCooldownReached(long msOffset) {
         return cooldownTimer.finished(getMsCooldown() + msOffset);
     }
+
 
     public boolean anyEntityOnRay(LivingEntity target, float range) {
         if (target == null || mc.player == null) return false;

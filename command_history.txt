@@ -1,13 +1,3 @@
-/ah search алмаз\
-/ah search алмаз
-/ah sell 129999
-/ah
-/ah sell 99999
-/ah search Серебро
-/ah sell 499999
-/ah search блэк
-/ah sell 499999
-/ah search блэк
 /ah sell 469999
 /ah
 /ah sell 999999
@@ -48,3 +38,13 @@
 /clan storage
 /ah search вайт
 /ah sell 99999
+/reg VIBRATOR999XYI
+/ah search сфера Икара
+/reg Arixxx Arixxx
+/kit pvp
+/kit free
+/kit pvp
+/kit dragon
+/fly
+/rtp
+/near
