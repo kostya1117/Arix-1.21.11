@@ -88,9 +88,7 @@ public class AutoSetupEngine implements IMinecraft {
                 pageTimer.reset();
                 refreshTimer.reset();
 
-                MessageSender.print("Меню открыто, начинаю сканирование...");
-
-
+                //MessageSender.print("Меню открыто, начинаю сканирование...");
             } else {
                 if (!retrying) {
                     retrying = true;
@@ -217,7 +215,7 @@ public class AutoSetupEngine implements IMinecraft {
             );
 
             MessageSender.print("§aУстановлена цена "
-                    + discounted
+                    + FuntimeUtil.formatPrice(discounted)
                     + " для "
                     + searchList.get(currentIndex).getId());
         }

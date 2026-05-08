@@ -240,7 +240,7 @@ public class AuctionUtils extends Module {
     }
 
     private void renderPriceLabel(GuiGraphics context, Slot slot, int price, int textColor) {
-        String text = formatPrice(price);
+        String text = FuntimeUtil.formatPrice(price);
 
         var matrices = context.pose();
         matrices.pushMatrix();
@@ -257,22 +257,6 @@ public class AuctionUtils extends Module {
         context.drawString(mc.font, text, 0, 0, textColor, false);
 
         matrices.popMatrix();
-    }
-
-    private String formatPrice(int price) {
-        if (price >= 1_000_000) {
-            double kk = price / 1_000_000.0;
-
-            DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.US);
-            symbols.setDecimalSeparator('.');
-
-            DecimalFormat format = new DecimalFormat("#.###", symbols);
-            return format.format(kk) + "KK";
-        } else if (price >= 1_000) {
-            return (price / 1_000) + "K";
-        }
-
-        return "$" + price;
     }
 
     private boolean isArmorGood(ItemStack stack) {

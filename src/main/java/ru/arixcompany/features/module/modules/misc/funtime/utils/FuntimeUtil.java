@@ -33,6 +33,22 @@ public class FuntimeUtil extends MessageSender implements IMinecraft {
             901, 902, 903, 904
     );
 
+    public String formatPrice(int price) {
+        if (price >= 1_000_000) {
+            double kk = price / 1_000_000.0;
+
+            DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.US);
+            symbols.setDecimalSeparator('.');
+
+            DecimalFormat format = new DecimalFormat("#.###", symbols);
+            return format.format(kk) + "KK";
+        } else if (price >= 1_000) {
+            return (price / 1_000) + "K";
+        }
+
+        return "$" + price;
+    }
+
     public int getRandomAnarchy() {
         if (ANARCHIES.isEmpty()) return 0;
         return ANARCHIES.get((int) (Math.random() * ANARCHIES.size()));

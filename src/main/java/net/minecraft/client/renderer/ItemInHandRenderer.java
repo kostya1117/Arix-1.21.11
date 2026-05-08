@@ -141,7 +141,7 @@ public class ItemInHandRenderer {
     }
 
     public void renderItem(
-        LivingEntity p_270072_, ItemStack p_270793_, ItemDisplayContext p_270837_, PoseStack p_270974_, SubmitNodeCollector p_429847_, int p_270103_
+            LivingEntity p_270072_, ItemStack p_270793_, ItemDisplayContext p_270837_, PoseStack p_270974_, SubmitNodeCollector p_429847_, int p_270103_
     ) {
         boolean flag = p_270837_ == ItemDisplayContext.FIRST_PERSON_LEFT_HAND;
         boolean flag1 = p_270072_.getMainArm() == HumanoidArm.LEFT ? !flag : flag;
@@ -182,7 +182,7 @@ public class ItemInHandRenderer {
     }
 
     private void renderOneHandedMap(
-        PoseStack p_109354_, SubmitNodeCollector p_428648_, int p_109356_, float p_109357_, HumanoidArm p_109358_, float p_109359_, ItemStack p_109360_
+            PoseStack p_109354_, SubmitNodeCollector p_428648_, int p_109356_, float p_109357_, HumanoidArm p_109358_, float p_109359_, ItemStack p_109360_
     ) {
         float f = p_109358_ == HumanoidArm.RIGHT ? 1.0F : -1.0F;
         p_109354_.translate(f * 0.125F, -0.125F, 0.0F);
@@ -239,34 +239,34 @@ public class ItemInHandRenderer {
         MapItemSavedData mapitemsaveddata = MapItem.getSavedData(mapid, this.minecraft.level);
         RenderType rendertype = mapitemsaveddata == null ? MAP_BACKGROUND : MAP_BACKGROUND_CHECKERBOARD;
         p_425019_.submitCustomGeometry(
-            p_109367_,
-            rendertype,
-            (matrix2In, buffer2In) -> {
-                buffer2In.addVertex(matrix2In, -7.0F, 135.0F, 0.0F)
-                    .setColor(-1)
-                    .setUv(0.0F, 1.0F)
-                    .setOverlay(OverlayTexture.NO_OVERLAY)
-                    .setLight(p_109369_)
-                    .setNormal(0.0F, 1.0F, 0.0F);
-                buffer2In.addVertex(matrix2In, 135.0F, 135.0F, 0.0F)
-                    .setColor(-1)
-                    .setUv(1.0F, 1.0F)
-                    .setOverlay(OverlayTexture.NO_OVERLAY)
-                    .setLight(p_109369_)
-                    .setNormal(0.0F, 1.0F, 0.0F);
-                buffer2In.addVertex(matrix2In, 135.0F, -7.0F, 0.0F)
-                    .setColor(-1)
-                    .setUv(1.0F, 0.0F)
-                    .setOverlay(OverlayTexture.NO_OVERLAY)
-                    .setLight(p_109369_)
-                    .setNormal(0.0F, 1.0F, 0.0F);
-                buffer2In.addVertex(matrix2In, -7.0F, -7.0F, 0.0F)
-                    .setColor(-1)
-                    .setUv(0.0F, 0.0F)
-                    .setOverlay(OverlayTexture.NO_OVERLAY)
-                    .setLight(p_109369_)
-                    .setNormal(0.0F, 1.0F, 0.0F);
-            }
+                p_109367_,
+                rendertype,
+                (matrix2In, buffer2In) -> {
+                    buffer2In.addVertex(matrix2In, -7.0F, 135.0F, 0.0F)
+                            .setColor(-1)
+                            .setUv(0.0F, 1.0F)
+                            .setOverlay(OverlayTexture.NO_OVERLAY)
+                            .setLight(p_109369_)
+                            .setNormal(0.0F, 1.0F, 0.0F);
+                    buffer2In.addVertex(matrix2In, 135.0F, 135.0F, 0.0F)
+                            .setColor(-1)
+                            .setUv(1.0F, 1.0F)
+                            .setOverlay(OverlayTexture.NO_OVERLAY)
+                            .setLight(p_109369_)
+                            .setNormal(0.0F, 1.0F, 0.0F);
+                    buffer2In.addVertex(matrix2In, 135.0F, -7.0F, 0.0F)
+                            .setColor(-1)
+                            .setUv(1.0F, 0.0F)
+                            .setOverlay(OverlayTexture.NO_OVERLAY)
+                            .setLight(p_109369_)
+                            .setNormal(0.0F, 1.0F, 0.0F);
+                    buffer2In.addVertex(matrix2In, -7.0F, -7.0F, 0.0F)
+                            .setColor(-1)
+                            .setUv(0.0F, 0.0F)
+                            .setOverlay(OverlayTexture.NO_OVERLAY)
+                            .setLight(p_109369_)
+                            .setNormal(0.0F, 1.0F, 0.0F);
+                }
         );
         if (mapitemsaveddata != null) {
             MapRenderer maprenderer = this.minecraft.getMapRenderer();
@@ -378,7 +378,7 @@ public class ItemInHandRenderer {
             float f4 = interactionhand == InteractionHand.MAIN_HAND ? f : 0.0F;
             float f5 = this.itemModelResolver.swapAnimationScale(this.mainHandItem) * (1.0F - Mth.lerp(p_109315_, this.oMainHandHeight, this.mainHandHeight));
             if (!Reflector.ForgeHooksClient_renderSpecificFirstPersonHand.exists()
-                || !Reflector.callBoolean(
+                    || !Reflector.callBoolean(
                     Reflector.ForgeHooksClient_renderSpecificFirstPersonHand,
                     InteractionHand.MAIN_HAND,
                     p_109316_,
@@ -389,7 +389,7 @@ public class ItemInHandRenderer {
                     f4,
                     f5,
                     this.mainHandItem
-                )) {
+            )) {
                 this.renderArmWithItem(p_109318_, p_109315_, f1, InteractionHand.MAIN_HAND, f4, this.mainHandItem, f5, p_109316_, p_424174_, p_109319_);
             }
         }
@@ -398,7 +398,7 @@ public class ItemInHandRenderer {
             float f6 = interactionhand == InteractionHand.OFF_HAND ? f : 0.0F;
             float f7 = this.itemModelResolver.swapAnimationScale(this.offHandItem) * (1.0F - Mth.lerp(p_109315_, this.oOffHandHeight, this.offHandHeight));
             if (!Reflector.ForgeHooksClient_renderSpecificFirstPersonHand.exists()
-                || !Reflector.callBoolean(
+                    || !Reflector.callBoolean(
                     Reflector.ForgeHooksClient_renderSpecificFirstPersonHand,
                     InteractionHand.OFF_HAND,
                     p_109316_,
@@ -409,7 +409,7 @@ public class ItemInHandRenderer {
                     f6,
                     f7,
                     this.offHandItem
-                )) {
+            )) {
                 this.renderArmWithItem(p_109318_, p_109315_, f1, InteractionHand.OFF_HAND, f6, this.offHandItem, f7, p_109316_, p_424174_, p_109319_);
             }
         }
@@ -430,8 +430,8 @@ public class ItemInHandRenderer {
             return selectionUsingItemWhileHoldingBowLike(p_172915_);
         } else {
             return isChargedCrossbow(itemstack)
-                ? ItemInHandRenderer.HandRenderSelection.RENDER_MAIN_HAND_ONLY
-                : ItemInHandRenderer.HandRenderSelection.RENDER_BOTH_HANDS;
+                    ? ItemInHandRenderer.HandRenderSelection.RENDER_MAIN_HAND_ONLY
+                    : ItemInHandRenderer.HandRenderSelection.RENDER_BOTH_HANDS;
         }
     }
 
@@ -440,8 +440,8 @@ public class ItemInHandRenderer {
         InteractionHand interactionhand = p_172917_.getUsedItemHand();
         if (!itemstack.is(Items.BOW) && !itemstack.is(Items.CROSSBOW)) {
             return interactionhand == InteractionHand.MAIN_HAND && isChargedCrossbow(p_172917_.getOffhandItem())
-                ? ItemInHandRenderer.HandRenderSelection.RENDER_MAIN_HAND_ONLY
-                : ItemInHandRenderer.HandRenderSelection.RENDER_BOTH_HANDS;
+                    ? ItemInHandRenderer.HandRenderSelection.RENDER_MAIN_HAND_ONLY
+                    : ItemInHandRenderer.HandRenderSelection.RENDER_BOTH_HANDS;
         } else {
             return ItemInHandRenderer.HandRenderSelection.onlyForHand(interactionhand);
         }
@@ -452,16 +452,16 @@ public class ItemInHandRenderer {
     }
 
     private void renderArmWithItem(
-        AbstractClientPlayer p_109372_,
-        float p_109373_,
-        float p_109374_,
-        InteractionHand p_109375_,
-        float p_109376_,
-        ItemStack p_109377_,
-        float p_109378_,
-        PoseStack p_109379_,
-        SubmitNodeCollector p_425151_,
-        int p_109381_
+            AbstractClientPlayer p_109372_,
+            float p_109373_,
+            float p_109374_,
+            InteractionHand p_109375_,
+            float p_109376_,
+            ItemStack p_109377_,
+            float p_109378_,
+            PoseStack p_109379_,
+            SubmitNodeCollector p_425151_,
+            int p_109381_
     ) {
         this.currentHand = p_109375_;
         if (!Config.isShaders() || !Shaders.isSkipRenderHand(p_109375_)) {
@@ -515,18 +515,18 @@ public class ItemInHandRenderer {
                     }
 
                     this.renderItem(
-                        p_109372_,
-                        p_109377_,
-                        flag3 ? ItemDisplayContext.FIRST_PERSON_RIGHT_HAND : ItemDisplayContext.FIRST_PERSON_LEFT_HAND,
-                        p_109379_,
-                        p_425151_,
-                        p_109381_
+                            p_109372_,
+                            p_109377_,
+                            flag3 ? ItemDisplayContext.FIRST_PERSON_RIGHT_HAND : ItemDisplayContext.FIRST_PERSON_LEFT_HAND,
+                            p_109379_,
+                            p_425151_,
+                            p_109381_
                     );
                 } else {
                     boolean flag1 = humanoidarm == HumanoidArm.RIGHT;
                     int i = flag1 ? 1 : -1;
                     if (!IClientItemExtensions.of(p_109377_)
-                        .applyForgeHandTransform(p_109379_, this.minecraft.player, humanoidarm, p_109377_, p_109373_, p_109378_, p_109376_)) {
+                            .applyForgeHandTransform(p_109379_, this.minecraft.player, humanoidarm, p_109377_, p_109373_, p_109378_, p_109376_)) {
                         if (p_109372_.isUsingItem() && p_109372_.getUseItemRemainingTicks() > 0 && p_109372_.getUsedItemHand() == p_109375_) {
                             ItemUseAnimation itemuseanimation = p_109377_.getUseAnimation();
                             if (!itemuseanimation.hasCustomArmTransform()) {
@@ -627,12 +627,12 @@ public class ItemInHandRenderer {
                     }
 
                     this.renderItem(
-                        p_109372_,
-                        p_109377_,
-                        flag1 ? ItemDisplayContext.FIRST_PERSON_RIGHT_HAND : ItemDisplayContext.FIRST_PERSON_LEFT_HAND,
-                        p_109379_,
-                        p_425151_,
-                        p_109381_
+                            p_109372_,
+                            p_109377_,
+                            flag1 ? ItemDisplayContext.FIRST_PERSON_RIGHT_HAND : ItemDisplayContext.FIRST_PERSON_LEFT_HAND,
+                            p_109379_,
+                            p_425151_,
+                            p_109381_
                     );
                 }
 
@@ -693,7 +693,7 @@ public class ItemInHandRenderer {
             float f2 = this.offHandItem != itemstack1 ? 0.0F : 1.0F;
             if (Reflector.ForgeHooksClient_shouldCauseReequipAnimation.exists()) {
                 boolean flag = Reflector.callBoolean(
-                    Reflector.ForgeHooksClient_shouldCauseReequipAnimation, this.mainHandItem, itemstack, localplayer.getInventory().getSelectedSlot()
+                        Reflector.ForgeHooksClient_shouldCauseReequipAnimation, this.mainHandItem, itemstack, localplayer.getInventory().getSelectedSlot()
                 );
                 boolean flag1 = Reflector.callBoolean(Reflector.ForgeHooksClient_shouldCauseReequipAnimation, this.offHandItem, itemstack1, -1);
                 if (!flag && !Objects.equals(this.mainHandItem, itemstack)) {
