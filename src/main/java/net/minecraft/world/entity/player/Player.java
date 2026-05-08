@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.OptionalInt;
 import java.util.function.Predicate;
+
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.GlobalPos;
@@ -121,6 +123,8 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.scores.PlayerTeam;
 import net.minecraft.world.scores.Team;
 import org.jspecify.annotations.Nullable;
+import ru.arixcompany.features.event.EventRepo;
+import ru.arixcompany.features.event.player.EventPush;
 
 public abstract class Player extends Avatar implements ContainerUser {
     public static final int MAX_HEALTH = 20;
@@ -1693,6 +1697,12 @@ public abstract class Player extends Avatar implements ContainerUser {
 
     @Override
     public boolean isPushedByFluid() {
+        EventPush eventPush = new EventPush(EventPush.PushEnum.Fluids);
+        EventRepo.call(eventPush);
+
+        if (this instanceof LocalPlayer && eventPush.isCancelled()) {
+            return false;
+        }
         return !this.abilities.flying;
     }
 

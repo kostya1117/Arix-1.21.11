@@ -102,6 +102,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import ru.arixcompany.features.event.EventRepo;
+import ru.arixcompany.features.event.player.EventPush;
 import ru.arixcompany.features.event.world.EventUpdate;
 import ru.arixcompany.features.module.modules.combat.aura.rotation.impl.FreeLookUtil;
 
@@ -427,6 +428,13 @@ public class LocalPlayer extends AbstractClientPlayer {
     }
 
     private void moveTowardsClosestSpace(double p_108705_, double p_108706_) {
+        EventPush eventPush = new EventPush(EventPush.PushEnum.Blocks);
+        EventRepo.call(eventPush);
+
+        if (eventPush.isCancelled()) {
+            return;
+        }
+
         BlockPos blockpos = BlockPos.containing(p_108705_, this.getY(), p_108706_);
         if (this.suffocatesAt(blockpos)) {
             double d0 = p_108705_ - blockpos.getX();

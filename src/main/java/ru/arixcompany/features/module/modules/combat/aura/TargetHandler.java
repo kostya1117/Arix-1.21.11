@@ -11,6 +11,7 @@ import net.minecraft.world.entity.monster.Slime;
 import net.minecraft.world.entity.npc.villager.Villager;
 import net.minecraft.world.entity.player.Player;
 import ru.arixcompany.features.module.modules.combat.HitAura;
+import ru.arixcompany.features.module.modules.combat.aura.utils.RayTraceUtil;
 import ru.arixcompany.features.repos.FriendRepo;
 import ru.arixcompany.utils.IMinecraft;
 
@@ -29,8 +30,6 @@ public class TargetHandler implements IMinecraft {
         }
 
         LivingEntity bestTarget = null;
-        // ИСПРАВЛЕНО: приоритет по дистанции, а не по углу.
-        // Угол используется только как вторичный критерий через взвешенный score.
         double bestScore = Double.MAX_VALUE;
 
         float maxDist = auraDist();
@@ -42,8 +41,6 @@ public class TargetHandler implements IMinecraft {
             double dist = mc.player.distanceTo(living);
             if (dist > maxDist) continue;
 
-            // Score = дистанция (основной) + небольшой вес угла (вторичный)
-            // Это даёт ближайшую цель с небольшим предпочтением к той, на которую смотрим
             double score = dist;
 
             if (score < bestScore) {
@@ -60,24 +57,19 @@ public class TargetHandler implements IMinecraft {
     }
 
     private boolean isValidTarget(LivingEntity entity) {
-        // Базовые проверки
         if (entity instanceof LocalPlayer) return false;
         if (!entity.isAlive()) return false;
         if (entity.isInvulnerable()) return false;
         if (entity instanceof ArmorStand) return false;
 
-        // Дистанция
         if (mc.player.distanceTo(entity) > auraDist()) return false;
 
-        // Линия видимости
         if (!HitAura.misc.isSelected("Бить через блоки") && !mc.player.hasLineOfSight(entity))
             return false;
 
-        // Игроки
         if (entity instanceof Player player) {
             if (!HitAura.targets.isSelected("Игроки")) return false;
             if (player.isCreative()) return false;
-            // ИСПРАВЛЕНО: убрана дублирующая проверка друзей (была дважды)
             if (FriendRepo.isFriend(player.getName().getString())) return false;
 
             boolean hasArmor = false;
@@ -95,7 +87,6 @@ public class TargetHandler implements IMinecraft {
             return true;
         }
 
-        // Мобы
         if (entity instanceof Monster || entity instanceof Slime
                 || entity instanceof Villager || entity instanceof Animal) {
             return HitAura.targets.isSelected("Мобы");

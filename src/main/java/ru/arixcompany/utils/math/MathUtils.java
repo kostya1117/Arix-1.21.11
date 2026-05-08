@@ -1,6 +1,8 @@
 package ru.arixcompany.utils.math;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.util.Mth;
+import org.joml.Matrix3x2fStack;
 import ru.arixcompany.utils.IMinecraft;
 
 import java.util.concurrent.ThreadLocalRandom;
@@ -24,5 +26,19 @@ public class MathUtils implements IMinecraft {
         if (max < min) {
             throw new IllegalArgumentException("max не может быть меньше min.");
         }
+    }
+
+    public static void scale(Matrix3x2fStack stack,
+                             float x,
+                             float y,
+                             float scale,
+                             Runnable data) {
+
+        stack.pushMatrix();
+        stack.translate(x, y);
+        stack.scale(scale, scale);
+        stack.translate(-x, -y);
+        data.run();
+        stack.popMatrix();
     }
 }

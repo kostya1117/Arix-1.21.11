@@ -6,6 +6,7 @@ import lombok.Setter;
 import lombok.experimental.NonFinal;
 import net.minecraft.client.Minecraft;
 import org.lwjgl.glfw.GLFW;
+import ru.arixcompany.features.draggable.DraggableRepo;
 import ru.arixcompany.features.module.modules.combat.aura.rotation.ComponentRepo;
 import ru.arixcompany.features.repos.AltRepo;
 import ru.arixcompany.ui.alt.SessionUtil;
@@ -54,6 +55,8 @@ public class Arix implements IMinecraft {
     CommandRepo commandRepo;
     @NonFinal
     public ComponentRepo componentRepo;
+    @NonFinal
+    DraggableRepo draggableRepo;
 
     public Arix(){
         instance = this;
@@ -71,6 +74,9 @@ public class Arix implements IMinecraft {
 
         componentRepo = new ComponentRepo();
         componentRepo.init();
+
+        draggableRepo = new DraggableRepo();
+        draggableRepo.init();
 
         initFileManager();
         tryAutoLogin();

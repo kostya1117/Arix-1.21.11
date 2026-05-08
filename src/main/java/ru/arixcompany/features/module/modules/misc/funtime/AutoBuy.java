@@ -125,6 +125,9 @@ public class AutoBuy extends Module {
 
         if (autoBuyEnabled && !auctionController.isWaitingAfterAnarchy()) {
             autoBuyEngine.tick((int) updateDelay.getValue());
+            if (autoBuyEnabled && autoBuyEngine.consumeReopenRequest()) {
+                reopenAuctionLater(250);
+            }
         }
 
         autoSetupEngine.tick(
@@ -140,9 +143,9 @@ public class AutoBuy extends Module {
         if (!(e.getPacket() instanceof ClientboundSystemChatPacket packet))
             return;
 
-        String message = packet.content().getString();
+        String message = packet.content().getString().toLowerCase();
 
-        if (message.contains("Вы успешно купили") || message.contains("куплен")) {
+        if (message.contains("вы успешно купили")) {
 
             autoBuyEngine.confirmPurchase();
             balanceController.request();
@@ -165,10 +168,19 @@ public class AutoBuy extends Module {
 
                 } catch (Exception ignored) {}
             }).start();
+
+            return;
         }
 
-        if (message.contains("не хватает")) {
-            autoBuyEngine.resetState();
+        if (message.contains("не хватает")
+                || message.contains("уже купили")
+                || message.contains("уже куплен")
+                || message.contains("не удалось купить")
+                || message.contains("лот недоступен")
+                || message.contains("этот товар уже")) {
+
+            autoBuyEngine.failAndReopen();
+            return;
         }
 
         balanceController.handlePacket(packet);
@@ -180,6 +192,24 @@ public class AutoBuy extends Module {
         if (target != null) {
             target.setBuyPrice(price);
         }
+    }
+
+    private void reopenAuctionLater(long delayMs) {
+        new Thread(() -> {
+            try {
+                Thread.sleep(delayMs);
+
+                mc.execute(() -> {
+                    if (mc.player != null && autoBuyEnabled && !auctionController.isWaitingAfterAnarchy()) {
+                        if (mc.screen != null) {
+                            mc.screen.onClose();
+                        }
+                        mc.player.connection.sendCommand("ah");
+                    }
+                });
+
+            } catch (Exception ignored) {}
+        }).start();
     }
 }
 

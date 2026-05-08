@@ -38,6 +38,10 @@ public class AutoBuyEngine implements IMinecraft {
     @Setter
     private int clickDelay = 200;
 
+    private final Timer confirmWatch = new Timer();
+    private boolean reopenRequested = false;
+
+
     public AutoBuyEngine(Map<String, ItemTarget> targets,
                          Timer clickCooldown,
                          Timer scanWatch,
@@ -51,8 +55,15 @@ public class AutoBuyEngine implements IMinecraft {
 
     public void tick(int updateDelay) {
 
+        if (waitingForConfirm) {
+            if (confirmWatch.finished(1500)) {
+                failAndReopen();
+            }
+            return;
+        }
+
         if (currentAuctionScreen == null) return;
-        if (isBuying || waitingForConfirm) return;
+        if (isBuying) return;
 
         if (scanWatch.every(50))
             scanSlots();
@@ -144,7 +155,9 @@ public class AutoBuyEngine implements IMinecraft {
 
         isBuying = true;
         waitingForConfirm = true;
+        reopenRequested = false;
 
+        confirmWatch.reset();
         clickCooldown.reset();
 
         InvUtil.clickSlot(slot.index, 0, ClickType.QUICK_MOVE, false);
@@ -197,13 +210,28 @@ public class AutoBuyEngine implements IMinecraft {
                 : Collections.emptyList();
     }
 
+    public void failAndReopen() {
+        isBuying = false;
+        waitingForConfirm = false;
+        reopenRequested = true;
+    }
+
+    public boolean consumeReopenRequest() {
+        boolean value = reopenRequested;
+        reopenRequested = false;
+        return value;
+    }
+
     public void resetState() {
         isBuying = false;
         waitingForConfirm = false;
+        reopenRequested = false;
     }
 
     public void confirmPurchase() {
         isBuying = false;
         waitingForConfirm = false;
+        reopenRequested = false;
     }
+
 }

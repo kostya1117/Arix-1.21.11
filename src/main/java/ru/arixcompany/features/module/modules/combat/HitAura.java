@@ -63,8 +63,7 @@ public class HitAura extends Module {
                             "Бить только оружием",
                             "Не бить если кушаеш",
                             "Не атакавать в контейнере",
-                            "Райкаст",
-                            "Продвинутый райкаст"
+                            "Райкаст"
                     );
 
     public static final ListSetting extraSettings =
@@ -141,7 +140,6 @@ public class HitAura extends Module {
    public static float[] getRanges() {
       return new float[]{attackRange.getValue(), preRange.getValue()};
    }
-
 
     private final FunTimeRotation funTimeRotation = new FunTimeRotation();
     private final FuntimeRot funTimeRot = new FuntimeRot();

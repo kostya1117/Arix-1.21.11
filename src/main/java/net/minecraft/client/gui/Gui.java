@@ -6,6 +6,7 @@ import com.mojang.blaze3d.opengl.GlStateManager;
 import com.mojang.blaze3d.platform.Window;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 import net.minecraft.ChatFormatting;
@@ -25,6 +26,7 @@ import net.minecraft.client.gui.contextualbar.ContextualBarRenderer;
 import net.minecraft.client.gui.contextualbar.ExperienceBarRenderer;
 import net.minecraft.client.gui.contextualbar.JumpableVehicleBarRenderer;
 import net.minecraft.client.gui.contextualbar.LocatorBarRenderer;
+import net.minecraft.client.gui.screens.ChatScreen;
 import net.minecraft.client.gui.screens.LevelLoadingScreen;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.LightTexture;
@@ -85,9 +87,12 @@ import net.optifine.reflect.Reflector;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jspecify.annotations.Nullable;
 import ru.arixcompany.Arix;
+import ru.arixcompany.features.draggable.DraggableComponent;
+import ru.arixcompany.features.draggable.DraggableRepo;
 import ru.arixcompany.features.event.EventRepo;
 import ru.arixcompany.features.event.render.EventScreen;
 import ru.arixcompany.features.module.modules.render.NoRender;
+import ru.arixcompany.utils.math.MathUtils;
 
 public class Gui {
     private static final Identifier CROSSHAIR_SPRITE = Identifier.withDefaultNamespace("hud/crosshair");
@@ -210,6 +215,8 @@ public class Gui {
         this.titleFadeOutTime = 20;
     }
 
+// Только метод render и renderDraggableOverlay — добавить в net/minecraft/client/gui/Gui.java
+
     public void render(GuiGraphics p_282884_, DeltaTracker p_342095_) {
         if (!(this.minecraft.screen instanceof LevelLoadingScreen)) {
             if (Reflector.ForgeLayeredDraw_beginRender.exists()) {
@@ -227,6 +234,7 @@ public class Gui {
             }
 
             this.renderSleepOverlay(p_282884_, p_342095_);
+
             if (!this.minecraft.options.hideGui) {
                 this.renderDemoOverlay(p_282884_, p_342095_);
                 this.renderScoreboardSidebar(p_282884_, p_342095_);
@@ -234,12 +242,31 @@ public class Gui {
                 this.renderTitle(p_282884_, p_342095_);
                 this.renderChat(p_282884_, p_342095_);
                 this.renderTabList(p_282884_, p_342095_);
-                this.renderSubtitleOverlay(p_282884_, this.minecraft.screen == null || this.minecraft.screen.isInGameUi());
+                this.renderSubtitleOverlay(p_282884_,
+                        this.minecraft.screen == null || this.minecraft.screen.isInGameUi());
             } else if (this.minecraft.screen != null && this.minecraft.screen.isInGameUi()) {
                 this.renderSubtitleOverlay(p_282884_, true);
             }
         }
+
         EventRepo.call(new EventScreen(p_282884_));
+
+        if (!(this.minecraft.screen instanceof ChatScreen)) {
+            renderDraggableOverlay(p_282884_, p_342095_);
+        }
+    }
+
+    private void renderDraggableOverlay(GuiGraphics graphics, DeltaTracker delta) {
+        if (Arix.getInstance() == null) return;
+        DraggableRepo repo = Arix.getInstance().getDraggableRepo();
+        if (repo == null) return;
+
+        Window window = this.minecraft.getWindow();
+        int mouseX = (int)(this.minecraft.mouseHandler.xpos() * window.getGuiScaledWidth() / window.getWidth());
+        int mouseY = (int)(this.minecraft.mouseHandler.ypos() * window.getGuiScaledHeight() / window.getHeight());
+
+        repo.updateAll();
+        repo.renderAll(graphics, mouseX, mouseY, delta.getGameTimeDeltaPartialTick(false));
     }
 
     private void renderBossOverlay(GuiGraphics p_407400_, DeltaTracker p_407876_) {

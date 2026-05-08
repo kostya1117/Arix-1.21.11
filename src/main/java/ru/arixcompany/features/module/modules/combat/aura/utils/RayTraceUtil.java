@@ -3,6 +3,7 @@ package ru.arixcompany.features.module.modules.combat.aura.utils;
 import lombok.experimental.UtilityClass;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.phys.AABB;
@@ -18,6 +19,34 @@ import java.util.Optional;
 
 @UtilityClass
 public final class RayTraceUtil implements IMinecraft {
+
+    public static Entity getRtxTarget(float yaw, float pitch, float distance, boolean ignoreWalls) {
+        Vec3 start = mc.player.getEyePosition(1F);
+        Vec3 rotation = getRotationVector(pitch, yaw);
+        Vec3 end = start.add(rotation.scale(distance));
+
+        HitResult blockHit = ignoreWalls ? null : rayTrace(distance, yaw, pitch);
+        double maxDistSq = distance * distance;
+
+        if (blockHit != null && blockHit.getType() != HitResult.Type.MISS) {
+            maxDistSq = start.distanceToSqr(blockHit.getLocation());
+        }
+
+
+        AABB box = mc.player.getBoundingBox().expandTowards(rotation.scale(distance)).inflate(1.0, 1.0, 1.0);
+
+        EntityHitResult hit = ProjectileUtil.getEntityHitResult(
+                mc.player, start, end, box,
+                e -> !e.isSpectator() && e.isPickable(),
+                maxDistSq
+        );
+
+        if (hit != null && hit.getEntity() instanceof LivingEntity) {
+            return hit.getEntity();
+        }
+
+        return null;
+    }
 
     public boolean checkRtx(float yaw, float pitch, float distance, float wallDistance) {
 //        if (rt == Aura.RayTrace.OFF)
@@ -99,6 +128,7 @@ public final class RayTraceUtil implements IMinecraft {
     public @NotNull Vec3 getRotationVector(float yaw, float pitch) {
         return new Vec3(Mth.sin(-pitch * 0.017453292F) * Mth.cos(yaw * 0.017453292F), -Mth.sin(yaw * 0.017453292F), Mth.cos(-pitch * 0.017453292F) * Mth.cos(yaw * 0.017453292F));
     }
+
     public static HitResult traceBlock(
             Vec3 start,
             Vec3 end,
