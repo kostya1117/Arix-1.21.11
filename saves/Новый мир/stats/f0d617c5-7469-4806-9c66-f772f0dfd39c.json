@@ -1,0 +1,21 @@
+{
+  "stats": {
+    "minecraft:custom": {
+      "minecraft:sprint_one_cm": 6941,
+      "minecraft:time_since_rest": 3508,
+      "minecraft:walk_one_cm": 5698,
+      "minecraft:total_world_time": 5296,
+      "minecraft:leave_game": 1,
+      "minecraft:fly_one_cm": 14654,
+      "minecraft:sneak_time": 15,
+      "minecraft:play_time": 3508,
+      "minecraft:jump": 71,
+      "minecraft:time_since_death": 3508
+    },
+    "minecraft:used": {
+      "minecraft:enchanted_golden_apple": 1,
+      "minecraft:bedrock": 1
+    }
+  },
+  "DataVersion": 4671
+}

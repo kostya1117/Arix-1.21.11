@@ -7,7 +7,6 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.util.ARGB;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -21,7 +20,7 @@ import ru.arixcompany.features.event.EventHandler;
 import ru.arixcompany.features.event.render.EventHandledScreen;
 import ru.arixcompany.features.module.Category;
 import ru.arixcompany.features.module.Module;
-import ru.arixcompany.features.module.modules.misc.funtime.utils.FuntimeComponentParser;
+import ru.arixcompany.features.module.modules.misc.funtime.utils.FuntimeUtil;
 import ru.arixcompany.features.module.setting.implement.BooleanSetting;
 import ru.arixcompany.features.module.setting.implement.ListSetting;
 import ru.arixcompany.features.module.setting.implement.SelectSetting;
@@ -97,7 +96,7 @@ public class AuctionUtils extends Module {
         if (cheapestTotal != null) {
             highlightSlot(context, cheapestTotal, getBlinkingColor(new Color(0, 220, 0).getRGB()));
             renderPriceLabel(context, cheapestTotal,
-                    FuntimeComponentParser.getPrice(cheapestTotal.getItem()),
+                    FuntimeUtil.getPrice(cheapestTotal.getItem()),
                     0xFF55FF55);
         }
 
@@ -122,7 +121,7 @@ public class AuctionUtils extends Module {
             }
 
             goodSlots.sort(Comparator.comparingInt(
-                    s -> FuntimeComponentParser.getPrice(s.getItem())));
+                    s -> FuntimeUtil.getPrice(s.getItem())));
 
             int topColor = getBlinkingColor(new Color(255, 215, 0).getRGB());
             int goodColor = getBlinkingColor(new Color(100, 180, 255).getRGB());
@@ -136,7 +135,7 @@ public class AuctionUtils extends Module {
                     highlightSlot(context, slot, topColor);
                     renderRank(context, slot, i + 1);
                     renderPriceLabel(context, slot,
-                            FuntimeComponentParser.getPrice(slot.getItem()),
+                            FuntimeUtil.getPrice(slot.getItem()),
                             0xFFFFD700);
                 } else {
                     highlightSlot(context, slot, goodColor);
@@ -159,7 +158,7 @@ public class AuctionUtils extends Module {
             }
 
             potionSlots.sort(Comparator.comparingInt(
-                    s -> FuntimeComponentParser.getPrice(s.getItem())));
+                    s -> FuntimeUtil.getPrice(s.getItem())));
 
             int maxShow = Math.min(potionSlots.size(), 3);
 
@@ -189,7 +188,7 @@ public class AuctionUtils extends Module {
                 highlightSlot(context, slot, blinkColor);
                 renderRank(context, slot, i + 1);
                 renderPriceLabel(context, slot,
-                        FuntimeComponentParser.getPrice(slot.getItem()),
+                        FuntimeUtil.getPrice(slot.getItem()),
                         textColor);
             }
         }
@@ -197,8 +196,8 @@ public class AuctionUtils extends Module {
         context.pose().popMatrix();
 
         for (Slot slot : slots) {
-            if (FuntimeComponentParser.hasPrice(slot.getItem())) {
-                FuntimeComponentParser.addPriceToTooltip(slot.getItem());
+            if (FuntimeUtil.hasPrice(slot.getItem())) {
+                FuntimeUtil.addPriceToTooltip(slot.getItem());
             }
         }
     }
@@ -241,7 +240,7 @@ public class AuctionUtils extends Module {
     }
 
     private void renderPriceLabel(GuiGraphics context, Slot slot, int price, int textColor) {
-        String text = formatPrice(price);
+        String text = FuntimeUtil.formatPrice(price);
 
         var matrices = context.pose();
         matrices.pushMatrix();
@@ -258,22 +257,6 @@ public class AuctionUtils extends Module {
         context.drawString(mc.font, text, 0, 0, textColor, false);
 
         matrices.popMatrix();
-    }
-
-    private String formatPrice(int price) {
-        if (price >= 1_000_000) {
-            double kk = price / 1_000_000.0;
-
-            DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.US);
-            symbols.setDecimalSeparator('.');
-
-            DecimalFormat format = new DecimalFormat("#.###", symbols);
-            return format.format(kk) + "KK";
-        } else if (price >= 1_000) {
-            return (price / 1_000) + "K";
-        }
-
-        return "$" + price;
     }
 
     private boolean isArmorGood(ItemStack stack) {
@@ -420,8 +403,8 @@ public class AuctionUtils extends Module {
             if (!passesDurabilityCheck(stack)) continue;
 
             int price = perItem
-                    ? FuntimeComponentParser.getPricePerItem(stack)
-                    : FuntimeComponentParser.getPrice(stack);
+                    ? FuntimeUtil.getPricePerItem(stack)
+                    : FuntimeUtil.getPrice(stack);
             if (price < lowest) {
                 lowest = price;
                 cheapest = slot;
@@ -441,7 +424,7 @@ public class AuctionUtils extends Module {
     }
 
     private boolean hasValidPrice(Slot slot) {
-        int price = FuntimeComponentParser.getPrice(slot.getItem());
+        int price = FuntimeUtil.getPrice(slot.getItem());
         return price > 10 && price != 3;
     }
 

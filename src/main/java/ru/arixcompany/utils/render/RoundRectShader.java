@@ -22,7 +22,7 @@ public final class RoundRectShader {
     private static boolean initialized = false;
 
     private static final RenderPipeline ROUND_RECT_PIPELINE = RenderPipelines.register(
-            RenderPipeline.builder(RenderPipelines.MATRICES_PROJECTION_SNIPPET)
+            RenderPipeline.builder(RenderPipelines.GUI_TEXTURED_SNIPPET)
                     .withLocation("pipeline/round_rect")
                     .withVertexShader("core/round_rect")
                     .withFragmentShader("core/round_rect")
@@ -35,7 +35,7 @@ public final class RoundRectShader {
     );
 
     private static final RenderPipeline ROUND_RECT_OUTLINE_PIPELINE = RenderPipelines.register(
-            RenderPipeline.builder(RenderPipelines.MATRICES_PROJECTION_SNIPPET)
+            RenderPipeline.builder(RenderPipelines.GUI_TEXTURED_SNIPPET)
                     .withLocation("pipeline/round_rect_outline")
                     .withVertexShader("core/round_rect_outline")
                     .withFragmentShader("core/round_rect_outline")
@@ -48,7 +48,7 @@ public final class RoundRectShader {
     );
 
     private static final RenderPipeline ROUND_RECT_CORNERS_PIPELINE = RenderPipelines.register(
-            RenderPipeline.builder(RenderPipelines.MATRICES_PROJECTION_SNIPPET)
+            RenderPipeline.builder(RenderPipelines.GUI_TEXTURED_SNIPPET)
                     .withLocation("pipeline/round_rect_corners")
                     .withVertexShader("core/round_rect_corners")
                     .withFragmentShader("core/round_rect_corners")

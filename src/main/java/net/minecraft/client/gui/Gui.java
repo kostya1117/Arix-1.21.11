@@ -84,8 +84,10 @@ import net.optifine.TextureAnimations;
 import net.optifine.reflect.Reflector;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jspecify.annotations.Nullable;
+import ru.arixcompany.Arix;
 import ru.arixcompany.features.event.EventRepo;
 import ru.arixcompany.features.event.render.EventScreen;
+import ru.arixcompany.features.module.modules.render.NoRender;
 
 public class Gui {
     private static final Identifier CROSSHAIR_SPRITE = Identifier.withDefaultNamespace("hud/crosshair");
@@ -1047,6 +1049,9 @@ public class Gui {
     }
 
     private void renderSpyglassOverlay(GuiGraphics p_282069_, float p_283442_) {
+        NoRender mod = (NoRender) Arix.getInstance().getModuleRepo().getModule(NoRender.class);
+        if (mod != null && mod.noBadEffects()) return;
+
         float f = Math.min(p_282069_.guiWidth(), p_282069_.guiHeight());
         float f1 = Math.min(p_282069_.guiWidth() / f, p_282069_.guiHeight() / f) * p_283442_;
         int i = Mth.floor(f * f1);
@@ -1070,6 +1075,9 @@ public class Gui {
     }
 
     private void renderVignette(GuiGraphics p_283063_,  Entity p_283439_) {
+        NoRender mod = (NoRender) Arix.getInstance().getModuleRepo().getModule(NoRender.class);
+        if (mod != null && mod.noBadEffects()) return;
+
         if (!Config.isVignetteEnabled()) {
             GlStateManager._enableDepthTest();
             GlStateManager._blendFuncSeparate(770, 771, 1, 0);
@@ -1112,6 +1120,9 @@ public class Gui {
     }
 
     private void renderPortalOverlay(GuiGraphics p_283375_, float p_283296_) {
+        NoRender mod = (NoRender) Arix.getInstance().getModuleRepo().getModule(NoRender.class);
+        if (mod != null && mod.noBadEffects()) return;
+
         if (p_283296_ < 1.0F) {
             p_283296_ *= p_283296_;
             p_283296_ *= p_283296_;
@@ -1124,6 +1135,9 @@ public class Gui {
     }
 
     private void renderConfusionOverlay(GuiGraphics p_365616_, float p_366912_) {
+        NoRender mod = (NoRender) Arix.getInstance().getModuleRepo().getModule(NoRender.class);
+        if (mod != null && mod.noBadEffects()) return;
+
         int i = p_365616_.guiWidth();
         int j = p_365616_.guiHeight();
         p_365616_.pose().pushMatrix();

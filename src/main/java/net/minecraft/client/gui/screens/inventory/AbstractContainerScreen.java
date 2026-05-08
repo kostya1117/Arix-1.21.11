@@ -24,8 +24,6 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.joml.Vector2i;
 import org.jspecify.annotations.Nullable;
 import ru.arixcompany.features.event.EventRepo;
@@ -40,8 +38,8 @@ public abstract class AbstractContainerScreen<T extends AbstractContainerMenu> e
     protected static final int BACKGROUND_TEXTURE_HEIGHT = 256;
     private static final float SNAPBACK_SPEED = 100.0F;
     private static final int QUICKDROP_DELAY = 500;
-    protected int imageWidth = 176;
-    protected int imageHeight = 166;
+    public int imageWidth = 176;
+    public int imageHeight = 166;
     protected int titleLabelX;
     protected int titleLabelY;
     protected int inventoryLabelX;
@@ -54,8 +52,8 @@ public abstract class AbstractContainerScreen<T extends AbstractContainerMenu> e
     private @Nullable Slot quickdropSlot;
     private @Nullable Slot lastClickSlot;
     private AbstractContainerScreen.@Nullable SnapbackData snapbackData;
-    protected int leftPos;
-    protected int topPos;
+    public int leftPos;
+    public int topPos;
     private boolean isSplittingStack;
     private ItemStack draggingItem = ItemStack.EMPTY;
     private long quickdropTime;
@@ -104,7 +102,9 @@ public abstract class AbstractContainerScreen<T extends AbstractContainerMenu> e
                         p_283479_,
                         this.imageWidth,
                         this.imageHeight,
-                        this.hoveredSlot
+                        this.hoveredSlot,
+                        p_283661_,  // mouseX
+                        p_281248_   // mouseY
                 )
         );
     }

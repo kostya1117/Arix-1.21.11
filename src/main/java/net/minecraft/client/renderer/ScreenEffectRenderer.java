@@ -31,6 +31,8 @@ import net.optifine.shaders.Shaders;
 import org.apache.commons.lang3.tuple.Pair;
 import org.joml.Matrix4f;
 import org.jspecify.annotations.Nullable;
+import ru.arixcompany.Arix;
+import ru.arixcompany.features.module.modules.render.NoRender;
 
 public class ScreenEffectRenderer {
     private static final Identifier UNDERWATER_LOCATION = Identifier.withDefaultNamespace("textures/misc/underwater.png");
@@ -162,6 +164,9 @@ public class ScreenEffectRenderer {
     }
 
     private static void renderTex(TextureAtlasSprite p_173297_, PoseStack p_173298_, MultiBufferSource p_376984_) {
+        NoRender mod = (NoRender) Arix.getInstance().getModuleRepo().getModule(NoRender.class);
+        if (mod != null && mod.noOverlays()) return;
+
         if (SmartAnimations.isActive()) {
             SmartAnimations.spriteRendered(p_173297_);
         }
@@ -186,6 +191,9 @@ public class ScreenEffectRenderer {
     }
 
     private static void renderWater(Minecraft p_110726_, PoseStack p_110727_, MultiBufferSource p_376402_) {
+        NoRender mod = (NoRender) Arix.getInstance().getModuleRepo().getModule(NoRender.class);
+        if (mod != null && mod.noOverlays()) return;
+
         renderFluid(p_110726_, p_110727_, p_376402_, UNDERWATER_LOCATION);
     }
 
@@ -216,6 +224,9 @@ public class ScreenEffectRenderer {
     }
 
     private static void renderFire(PoseStack p_110730_, MultiBufferSource p_376973_, TextureAtlasSprite p_422518_) {
+        NoRender mod = (NoRender) Arix.getInstance().getModuleRepo().getModule(NoRender.class);
+        if (mod != null && mod.noFireOverlay()) return;
+
         if (SmartAnimations.isActive()) {
             SmartAnimations.spriteRendered(p_422518_);
         }

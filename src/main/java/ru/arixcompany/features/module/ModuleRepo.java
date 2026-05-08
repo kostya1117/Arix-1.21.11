@@ -12,12 +12,9 @@ import ru.arixcompany.features.module.modules.misc.CameraTweaks;
 import ru.arixcompany.features.module.modules.misc.ClientSounds;
 import ru.arixcompany.features.module.modules.misc.funtime.AuctionUtils;
 import ru.arixcompany.features.module.modules.misc.funtime.AutoBuy;
-import ru.arixcompany.features.module.modules.misc.funtime.AutoSetup;
 import ru.arixcompany.features.module.modules.movement.AutoSprint;
 import ru.arixcompany.features.module.modules.player.TestModule;
-import ru.arixcompany.features.module.modules.render.HandView;
-import ru.arixcompany.features.module.modules.render.Nametags;
-import ru.arixcompany.features.module.modules.render.TargetESP;
+import ru.arixcompany.features.module.modules.render.*;
 import ru.arixcompany.utils.IMinecraft;
 
 import java.util.ArrayList;
@@ -37,8 +34,9 @@ public class ModuleRepo implements IMinecraft {
        modules.add(new ClientSounds());
        modules.add(new HitAura());
        modules.add(new AutoBuy());
-       modules.add(new AutoSetup());
        modules.add(new AuctionUtils());
+       modules.add(new FullBright());
+       modules.add(new NoRender());
    }
 
    public void init() {

@@ -6,7 +6,7 @@ ofSmoothFps:false
 ofSmoothWorld:true
 ofAoLevel:1.0
 ofCloudsHeight:0.0
-ofTrees:2
+ofTrees:1
 ofAnimatedWater:0
 ofAnimatedLava:0
 ofAnimatedFire:true

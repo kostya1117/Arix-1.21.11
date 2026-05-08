@@ -125,6 +125,7 @@ public final class Gui extends Screen implements IMinecraft {
 
     @Override
     public void render(GuiGraphics ctx, int mouseX, int mouseY, float delta) {
+        super.render(ctx,mouseX,mouseY,delta);
         if (mc.getWindow() == null) return;
         float mainAlpha = (float) alphaPC.getOutput();
 
@@ -141,11 +142,6 @@ public final class Gui extends Screen implements IMinecraft {
 
         panelComponent.render(ctx, mouseX, mouseY, mainAlpha);
         moduleComponent.renderOverlay(mainAlpha);
-    }
-
-    @Override
-    public void renderBackground(GuiGraphics ctx, int mouseX, int mouseY, float delta) {
-
     }
 
     @Override

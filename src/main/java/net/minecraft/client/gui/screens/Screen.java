@@ -48,6 +48,8 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
+import ru.arixcompany.Arix;
+import ru.arixcompany.features.module.modules.render.NoRender;
 
 
 public abstract class Screen extends AbstractContainerEventHandler implements Renderable {
@@ -199,7 +201,7 @@ public abstract class Screen extends AbstractContainerEventHandler implements Re
         this.minecraft.setScreen(null);
     }
 
-    protected <T extends GuiEventListener & Renderable & NarratableEntry> T addRenderableWidget(T p_169406_) {
+    public <T extends GuiEventListener & Renderable & NarratableEntry> T addRenderableWidget(T p_169406_) {
         this.renderables.add(p_169406_);
         return this.addWidget(p_169406_);
     }
@@ -215,7 +217,7 @@ public abstract class Screen extends AbstractContainerEventHandler implements Re
         return p_96625_;
     }
 
-    protected void removeWidget(GuiEventListener p_169412_) {
+    public void removeWidget(GuiEventListener p_169412_) {
         if (p_169412_ instanceof Renderable) {
             this.renderables.remove((Renderable)p_169412_);
         }
@@ -416,6 +418,9 @@ public abstract class Screen extends AbstractContainerEventHandler implements Re
     }
 
     public void renderTransparentBackground(GuiGraphics p_300203_) {
+        NoRender mod = (NoRender) Arix.getInstance().getModuleRepo().getModule(NoRender.class);
+        if (mod != null && mod.noGuiBackground()) return;
+
         p_300203_.fillGradient(0, 0, this.width, this.height, -1072689136, -804253680);
     }
 
