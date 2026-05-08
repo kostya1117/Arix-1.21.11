@@ -23,11 +23,8 @@ import net.optifine.shaders.Shaders;
 import org.apache.commons.lang3.StringUtils;
 import ru.arixcompany.Arix;
 import ru.arixcompany.features.draggable.DraggableRepo;
-import ru.arixcompany.ui.others.ChatTextAnimator;
 
 public class ChatScreen extends Screen {
-
-    public static final double MOUSE_SCROLL_SPEED = 7.0;
     private static final Component USAGE_TEXT = Component.translatable("chat_screen.usage");
 
     private String historyBuffer = "";
@@ -37,7 +34,6 @@ public class ChatScreen extends Screen {
     protected boolean isDraft;
     protected ExitReason exitReason = ExitReason.INTERRUPTED;
     CommandSuggestions commandSuggestions;
-    private final ChatTextAnimator textAnimator = new ChatTextAnimator();
 
     public ChatScreen(String initial, boolean isDraft) {
         super(Component.translatable("chat_screen.title"));
@@ -106,7 +102,6 @@ public class ChatScreen extends Screen {
             this.minecraft.gui.getChat().saveAsDraft(this.initial);
         }
 
-        textAnimator.clear();
         Arix.getInstance().getDraggableRepo().releaseAll();
     }
 
@@ -122,15 +117,6 @@ public class ChatScreen extends Screen {
                 this.insertionClickMode()
         );
 
-//        // Стандартный рендер виджетов (но EditBox скрываем)
-//        this.input.setTextColor(0x00000000); // Прозрачный текст
-//        super.render(g, mouseX, mouseY, delta);
-//
-//        // Анимированный текст
-//        textAnimator.sync(this.input.getValue());
-//        textAnimator.update();
-//        textAnimator.render(g, 4, this.height - 12, 0xFFE0E0E0,
-//                this.input.isFocused());
         super.render(g, mouseX, mouseY, delta);
 
         this.commandSuggestions.render(g, mouseX, mouseY);
