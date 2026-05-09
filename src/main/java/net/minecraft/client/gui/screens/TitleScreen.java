@@ -111,14 +111,10 @@ public class TitleScreen extends Screen {
         j = this.width - i - 2;
         int l = this.height / 4 + 48;
         Button modButton = null;
-        if (this.minecraft.isDemo()) {
-            l = this.createDemoMenuOptions(l, 24);
-        } else {
-            l = this.createNormalMenuOptions(l, 24);
-            if (Reflector.ModListScreen_Constructor.exists()) {
-                modButton = ReflectorForge.makeButtonMods(this, l, 24);
-                this.addRenderableWidget(modButton);
-            }
+        l = this.createNormalMenuOptions(l, 24);
+        if (Reflector.ModListScreen_Constructor.exists()) {
+            modButton = ReflectorForge.makeButtonMods(this, l, 24);
+            this.addRenderableWidget(modButton);
         }
 
         l = this.createTestWorldButton(l, 24);
@@ -286,11 +282,7 @@ public class TitleScreen extends Screen {
         }
 
         String s = "Minecraft " + SharedConstants.getCurrentVersion().name();
-        if (this.minecraft.isDemo()) {
-            s = s + " Demo";
-        } else {
-            s = s + ("release".equalsIgnoreCase(this.minecraft.getVersionType()) ? "" : "/" + this.minecraft.getVersionType());
-        }
+        s = s + ("release".equalsIgnoreCase(this.minecraft.getVersionType()) ? "" : "/" + this.minecraft.getVersionType());
 
         if (Minecraft.checkModStatus().shouldReportAsModified()) {
             s = s + I18n.get("menu.modded");

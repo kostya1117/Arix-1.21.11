@@ -1,50 +1,50 @@
-/clan withdraw 500000
-/ah search Сила
-/ah search исцел
-/clan withdraw 500000
-/ah search исцел
+/ah search алмаз
+/ah sell 329999
+/ah
+/ah search голова дракона
+/ah sell 549999
+/an509
+/ah
+/an509
+/ah sell 199999
+/ah
+/ah search Святая вода
+/ah sell 399999
+/an509
+/ah
+/ah search Радиация
+/ah search вайт
+/ah sell 139999
+/ah
+/an509
+/ah
+/an509
+/ah search яйцо жителя
+/ah sell 999999
+/ah
 /ah search Чарка
-/ah search Сатира
-/clan withdraw 500000
-/ah search Сатира
-/clan chat зач
-/clan chat го норм сета
-/clan chat выебем их
-/clan chat ну так бля
-/clan chat я не пойду
-/clan chat я в незерке буду
-/clan invest 300000
-/clan withdraw 800000
-/ah search Ботинки
-/clan withdraw 800000
-/ah search Ботинки
-/clan invest 400000
-/clan home v
-/clan home b
-/clan home v
-/clan home b
-/clan home v
-/kit start
-/reg vjccra
-/reg Arixxx Arixxx
-/kit dragon
-/warp pvp
-/fly
-/rtp
-/reg xDriftzslmkz
-/login xDriftzslmkz
-/reg xjnierlovb
-/login xjnierlovb
-/login Wemmbu39
-/reg Zay9
-/login Zay9
-/login C:\Users\user\.jdks\corretto-21.0.11\bin\java.exe "-javaagent:C:\Program Files\JetBrains\IntelliJ IDEA 2026.1\lib\idea_rt.jar=5505" -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8 -classpath C:\Users\user\Downloads\Arix
-/login Zay9
-/reg zoroyygg
-/reg 040ruiZuFu
-/hub
-/kit start
-/reg Cryroranghjh05
-/reg xPulse
-/kit start
-/ac
+/ah sell 149999
+/ah
+/an509
+/ah search Святая вода
+/ah sell 499999
+/ah search Палладин
+/ah sell 499999
+/ah
+/ah search святая вода
+/ah
+/an509
+/ah search Святая вода
+/ah sell 499999
+/ah search Святая вода
+/ah
+/an509
+/ah
+/an509
+/ah search Святая вода
+/ah sell 499999
+/ah search Ключ испытаний
+/ah sell 399999
+/ah
+/an509
+/ah

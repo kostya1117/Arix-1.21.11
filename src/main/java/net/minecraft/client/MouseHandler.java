@@ -32,6 +32,7 @@ import org.lwjgl.glfw.GLFWDropCallback;
 import org.slf4j.Logger;
 import ru.arixcompany.features.event.EventRepo;
 import ru.arixcompany.features.event.player.EventLook;
+import ru.arixcompany.features.event.player.EventMouseScroll;
 
 public class MouseHandler {
     private static final Logger LOGGER = LogUtils.getLogger();
@@ -208,6 +209,15 @@ public class MouseHandler {
             double d0 = this.minecraft.options.mouseWheelSensitivity().get();
             double d1 = (flag ? Math.signum(p_91528_) : p_91528_) * d0;
             double d2 = (flag ? Math.signum(p_91529_) : p_91529_) * d0;
+
+            double mouseX = this.getScaledXPos(this.minecraft.getWindow());
+            double mouseY = this.getScaledYPos(this.minecraft.getWindow());
+
+            EventMouseScroll event =
+                    new EventMouseScroll(d1, d2, mouseX, mouseY);
+            EventRepo.call(event);
+            if (event.isCancelled()) return;
+
             if (this.minecraft.getOverlay() == null) {
                 if (this.minecraft.screen != null) {
                     double d3 = this.getScaledXPos(this.minecraft.getWindow());

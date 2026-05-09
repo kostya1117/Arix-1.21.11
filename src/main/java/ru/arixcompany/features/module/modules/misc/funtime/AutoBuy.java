@@ -1,8 +1,12 @@
 package ru.arixcompany.features.module.modules.misc.funtime;
 
+import lombok.Getter;
+import lombok.Setter;
 import net.minecraft.client.gui.screens.inventory.ContainerScreen;
 import net.minecraft.network.protocol.game.ClientboundSystemChatPacket;
 import ru.arixcompany.features.event.EventHandler;
+import ru.arixcompany.features.event.player.EventMouseScroll;
+import ru.arixcompany.features.event.render.EventScreen;
 import ru.arixcompany.features.event.world.EventPacket;
 import ru.arixcompany.features.event.world.EventTick;
 import ru.arixcompany.features.module.Category;
@@ -10,7 +14,11 @@ import ru.arixcompany.features.module.Module;
 import ru.arixcompany.features.module.modules.misc.funtime.autobuy.*;
 import ru.arixcompany.features.module.modules.misc.funtime.autobuy.items.ItemTarget;
 import ru.arixcompany.features.module.modules.misc.funtime.autobuy.items.ItemsRegistry;
+import ru.arixcompany.features.module.modules.misc.funtime.utils.FuntimeUtil;
+import ru.arixcompany.features.module.setting.implement.BooleanSetting;
 import ru.arixcompany.features.module.setting.implement.ValueSetting;
+import ru.arixcompany.utils.MessageSender;
+import ru.arixcompany.utils.math.MathUtils;
 import ru.arixcompany.utils.math.Timer;
 
 import java.util.ArrayList;
@@ -19,25 +27,27 @@ import java.util.Map;
 
 public class AutoBuy extends Module {
 
-    private final ValueSetting searchDuration =
-            new ValueSetting("Время поиска (сек)").setValue(10).range(5, 60).step(1);
-
-    private final ValueSetting updateDelay =
-            new ValueSetting("Обновление (мс)").setValue(2000).range(1000, 5000).step(100);
-
-    private final ValueSetting anarchyChangeDelay =
-            new ValueSetting("Менять анархию каждые (мин)").setValue(5).range(3, 10).step(1);
-
-    private final ValueSetting clickDelay =
-            new ValueSetting("Задержка клика (мс)").setValue(200).range(50, 500).step(50);
-
+    public static final BooleanSetting autoBuyAfterSetup = new BooleanSetting("Включить после сетапа");
     private final ValueSetting discountPercent =
-            new ValueSetting("Скидка (%)").setValue(50).range(10, 90).step(1);
+            new ValueSetting("Скидка покупки (%)").setValue(50).range(10, 90).step(1);
 
-    public boolean autoBuyEnabled = false;
+    public static final BooleanSetting autoSell = new BooleanSetting("Авто-продажа");
+    private final ValueSetting sellMargin =
+            new ValueSetting("Наценка (%)").setValue(10).range(5, 300).step(5)
+                    .visible(autoSell::isValue);
+
+    private final BooleanSetting autoSetupScheduler =
+            new BooleanSetting("Авто‑рестарт сетапа");
+    private final ValueSetting autoSetupInterval =
+            new ValueSetting("Интервал (мин)")
+                    .setValue(15)
+                    .range(10, 60)
+                    .step(5)
+                    .visible(autoSetupScheduler::isValue);
+
+    @Setter
+    public static boolean autoBuyEnabled = false;
     public boolean autoSetupEnabled = false;
-
-    private final BalanceController balanceController = new BalanceController();
 
     private ContainerScreen lastScreen;
 
@@ -46,14 +56,20 @@ public class AutoBuy extends Module {
     private final Timer clickCooldown = new Timer();
     private final Timer scanWatch = new Timer();
     private final Timer updateWatch = new Timer();
+    private final Timer autoSetupTimer = new Timer();
 
-    private final AuctionController auctionController = new AuctionController();
-    private AutoBuyEngine autoBuyEngine;
-    private AutoSetupEngine autoSetupEngine;
+    @Getter
+    public static final BalanceController balanceController = new BalanceController();
+    public static final AuctionRenderer auctionRenderer = new AuctionRenderer();
+    public static AutoBuyEngine autoBuyEngine;
+    public AutoSetupEngine autoSetupEngine;
+    public static final AutoSellEngine autoSellEngine = new AutoSellEngine();
 
     public AutoBuy() {
         super("AutoBuy", Category.Misc);
-        setup(searchDuration, updateDelay, anarchyChangeDelay, clickDelay, discountPercent);
+        setup(autoBuyAfterSetup,discountPercent,
+                autoSell,sellMargin,
+                autoSetupScheduler,autoSetupInterval);
 
         ItemsRegistry.register(targets);
 
@@ -81,7 +97,7 @@ public class AutoBuy extends Module {
 
                 if (screen != lastScreen) {
                     lastScreen = screen;
-                    auctionController.addButtons(
+                    auctionRenderer.addButtons(
                             screen,
                             autoBuyEnabled,
                             autoSetupEnabled,
@@ -92,13 +108,12 @@ public class AutoBuy extends Module {
                                 if (autoBuyEnabled) {
                                     balanceController.request();
                                 } else {
-                                    auctionController.reset();
                                     autoBuyEngine.resetState();
                                 }
                             },
                             () -> {
                                 if (!autoSetupEngine.isRunning()) {
-                                    autoSetupEngine.start((int) discountPercent.getValue());
+                                    autoSetupEngine.start();
                                     autoSetupEnabled = true;
                                 } else {
                                     autoSetupEngine.stop();
@@ -116,63 +131,113 @@ public class AutoBuy extends Module {
             autoBuyEngine.setCurrentAuctionScreen(null);
         }
 
-        auctionController.tick(
-                autoBuyEnabled,
-                (long) anarchyChangeDelay.getValue() * 60 * 1000
-        );
+        autoSellEngine.tick();
+        autoBuyEngine.setClickDelay((int) getClickDelay());
 
-        autoBuyEngine.setClickDelay((int) clickDelay.getValue());
-
-        if (autoBuyEnabled && !auctionController.isWaitingAfterAnarchy()) {
-            autoBuyEngine.tick((int) updateDelay.getValue());
+        if (autoBuyEnabled && !autoSellEngine.isSelling()) {
+            autoBuyEngine.tick((int) getUpdateDelay());
         }
 
         autoSetupEngine.tick(
-                (int) searchDuration.getValue(),
-                (int) updateDelay.getValue(),
+                (int) getSearchTime(),
+                (int) getUpdateDelay(),
                 (int) discountPercent.getValue()
         );
+
+        if (autoSetupScheduler.isValue()) {
+            // Интервал от 10 до 60 минут
+            long intervalMs = (long) autoSetupInterval.getValue() * 60_000L;
+
+            if (autoSetupTimer.finished(intervalMs)) {
+                MessageSender.print("§e Время обновлять цены...");
+
+                // 1. Выключаем автобай
+                autoBuyEnabled = false;
+                autoBuyEngine.resetState();
+
+                // 2. Включаем сетап
+                if (!autoSetupEngine.isRunning()) {
+                    autoSetupEngine.start();
+                    autoSetupEnabled = true;
+                }
+
+                autoSetupTimer.reset();
+            }
+        }
     }
+
 
     @EventHandler
     public void onPacket(EventPacket e) {
+        if (!(e.getPacket() instanceof ClientboundSystemChatPacket packet)) return;
+        String msg = packet.content().getString().toLowerCase();
 
-        if (!(e.getPacket() instanceof ClientboundSystemChatPacket packet))
-            return;
-
-        String message = packet.content().getString();
-
-        if (message.contains("Вы успешно купили") || message.contains("куплен")) {
-
+        if (msg.contains("вы успешно купили")) {
             autoBuyEngine.confirmPurchase();
+            ItemTarget target = autoBuyEngine.getLastTarget();
+
+            if (target != null) {
+                int count = autoBuyEngine.getLastBoughtCount();
+                int totalBuyPrice = autoBuyEngine.getLastTotalPrice();
+                int perOne = totalBuyPrice / (count > 0 ? count : 1);
+
+                if (autoSell.isValue()) {
+                    // Это запускает процесс: ищет предмет в инвентаре и начинает цепочку действий
+                    autoSellEngine.processSell(target, totalBuyPrice, (int) sellMargin.getValue());
+                } else {
+                    auctionRenderer.addPurchase(target.getDisplayStack(), target.getDisplayName(),
+                            perOne, count, totalBuyPrice, 0);
+                }
+            }
             balanceController.request();
-
-            new Thread(() -> {
-                try {
-                    Thread.sleep(500);
-
-                    mc.execute(() -> {
-                        if (mc.screen != null)
-                            mc.screen.onClose();
-                    });
-
-                    Thread.sleep(1500);
-
-                    mc.execute(() -> {
-                        if (mc.player != null && autoBuyEnabled)
-                            mc.player.connection.sendCommand("ah");
-                    });
-
-                } catch (Exception ignored) {}
-            }).start();
         }
 
-        if (message.contains("не хватает")) {
-            autoBuyEngine.resetState();
+        if (msg.contains("не хватает")
+                || msg.contains("уже купили")
+                || msg.contains("уже куплен")
+                || msg.contains("не удалось купить")
+                || msg.contains("лот недоступен")
+                || msg.contains("этот товар уже")) {
+
+            autoBuyEngine.failAndReopen();
+            return;
         }
 
         balanceController.handlePacket(packet);
         autoBuyEngine.setCurrentBalance(balanceController.getBalance());
+        autoSellEngine.onChat(msg);
+    }
+
+    @EventHandler
+    public void onMouseScroll(EventMouseScroll e) {
+        if (mc.screen instanceof ContainerScreen screen) {
+            String title = screen.getTitle().getString().toLowerCase();
+
+            if (title.contains("аукцион") || title.contains("auction")) {
+                auctionRenderer.handleScroll(
+                        e.getDeltaY(),
+                        e.getMouseX(),
+                        e.getMouseY()
+                );
+            }
+        }
+    }
+
+    @EventHandler
+    public void onRender2D(EventScreen e) {
+        if (mc.screen instanceof ContainerScreen screen) {
+
+            String title = screen.getTitle().getString().toLowerCase();
+
+            if (title.contains("аукцион") || title.contains("auction")) {
+
+                auctionRenderer.render(
+                        e.getGuiGraphics(),
+                        screen,
+                        targets
+                );
+            }
+        }
     }
 
     public void setPriceForItem(String itemId, int price) {
@@ -180,6 +245,24 @@ public class AutoBuy extends Module {
         if (target != null) {
             target.setBuyPrice(price);
         }
+    }
+
+    public static float getUpdateDelay() {
+        float min = 750;
+        float max = 2000;
+        return MathUtils.getSmartRandom(min,max);
+    }
+
+    public static float getClickDelay() {
+        float min = 50;
+        float max = 500;
+        return MathUtils.getSmartRandom(min,max);
+    }
+    public static float getSearchTime() {
+        float min = 5;
+        float max = 20;
+
+        return MathUtils.getSmartRandom(min,max);
     }
 }
 

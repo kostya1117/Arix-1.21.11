@@ -6,6 +6,7 @@ import com.mojang.blaze3d.opengl.GlStateManager;
 import com.mojang.blaze3d.platform.Window;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 import net.minecraft.ChatFormatting;
@@ -25,6 +26,7 @@ import net.minecraft.client.gui.contextualbar.ContextualBarRenderer;
 import net.minecraft.client.gui.contextualbar.ExperienceBarRenderer;
 import net.minecraft.client.gui.contextualbar.JumpableVehicleBarRenderer;
 import net.minecraft.client.gui.contextualbar.LocatorBarRenderer;
+import net.minecraft.client.gui.screens.ChatScreen;
 import net.minecraft.client.gui.screens.LevelLoadingScreen;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.LightTexture;
@@ -85,9 +87,13 @@ import net.optifine.reflect.Reflector;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jspecify.annotations.Nullable;
 import ru.arixcompany.Arix;
+import ru.arixcompany.features.draggable.DraggableComponent;
+import ru.arixcompany.features.draggable.DraggableRepo;
 import ru.arixcompany.features.event.EventRepo;
 import ru.arixcompany.features.event.render.EventScreen;
+import ru.arixcompany.features.module.modules.render.Animations;
 import ru.arixcompany.features.module.modules.render.NoRender;
+import ru.arixcompany.utils.math.MathUtils;
 
 public class Gui {
     private static final Identifier CROSSHAIR_SPRITE = Identifier.withDefaultNamespace("hud/crosshair");
@@ -126,28 +132,6 @@ public class Gui {
         .thenComparing(PlayerScoreEntry::owner, String.CASE_INSENSITIVE_ORDER);
     private static final Component DEMO_EXPIRED_TEXT = Component.translatable("demo.demoExpired");
     private static final Component SAVING_TEXT = Component.translatable("menu.savingLevel");
-    private static final float MIN_CROSSHAIR_ATTACK_SPEED = 5.0F;
-    private static final int EXPERIENCE_BAR_DISPLAY_TICKS = 100;
-    private static final int NUM_HEARTS_PER_ROW = 10;
-    private static final int LINE_HEIGHT = 10;
-    private static final String SPACER = ": ";
-    private static final float PORTAL_OVERLAY_ALPHA_MIN = 0.2F;
-    private static final int HEART_SIZE = 9;
-    private static final int HEART_SEPARATION = 8;
-    private static final int NUM_AIR_BUBBLES = 10;
-    private static final int AIR_BUBBLE_SIZE = 9;
-    private static final int AIR_BUBBLE_SEPERATION = 8;
-    private static final int AIR_BUBBLE_POPPING_DURATION = 2;
-    private static final int EMPTY_AIR_BUBBLE_DELAY_DURATION = 1;
-    private static final float AIR_BUBBLE_POP_SOUND_VOLUME_BASE = 0.5F;
-    private static final float AIR_BUBBLE_POP_SOUND_VOLUME_INCREMENT = 0.1F;
-    private static final float AIR_BUBBLE_POP_SOUND_PITCH_BASE = 1.0F;
-    private static final float AIR_BUBBLE_POP_SOUND_PITCH_INCREMENT = 0.1F;
-    private static final int NUM_AIR_BUBBLE_POPPED_BEFORE_SOUND_VOLUME_INCREASE = 3;
-    private static final int NUM_AIR_BUBBLE_POPPED_BEFORE_SOUND_PITCH_INCREASE = 5;
-    private static final float AUTOSAVE_FADE_SPEED_FACTOR = 0.2F;
-    private static final int SAVING_INDICATOR_WIDTH_PADDING_RIGHT = 5;
-    private static final int SAVING_INDICATOR_HEIGHT_PADDING_BOTTOM = 5;
     private final RandomSource random = RandomSource.create();
     private final Minecraft minecraft;
     private final ChatComponent chat;
@@ -181,6 +165,18 @@ public class Gui {
     private Pair<Gui.ContextualInfo, ContextualBarRenderer> contextualInfoBar = Pair.of(Gui.ContextualInfo.EMPTY, ContextualBarRenderer.EMPTY);
     private final Map<Gui.ContextualInfo, Supplier<ContextualBarRenderer>> contextualInfoBarRenderers;
     private float scopeScale;
+
+    public float hotbarChatOffset = 0.0F;
+    private float chatSlideOffset = 0.0F;
+
+    // Анимация подъёма хотбара — используется и хотбаром и ArmorHUD
+    public static final ru.arixcompany.utils.animation.Animation hotbarRiseAnim =
+            new ru.arixcompany.utils.animation.impl.EaseInOutQuad(200, 1.0);
+
+    static {
+        hotbarRiseAnim.setDirection(ru.arixcompany.utils.animation.Direction.BACKWARDS);
+        hotbarRiseAnim.timerUtil.setTime(System.currentTimeMillis() - 9999);
+    }
 
     public Gui(Minecraft p_330021_) {
         this.minecraft = p_330021_;
@@ -227,19 +223,60 @@ public class Gui {
             }
 
             this.renderSleepOverlay(p_282884_, p_342095_);
+
             if (!this.minecraft.options.hideGui) {
-                this.renderDemoOverlay(p_282884_, p_342095_);
                 this.renderScoreboardSidebar(p_282884_, p_342095_);
                 this.renderOverlayMessage(p_282884_, p_342095_);
                 this.renderTitle(p_282884_, p_342095_);
                 this.renderChat(p_282884_, p_342095_);
                 this.renderTabList(p_282884_, p_342095_);
-                this.renderSubtitleOverlay(p_282884_, this.minecraft.screen == null || this.minecraft.screen.isInGameUi());
+                this.renderSubtitleOverlay(p_282884_,
+                        this.minecraft.screen == null || this.minecraft.screen.isInGameUi());
             } else if (this.minecraft.screen != null && this.minecraft.screen.isInGameUi()) {
                 this.renderSubtitleOverlay(p_282884_, true);
             }
         }
+
         EventRepo.call(new EventScreen(p_282884_));
+
+        if (!(this.minecraft.screen instanceof ChatScreen)) {
+            renderDraggableOverlay(p_282884_, p_342095_);
+        } else {
+            // При открытом чате всё равно рендерим ArmorHUD (он поднимается с хотбаром)
+            renderArmorHudOnly(p_282884_, p_342095_);
+        }
+    }
+
+    private void renderArmorHudOnly(GuiGraphics graphics, DeltaTracker delta) {
+        if (Arix.getInstance() == null) return;
+        DraggableRepo repo = Arix.getInstance().getDraggableRepo();
+        if (repo == null) return;
+
+        Window window = this.minecraft.getWindow();
+        int mouseX = (int)(this.minecraft.mouseHandler.xpos() * window.getGuiScaledWidth() / window.getWidth());
+        int mouseY = (int)(this.minecraft.mouseHandler.ypos() * window.getGuiScaledHeight() / window.getHeight());
+
+        // Обновляем все компоненты (позиция ArmorHUD должна обновляться)
+        repo.updateAll();
+
+        // Рендерим только ArmorHUD
+        ru.arixcompany.features.draggable.draggables.ArmorHudDraggable armorHud = repo.getArmorHud();
+        if (armorHud != null && armorHud.shouldRender()) {
+            armorHud.renderComponent(graphics, mouseX, mouseY, delta.getGameTimeDeltaPartialTick(false));
+        }
+    }
+
+    private void renderDraggableOverlay(GuiGraphics graphics, DeltaTracker delta) {
+        if (Arix.getInstance() == null) return;
+        DraggableRepo repo = Arix.getInstance().getDraggableRepo();
+        if (repo == null) return;
+
+        Window window = this.minecraft.getWindow();
+        int mouseX = (int)(this.minecraft.mouseHandler.xpos() * window.getGuiScaledWidth() / window.getWidth());
+        int mouseY = (int)(this.minecraft.mouseHandler.ypos() * window.getGuiScaledHeight() / window.getHeight());
+
+        repo.updateAll();
+        repo.renderAll(graphics, mouseX, mouseY, delta.getGameTimeDeltaPartialTick(false));
     }
 
     private void renderBossOverlay(GuiGraphics p_407400_, DeltaTracker p_407876_) {
@@ -337,7 +374,9 @@ public class Gui {
             if (i > 0) {
                 p_330258_.nextStratum();
                 p_330258_.pose().pushMatrix();
-                p_330258_.pose().translate(p_330258_.guiWidth() / 2, p_330258_.guiHeight() - 68);
+
+                p_330258_.pose().translate((float)p_330258_.guiWidth() / 2.0F, (float)p_330258_.guiHeight() - 68.0F - this.hotbarChatOffset);
+
                 int j;
                 if (this.animateOverlayMessageColor) {
                     j = Mth.hsvToArgb(f / 50.0F, 0.7F, 0.6F, i);
@@ -401,10 +440,25 @@ public class Gui {
             int i = Mth.floor(this.minecraft.mouseHandler.getScaledXPos(window));
             int j = Mth.floor(this.minecraft.mouseHandler.getScaledYPos(window));
             p_329202_.nextStratum();
+
+            // Анимация чата: плавный слайд снизу при появлении
+            if (Animations.isEnabled("Чат")) {
+                boolean isChatOpen = this.minecraft.screen instanceof ChatScreen;
+                float targetChatSlide = isChatOpen ? 0.0F : 8.0F;
+                this.chatSlideOffset = Mth.lerp(0.2F, this.chatSlideOffset, targetChatSlide);
+
+                p_329202_.pose().pushMatrix();
+                p_329202_.pose().translate(0.0F, this.chatSlideOffset);
+            }
+
             if (Reflector.ForgeHooksClient_onCustomizeChatEvent.exists()) {
                 Reflector.ForgeHooksClient_onCustomizeChatEvent.callVoid(p_329202_, this.chat, window, i, j, this.tickCount, this.getFont());
             } else {
                 this.chat.render(p_329202_, this.getFont(), this.tickCount, i, j, false, false);
+            }
+
+            if (Animations.isEnabled("Чат")) {
+                p_329202_.pose().popMatrix();
             }
         }
     }
@@ -430,13 +484,15 @@ public class Gui {
     private void renderTabList(GuiGraphics p_330031_, DeltaTracker p_343599_) {
         Scoreboard scoreboard = this.minecraft.level.getScoreboard();
         Objective objective = scoreboard.getDisplayObjective(DisplaySlot.LIST);
-        if (this.minecraft.options.keyPlayerList.isDown()
-            && (!this.minecraft.isLocalServer() || this.minecraft.player.connection.getListedOnlinePlayers().size() > 1 || objective != null)) {
-            this.tabList.setVisible(true);
+
+        boolean shouldShow = this.minecraft.options.keyPlayerList.isDown()
+                && (!this.minecraft.isLocalServer() || this.minecraft.player.connection.getListedOnlinePlayers().size() > 1 || objective != null);
+
+        this.tabList.setVisible(shouldShow);
+
+        if (this.tabList.shouldRender()) {
             p_330031_.nextStratum();
             this.tabList.render(p_330031_, p_330031_.guiWidth(), scoreboard, objective);
-        } else {
-            this.tabList.setVisible(false);
         }
     }
 
@@ -497,9 +553,6 @@ public class Gui {
                 if ((iclientmobeffectextensions == null || iclientmobeffectextensions.isVisibleInGui(mobeffectinstance)) && mobeffectinstance.showIcon()) {
                     int k = p_282812_.guiWidth();
                     int l = 1;
-                    if (this.minecraft.isDemo()) {
-                        l += 15;
-                    }
 
                     if (holder.value().isBeneficial()) {
                         i++;
@@ -537,6 +590,24 @@ public class Gui {
     }
 
     private void renderHotbarAndDecorations(GuiGraphics p_333625_, DeltaTracker p_344796_) {
+        boolean isChatOpen = this.minecraft.screen instanceof ChatScreen;
+
+        // Анимация подъёма хотбара через EaseInOutQuad — та же анимация что читает ArmorHUD
+        if (Animations.isEnabled("Хотбар")) {
+            ru.arixcompany.utils.animation.Direction target = isChatOpen
+                    ? ru.arixcompany.utils.animation.Direction.FORWARDS
+                    : ru.arixcompany.utils.animation.Direction.BACKWARDS;
+            if (hotbarRiseAnim.getDirection() != target) hotbarRiseAnim.setDirection(target);
+            this.hotbarChatOffset = (float) hotbarRiseAnim.getOutput() * 14.0F;
+        } else {
+            hotbarRiseAnim.setDirection(ru.arixcompany.utils.animation.Direction.BACKWARDS);
+            hotbarRiseAnim.timerUtil.setTime(System.currentTimeMillis() - 9999);
+            this.hotbarChatOffset = isChatOpen ? 14.0F : 0.0F;
+        }
+
+        p_333625_.pose().pushMatrix();
+        p_333625_.pose().translate(0.0F, -this.hotbarChatOffset);
+
         if (this.minecraft.gameMode.getPlayerMode() == GameType.SPECTATOR) {
             this.spectatorGui.renderHotbar(p_333625_);
         } else {
@@ -564,6 +635,8 @@ public class Gui {
         } else if (this.minecraft.player.isSpectator()) {
             this.spectatorGui.renderAction(p_333625_);
         }
+
+        p_333625_.pose().popMatrix();
     }
 
     private void renderItemHotbar(GuiGraphics p_332738_, DeltaTracker p_342619_) {
@@ -667,28 +740,6 @@ public class Gui {
         }
 
         Profiler.get().pop();
-    }
-
-    private void renderDemoOverlay(GuiGraphics p_281825_, DeltaTracker p_343325_) {
-        if (this.minecraft.isDemo()) {
-            Profiler.get().push("demo");
-            p_281825_.nextStratum();
-            Component component;
-            if (this.minecraft.level.getGameTime() >= 120500L) {
-                component = DEMO_EXPIRED_TEXT;
-            } else {
-                component = Component.translatable(
-                    "demo.remainingTime",
-                    StringUtil.formatTickDuration((int)(120500L - this.minecraft.level.getGameTime()), this.minecraft.level.tickRateManager().tickrate())
-                );
-            }
-
-            int i = this.getFont().width(component);
-            int j = p_281825_.guiWidth() - i - 10;
-            int k = 5;
-            p_281825_.drawStringWithBackdrop(this.getFont(), component, j, 5, i, -1);
-            Profiler.get().pop();
-        }
     }
 
     private void displayScoreboardSidebar(GuiGraphics p_282008_, Objective p_283455_) {

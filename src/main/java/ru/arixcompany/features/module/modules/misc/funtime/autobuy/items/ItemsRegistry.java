@@ -26,7 +26,6 @@ public final class ItemsRegistry {
 
         elytra.setCheckDurability(true);
         elytra.setMinDurabilityPercent(70);
-
         targets.put("elytra", elytra);
 
         item(targets, "netherite_ingot", "Незерит слиток", Items.NETHERITE_INGOT, "незеритовый слиток");

@@ -34,10 +34,12 @@ import net.minecraft.world.scores.ReadOnlyScoreInfo;
 import net.minecraft.world.scores.ScoreHolder;
 import net.minecraft.world.scores.Scoreboard;
 import net.minecraft.world.scores.criteria.ObjectiveCriteria;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jspecify.annotations.Nullable;
-
+import ru.arixcompany.features.repos.FriendRepo;
+import ru.arixcompany.utils.Colors;
+import ru.arixcompany.utils.animation.Animation;
+import ru.arixcompany.utils.animation.Direction;
+import ru.arixcompany.utils.animation.impl.EaseInOutQuad;
 
 public class PlayerTabOverlay {
     private static final Identifier PING_UNKNOWN_SPRITE = Identifier.withDefaultNamespace("icon/ping_unknown");
@@ -55,9 +57,9 @@ public class PlayerTabOverlay {
     private static final Identifier HEART_ABSORBING_HALF_BLINKING_SPRITE = Identifier.withDefaultNamespace("hud/heart/absorbing_half_blinking");
     private static final Identifier HEART_HALF_SPRITE = Identifier.withDefaultNamespace("hud/heart/half");
     private static final Comparator<PlayerInfo> PLAYER_COMPARATOR = Comparator.<PlayerInfo>comparingInt(p_357670_ -> -p_357670_.getTabListOrder())
-        .thenComparingInt(p_253306_ -> p_253306_.getGameMode() == GameType.SPECTATOR ? 1 : 0)
-        .thenComparing(p_269613_ -> Optionull.mapOrDefault(p_269613_.getTeam(), PlayerTeam::getName, ""))
-        .thenComparing(p_420708_ -> p_420708_.getProfile().name(), String::compareToIgnoreCase);
+            .thenComparingInt(p_253306_ -> p_253306_.getGameMode() == GameType.SPECTATOR ? 1 : 0)
+            .thenComparing(p_269613_ -> Optionull.mapOrDefault(p_269613_.getTeam(), PlayerTeam::getName, ""))
+            .thenComparing(p_420708_ -> p_420708_.getProfile().name(), String::compareToIgnoreCase);
     public static final int MAX_ROWS_PER_COL = 20;
     private final Minecraft minecraft;
     private final Gui gui;
@@ -66,15 +68,21 @@ public class PlayerTabOverlay {
     private boolean visible;
     private final Map<UUID, PlayerTabOverlay.HealthState> healthStates = new Object2ObjectOpenHashMap<>();
 
+    private final Animation tabAnimation = new EaseInOutQuad(300, 1.0);
+    private boolean animatingOut = false;
+
     public PlayerTabOverlay(Minecraft p_94527_, Gui p_94528_) {
         this.minecraft = p_94527_;
         this.gui = p_94528_;
+
+        this.tabAnimation.setDirection(Direction.BACKWARDS);
+        this.tabAnimation.timerUtil.setTime(System.currentTimeMillis() - 9999);
     }
 
     public Component getNameForDisplay(PlayerInfo p_94550_) {
         return p_94550_.getTabListDisplayName() != null
-            ? this.decorateName(p_94550_, p_94550_.getTabListDisplayName().copy())
-            : this.decorateName(p_94550_, PlayerTeam.formatNameForTeam(p_94550_.getTeam(), Component.literal(p_94550_.getProfile().name())));
+                ? this.decorateName(p_94550_, p_94550_.getTabListDisplayName().copy())
+                : this.decorateName(p_94550_, PlayerTeam.formatNameForTeam(p_94550_.getTeam(), Component.literal(p_94550_.getProfile().name())));
     }
 
     private Component decorateName(PlayerInfo p_94552_, MutableComponent p_94553_) {
@@ -82,14 +90,45 @@ public class PlayerTabOverlay {
     }
 
     public void setVisible(boolean p_94557_) {
-        if (this.visible != p_94557_) {
+        if (p_94557_ && !this.visible && !this.animatingOut) {
+            this.visible = true;
+            this.animatingOut = false;
+            // Если анимация таба включена — плавно, иначе мгновенно
+            if (ru.arixcompany.features.module.modules.render.Animations.isEnabled("Таб")) {
+                this.tabAnimation.setDirection(Direction.FORWARDS);
+            } else {
+                this.tabAnimation.setDirection(Direction.FORWARDS);
+                this.tabAnimation.timerUtil.setTime(System.currentTimeMillis() - 9999);
+            }
             this.healthStates.clear();
-            this.visible = p_94557_;
-            if (p_94557_) {
-                Component component = ComponentUtils.formatList(this.getPlayerInfos(), Component.literal(", "), this::getNameForDisplay);
-                this.minecraft.getNarrator().saySystemNow(Component.translatable("multiplayer.player.list.narration", component));
+            Component component = ComponentUtils.formatList(this.getPlayerInfos(), Component.literal(", "), this::getNameForDisplay);
+            this.minecraft.getNarrator().saySystemNow(Component.translatable("multiplayer.player.list.narration", component));
+        } else if (!p_94557_ && this.visible) {
+            this.visible = false;
+            this.animatingOut = true;
+            if (ru.arixcompany.features.module.modules.render.Animations.isEnabled("Таб")) {
+                this.tabAnimation.setDirection(Direction.BACKWARDS);
+            } else {
+                this.tabAnimation.setDirection(Direction.BACKWARDS);
+                this.tabAnimation.timerUtil.setTime(System.currentTimeMillis() - 9999);
             }
         }
+
+        if (this.animatingOut && this.tabAnimation.finished(Direction.BACKWARDS)) {
+            this.animatingOut = false;
+            this.healthStates.clear();
+        }
+    }
+
+    public boolean shouldRender() {
+        return this.visible || this.animatingOut;
+    }
+
+    public float getAnimationProgress() {
+        if (!ru.arixcompany.features.module.modules.render.Animations.isEnabled("Таб")) {
+            return this.visible ? 1.0f : 0.0f;
+        }
+        return (float) this.tabAnimation.getOutput();
     }
 
     private List<PlayerInfo> getPlayerInfos() {
@@ -97,6 +136,20 @@ public class PlayerTabOverlay {
     }
 
     public void render(GuiGraphics p_281484_, int p_283602_, Scoreboard p_282338_, @Nullable Objective p_282369_) {
+        if (!shouldRender()) return;
+
+        float animProgress = getAnimationProgress();
+        if (animProgress <= 0.0f) return;
+
+        int alpha = (int)(animProgress * 255.0f);
+        alpha = Mth.clamp(alpha, 0, 255);
+        // normalised 0.0–1.0 для Colors.* которые ожидают именно такой диапазон
+        float alphaN = alpha / 255.0f;
+
+        float slideOffset = (1.0f - animProgress) * -20.0f;
+
+        float scale = 0.85f + 0.15f * animProgress;
+
         List<PlayerInfo> list = this.getPlayerInfos();
         List<PlayerTabOverlay.ScoreDisplayEntry> list1 = new ArrayList<>(list.size());
         int i = this.minecraft.font.width(" ");
@@ -174,44 +227,80 @@ public class PlayerTabOverlay {
             }
         }
 
+        p_281484_.pose().pushMatrix();
+
+        float centerX = p_283602_ / 2.0f;
+        p_281484_.pose().translate(centerX, slideOffset);
+        p_281484_.pose().scale(scale, scale);
+        p_281484_.pose().translate(-centerX, 0);
+
+        int bgAlpha = (int)(alpha * 0.5f);
+        int bgColor = (bgAlpha << 24);
+        int textAlpha = alpha;
+
+        int headerFooterBg = ARGB.color(Math.min((int)(alpha * 0.502f), 128), 0, 0, 0);
+        int mainBg = ARGB.color(Math.min((int)(alpha * 0.502f), 128), 0, 0, 0);
+
         if (list2 != null) {
-            p_281484_.fill(p_283602_ / 2 - i4 / 2 - 1, l3 - 1, p_283602_ / 2 + i4 / 2 + 1, l3 + list2.size() * 9, Integer.MIN_VALUE);
+            p_281484_.fill(p_283602_ / 2 - i4 / 2 - 1, l3 - 1, p_283602_ / 2 + i4 / 2 + 1, l3 + list2.size() * 9, headerFooterBg);
 
             for (FormattedCharSequence formattedcharsequence2 : list2) {
                 int j1 = this.minecraft.font.width(formattedcharsequence2);
-                p_281484_.drawString(this.minecraft.font, formattedcharsequence2, p_283602_ / 2 - j1 / 2, l3, -1);
+                p_281484_.drawString(this.minecraft.font, formattedcharsequence2, p_283602_ / 2 - j1 / 2, l3, ARGB.white(textAlpha));
                 l3 += 9;
             }
 
             l3++;
         }
 
-        p_281484_.fill(p_283602_ / 2 - i4 / 2 - 1, l3 - 1, p_283602_ / 2 + i4 / 2 + 1, l3 + k2 * 9, Integer.MIN_VALUE);
-        int j4 = this.minecraft.options.getBackgroundColor(553648127);
-
         for (int k4 = 0; k4 < j2; k4++) {
             int l4 = k4 / k2;
             int k1 = k4 % k2;
             int l1 = k3 + l4 * j3 + l4 * 5;
             int i2 = l3 + k1 * 9;
-            p_281484_.fill(l1, i2, l1 + j3, i2 + 8, j4);
+
             if (k4 < list.size()) {
                 PlayerInfo playerinfo1 = list.get(k4);
+
+                boolean isMe = playerinfo1.getProfile().id().equals(this.minecraft.player.getUUID());
+                boolean isFriend = FriendRepo.isFriend(playerinfo1.getProfile().name());
+
+                int rowColor;
+                if (isMe) {
+                    // Себя — цвет акцента темы
+                    rowColor = Colors.accent(alphaN * 0.45f);
+                } else if (isFriend) {
+                    // Друга — зелёный (отдельный от акцента)
+                    rowColor = Colors.friend(alphaN * 0.45f);
+                } else {
+                    rowColor = ARGB.color(Math.min((int)(alphaN * 0.33f * 255), 255), 20, 20, 20);
+                }
+
+                p_281484_.fill(l1, i2, l1 + j3, i2 + 8, rowColor);
+
                 PlayerTabOverlay.ScoreDisplayEntry playertaboverlay$scoredisplayentry = list1.get(k4);
                 GameProfile gameprofile = playerinfo1.getProfile();
+
                 if (flag1) {
                     Player player = this.minecraft.level.getPlayerByUUID(gameprofile.id());
                     boolean flag = player != null && AvatarRenderer.isPlayerUpsideDown(player);
-                    PlayerFaceRenderer.draw(p_281484_, playerinfo1.getSkin().body().texturePath(), l1, i2, 8, playerinfo1.showHat(), flag, -1);
+                    PlayerFaceRenderer.draw(p_281484_, playerinfo1.getSkin().body().texturePath(), l1, i2, 8, playerinfo1.showHat(), flag, ARGB.white(textAlpha));
                     l1 += 9;
                 }
 
+                int nameColor;
+                if (playerinfo1.getGameMode() == GameType.SPECTATOR) {
+                    nameColor = ARGB.color(textAlpha, 144, 144, 144); // spectator gray with alpha
+                } else {
+                    nameColor = ARGB.white(textAlpha);
+                }
+
                 p_281484_.drawString(
-                    this.minecraft.font,
-                    playertaboverlay$scoredisplayentry.name,
-                    l1,
-                    i2,
-                    playerinfo1.getGameMode() == GameType.SPECTATOR ? -1862270977 : -1
+                        this.minecraft.font,
+                        playertaboverlay$scoredisplayentry.name,
+                        l1,
+                        i2,
+                        nameColor
                 );
                 if (p_282369_ != null && playerinfo1.getGameMode() != GameType.SPECTATOR) {
                     int j5 = l1 + j + 1;
@@ -221,23 +310,25 @@ public class PlayerTabOverlay {
                     }
                 }
 
-                this.renderPingIcon(p_281484_, j3, l1 - (flag1 ? 9 : 0), i2, playerinfo1);
+                this.renderPingIcon(p_281484_, j3, l1 - (flag1 ? 9 : 0), i2, playerinfo1, textAlpha);
             }
         }
 
         if (list3 != null) {
             l3 += k2 * 9 + 1;
-            p_281484_.fill(p_283602_ / 2 - i4 / 2 - 1, l3 - 1, p_283602_ / 2 + i4 / 2 + 1, l3 + list3.size() * 9, Integer.MIN_VALUE);
+            p_281484_.fill(p_283602_ / 2 - i4 / 2 - 1, l3 - 1, p_283602_ / 2 + i4 / 2 + 1, l3 + list3.size() * 9, headerFooterBg);
 
             for (FormattedCharSequence formattedcharsequence3 : list3) {
                 int i5 = this.minecraft.font.width(formattedcharsequence3);
-                p_281484_.drawString(this.minecraft.font, formattedcharsequence3, p_283602_ / 2 - i5 / 2, l3, -1);
+                p_281484_.drawString(this.minecraft.font, formattedcharsequence3, p_283602_ / 2 - i5 / 2, l3, ARGB.white(textAlpha));
                 l3 += 9;
             }
         }
+
+        p_281484_.pose().popMatrix();
     }
 
-    protected void renderPingIcon(GuiGraphics p_283286_, int p_281809_, int p_282801_, int p_282223_, PlayerInfo p_282986_) {
+    protected void renderPingIcon(GuiGraphics p_283286_, int p_281809_, int p_282801_, int p_282223_, PlayerInfo p_282986_, int alpha) {
         Identifier identifier;
         if (p_282986_.getLatency() < 0) {
             identifier = PING_UNKNOWN_SPRITE;
@@ -253,11 +344,11 @@ public class PlayerTabOverlay {
             identifier = PING_1_SPRITE;
         }
 
-        p_283286_.blitSprite(RenderPipelines.GUI_TEXTURED, identifier, p_282801_ + p_281809_ - 11, p_282223_, 10, 8);
+        p_283286_.blitSprite(RenderPipelines.GUI_TEXTURED, identifier, p_282801_ + p_281809_ - 11, p_282223_, 10, 8, ARGB.white(alpha));
     }
 
     private void renderTablistScore(
-        Objective p_283381_, int p_282557_, PlayerTabOverlay.ScoreDisplayEntry p_312058_, int p_283533_, int p_281254_, UUID p_283099_, GuiGraphics p_282280_
+            Objective p_283381_, int p_282557_, PlayerTabOverlay.ScoreDisplayEntry p_312058_, int p_283533_, int p_281254_, UUID p_283099_, GuiGraphics p_282280_
     ) {
         if (p_283381_.getRenderType() == ObjectiveCriteria.RenderType.HEARTS) {
             this.renderTablistHearts(p_282557_, p_283533_, p_281254_, p_283099_, p_282280_, p_312058_.score);
@@ -268,7 +359,7 @@ public class PlayerTabOverlay {
 
     private void renderTablistHearts(int p_282904_, int p_283173_, int p_282149_, UUID p_283348_, GuiGraphics p_281723_, int p_281354_) {
         PlayerTabOverlay.HealthState playertaboverlay$healthstate = this.healthStates
-            .computeIfAbsent(p_283348_, p_249546_ -> new PlayerTabOverlay.HealthState(p_281354_));
+                .computeIfAbsent(p_283348_, p_249546_ -> new PlayerTabOverlay.HealthState(p_281354_));
         playertaboverlay$healthstate.update(p_281354_, this.gui.getGuiTicks());
         int i = Mth.positiveCeilDiv(Math.max(p_281354_, playertaboverlay$healthstate.displayedValue()), 2);
         int j = Math.max(p_281354_, Math.max(playertaboverlay$healthstate.displayedValue(), 20)) / 2;
@@ -288,11 +379,11 @@ public class PlayerTabOverlay {
                 }
 
                 p_281723_.drawString(
-                    this.minecraft.font,
-                    component1,
-                    (p_282149_ + p_283173_ - this.minecraft.font.width(component1)) / 2,
-                    p_282904_,
-                    ARGB.opaque(j1)
+                        this.minecraft.font,
+                        component1,
+                        (p_282149_ + p_283173_ - this.minecraft.font.width(component1)) / 2,
+                        p_282904_,
+                        ARGB.opaque(j1)
                 );
             } else {
                 Identifier identifier = flag ? HEART_CONTAINER_BLINKING_SPRITE : HEART_CONTAINER_SPRITE;
@@ -338,7 +429,7 @@ public class PlayerTabOverlay {
         this.footer = null;
     }
 
-    
+
     static class HealthState {
         private static final long DISPLAY_UPDATE_DELAY = 20L;
         private static final long DECREASE_BLINK_DURATION = 20L;
@@ -375,7 +466,7 @@ public class PlayerTabOverlay {
         }
     }
 
-    
+
     record ScoreDisplayEntry(Component name, int score, @Nullable Component formattedScore, int scoreWidth) {
     }
 }

@@ -84,6 +84,8 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jspecify.annotations.Nullable;
+import ru.arixcompany.features.event.EventRepo;
+import ru.arixcompany.features.event.player.EventPush;
 
 public abstract class BlockBehaviour implements FeatureElement {
     protected static final Direction[] UPDATE_SHAPE_ORDER = new Direction[]{
@@ -777,6 +779,13 @@ public abstract class BlockBehaviour implements FeatureElement {
         }
 
         public boolean isViewBlocking(BlockGetter p_60832_, BlockPos p_60833_) {
+            EventPush eventPush = new EventPush(EventPush.PushEnum.Blocks);
+            EventRepo.call(eventPush);
+
+            if (eventPush.isCancelled()) {
+               return false;
+            }
+
             return this.isViewBlocking.test(this.asState(), p_60832_, p_60833_);
         }
 

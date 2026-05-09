@@ -32,6 +32,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.commands.arguments.EntityAnchorArgument;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -144,6 +145,8 @@ import org.jetbrains.annotations.Contract;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import ru.arixcompany.Arix;
+import ru.arixcompany.features.event.EventRepo;
+import ru.arixcompany.features.event.player.EventPush;
 import ru.arixcompany.features.module.modules.render.NoRender;
 
 public abstract class LivingEntity extends Entity implements Attackable, WaypointTransmitter {
@@ -3222,6 +3225,12 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
 
     @Override
     public boolean isPushable() {
+        EventPush eventPush = new EventPush(EventPush.PushEnum.Players);
+        EventRepo.call(eventPush);
+
+        if (this instanceof LocalPlayer && eventPush.isCancelled()) {
+            return false;
+        }
         return this.isAlive() && !this.isSpectator() && !this.onClimbable();
     }
 

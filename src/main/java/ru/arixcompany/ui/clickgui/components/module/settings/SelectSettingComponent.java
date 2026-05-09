@@ -2,10 +2,10 @@ package ru.arixcompany.ui.clickgui.components.module.settings;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import net.minecraft.client.gui.GuiGraphics;
-import ru.arixcompany.ui.clickgui.components.IComponent;
-import ru.arixcompany.ui.clickgui.components.module.ModuleComponent;
 import ru.arixcompany.features.module.setting.implement.SelectSetting;
+import ru.arixcompany.ui.clickgui.components.IComponent;
 import ru.arixcompany.utils.render.RenderUtils;
 import ru.arixcompany.utils.render.font.FontManager;
 
@@ -23,19 +23,20 @@ public final class SelectSettingComponent implements IComponent {
     private static final float BTN_GAP_X = 6f;
     private static final float BTN_GAP_Y = 4f;
 
+    @Setter
+    private float layoutWidth = 118f;
+
     @Override
     public float getHeight() {
-
         List<String> list = setting.getList();
         if (list == null || list.isEmpty()) return LABEL_H + 6f;
 
-        float width = ModuleComponent.getSettingsWidth();
+        float width = layoutWidth;
 
         float xCursor = 0;
         int rows = 1;
 
         for (String mode : list) {
-
             float btnW = FontManager.get(10).getWidth(mode) + BTN_PAD * 2;
 
             if (btnW > width) {
@@ -61,7 +62,10 @@ public final class SelectSettingComponent implements IComponent {
                        int outlineColor, int accentColor, int bgColor,
                        int textInactive, int textActive, float alpha) {
 
-        FontManager.get(10).drawString(guiGraphics,
+        this.layoutWidth = width;
+
+        FontManager.get(10).drawString(
+                guiGraphics,
                 setting.getName(),
                 x,
                 y,
@@ -75,7 +79,6 @@ public final class SelectSettingComponent implements IComponent {
         float yCursor = y + LABEL_H + 6f;
 
         for (String mode : list) {
-
             float btnW = FontManager.get(10).getWidth(mode) + BTN_PAD * 2;
 
             if (btnW > width) {
@@ -100,11 +103,12 @@ public final class SelectSettingComponent implements IComponent {
                     rectColor
             );
 
-            FontManager.get(10).drawString(guiGraphics,
+            FontManager.get(10).drawString(
+                    guiGraphics,
                     mode,
                     xCursor + BTN_PAD,
                     yCursor,
-                    textInactive
+                    selected ? textActive : textInactive
             );
 
             xCursor += btnW + BTN_GAP_X;
@@ -115,6 +119,8 @@ public final class SelectSettingComponent implements IComponent {
     public boolean handleClick(float x, float y, float width,
                                int mouseX, int mouseY, int button) {
 
+        this.layoutWidth = width;
+
         if (button != 0) return false;
 
         List<String> list = setting.getList();
@@ -124,7 +130,6 @@ public final class SelectSettingComponent implements IComponent {
         float yCursor = y + LABEL_H + 6f;
 
         for (String mode : list) {
-
             float btnW = FontManager.get(10).getWidth(mode) + BTN_PAD * 2;
 
             if (btnW > width) {

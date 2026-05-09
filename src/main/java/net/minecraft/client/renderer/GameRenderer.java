@@ -430,8 +430,13 @@ public class GameRenderer implements TrackedWaypoint.Projector, AutoCloseable {
         }
 
         float targetZoom = zoom ? 1.0F : 0.0F;
-        this.zoomProgress = Mth.lerp(0.05F, this.zoomProgress, targetZoom);
-        
+        // Если анимация зума включена — плавный lerp, иначе мгновенно
+        if (ru.arixcompany.features.module.modules.render.Animations.isEnabled("Зум")) {
+            this.zoomProgress = Mth.lerp(0.05F, this.zoomProgress, targetZoom);
+        } else {
+            this.zoomProgress = targetZoom;
+        }
+
         float zoomFactor = Mth.lerp(this.zoomProgress, 1.0F, 1.2F);
         f /= zoomFactor;
 

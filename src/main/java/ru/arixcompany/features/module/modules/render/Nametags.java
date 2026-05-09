@@ -17,6 +17,7 @@ import ru.arixcompany.features.module.Category;
 import ru.arixcompany.features.module.Module;
 import ru.arixcompany.features.module.setting.implement.ListSetting;
 import ru.arixcompany.features.repos.FriendRepo;
+import ru.arixcompany.utils.Colors;
 import ru.arixcompany.utils.math.ProjectUtils;
 import ru.arixcompany.utils.render.RenderUtils;
 import ru.arixcompany.utils.render.font.FontManager;
@@ -102,7 +103,7 @@ public class Nametags extends Module {
                 float rectY = screenY - textHeight - 8f;
 
                 boolean isFriend = FriendRepo.isFriend(player);
-                int bgColor = isFriend ? 0x8028FF28 : 0x90000000;
+                int bgColor = isFriend ? Colors.friend(95) : 0x90000000;
 
                 RenderUtils.fillRoundRect(rectX, rectY,
                         textWidth + padding * 2f,

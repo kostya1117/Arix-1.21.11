@@ -6,10 +6,8 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import lombok.AllArgsConstructor;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.multiplayer.ClientSuggestionProvider;
-import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import ru.arixcompany.features.command.AbstractCommand;
 import ru.arixcompany.features.command.arguments.WayPointArgumentType;
@@ -18,15 +16,12 @@ import ru.arixcompany.features.event.EventRepo;
 import ru.arixcompany.features.event.render.EventRender3D;
 import ru.arixcompany.features.event.render.EventScreen;
 import ru.arixcompany.features.repos.WayPointRepo;
-import ru.arixcompany.ui.clickgui.Colors;
 import ru.arixcompany.utils.MessageSender;
-import ru.arixcompany.utils.math.MathUtils;
 import ru.arixcompany.utils.math.ProjectUtils;
 import ru.arixcompany.utils.render.ColorUtil;
 import ru.arixcompany.utils.render.RenderUtils;
 import ru.arixcompany.utils.render.font.FontManager;
 
-import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 

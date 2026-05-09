@@ -1,8 +1,11 @@
 package ru.arixcompany.utils.math;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.util.Mth;
+import org.joml.Matrix3x2fStack;
 import ru.arixcompany.utils.IMinecraft;
 
+import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class MathUtils implements IMinecraft {
@@ -24,5 +27,22 @@ public class MathUtils implements IMinecraft {
         if (max < min) {
             throw new IllegalArgumentException("max не может быть меньше min.");
         }
+    }
+
+    public static float getSmartRandom(float min,float max) {
+        Random random = ThreadLocalRandom.current();
+
+        double gaussian = random.nextGaussian();
+
+        float average = (min + max) / 2.0f;
+        float deviation = (max - min) / 4.0f;
+
+        float delay = (float) (average + gaussian * deviation);
+
+        if (random.nextFloat() < 0.05f) {
+            delay += 200 + random.nextFloat() * 300;
+        }
+
+        return Math.max(min, Math.min(max, delay));
     }
 }

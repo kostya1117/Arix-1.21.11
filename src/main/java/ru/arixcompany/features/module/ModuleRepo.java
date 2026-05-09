@@ -7,12 +7,14 @@ import ru.arixcompany.features.event.EventRepo;
 import ru.arixcompany.features.event.player.EventKey;
 import ru.arixcompany.features.module.modules.combat.HitAura;
 import ru.arixcompany.features.module.modules.combat.NoFriendDMG;
+import ru.arixcompany.features.module.modules.combat.TriggerBot;
 import ru.arixcompany.features.module.modules.misc.AutoAccept;
 import ru.arixcompany.features.module.modules.misc.CameraTweaks;
 import ru.arixcompany.features.module.modules.misc.ClientSounds;
 import ru.arixcompany.features.module.modules.misc.funtime.AuctionUtils;
 import ru.arixcompany.features.module.modules.misc.funtime.AutoBuy;
 import ru.arixcompany.features.module.modules.movement.AutoSprint;
+import ru.arixcompany.features.module.modules.player.NoPush;
 import ru.arixcompany.features.module.modules.player.TestModule;
 import ru.arixcompany.features.module.modules.render.*;
 import ru.arixcompany.utils.IMinecraft;
@@ -37,6 +39,10 @@ public class ModuleRepo implements IMinecraft {
        modules.add(new AuctionUtils());
        modules.add(new FullBright());
        modules.add(new NoRender());
+       modules.add(new TriggerBot());
+       modules.add(new Interface());
+       modules.add(new Animations());
+       modules.add(new NoPush());
    }
 
    public void init() {

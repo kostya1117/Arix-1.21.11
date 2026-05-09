@@ -53,7 +53,7 @@ public class Inventory implements Container, Nameable {
     );
     private static final Component DEFAULT_NAME = Component.translatable("container.inventory");
     private final NonNullList<ItemStack> items = NonNullList.withSize(36, ItemStack.EMPTY);
-    private int selected;
+    public int selected;
     public final Player player;
     private final EntityEquipment equipment;
     private int timesChanged;
