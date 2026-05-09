@@ -133,6 +133,9 @@ public class ItemInHandRenderer {
     private final ItemModelResolver itemModelResolver;
     private static boolean renderItemHand = false;
 
+
+
+
     private InteractionHand currentHand = InteractionHand.MAIN_HAND;
 
     public ItemInHandRenderer(Minecraft p_234241_, EntityRenderDispatcher p_234242_, ItemModelResolver p_376876_) {

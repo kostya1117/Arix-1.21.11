@@ -272,8 +272,6 @@ public class EntityRenderDispatcher implements ResourceManagerReloadListener {
             this.renderers = new HashMap<>(this.renderers);
         }
 
-        // Двойное приведение: сначала сбрасываем дженерики через (Map),
-        // затем кастуем к нужному возвращаемому типу
         return (Map<EntityType, EntityRenderer>) (Map) this.renderers;
     }
 

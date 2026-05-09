@@ -56,16 +56,15 @@ public class FunTimeRotation implements AbstractRotation, IMinecraft {
             tick = MathUtils.randomValue(20.0F, 25.0F);
         }
 
-        float yawChangeSpeed   = randomLerp(25.0F, 35.0F);
-        float randomAttackShift = 0.0F;
+        float yawChangeSpeed   = randomLerp(35.0F, 45.0F);
 
         float waveA = (float) Math.cos(now / 40.0);
         float waveB = (float) Math.sin(now / 70.0);
 
         if (tick > 0.0F) {
-            yawChangeSpeed = randomLerp(55.0F, 65.0F);
+            yawChangeSpeed = randomLerp(65.0F, 75.0F);
+
             baseYaw = (float) Math.toDegrees(Math.atan2(-directionVec.x, directionVec.z));
-            randomAttackShift = randomLerp(2.0F, 4.0F);
             tick--;
         }
 
@@ -74,8 +73,8 @@ public class FunTimeRotation implements AbstractRotation, IMinecraft {
                 -90.0, 90.0
         );
 
-        float yawJitter   = waveA * randomLerp(9.0F, 11.0F) + randomAttackShift;
-        float pitchJitter = waveB * randomLerp(5.0F,  6.0F)  + randomAttackShift;
+        float yawJitter   = waveA * randomLerp(5.0F, 9.0F);
+        float pitchJitter = waveB * randomLerp(4.0F,  7.0F);
 
         float finalPitch = basePitch;
 
@@ -87,10 +86,10 @@ public class FunTimeRotation implements AbstractRotation, IMinecraft {
                 new Rotation(baseYaw + yawJitter, finalPitch + pitchJitter),
                 yawChangeSpeed,
                 pitchSpeed,
-                8.0F,
-                8.0F,
+                12.0F,
+                12.0F,
                 0,
-                2,
+                1,
                 false
         );
     }

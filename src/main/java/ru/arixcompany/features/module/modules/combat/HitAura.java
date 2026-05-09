@@ -4,9 +4,8 @@ import lombok.Getter;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ShieldItem;
-import net.minecraft.world.phys.Vec3;
 import ru.arixcompany.features.event.EventHandler;
-import ru.arixcompany.features.event.player.EventInput;
+import ru.arixcompany.features.event.player.EventSprint;
 import ru.arixcompany.features.event.world.EventGameTick;
 import ru.arixcompany.features.event.world.EventTick;
 import ru.arixcompany.features.event.world.EventUpdate;
@@ -14,14 +13,14 @@ import ru.arixcompany.features.module.Category;
 import ru.arixcompany.features.module.Module;
 import ru.arixcompany.features.module.modules.combat.aura.AttackHandler;
 import ru.arixcompany.features.module.modules.combat.aura.TargetHandler;
-import ru.arixcompany.features.module.modules.combat.aura.rotation.impl.FreeLookUtil;
 import ru.arixcompany.features.module.modules.combat.aura.rotation.rotations.FunTimeRotation;
 import ru.arixcompany.features.module.modules.combat.aura.rotation.rotations.FuntimeRot;
 import ru.arixcompany.features.module.modules.combat.aura.rotation.rotations.SnapRotation;
 import ru.arixcompany.features.module.setting.implement.ListSetting;
 import ru.arixcompany.features.module.setting.implement.SelectSetting;
 import ru.arixcompany.features.module.setting.implement.ValueSetting;
-import ru.arixcompany.utils.player.MoveUtils;
+import ru.arixcompany.utils.MessageSender;
+import ru.arixcompany.utils.math.Timer;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -63,13 +62,17 @@ public class HitAura extends Module {
                             "Бить только оружием",
                             "Не бить если кушаеш",
                             "Не атакавать в контейнере",
-                            "Райкаст",
-                            "Продвинутый райкаст"
+                            "Райкаст"
                     );
 
     public static final ListSetting extraSettings =
             new ListSetting("Доп.настройка")
-                    .value("Легитный спринт", "Умные криты");
+                    .value("Умные криты","Сброс спринта");
+
+    public final SelectSetting sprintReset =
+            new SelectSetting("Режим сброса спринта")
+                    .value("Пакет", "Легит")
+                    .visible(() -> extraSettings.isSelected("Сброс спринта"));
 
     public static final SelectSetting motion =
             new SelectSetting("Режим движения")
@@ -98,50 +101,44 @@ public class HitAura extends Module {
                 attackDelay,
                 misc,
                 extraSettings,
-                motion
+                motion,
+                sprintReset
         );
     }
 
    @EventHandler
-   public void onEvent(EventGameTick e) {
-      if (target != null && mc.player != null && mc.level != null) {
-         this.updateRotation();
-      }
-   }
+    public void onEvent(EventGameTick e) {
+        if (target != null && mc.player != null && mc.level != null) {
+            this.updateRotation();
+        }
+    }
 
-   @EventHandler
-   public void onEvent(EventUpdate e) {
-      if (!mc.player.isAlive()) {
-         this.toggle();
-      } else {
-          targetHandler.updateTarget();
-          target = targetHandler.getTarget();
-
-         if (target != null && mc.player != null && mc.level != null) {
-
-//            if (AttackHandler.resetSprintTick(target, getRanges())) {
-//               mc.options.keySprint.setDown(false);
-//            }
+    public boolean hasStopSprint() {
+        return !AttackHandler.hasMovementRestrictions();
+    }
 
 
-             if (!this.checkToAttack()) {
-                 AttackHandler.performAttack(
-                         target,
-                         misc.isSelected("Райкаст"),
-                         extraSettings.isSelected("Легитный спринт"),
-                         getRanges()
-                 );
-             }
-         } else {
+    @EventHandler
+    public void onEventsss(EventGameTick e) {
+        if (!mc.player.isAlive() || mc.player == null) {
+            this.toggle();
+            return;
+        }
+
+        targetHandler.updateTarget();
+        target = targetHandler.getTarget();
+        if (target != null && mc.player != null && mc.level != null) {
+            if (!this.checkToAttack()) {
+                AttackHandler.performAttack(
+                        target,
+                        misc.isSelected("Райкаст"),
+                        attackRange.getValue()
+                );
+            }
+        } else {
             this.reset();
-         }
-      }
-   }
-
-   public static float[] getRanges() {
-      return new float[]{attackRange.getValue(), preRange.getValue()};
-   }
-
+        }
+    }
 
     private final FunTimeRotation funTimeRotation = new FunTimeRotation();
     private final FuntimeRot funTimeRot = new FuntimeRot();
@@ -154,9 +151,8 @@ public class HitAura extends Module {
                         target,
                         false,
                         true,
-                        true,
                         -50L,
-                        getRanges()
+                        attackRange.getValue()
                 );
 
         switch (rotationType.getSelected()) {
@@ -198,6 +194,8 @@ public class HitAura extends Module {
          isLookingUp = false;
          lookUpStartTime = 0L;
          count = 0;
+         AttackHandler.sprintTimer.reset();
+         AttackHandler.skipTicks = 1;
       }
    }
 

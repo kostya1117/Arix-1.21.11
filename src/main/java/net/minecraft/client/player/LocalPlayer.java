@@ -6,6 +6,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.StreamSupport;
+
+import lombok.Getter;
+import lombok.Setter;
 import net.minecraft.client.ClientRecipeBook;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
@@ -102,6 +105,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import ru.arixcompany.features.event.EventRepo;
+import ru.arixcompany.features.event.player.EventSprint;
 import ru.arixcompany.features.event.world.EventUpdate;
 import ru.arixcompany.features.module.modules.combat.aura.rotation.impl.FreeLookUtil;
 
@@ -128,7 +132,9 @@ public class LocalPlayer extends AbstractClientPlayer {
     private boolean lastOnGround;
     private boolean lastHorizontalCollision;
     private boolean crouching;
-    private boolean wasSprinting;
+    @Getter
+    @Setter
+    public boolean wasSprinting;
     private int positionReminder;
     private boolean flashOnSetHealth;
     public ClientInput input = new ClientInput();
@@ -155,15 +161,16 @@ public class LocalPlayer extends AbstractClientPlayer {
     private int waterVisionTime;
     private boolean showDeathScreen = true;
     private boolean doLimitedCrafting = false;
+    public int ticksOnGround;
 
     public LocalPlayer(
-        Minecraft p_108621_,
-        ClientLevel p_108622_,
-        ClientPacketListener p_108623_,
-        StatsCounter p_108624_,
-        ClientRecipeBook p_108625_,
-        Input p_407393_,
-        boolean p_108626_
+            Minecraft p_108621_,
+            ClientLevel p_108622_,
+            ClientPacketListener p_108623_,
+            StatsCounter p_108624_,
+            ClientRecipeBook p_108625_,
+            Input p_407393_,
+            boolean p_108626_
     ) {
         super(p_108622_, p_108623_.getLocalGameProfile());
         this.minecraft = p_108621_;
@@ -192,12 +199,12 @@ public class LocalPlayer extends AbstractClientPlayer {
             this.minecraft.getSoundManager().play(new RidingMinecartSoundInstance(this, abstractminecart, false, SoundEvents.MINECART_INSIDE, 0.0F, 0.75F, 1.0F));
         } else if (p_108667_ instanceof HappyGhast happyghast) {
             this.minecraft
-                .getSoundManager()
-                .play(new RidingEntitySoundInstance(this, happyghast, false, SoundEvents.HAPPY_GHAST_RIDING, happyghast.getSoundSource(), 0.0F, 1.0F, 5.0F));
+                    .getSoundManager()
+                    .play(new RidingEntitySoundInstance(this, happyghast, false, SoundEvents.HAPPY_GHAST_RIDING, happyghast.getSoundSource(), 0.0F, 1.0F, 5.0F));
         } else if (p_108667_ instanceof AbstractNautilus abstractnautilus) {
             this.minecraft
-                .getSoundManager()
-                .play(new RidingEntitySoundInstance(this, abstractnautilus, true, SoundEvents.NAUTILUS_RIDING, abstractnautilus.getSoundSource(), 0.0F, 1.0F, 5.0F));
+                    .getSoundManager()
+                    .play(new RidingEntitySoundInstance(this, abstractnautilus, true, SoundEvents.NAUTILUS_RIDING, abstractnautilus.getSoundSource(), 0.0F, 1.0F, 5.0F));
         }
 
         return true;
@@ -221,10 +228,10 @@ public class LocalPlayer extends AbstractClientPlayer {
 
     @Override
     public void tick() {
-        EventRepo.call(new EventUpdate());
         if (this.connection.hasClientLoaded()) {
             this.dropSpamThrottler.tick();
             super.tick();
+            EventRepo.call(new EventUpdate());
             if (!this.lastSentInput.equals(this.input.keyPresses)) {
                 this.connection.send(new ServerboundPlayerInputPacket(this.input.keyPresses));
                 this.lastSentInput = this.input.keyPresses;
@@ -250,7 +257,7 @@ public class LocalPlayer extends AbstractClientPlayer {
     public float getCurrentMood() {
         for (AmbientSoundHandler ambientsoundhandler : this.ambientSoundHandlers) {
             if (ambientsoundhandler instanceof BiomeAmbientSoundsHandler) {
-                return ((BiomeAmbientSoundsHandler)ambientsoundhandler).getMoodiness();
+                return ((BiomeAmbientSoundsHandler) ambientsoundhandler).getMoodiness();
             }
         }
 
@@ -270,7 +277,7 @@ public class LocalPlayer extends AbstractClientPlayer {
             boolean flag1 = d3 != 0.0 || d4 != 0.0;
             if (flag && flag1) {
                 this.connection
-                    .send(new ServerboundMovePlayerPacket.PosRot(this.position(), this.getYRot(), this.getXRot(), this.onGround(), this.horizontalCollision));
+                        .send(new ServerboundMovePlayerPacket.PosRot(this.position(), this.getYRot(), this.getXRot(), this.onGround(), this.horizontalCollision));
             } else if (flag) {
                 this.connection.send(new ServerboundMovePlayerPacket.Pos(this.position(), this.onGround(), this.horizontalCollision));
             } else if (flag1) {
@@ -290,6 +297,8 @@ public class LocalPlayer extends AbstractClientPlayer {
                 this.yRotLast = this.getYRot();
                 this.xRotLast = this.getXRot();
             }
+            if (onGround()) ++ticksOnGround;
+            else ticksOnGround = 0;
 
             this.lastOnGround = this.onGround();
             this.lastHorizontalCollision = this.horizontalCollision;
@@ -297,12 +306,12 @@ public class LocalPlayer extends AbstractClientPlayer {
         }
     }
 
-    private void sendIsSprintingIfNeeded() {
+    public void sendIsSprintingIfNeeded() {
         boolean flag = this.isSprinting();
         if (flag != this.wasSprinting) {
             ServerboundPlayerCommandPacket.Action serverboundplayercommandpacket$action = flag
-                ? ServerboundPlayerCommandPacket.Action.START_SPRINTING
-                : ServerboundPlayerCommandPacket.Action.STOP_SPRINTING;
+                    ? ServerboundPlayerCommandPacket.Action.START_SPRINTING
+                    : ServerboundPlayerCommandPacket.Action.STOP_SPRINTING;
             this.connection.send(new ServerboundPlayerCommandPacket(this, serverboundplayercommandpacket$action));
             this.wasSprinting = flag;
         }
@@ -310,8 +319,8 @@ public class LocalPlayer extends AbstractClientPlayer {
 
     public boolean drop(boolean p_108701_) {
         ServerboundPlayerActionPacket.Action serverboundplayeractionpacket$action = p_108701_
-            ? ServerboundPlayerActionPacket.Action.DROP_ALL_ITEMS
-            : ServerboundPlayerActionPacket.Action.DROP_ITEM;
+                ? ServerboundPlayerActionPacket.Action.DROP_ALL_ITEMS
+                : ServerboundPlayerActionPacket.Action.DROP_ITEM;
         ItemStack itemstack = this.getInventory().removeFromSelected(p_108701_);
         this.connection.send(new ServerboundPlayerActionPacket(serverboundplayeractionpacket$action, BlockPos.ZERO, Direction.DOWN));
         return !itemstack.isEmpty();
@@ -388,9 +397,9 @@ public class LocalPlayer extends AbstractClientPlayer {
 
     protected void sendRidingJump() {
         this.connection
-            .send(
-                new ServerboundPlayerCommandPacket(this, ServerboundPlayerCommandPacket.Action.START_RIDING_JUMP, Mth.floor(this.getJumpRidingScale() * 100.0F))
-            );
+                .send(
+                        new ServerboundPlayerCommandPacket(this, ServerboundPlayerCommandPacket.Action.START_RIDING_JUMP, Mth.floor(this.getJumpRidingScale() * 100.0F))
+                );
     }
 
     public void sendOpenInventory() {
@@ -459,8 +468,8 @@ public class LocalPlayer extends AbstractClientPlayer {
         AABB aabb = this.getBoundingBox();
         AABB aabb1 = new AABB(
                 p_108747_.getX(), aabb.minY, p_108747_.getZ(), p_108747_.getX() + 1.0, aabb.maxY, p_108747_.getZ() + 1.0
-            )
-            .deflate(1.0E-7);
+        )
+                .deflate(1.0E-7);
         return this.level().collidesWithSuffocatingBlock(this, aabb1);
     }
 
@@ -701,7 +710,7 @@ public class LocalPlayer extends AbstractClientPlayer {
         }
 
         if (this.isMovingSlowly()) {
-            float f = (float)this.getAttributeValue(Attributes.SNEAKING_SPEED);
+            float f = (float) this.getAttributeValue(Attributes.SNEAKING_SPEED);
             vec2 = vec2.scale(f);
         }
 
@@ -765,10 +774,10 @@ public class LocalPlayer extends AbstractClientPlayer {
         boolean flag2 = this.input.hasForwardImpulse();
         Abilities abilities = this.getAbilities();
         this.crouching = !abilities.flying
-            && !this.isSwimming()
-            && !this.isPassenger()
-            && this.canPlayerFitWithinBlocksAndEntitiesWhen(Pose.CROUCHING)
-            && (this.isShiftKeyDown() || !this.isSleeping() && !this.canPlayerFitWithinBlocksAndEntitiesWhen(Pose.STANDING));
+                && !this.isSwimming()
+                && !this.isPassenger()
+                && this.canPlayerFitWithinBlocksAndEntitiesWhen(Pose.CROUCHING)
+                && (this.isShiftKeyDown() || !this.isSleeping() && !this.canPlayerFitWithinBlocksAndEntitiesWhen(Pose.STANDING));
         this.input.tick();
         this.minecraft.getTutorial().onInput(this.input);
         boolean flag3 = false;
@@ -955,18 +964,18 @@ public class LocalPlayer extends AbstractClientPlayer {
         this.handsBusy = false;
         if (this.getControlledVehicle() instanceof AbstractBoat abstractboat) {
             abstractboat.setInput(
-                this.input.keyPresses.left(),
-                this.input.keyPresses.right(),
-                this.input.keyPresses.forward(),
-                this.input.keyPresses.backward()
+                    this.input.keyPresses.left(),
+                    this.input.keyPresses.right(),
+                    this.input.keyPresses.forward(),
+                    this.input.keyPresses.backward()
             );
             this.handsBusy = this.handsBusy
-                | (
+                    | (
                     this.input.keyPresses.left()
-                        || this.input.keyPresses.right()
-                        || this.input.keyPresses.forward()
-                        || this.input.keyPresses.backward()
-                );
+                            || this.input.keyPresses.right()
+                            || this.input.keyPresses.forward()
+                            || this.input.keyPresses.backward()
+            );
         }
     }
 
@@ -979,8 +988,8 @@ public class LocalPlayer extends AbstractClientPlayer {
         double d0 = this.getX();
         double d1 = this.getZ();
         super.move(p_108670_, p_108671_);
-        float f = (float)(this.getX() - d0);
-        float f1 = (float)(this.getZ() - d1);
+        float f = (float) (this.getX() - d0);
+        float f1 = (float) (this.getZ() - d1);
         this.updateAutoJump(f, f1);
         this.addWalkedDistance(Mth.length(f, f1) * 0.6F);
     }
@@ -1000,7 +1009,7 @@ public class LocalPlayer extends AbstractClientPlayer {
             Vec3 vec31 = vec3.add(p_108744_, 0.0, p_108745_);
             Vec3 vec32 = new Vec3(p_108744_, 0.0, p_108745_);
             float f = this.getSpeed();
-            float f1 = (float)vec32.lengthSqr();
+            float f1 = (float) vec32.lengthSqr();
             if (f1 <= 0.001F) {
                 Vec2 vec2 = this.input.getMoveVector();
                 float f2 = f * vec2.x;
@@ -1008,7 +1017,7 @@ public class LocalPlayer extends AbstractClientPlayer {
                 float f4 = Mth.sin(this.getYRot() * (float) (Math.PI / 180.0));
                 float f5 = Mth.cos(this.getYRot() * (float) (Math.PI / 180.0));
                 vec32 = new Vec3(f2 * f5 - f3 * f4, vec32.y, f3 * f5 + f2 * f4);
-                f1 = (float)vec32.lengthSqr();
+                f1 = (float) vec32.lengthSqr();
                 if (f1 <= 0.001F) {
                     return;
                 }
@@ -1017,7 +1026,7 @@ public class LocalPlayer extends AbstractClientPlayer {
             float f12 = Mth.invSqrt(f1);
             Vec3 vec312 = vec32.scale(f12);
             Vec3 vec313 = this.getForward();
-            float f13 = (float)(vec313.x * vec312.x + vec313.z * vec312.z);
+            float f13 = (float) (vec313.x * vec312.x + vec313.z * vec312.z);
             if (!(f13 < -0.15F)) {
                 CollisionContext collisioncontext = CollisionContext.of(this);
                 BlockPos blockpos = BlockPos.containing(this.getX(), this.getBoundingBox().maxY, this.getZ());
@@ -1048,14 +1057,14 @@ public class LocalPlayer extends AbstractClientPlayer {
                         Vec3 vec310 = vec34.add(vec36);
                         Iterable<VoxelShape> iterable = this.level().getCollisions(this, aabb);
                         Iterator<AABB> iterator = StreamSupport.stream(iterable.spliterator(), false)
-                            .flatMap(p_234124_ -> p_234124_.toAabbs().stream())
-                            .iterator();
+                                .flatMap(p_234124_ -> p_234124_.toAabbs().stream())
+                                .iterator();
                         float f11 = Float.MIN_VALUE;
 
                         while (iterator.hasNext()) {
                             AABB aabb1 = iterator.next();
                             if (aabb1.intersects(vec37, vec38) || aabb1.intersects(vec39, vec310)) {
-                                f11 = (float)aabb1.maxY;
+                                f11 = (float) aabb1.maxY;
                                 Vec3 vec311 = aabb1.getCenter();
                                 BlockPos blockpos1 = BlockPos.containing(vec311);
 
@@ -1064,7 +1073,7 @@ public class LocalPlayer extends AbstractClientPlayer {
                                     BlockState blockstate2 = this.level().getBlockState(blockpos2);
                                     VoxelShape voxelshape;
                                     if (!(voxelshape = blockstate2.getCollisionShape(this.level(), blockpos2, collisioncontext)).isEmpty()) {
-                                        f11 = (float)voxelshape.max(Direction.Axis.Y) + blockpos2.getY();
+                                        f11 = (float) voxelshape.max(Direction.Axis.Y) + blockpos2.getY();
                                         if (f11 - this.getY() > f7) {
                                             return;
                                         }
@@ -1083,7 +1092,7 @@ public class LocalPlayer extends AbstractClientPlayer {
                         }
 
                         if (f11 != Float.MIN_VALUE) {
-                            float f14 = (float)(f11 - this.getY());
+                            float f14 = (float) (f11 - this.getY());
                             if (!(f14 <= 0.5F) && !(f14 > f7)) {
                                 this.autoJumpTime = 1;
                             }
@@ -1126,11 +1135,11 @@ public class LocalPlayer extends AbstractClientPlayer {
 
     private boolean canStartSprinting() {
         return !this.isSprinting()
-            && this.input.hasForwardImpulse()
-            && this.isSprintingPossible(this.getAbilities().flying)
-            && !this.isSlowDueToUsingItem()
-            && (!this.isFallFlying() || this.isUnderWater())
-            && (!this.isMovingSlowly() || this.isUnderWater());
+                && this.input.hasForwardImpulse()
+                && this.isSprintingPossible(this.getAbilities().flying)
+                && !this.isSlowDueToUsingItem()
+                && (!this.isFallFlying() || this.isUnderWater())
+                && (!this.isMovingSlowly() || this.isUnderWater());
     }
 
     private boolean vehicleCanSprint(Entity p_265184_) {
@@ -1262,8 +1271,8 @@ public class LocalPlayer extends AbstractClientPlayer {
         AABB aabb = p_454621_.getBoundingBox().expandTowards(vec31.scale(d0)).inflate(1.0, 1.0, 1.0);
         EntityHitResult entityhitresult = ProjectileUtil.getEntityHitResult(p_454621_, vec3, vec32, aabb, EntitySelector.CAN_BE_PICKED, d1);
         return entityhitresult != null && entityhitresult.getLocation().distanceToSqr(vec3) < d2
-            ? filterHitResult(entityhitresult, vec3, p_458542_)
-            : filterHitResult(hitresult, vec3, p_455721_);
+                ? filterHitResult(entityhitresult, vec3, p_458542_)
+                : filterHitResult(hitresult, vec3, p_455721_);
     }
 
     private static HitResult filterHitResult(HitResult p_457200_, Vec3 p_454570_, double p_452240_) {
@@ -1271,11 +1280,16 @@ public class LocalPlayer extends AbstractClientPlayer {
         if (!vec3.closerThan(p_454570_, p_452240_)) {
             Vec3 vec31 = p_457200_.getLocation();
             Direction direction = Direction.getApproximateNearest(
-                vec31.x - p_454570_.x, vec31.y - p_454570_.y, vec31.z - p_454570_.z
+                    vec31.x - p_454570_.x, vec31.y - p_454570_.y, vec31.z - p_454570_.z
             );
             return BlockHitResult.miss(vec31, direction, BlockPos.containing(vec31));
         } else {
             return p_457200_;
         }
+    }
+
+    @Override
+    public void setSprinting(boolean sprinting) {
+        super.setSprinting(sprinting);
     }
 }

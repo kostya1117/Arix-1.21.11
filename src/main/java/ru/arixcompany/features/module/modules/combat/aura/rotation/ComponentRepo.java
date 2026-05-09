@@ -4,12 +4,13 @@ package ru.arixcompany.features.module.modules.combat.aura.rotation;
 import ru.arixcompany.features.event.EventRepo;
 import ru.arixcompany.features.module.modules.combat.aura.rotation.impl.FreeLookUtil;
 import ru.arixcompany.features.module.modules.combat.aura.rotation.impl.RotationRepo;
+import ru.arixcompany.features.module.modules.combat.aura.rotation.impl.SprintServerRepo;
 
 import java.util.HashMap;
 
 public final class ComponentRepo extends HashMap<Class<? extends Component>, Component> {
    public void init() {
-      this.add(new FreeLookUtil(), new RotationRepo());
+      this.add(new FreeLookUtil(), new RotationRepo(),new SprintServerRepo());
       this.values().forEach(EventRepo::register);
    }
 

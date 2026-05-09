@@ -1,11 +1,13 @@
 package ru.arixcompany.features.module.modules.combat.aura;
 
+import lombok.experimental.NonFinal;
 import lombok.experimental.UtilityClass;
 import net.minecraft.network.protocol.game.ServerboundPlayerCommandPacket;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ClipContext;
@@ -15,70 +17,69 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import ru.arixcompany.Arix;
 import ru.arixcompany.features.module.modules.combat.HitAura;
+import ru.arixcompany.features.module.modules.combat.aura.rotation.impl.SprintServerRepo;
 import ru.arixcompany.features.module.modules.combat.aura.utils.AuraUtil;
 import ru.arixcompany.features.module.modules.combat.aura.utils.RayTraceUtil;
+import ru.arixcompany.features.module.modules.movement.AutoSprint;
 import ru.arixcompany.utils.IMinecraft;
 import ru.arixcompany.utils.math.MathUtils;
 import ru.arixcompany.utils.math.Timer;
+import ru.arixcompany.utils.player.FallingPlayer;
+import ru.arixcompany.utils.player.PlayerIntersectionUtil;
 
 import java.util.Arrays;
 import java.util.concurrent.ThreadLocalRandom;
 
+import static ru.arixcompany.features.module.modules.combat.HitAura.attackRange;
+
 @UtilityClass
 public final class AttackHandler implements IMinecraft {
-    private final Timer cooldownTimer = new Timer();
-
+    public final Timer cooldownTimer = new Timer();
+    HitAura hitAura = Arix.getInstance().getModuleRepo().getModule(HitAura.class);
+    public final Timer sprintTimer = new Timer();
+    @NonFinal
+    public int skipTicks;
     public Player getSelf()  { return mc.player; }
     public Level  getWorld() { return mc.level;  }
-
-    public void performAttack(
-            LivingEntity target,
-            boolean rayCast,
-            boolean legitSprint,
-            float[] ranges
-    ) {
+    boolean isStopSprintPacketSent;
+    public void performAttack(LivingEntity target, boolean rayCast, float ranges) {
         if (target == null || mc.player == null) return;
-        if (AuraUtil.getStrictDistance(target) >= ranges[0]) return;
+        if (AuraUtil.getStrictDistance(target) >= ranges) return;
 
-        boolean canPacket = !mc.player.hasEffect(MobEffects.BLINDNESS)
-                && !mc.player.isFlyingVehicle()
-                && !legitSprint;
-
-        boolean canAttack = shouldAttack(target, rayCast, true, true, 0L, ranges);
-        if (!canAttack) return;
+        boolean canAttack = shouldAttack(target, rayCast, true, 0L, ranges);
+        if (!canAttack)
+            return;
 
         useEntity(target, InteractionHand.MAIN_HAND);
     }
-
-    public static double getYCapacityOnPlayerPos(int rangeY) {
-        if (mc.level == null || mc.player == null) return 1.0;
-
-        Vec3 eyePos = mc.player.getEyePosition();
-        double minDst = rangeY * 2.0;
-        double maxY = 320.0;
-        double minY = -64.0;
-        float halfW = mc.player.getBbWidth() / 2.0F - 0.01F;
-
-        for (Vec3 corner : Arrays.asList(
-                eyePos.add(-halfW, 0, -halfW),
-                eyePos.add( halfW, 0,  halfW),
-                eyePos.add( halfW, 0, -halfW),
-                eyePos.add(-halfW, 0,  halfW)
-        )) {
-            HitResult down = mc.level.clip(new ClipContext(corner, corner.add(0, -rangeY, 0),
-                    ClipContext.Block.VISUAL, ClipContext.Fluid.ANY, mc.player));
-            HitResult up   = mc.level.clip(new ClipContext(corner, corner.add(0,  rangeY, 0),
-                    ClipContext.Block.VISUAL, ClipContext.Fluid.ANY, mc.player));
-
-            if (maxY > up.getLocation().y)   maxY = up.getLocation().y;
-            if (minY < down.getLocation().y) minY = down.getLocation().y;
-
-            double dst = maxY - minY;
-            if (minDst > dst) minDst = dst;
-        }
-
-        return minDst - mc.player.getBbHeight();
+    public boolean hasMovementRestrictions() {
+        return mc.player.hasEffect(MobEffects.BLINDNESS)
+                || mc.player.hasEffect(MobEffects.LEVITATION)
+                || PlayerIntersectionUtil.isPlayerInBlock(Blocks.COBWEB)
+                || mc.player.isInWater()
+                || mc.player.isInLava()
+                || mc.player.onClimbable()
+                || !PlayerIntersectionUtil.canChangeIntoPose(Pose.STANDING) && mc.player.isCrouching()
+                || mc.player.getAbilities().flying;
     }
+
+    public double getYCapacityOnPlayerPos(int rangeY) {
+    if (mc.level == null) return 1.D;
+    Vec3 eyePos = mc.player.getEyePosition();
+    double minDst = rangeY * 2.D, dst;
+    double maxY = 320, minY = -64;
+    final float selfWD2 = mc.player.getBbWidth() / 2.F - 1E-2F;
+    HitResult first, second;
+    for (final Vec3 vec : Arrays.asList(eyePos.add(-selfWD2, .0D, -selfWD2), eyePos.add(selfWD2, .0D, selfWD2), eyePos.add(selfWD2, .0D, -selfWD2), eyePos.add(-selfWD2, .0D, selfWD2))) {
+        first = mc.level.clip(new ClipContext(vec, vec.add(0.D, -rangeY, 0.D), ClipContext.Block.VISUAL, ClipContext.Fluid.ANY, mc.player));
+        second = mc.level.clip(new ClipContext(vec, vec.add(0.D, rangeY, 0.D), ClipContext.Block.VISUAL, ClipContext.Fluid.ANY, mc.player));
+        if (maxY > second.getLocation().y) maxY = second.getLocation().y;
+        if (minY < first.getLocation().y) minY = first.getLocation().y;
+        dst = maxY - minY;
+        if (minDst > dst) minDst = dst;
+    }
+    return minDst - mc.player.getBbHeight();
+}
 
     public static double convenientFallOffset() {
         if (mc.player == null) return 0.0;
@@ -91,22 +92,34 @@ public final class AttackHandler implements IMinecraft {
             boolean posUpLiquid = !mc.level.getFluidState(mc.player.blockPosition().above()).isEmpty();
             if (!posLiquid && !posUpLiquid
                     && mc.player.fallDistance < -mc.player.getDeltaMovement().y
-                    && mc.player.tickCount > 6) {
+                    && mc.player.ticksOnGround > 6) {
                 fallOffset = -mc.player.getDeltaMovement().y;
             }
         }
         return fallOffset;
     }
 
-    public boolean isBestMomentToHit(boolean fallCheck) {
-        if (!fallCheck || mc.player == null) return true;
+    public float getfalldistance() {
+        float adaptiveFallValue = 0.F;
+        //float maxFallOff = .2F;
+        double yCapacity = getYCapacityOnPlayerPos(2);
+        //float maxFallOff = (float) Math.min(0.9, 0.2 + yCapacity * 0.35);
+        float maxFallOff = MathUtils.randomValue(0.2f,0.7f);
+        if (yCapacity > .2) {
+            adaptiveFallValue = maxFallOff;
+        }
+        return adaptiveFallValue;
+    }
+
+    public boolean isBestMomentToHit() {
+        if (mc.player == null) return false;
 
         float adaptiveFallValue = 0.F;
         //float maxFallOff = .2F;
         double yCapacity = getYCapacityOnPlayerPos(2);
         //float maxFallOff = (float) Math.min(0.9, 0.2 + yCapacity * 0.35);
         float maxFallOff = MathUtils.randomValue(0.2f,0.7f);
-        if (yCapacity > .20000004768371582D) {
+        if (yCapacity > .2) {
             adaptiveFallValue = maxFallOff;
         }
         final boolean hasFall = convenientFallOffset() > adaptiveFallValue || getYCapacityOnPlayerPos(2) < .1F;
@@ -121,8 +134,8 @@ public final class AttackHandler implements IMinecraft {
                 || isInWeb;
 
         return badLiquid
-                || (!mc.player.isJumping() && mc.player.tickCount > 6
-                        && HitAura.extraSettings.isSelected("Умные криты"))
+                || (!mc.player.isJumping() && mc.player.ticksOnGround > 6
+                && HitAura.extraSettings.isSelected("Умные криты"))
                 || mc.player.onClimbable()
                 || mc.player.isPassenger()
                 || mc.player.hasEffect(MobEffects.BLINDNESS)
@@ -131,19 +144,51 @@ public final class AttackHandler implements IMinecraft {
                 || mc.player.getAbilities().flying;
     }
 
-    public boolean useEntity(
-            LivingEntity target,
-            InteractionHand hand
-    ) {
-        if (target != null && mc.gameMode != null && mc.player != null) {
-            mc.gameMode.attack(mc.player, target);
-            if (hand != null)
-                mc.player.swing(hand);
-            Arix.getInstance().getModuleRepo().getModule(HitAura.class).count = (Arix.getInstance().getModuleRepo().getModule(HitAura.class).count + 1) % 2; // Update count for FunTime rotation
+    public boolean useEntity(LivingEntity target, InteractionHand hand) {
+        if (target == null || mc.gameMode == null || mc.player == null) return false;
 
-            cooldownTimer.reset();
+        HitAura hitAura = Arix.getInstance().getModuleRepo().getModule(HitAura.class);
+        preAttack();
+        mc.gameMode.attack(mc.player, target);
+        mc.player.swing(hand);
+        postAttack();
+        hitAura.count = (hitAura.count + 1) % 2;
+        cooldownTimer.reset();
+        skipTicks = 0;
+
+        return true;
+    }
+    public boolean shouldAttack() {
+        if (!msCooldownReached(0))
+            return false;
+        return isBestMomentToHit();
+    }
+    public void preAttack() {
+        if (hitAura.sprintReset.isSelected("Пакет")) {
+            if (SprintServerRepo.serverSprint && mc.player.wasSprinting) {
+                mc.player.setSprinting(false);
+                mc.player.connection.send(new ServerboundPlayerCommandPacket(mc.player, ServerboundPlayerCommandPacket.Action.STOP_SPRINTING));
+                isStopSprintPacketSent = true;
+            }
+        } else if (hitAura.sprintReset.isSelected("Легит")) {
+            mc.player.setSprinting(false);
+            isStopSprintPacketSent = true;
         }
-        return target != null;
+    }
+
+    public void postAttack() {
+        if (hitAura.sprintReset.isSelected("Пакет")) {
+            if (isStopSprintPacketSent && (!SprintServerRepo.serverSprint && mc.player.wasSprinting)) {
+                mc.player.setSprinting(true);
+                mc.player.connection.send(new ServerboundPlayerCommandPacket(mc.player, ServerboundPlayerCommandPacket.Action.START_SPRINTING));
+                isStopSprintPacketSent = false;
+            }
+        } else if (hitAura.sprintReset.isSelected("Легит")) {
+            if (isStopSprintPacketSent) {
+                mc.player.setSprinting(true);
+                isStopSprintPacketSent = false;
+            }
+        }
     }
 
     public long getMsCooldown() {
@@ -178,40 +223,21 @@ public final class AttackHandler implements IMinecraft {
             LivingEntity target,
             boolean rayCast,
             boolean distanceCheck,
-            boolean fallCheck,
             long cooldownMSOffset,
-            float[] ranges
+            float ranges
     ) {
-        if (distanceCheck && target != null && !AuraUtil.validDistance(target, ranges[0]))
+        if (distanceCheck && target != null && !AuraUtil.validDistance(target, ranges))
             return false;
         if (!msCooldownReached(cooldownMSOffset))
             return false;
 
-        boolean valid = isBestMomentToHit(fallCheck);
+        boolean valid = isBestMomentToHit();
         if (valid && rayCast) {
-            if (!anyEntityOnRay(target, ranges[0])) {
+            if (!anyEntityOnRay(target, ranges)) {
                 valid = false;
             }
         }
 
         return valid;
-    }
-
-    public boolean shouldAttack(
-            LivingEntity target,
-            boolean rayCast,
-            boolean fallCheck,
-            long cooldownMSOffset,
-            float[] ranges
-    ) {
-        return shouldAttack(target, rayCast, true, fallCheck, cooldownMSOffset, ranges);
-    }
-
-    public boolean resetSprintTick(LivingEntity target, float[] ranges) {
-        return target != null
-                && shouldAttack(target, false, false, -60L, ranges)
-                && !mc.player.onGround()
-                && !mc.player.isEyeInFluid(FluidTags.WATER)
-                && mc.player.getDeltaMovement().y <= 0.16477328182606651;
     }
 }

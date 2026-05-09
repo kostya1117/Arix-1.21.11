@@ -37,8 +37,8 @@ public class FuntimeRot implements AbstractRotation, IMinecraft {
 
         float cos = (float) Math.cos(System.currentTimeMillis() / 100D);
         float sin = (float) Math.sin(System.currentTimeMillis() / 100D);
-        float yawOffset = (float) Math.ceil(randomLerp(6, 13) * cos + (1F - cooldownFromLastSwing()) * (randomLerp(55, 65) * (Arix.getInstance().getModuleRepo().getModule(HitAura.class).count == 0 ? 1 : -1)));
-        float pitchOffset = (float) Math.ceil(randomLerp(3, 9) * sin + (1F - cooldownFromLastSwing()) * (randomLerp(20, 40) * (Arix.getInstance().getModuleRepo().getModule(HitAura.class).count == 0 ? 1 : -1)));
+        float yawOffset = (float) Math.ceil(randomLerp(6, 11) * cos + (1F - cooldownFromLastSwing()) * (randomLerp(35, 55) * (Arix.getInstance().getModuleRepo().getModule(HitAura.class).count == 0 ? 1 : -1)));
+        float pitchOffset = (float) Math.ceil(randomLerp(3, 9) * sin + (1F - cooldownFromLastSwing()) * (randomLerp(15, 35) * (Arix.getInstance().getModuleRepo().getModule(HitAura.class).count == 0 ? 1 : -1)));
 
         float targetYaw = rawYaw + yawOffset;
         float targetPitch = Mth.clamp(rawPitch + pitchOffset, -90F, 90F);

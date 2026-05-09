@@ -62,7 +62,6 @@ public class Arix implements IMinecraft {
         FontManager.init();
 
         RoundRectShader.init();
-
         moduleRepo = new ModuleRepo();
         moduleRepo.init();
 
