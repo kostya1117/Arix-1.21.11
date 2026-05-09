@@ -67,7 +67,7 @@
       "Звуки ударов": "Без"
     },
     "hitaura": {
-      "bind": 71,
+      "bind": -1,
       "state": false,
       "Радиус атаки": 3.0,
       "Радиус обнаружения": 1.0,
@@ -82,11 +82,11 @@
     "autobuy": {
       "bind": 79,
       "state": true,
-      "Время поиска (сек)": 8.0,
+      "Включить после сетапа": true,
+      "Время поиска (сек)": 5.0,
       "Обновление (мс)": 1000.0,
-      "Менять анархию каждые (мин)": 10.0,
-      "Задержка клика (мс)": 150.0,
-      "Скидка (%)": 17.0
+      "Задержка клика (мс)": 50.0,
+      "Скидка покупки (%)": 15.0
     },
     "auctionutils": {
       "bind": -1,
@@ -103,17 +103,17 @@
     },
     "fullbright": {
       "bind": -1,
-      "state": false
+      "state": true
     },
     "norender": {
       "bind": -1,
-      "state": false,
-      "Плохие эффекты": false,
-      "Огонь": false,
-      "Оверлеи": false,
-      "Фон GUI": false,
-      "Туман": false,
-      "Свечение": false
+      "state": true,
+      "Плохие эффекты": true,
+      "Огонь": true,
+      "Оверлеи": true,
+      "Фон GUI": true,
+      "Туман": true,
+      "Свечение": true
     },
     "triggerbot": {
       "bind": 82,
@@ -128,14 +128,15 @@
     "interface": {
       "bind": -1,
       "state": true,
-      "Элементы": "ArrayList"
+      "Элементы": "ArrayList,ArmorHUD"
     },
     "nopush": {
       "bind": -1,
-      "state": false
+      "state": false,
+      "Отменить от": ""
     }
   },
   "misc": {
-    "Theme": "TEAL"
+    "Theme": "MINT"
   }
 }

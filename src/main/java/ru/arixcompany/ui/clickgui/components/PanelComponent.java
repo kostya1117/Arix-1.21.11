@@ -3,7 +3,7 @@ package ru.arixcompany.ui.clickgui.components;
 import lombok.RequiredArgsConstructor;
 import net.minecraft.client.gui.GuiGraphics;
 import ru.arixcompany.Arix;
-import ru.arixcompany.ui.clickgui.Colors;
+import ru.arixcompany.utils.Colors;
 import ru.arixcompany.ui.clickgui.Gui;
 import ru.arixcompany.ui.clickgui.components.module.ModuleComponent;
 import ru.arixcompany.features.module.Category;

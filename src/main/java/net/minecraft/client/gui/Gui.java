@@ -215,8 +215,6 @@ public class Gui {
         this.titleFadeOutTime = 20;
     }
 
-// Только метод render и renderDraggableOverlay — добавить в net/minecraft/client/gui/Gui.java
-
     public void render(GuiGraphics p_282884_, DeltaTracker p_342095_) {
         if (!(this.minecraft.screen instanceof LevelLoadingScreen)) {
             if (Reflector.ForgeLayeredDraw_beginRender.exists()) {
@@ -457,13 +455,15 @@ public class Gui {
     private void renderTabList(GuiGraphics p_330031_, DeltaTracker p_343599_) {
         Scoreboard scoreboard = this.minecraft.level.getScoreboard();
         Objective objective = scoreboard.getDisplayObjective(DisplaySlot.LIST);
-        if (this.minecraft.options.keyPlayerList.isDown()
-            && (!this.minecraft.isLocalServer() || this.minecraft.player.connection.getListedOnlinePlayers().size() > 1 || objective != null)) {
-            this.tabList.setVisible(true);
+
+        boolean shouldShow = this.minecraft.options.keyPlayerList.isDown()
+                && (!this.minecraft.isLocalServer() || this.minecraft.player.connection.getListedOnlinePlayers().size() > 1 || objective != null);
+
+        this.tabList.setVisible(shouldShow);
+
+        if (this.tabList.shouldRender()) {
             p_330031_.nextStratum();
             this.tabList.render(p_330031_, p_330031_.guiWidth(), scoreboard, objective);
-        } else {
-            this.tabList.setVisible(false);
         }
     }
 

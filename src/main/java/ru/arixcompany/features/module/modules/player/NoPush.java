@@ -9,6 +9,7 @@ import ru.arixcompany.features.module.setting.implement.ListSetting;
 public class NoPush extends Module {
     public NoPush() {
         super("NoPush", Category.Player);
+        setup(cancelPush);
     }
 
     ListSetting cancelPush = new ListSetting("Отменить от")

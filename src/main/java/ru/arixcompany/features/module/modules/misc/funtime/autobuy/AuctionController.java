@@ -1,8 +1,10 @@
 package ru.arixcompany.features.module.modules.misc.funtime.autobuy;
 
 import lombok.Getter;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.ContainerScreen;
+import net.minecraft.network.chat.Component;
 import ru.arixcompany.features.module.modules.misc.funtime.utils.FuntimeUtil;
 import ru.arixcompany.utils.IMinecraft;
 import ru.arixcompany.utils.math.Timer;
@@ -14,7 +16,7 @@ public class AuctionController implements IMinecraft {
     @Getter
     private boolean waitingAfterAnarchy = false;
 
-    public void tick(boolean autoBuyEnabled, long changeDelayMillis) {
+    public void tick(boolean autoBuyEnabled) {
 
         if (!autoBuyEnabled) return;
 
@@ -29,15 +31,6 @@ public class AuctionController implements IMinecraft {
             }
 
             return;
-        }
-
-        if (!waitingAfterAnarchy && anarchyWatch.finished(changeDelayMillis)) {
-
-            changeRandomAnarchy();
-            anarchyWatch.reset();
-
-            waitingAfterAnarchy = true;
-            waitTimer.reset();
         }
     }
 
@@ -65,22 +58,22 @@ public class AuctionController implements IMinecraft {
         int y = screen.topPos + 10;
 
         Button autoBuyButton = Button.builder(
-                net.minecraft.network.chat.Component.literal("AutoBuy: ")
-                        .append(net.minecraft.network.chat.Component.literal(
+                Component.literal("AutoBuy: ")
+                        .append(Component.literal(
                                         autoBuyEnabled ? "Вкл" : "Выкл")
                                 .withStyle(autoBuyEnabled ?
-                                        net.minecraft.ChatFormatting.GREEN :
-                                        net.minecraft.ChatFormatting.RED)),
+                                        ChatFormatting.GREEN :
+                                        ChatFormatting.RED)),
                 btn -> toggleBuy.run()
         ).bounds(x, y, 100, 20).build();
 
         Button autoSetupButton = Button.builder(
-                net.minecraft.network.chat.Component.literal("AutoSetup: ")
-                        .append(net.minecraft.network.chat.Component.literal(
+                Component.literal("AutoSetup: ")
+                        .append(Component.literal(
                                         autoSetupEnabled ? "Вкл" : "Выкл")
                                 .withStyle(autoSetupEnabled ?
-                                        net.minecraft.ChatFormatting.GREEN :
-                                        net.minecraft.ChatFormatting.RED)),
+                                        ChatFormatting.GREEN :
+                                        ChatFormatting.RED)),
                 btn -> toggleSetup.run()
         ).bounds(x, y + 25, 100, 20).build();
 

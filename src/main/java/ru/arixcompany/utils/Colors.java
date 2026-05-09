@@ -1,8 +1,10 @@
-package ru.arixcompany.ui.clickgui;
+package ru.arixcompany.utils;
 
 import ru.arixcompany.Arix;
 import ru.arixcompany.features.module.Theme;
 import ru.arixcompany.utils.render.ColorUtil;
+
+import java.awt.*;
 
 public final class Colors {
     private Colors() {}
@@ -23,4 +25,7 @@ public final class Colors {
     public static int textActive(float alpha) { return ColorUtil.rgba(255, 255, 255, (int) (255.0F * alpha)); }
     public static int textInactive(float alpha) { return ColorUtil.rgba(160, 160, 170, (int) (255.0F * alpha)); }
     public static int moduleEnabledColor(float alpha, float animPC) { return ColorUtil.overCol(textInactive(alpha), textActive(alpha), animPC); }
+    public static int friend(float alpha) {
+        return ColorUtil.replAlpha(0x8028FF28, (int) (255.0F * alpha));
+    }
 }

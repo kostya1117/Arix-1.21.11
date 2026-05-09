@@ -2,6 +2,7 @@ package ru.arixcompany.features.draggable;
 
 import lombok.Getter;
 import net.minecraft.client.gui.GuiGraphics;
+import ru.arixcompany.features.draggable.draggables.ArmorHudDraggable;
 import ru.arixcompany.features.draggable.draggables.ArrayListDraggable;
 
 import java.util.ArrayList;
@@ -14,12 +15,15 @@ public class DraggableRepo {
 
     @Getter
     private ArrayListDraggable arrayList;
+    @Getter
+    private ArmorHudDraggable armorHud;
 
     private IDraggable draggingComponent;
 
     public void init() {
         clear();
         this.arrayList = register(new ArrayListDraggable());
+        this.armorHud = register(new ArmorHudDraggable());
     }
 
     public <T extends IDraggable> T register(T c) {

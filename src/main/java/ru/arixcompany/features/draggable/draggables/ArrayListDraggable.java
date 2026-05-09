@@ -7,7 +7,7 @@ import ru.arixcompany.features.draggable.DraggableComponent;
 import ru.arixcompany.features.module.Module;
 import ru.arixcompany.features.module.modules.render.Interface;
 import ru.arixcompany.features.module.setting.implement.BooleanSetting;
-import ru.arixcompany.ui.clickgui.Colors;
+import ru.arixcompany.utils.Colors;
 import ru.arixcompany.utils.animation.Direction;
 import ru.arixcompany.utils.math.StringUtil;
 import ru.arixcompany.utils.render.RenderUtils;

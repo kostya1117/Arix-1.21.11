@@ -4,37 +4,61 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import ru.arixcompany.features.module.setting.Setting;
 import ru.arixcompany.features.module.setting.implement.BooleanSetting;
-import ru.arixcompany.ui.clickgui.Colors;
+import ru.arixcompany.features.module.setting.implement.SelectSetting;
+import ru.arixcompany.utils.Colors;
 import ru.arixcompany.ui.clickgui.components.IComponent;
 import ru.arixcompany.ui.clickgui.components.module.settings.BooleanSettingComponent;
+import ru.arixcompany.ui.clickgui.components.module.settings.SelectSettingComponent;
 import ru.arixcompany.utils.render.RenderUtils;
 import ru.arixcompany.utils.render.font.FontManager;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.WeakHashMap;
 
 public final class DraggableSettingsRenderer {
 
     private DraggableSettingsRenderer() {}
 
-    private static final float WIDTH   = 130f, PAD = 6f, RADIUS = 4f, HEADER_H = 16f;
+    private static final float WIDTH    = 130f;
+    private static final float PAD      = 6f;
+    private static final float RADIUS   = 4f;
+    private static final float HEADER_H = 16f;
+
+    private static final float CONTENT_W = WIDTH - PAD * 2;
+
     private static final Map<Setting, IComponent> cache = new WeakHashMap<>();
 
     private static IComponent getOrCreate(Setting s) {
-        return cache.computeIfAbsent(s, k -> k instanceof BooleanSetting bs ? new BooleanSettingComponent(bs) : null);
+        return cache.computeIfAbsent(s, k -> {
+            if (k instanceof BooleanSetting bs) return new BooleanSettingComponent(bs);
+            if (k instanceof SelectSetting  ss) return new SelectSettingComponent(ss);
+            return null;
+        });
+    }
+
+    private static void prepare(IComponent comp) {
+        if (comp instanceof SelectSettingComponent select) {
+            select.setLayoutWidth(CONTENT_W);
+        }
     }
 
     private static float popupHeight(DraggableComponent c) {
         float h = HEADER_H + PAD;
         for (Setting s : c.getSettingsForGUI()) {
             IComponent comp = getOrCreate(s);
-            if (comp != null) h += comp.getHeight();
+            if (comp == null) continue;
+            prepare(comp);
+            h += comp.getHeight();
         }
         return h + PAD;
     }
 
     private static float[] popupPos(DraggableComponent c) {
         Minecraft mc = Minecraft.getInstance();
-        int sw = mc.getWindow().getGuiScaledWidth(), sh = mc.getWindow().getGuiScaledHeight();
+        int sw = mc.getWindow().getGuiScaledWidth();
+        int sh = mc.getWindow().getGuiScaledHeight();
+
         float ph = popupHeight(c);
         float cr = c.getRenderX() + c.getWidth();
 
@@ -47,26 +71,38 @@ public final class DraggableSettingsRenderer {
         List<Setting> settings = c.getSettingsForGUI();
         if (settings.isEmpty()) return;
 
-        float[] p = popupPos(c);
-        float px = p[0], py = p[1], ph = popupHeight(c);
+        float[] p  = popupPos(c);
+        float px   = p[0];
+        float py   = p[1];
+        float ph   = popupHeight(c);
 
         RenderUtils.fillRoundRect(px, py, WIDTH, ph, RADIUS, Colors.bgPrimary(alpha));
         RenderUtils.drawRoundRectOutline(px, py, WIDTH, ph, RADIUS, 1f, Colors.outline(alpha * 0.5f));
 
-        var font = FontManager.get(9f);
-        font.drawString(g, c.getName(), px + PAD, py + (HEADER_H - font.getHeight()) / 2f, Colors.textActive(alpha));
+        var font = FontManager.get(10f);
+        font.drawString(g, c.getName(),
+                px + PAD,
+                py + (HEADER_H - font.getHeight()) / 2f,
+                Colors.textActive(alpha));
 
         float sepY = py + HEADER_H;
-        RenderUtils.fillRoundRect(px + PAD, sepY, WIDTH - PAD * 2, 0.5f, 0, Colors.outline(alpha * 0.4f));
+        RenderUtils.fillRoundRect(px + PAD, sepY, CONTENT_W, 0.5f, 0, Colors.outline(alpha * 0.4f));
 
-        float sy = sepY + PAD, sx = px + PAD, sw = WIDTH - PAD * 2;
-        int outline = Colors.outline(alpha), accent = Colors.accent(alpha);
-        int bg = Colors.bgElement(alpha), txtOff = Colors.textInactive(alpha), txtOn = Colors.textActive(alpha);
+        int outline = Colors.outline(alpha);
+        int accent  = Colors.accent(alpha);
+        int bg      = Colors.bgElement(alpha);
+        int txtOff  = Colors.textInactive(alpha);
+        int txtOn   = Colors.textActive(alpha);
+
+        float sx = px + PAD;
+        float sy = sepY + PAD;
 
         for (Setting s : settings) {
             IComponent comp = getOrCreate(s);
             if (comp == null) continue;
-            comp.render(g, sx, sy, sw, mx, my, outline, accent, bg, txtOff, txtOn, alpha);
+
+            prepare(comp);
+            comp.render(g, sx, sy, CONTENT_W, mx, my, outline, accent, bg, txtOff, txtOn, alpha);
             sy += comp.getHeight();
         }
     }
@@ -75,16 +111,23 @@ public final class DraggableSettingsRenderer {
         List<Setting> settings = c.getSettingsForGUI();
         if (settings.isEmpty()) return false;
 
-        float[] p = popupPos(c);
-        if (!inside(mx, my, p[0], p[1], WIDTH, popupHeight(c))) return false;
+        float[] p  = popupPos(c);
+        float   ph = popupHeight(c);
 
-        float sy = p[1] + HEADER_H + PAD, sx = p[0] + PAD, sw = WIDTH - PAD * 2;
+        if (!inside(mx, my, p[0], p[1], WIDTH, ph)) return false;
+
+        float sx = p[0] + PAD;
+        float sy = p[1] + HEADER_H + PAD;
+
         for (Setting s : settings) {
             IComponent comp = getOrCreate(s);
             if (comp == null) continue;
-            if (comp.handleClick(sx, sy, sw, (int) mx, (int) my, btn)) return true;
+
+            prepare(comp);
+            if (comp.handleClick(sx, sy, CONTENT_W, (int) mx, (int) my, btn)) return true;
             sy += comp.getHeight();
         }
+
         return true;
     }
 
