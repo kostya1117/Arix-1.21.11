@@ -1,6 +1,7 @@
 package ru.arixcompany.features.module.modules.misc.funtime.autobuy;
 
 import lombok.Getter;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.inventory.ContainerScreen;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
@@ -19,8 +20,6 @@ import java.util.TreeSet;
 
 public class AutoSetupEngine implements IMinecraft {
 
-    private static final int TOP_COUNT = 3;
-
     private final List<ItemTarget> searchList;
     private final AutoBuy parent;
     private final int total;
@@ -28,20 +27,19 @@ public class AutoSetupEngine implements IMinecraft {
     private final Timer pageTimer = new Timer();
     private final Timer refreshTimer = new Timer();
     private final Timer retryTimer = new Timer();
+    private final Timer transitionTimer = new Timer();
 
-    @Getter
-    private boolean running = false;
+    @Getter private boolean running = false;
     private boolean waitingForAuction = false;
-    private boolean retrying = false;
+    private boolean transitioning = false;
     private boolean finishingCurrent = false;
 
     private int currentIndex = 0;
+    @Getter private int completed = 0;
+    @Getter private int processed = 0;
 
-    @Getter
-    private int completed = 0;
-
-    @Getter
-    private int processed = 0;
+    // Флаг для повторной попытки (если не найдено или цена ниже покупки)
+    private boolean hasRetriedCurrent = false;
 
     private final TreeSet<Integer> foundPrices = new TreeSet<>();
 
@@ -56,23 +54,18 @@ public class AutoSetupEngine implements IMinecraft {
         currentIndex = 0;
         completed = 0;
         processed = 0;
+        transitioning = false;
+        hasRetriedCurrent = false;
         foundPrices.clear();
-
         MessageSender.print("§eЗапущена автонастройка цен");
-
         if (mc.screen != null) mc.screen.onClose();
-
         searchCurrent();
     }
 
     public void stop() {
         running = false;
-        waitingForAuction = false;
-        retrying = false;
-        finishingCurrent = false;
-
-        if (mc.screen != null)
-            mc.screen.onClose();
+        transitioning = false;
+        if (mc.screen != null) mc.screen.onClose();
 
         MessageSender.print("§cАвтонастройка остановлена: "
                 + completed + " успешных, "
@@ -82,6 +75,14 @@ public class AutoSetupEngine implements IMinecraft {
     public void tick(int searchDurationSeconds, int updateDelayMillis, int discountPercent) {
         if (!running) return;
 
+        if (transitioning) {
+            if (transitionTimer.finished(400)) {
+                transitioning = false;
+                searchCurrent();
+            }
+            return;
+        }
+
         if (waitingForAuction) {
             if (mc.screen instanceof ContainerScreen) {
                 waitingForAuction = false;
@@ -89,8 +90,9 @@ public class AutoSetupEngine implements IMinecraft {
                 pageTimer.reset();
                 refreshTimer.reset();
             } else {
-                if (!retrying) { retryTimer.reset(); retrying = true; }
-                if (retryTimer.finished(1500)) { retrying = false; searchCurrent(); }
+                if (retryTimer.finished(1500)) {
+                    searchCurrent();
+                }
             }
             return;
         }
@@ -100,19 +102,16 @@ public class AutoSetupEngine implements IMinecraft {
                 scanPrices(screen);
 
                 if (refreshTimer.finished(updateDelayMillis)) {
+                    foundPrices.clear();
                     refresh(screen);
                     refreshTimer.reset();
                 }
             } else {
                 finishCurrent(discountPercent);
             }
-        } else {
-            if (!retrying && currentIndex < total) {
-                retryTimer.reset();
-                retrying = true;
-            }
-            if (retrying && retryTimer.finished(1500)) {
-                retrying = false;
+        }
+        else if (!waitingForAuction && !transitioning) {
+            if (retryTimer.finished(1500)) {
                 searchCurrent();
             }
         }
@@ -125,42 +124,115 @@ public class AutoSetupEngine implements IMinecraft {
         }
 
         ItemTarget data = searchList.get(currentIndex);
-
         waitingForAuction = true;
-        retrying = false;
         finishingCurrent = false;
+        retryTimer.reset();
 
-        if (mc.player != null)
-            mc.player.connection.sendCommand("ah search " + data.getSearchTerm());
-    }
-
-    private void searchNext() {
-        if (currentIndex >= total) {
-            finishAll();
-            return;
+        if (mc.player != null) {
+            // Закрываем GUI перед новой командой, чтобы сервер корректно открыл новое
+            mc.execute(() -> {
+                if (mc.screen != null) mc.screen.onClose();
+                mc.player.connection.sendCommand("ah search " + data.getSearchTerm());
+            });
         }
-        searchCurrent();
     }
 
     private void scanPrices(ContainerScreen screen) {
+        ItemTarget target = searchList.get(currentIndex);
         var handler = screen.getMenu();
+
         for (Slot slot : handler.slots) {
             if (slot.container == mc.player.getInventory()) continue;
             ItemStack stack = slot.getItem();
             if (stack.isEmpty()) continue;
 
             if (!FuntimeUtil.hasPrice(stack)) continue;
-            int pricePerItem = FuntimeUtil.getPricePerItem(stack);
+            String itemNameRaw = ChatFormatting.stripFormatting(stack.getHoverName().getString()).toLowerCase();
+            if (itemNameRaw.contains("не актуален")) continue;
 
+            boolean matches = false;
+            if (target.getLoreKeywords() != null && !target.getLoreKeywords().isEmpty()) {
+                List<String> itemLore = FuntimeUtil.getLore(stack);
+                matches = FuntimeUtil.checkLoreFullMatch(itemLore, target.getLoreKeywords());
+            }
+            if (!matches && target.isCheckByName()) {
+                String itemName = ChatFormatting.stripFormatting(stack.getHoverName().getString()).toLowerCase();
+                String targetName = ChatFormatting.stripFormatting(target.getDisplayName()).toLowerCase();
+                if (itemName.contains(targetName)) matches = true;
+            }
+            if (!matches && target.isCheckByItem()) {
+                if (stack.getItem() == target.getDisplayStack().getItem()) matches = true;
+            }
+
+            if (!matches) continue;
+
+            int pricePerItem = FuntimeUtil.getPricePerItem(stack);
             if (pricePerItem > 0) {
                 foundPrices.add(pricePerItem);
             }
         }
     }
 
+    private void finishCurrent(int discountPercent) {
+        if (finishingCurrent) return;
+
+        ItemTarget target = searchList.get(currentIndex);
+
+        // 1. Если цена найдена
+        if (!foundPrices.isEmpty()) {
+            int minPrice = foundPrices.first();
+
+            // ПРОВЕРКА: Если мин. цена на ауке меньше нашей цены покупки, перенастраиваем
+            if (minPrice < target.getBuyPrice() && !hasRetriedCurrent) {
+                MessageSender.print(" Цена на §e" + target.getDisplayName() + " §7упала. Перенастройка...");
+                hasRetriedCurrent = true;
+                finishingCurrent = true; // чтобы выйти из текущего цикла
+                if (mc.screen != null) mc.screen.onClose();
+                transitioning = true;
+                transitionTimer.reset();
+                return; // Не инкрементируем currentIndex
+            }
+
+            int buyPrice = (int) (minPrice * (1 - discountPercent / 100.0));
+            if (buyPrice < 0) buyPrice = 0;
+
+            parent.setPriceForItem(target.getId(), buyPrice);
+            completed++;
+            processed++;
+
+            MessageSender.print("§a[+] §f" + target.getDisplayName() +
+                    " §7| Мин цена: §e" + FuntimeUtil.formatPrice(minPrice) +
+                    " §7| Твоя цена покупки : §6" + FuntimeUtil.formatPrice(buyPrice));
+
+            hasRetriedCurrent = false;
+            currentIndex++;
+        }
+        // 2. Если цена НЕ найдена
+        else {
+            if (!hasRetriedCurrent) {
+                MessageSender.print("§e[-] " + target.getDisplayName() + " не найден. Пробую еще раз...");
+                hasRetriedCurrent = true;
+                finishingCurrent = true;
+                if (mc.screen != null) mc.screen.onClose();
+                transitioning = true;
+                transitionTimer.reset();
+                return; // Пробуем этот же индекс еще раз
+            } else {
+                MessageSender.print("§c[-] " + target.getDisplayName() + " (не найден после 2-х попыток)");
+                processed++;
+                hasRetriedCurrent = false;
+                currentIndex++;
+            }
+        }
+
+        finishingCurrent = true;
+        if (mc.screen != null) mc.screen.onClose();
+        transitioning = true;
+        transitionTimer.reset();
+    }
+
     private void refresh(ContainerScreen screen) {
         var handler = screen.getMenu();
-
         for (Slot slot : handler.slots) {
             String name = slot.getItem().getHoverName().getString().toLowerCase();
             if (name.contains("обновить") || name.contains("refresh")) {
@@ -170,69 +242,24 @@ public class AutoSetupEngine implements IMinecraft {
         }
     }
 
-    private void finishCurrent(int discountPercent) {
-        if (finishingCurrent) return;
-        finishingCurrent = true;
-        processed++;
-
-        ItemTarget target = searchList.get(currentIndex);
-
-        if (!foundPrices.isEmpty()) {
-            int minPrice = foundPrices.first();
-
-            int buyPrice = (int) (minPrice * (1 - discountPercent / 100.0));
-
-            if (buyPrice < 0) buyPrice = 0;
-
-            parent.setPriceForItem(target.getId(), buyPrice);
-            completed++;
-
-            MessageSender.print("§a[+] §f" + target.getDisplayName() +
-                    " §7| Мин цена: §e" + FuntimeUtil.formatPrice(minPrice) +
-                    " §7| Твоя цена: §6" + FuntimeUtil.formatPrice(buyPrice));
-        } else {
-            MessageSender.print("§c[-] " + target.getDisplayName() + " (не найден)");
-        }
-
-        if (mc.screen != null) mc.screen.onClose();
-        currentIndex++;
-
-        new Thread(() -> {
-            try { Thread.sleep(150); mc.execute(this::searchNext); } catch (Exception ignored) {}
-        }).start();
-    }
-
     private void finishAll() {
         running = false;
+        transitioning = false;
         waitingForAuction = false;
-        retrying = false;
-        finishingCurrent = false;
-
-        if (mc.screen != null) {
-            mc.execute(() -> mc.screen.onClose());
-        }
-
-        MessageSender.print("§aАвтонастройка завершена: "
-                + completed + " успешных, "
-                + processed + " обработано, всего " + total);
-
+        if (mc.screen != null) mc.execute(() -> mc.screen.onClose());
+        MessageSender.print("§aАвтонастройка завершена: " + completed + "/" + total);
         Arix.getInstance().getModuleRepo().getModule(AutoBuy.class).autoSetupEnabled = false;
 
         new Thread(() -> {
             try {
                 Thread.sleep(300);
-
                 if (AutoBuy.autoBuyAfterSetup.isValue()) {
                     mc.execute(() -> {
                         if (mc.player != null) {
-                            AutoBuy.setAutoBuyEnabled(true);
-
-                            AutoBuy.autoBuyEngine.resetState();
-                            AutoBuy.auctionController.reset();
-
                             AutoBuy.balanceController.request();
-
                             mc.player.connection.sendCommand("ah");
+                            AutoBuy.setAutoBuyEnabled(true);
+                            AutoBuy.autoBuyEngine.resetState();
                         }
                     });
                 }

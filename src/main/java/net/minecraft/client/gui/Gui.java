@@ -131,28 +131,6 @@ public class Gui {
         .thenComparing(PlayerScoreEntry::owner, String.CASE_INSENSITIVE_ORDER);
     private static final Component DEMO_EXPIRED_TEXT = Component.translatable("demo.demoExpired");
     private static final Component SAVING_TEXT = Component.translatable("menu.savingLevel");
-    private static final float MIN_CROSSHAIR_ATTACK_SPEED = 5.0F;
-    private static final int EXPERIENCE_BAR_DISPLAY_TICKS = 100;
-    private static final int NUM_HEARTS_PER_ROW = 10;
-    private static final int LINE_HEIGHT = 10;
-    private static final String SPACER = ": ";
-    private static final float PORTAL_OVERLAY_ALPHA_MIN = 0.2F;
-    private static final int HEART_SIZE = 9;
-    private static final int HEART_SEPARATION = 8;
-    private static final int NUM_AIR_BUBBLES = 10;
-    private static final int AIR_BUBBLE_SIZE = 9;
-    private static final int AIR_BUBBLE_SEPERATION = 8;
-    private static final int AIR_BUBBLE_POPPING_DURATION = 2;
-    private static final int EMPTY_AIR_BUBBLE_DELAY_DURATION = 1;
-    private static final float AIR_BUBBLE_POP_SOUND_VOLUME_BASE = 0.5F;
-    private static final float AIR_BUBBLE_POP_SOUND_VOLUME_INCREMENT = 0.1F;
-    private static final float AIR_BUBBLE_POP_SOUND_PITCH_BASE = 1.0F;
-    private static final float AIR_BUBBLE_POP_SOUND_PITCH_INCREMENT = 0.1F;
-    private static final int NUM_AIR_BUBBLE_POPPED_BEFORE_SOUND_VOLUME_INCREASE = 3;
-    private static final int NUM_AIR_BUBBLE_POPPED_BEFORE_SOUND_PITCH_INCREASE = 5;
-    private static final float AUTOSAVE_FADE_SPEED_FACTOR = 0.2F;
-    private static final int SAVING_INDICATOR_WIDTH_PADDING_RIGHT = 5;
-    private static final int SAVING_INDICATOR_HEIGHT_PADDING_BOTTOM = 5;
     private final RandomSource random = RandomSource.create();
     private final Minecraft minecraft;
     private final ChatComponent chat;
@@ -186,6 +164,8 @@ public class Gui {
     private Pair<Gui.ContextualInfo, ContextualBarRenderer> contextualInfoBar = Pair.of(Gui.ContextualInfo.EMPTY, ContextualBarRenderer.EMPTY);
     private final Map<Gui.ContextualInfo, Supplier<ContextualBarRenderer>> contextualInfoBarRenderers;
     private float scopeScale;
+
+    private float hotbarChatOffset = 0.0F;
 
     public Gui(Minecraft p_330021_) {
         this.minecraft = p_330021_;
@@ -234,7 +214,6 @@ public class Gui {
             this.renderSleepOverlay(p_282884_, p_342095_);
 
             if (!this.minecraft.options.hideGui) {
-                this.renderDemoOverlay(p_282884_, p_342095_);
                 this.renderScoreboardSidebar(p_282884_, p_342095_);
                 this.renderOverlayMessage(p_282884_, p_342095_);
                 this.renderTitle(p_282884_, p_342095_);
@@ -362,7 +341,9 @@ public class Gui {
             if (i > 0) {
                 p_330258_.nextStratum();
                 p_330258_.pose().pushMatrix();
-                p_330258_.pose().translate(p_330258_.guiWidth() / 2, p_330258_.guiHeight() - 68);
+
+                p_330258_.pose().translate((float)p_330258_.guiWidth() / 2.0F, (float)p_330258_.guiHeight() - 68.0F - this.hotbarChatOffset);
+
                 int j;
                 if (this.animateOverlayMessageColor) {
                     j = Mth.hsvToArgb(f / 50.0F, 0.7F, 0.6F, i);
@@ -524,9 +505,6 @@ public class Gui {
                 if ((iclientmobeffectextensions == null || iclientmobeffectextensions.isVisibleInGui(mobeffectinstance)) && mobeffectinstance.showIcon()) {
                     int k = p_282812_.guiWidth();
                     int l = 1;
-                    if (this.minecraft.isDemo()) {
-                        l += 15;
-                    }
 
                     if (holder.value().isBeneficial()) {
                         i++;
@@ -564,6 +542,15 @@ public class Gui {
     }
 
     private void renderHotbarAndDecorations(GuiGraphics p_333625_, DeltaTracker p_344796_) {
+        boolean isChatOpen = this.minecraft.screen instanceof ChatScreen;
+        float targetOffset = isChatOpen ? 14.0F : 0.0F;
+
+        float partialTick = p_344796_.getGameTimeDeltaPartialTick(false);
+        this.hotbarChatOffset = Mth.lerp(0.2F, this.hotbarChatOffset, targetOffset);
+
+        p_333625_.pose().pushMatrix();
+        p_333625_.pose().translate(0.0F, -this.hotbarChatOffset);
+
         if (this.minecraft.gameMode.getPlayerMode() == GameType.SPECTATOR) {
             this.spectatorGui.renderHotbar(p_333625_);
         } else {
@@ -591,6 +578,8 @@ public class Gui {
         } else if (this.minecraft.player.isSpectator()) {
             this.spectatorGui.renderAction(p_333625_);
         }
+
+        p_333625_.pose().popMatrix();
     }
 
     private void renderItemHotbar(GuiGraphics p_332738_, DeltaTracker p_342619_) {
@@ -694,28 +683,6 @@ public class Gui {
         }
 
         Profiler.get().pop();
-    }
-
-    private void renderDemoOverlay(GuiGraphics p_281825_, DeltaTracker p_343325_) {
-        if (this.minecraft.isDemo()) {
-            Profiler.get().push("demo");
-            p_281825_.nextStratum();
-            Component component;
-            if (this.minecraft.level.getGameTime() >= 120500L) {
-                component = DEMO_EXPIRED_TEXT;
-            } else {
-                component = Component.translatable(
-                    "demo.remainingTime",
-                    StringUtil.formatTickDuration((int)(120500L - this.minecraft.level.getGameTime()), this.minecraft.level.tickRateManager().tickrate())
-                );
-            }
-
-            int i = this.getFont().width(component);
-            int j = p_281825_.guiWidth() - i - 10;
-            int k = 5;
-            p_281825_.drawStringWithBackdrop(this.getFont(), component, j, 5, i, -1);
-            Profiler.get().pop();
-        }
     }
 
     private void displayScoreboardSidebar(GuiGraphics p_282008_, Objective p_283455_) {

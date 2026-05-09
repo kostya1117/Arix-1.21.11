@@ -38,6 +38,8 @@ import org.joml.Matrix3x2f;
 import org.joml.Vector2f;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
+import ru.arixcompany.features.event.EventRepo;
+import ru.arixcompany.features.event.world.EventChat;
 
 public class ChatComponent {
     private static final Logger LOGGER = LogUtils.getLogger();
@@ -54,8 +56,8 @@ public class ChatComponent {
         .withHoverEvent(new HoverEvent.ShowText(Component.translatable("chat.queue.tooltip")));
     final Minecraft minecraft;
     private final ArrayListDeque<String> recentChat = new ArrayListDeque<>(100);
-    private final List<GuiMessage> allMessages = Lists.newArrayList();
-    private final List<GuiMessage.Line> trimmedMessages = Lists.newArrayList();
+    public final List<GuiMessage> allMessages = Lists.newArrayList();
+    public final List<GuiMessage.Line> trimmedMessages = Lists.newArrayList();
     private int chatScrollbarPos;
     private boolean newMessageSinceScroll;
     private ChatComponent. Draft latestDraft;

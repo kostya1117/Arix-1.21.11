@@ -79,7 +79,7 @@ public class IntegratedServer extends MinecraftServer {
     ) {
         super(p_235248_, p_235250_, p_235251_, p_235252_, p_235249_.getProxy(), p_235249_.getFixerUpper(), p_235253_, p_425240_);
         this.setSingleplayerProfile(p_235249_.getGameProfile());
-        this.setDemo(p_235249_.isDemo());
+        this.setDemo(false);
         this.setPlayerList(new IntegratedPlayerList(this, this.registries(), this.playerDataStorage));
         this.minecraft = p_235249_;
     }

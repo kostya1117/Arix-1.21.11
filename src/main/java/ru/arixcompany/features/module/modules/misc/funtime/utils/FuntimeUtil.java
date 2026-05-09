@@ -13,6 +13,7 @@ import ru.arixcompany.utils.MessageSender;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -138,5 +139,37 @@ public class FuntimeUtil extends MessageSender implements IMinecraft {
         }
 
         return false;
+    }
+
+    public static boolean checkLoreFullMatch(List<String> itemLore, List<String> targetLore) {
+        if (itemLore == null || targetLore == null) return false;
+
+        int matches = 0;
+
+        for (String targetLine : targetLore) {
+
+            String cleanTarget = ChatFormatting.stripFormatting(targetLine);
+
+            for (String itemLine : itemLore) {
+
+                String cleanItem = ChatFormatting.stripFormatting(itemLine);
+
+                if (cleanItem.contains(cleanTarget)) {
+                    matches++;
+                    break;
+                }
+            }
+        }
+
+        return matches >= targetLore.size();
+    }
+
+    public static List<String> getLore(ItemStack stack) {
+
+        ItemLore loreComp = stack.get(DataComponents.LORE);
+
+        return loreComp != null
+                ? loreComp.lines().stream().map(Component::getString).toList()
+                : Collections.emptyList();
     }
 }

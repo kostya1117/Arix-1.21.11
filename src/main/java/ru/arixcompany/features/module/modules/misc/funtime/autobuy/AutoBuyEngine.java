@@ -41,6 +41,14 @@ public class AutoBuyEngine implements IMinecraft {
     private final Timer confirmWatch = new Timer();
     private boolean reopenRequested = false;
 
+    @Getter private ItemTarget lastTarget;
+    @Getter private int lastTotalPrice;
+
+    @Getter private ItemTarget lastAttemptedTarget;
+    @Getter private int lastAttemptedPrice;
+
+    @Getter private int lastBoughtCount;
+    @Getter private int lastBoughtPerItem;
 
     public AutoBuyEngine(Map<String, ItemTarget> targets,
                          Timer clickCooldown,
@@ -82,6 +90,9 @@ public class AutoBuyEngine implements IMinecraft {
 
             if (slot.container == mc.player.getInventory()) continue;
             if (stack.isEmpty()) continue;
+            if (!FuntimeUtil.hasPrice(stack)) continue;
+            String itemNameRaw = ChatFormatting.stripFormatting(stack.getHoverName().getString()).toLowerCase();
+            if (itemNameRaw.contains("не актуален")) continue;
 
             String name = stack.getHoverName().getString().toLowerCase();
             if (name.contains("обновить") || name.contains("refresh"))
@@ -105,7 +116,7 @@ public class AutoBuyEngine implements IMinecraft {
         String itemName = ChatFormatting.stripFormatting(
                 stack.getHoverName().getString()).toLowerCase();
 
-        List<String> lore = getLore(stack);
+        List<String> lore = FuntimeUtil.getLore(stack);
 
         for (ItemTarget target : targets.values()) {
 
@@ -114,7 +125,7 @@ public class AutoBuyEngine implements IMinecraft {
             boolean matches = false;
 
             if (target.getLoreKeywords() != null && !target.getLoreKeywords().isEmpty())
-                matches = checkLoreFullMatch(lore, target.getLoreKeywords());
+                matches = FuntimeUtil.checkLoreFullMatch(lore, target.getLoreKeywords());
 
             if (!matches && target.isCheckByName()) {
                 String targetName = ChatFormatting.stripFormatting(target.getDisplayName()).toLowerCase();
@@ -143,6 +154,13 @@ public class AutoBuyEngine implements IMinecraft {
 
                 if (currentBalance < totalPrice)
                     return;
+
+                this.lastAttemptedTarget = target;
+                this.lastAttemptedPrice = pricePerItem;
+                this.lastTarget = target;
+                this.lastTotalPrice = totalPrice;
+                this.lastBoughtCount = stack.getCount();
+                this.lastBoughtPerItem = pricePerItem;
 
                 performPurchase(slot);
                 break;
@@ -178,48 +196,10 @@ public class AutoBuyEngine implements IMinecraft {
         }
     }
 
-    private boolean checkLoreFullMatch(List<String> itemLore, List<String> targetLore) {
-        if (itemLore == null || targetLore == null) return false;
-
-        int matches = 0;
-
-        for (String targetLine : targetLore) {
-
-            String cleanTarget = ChatFormatting.stripFormatting(targetLine);
-
-            for (String itemLine : itemLore) {
-
-                String cleanItem = ChatFormatting.stripFormatting(itemLine);
-
-                if (cleanItem.contains(cleanTarget)) {
-                    matches++;
-                    break;
-                }
-            }
-        }
-
-        return matches >= targetLore.size();
-    }
-
-    private List<String> getLore(ItemStack stack) {
-
-        ItemLore loreComp = stack.get(DataComponents.LORE);
-
-        return loreComp != null
-                ? loreComp.lines().stream().map(Component::getString).toList()
-                : Collections.emptyList();
-    }
-
     public void failAndReopen() {
         isBuying = false;
         waitingForConfirm = false;
         reopenRequested = true;
-    }
-
-    public boolean consumeReopenRequest() {
-        boolean value = reopenRequested;
-        reopenRequested = false;
-        return value;
     }
 
     public void resetState() {
@@ -233,5 +213,4 @@ public class AutoBuyEngine implements IMinecraft {
         waitingForConfirm = false;
         reopenRequested = false;
     }
-
 }

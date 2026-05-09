@@ -2231,10 +2231,6 @@ public class Minecraft extends ReentrantBlockableEventLoop<Runnable> implements 
         return this.allowsMultiplayer && this.userProperties().flag(UserFlag.SERVERS_ALLOWED) && this.multiplayerBan() == null && !this.isNameBanned();
     }
 
-    public boolean allowsRealms() {
-        return this.userProperties().flag(UserFlag.REALMS_ALLOWED) && this.multiplayerBan() == null;
-    }
-
     public @Nullable BanDetails multiplayerBan() {
         return this.userProperties().bannedScopes().get("MULTIPLAYER");
     }
@@ -2258,10 +2254,6 @@ public class Minecraft extends ReentrantBlockableEventLoop<Runnable> implements 
         } else {
             return !this.userProperties().flag(UserFlag.CHAT_ALLOWED) ? Minecraft.ChatStatus.DISABLED_BY_PROFILE : Minecraft.ChatStatus.ENABLED;
         }
-    }
-
-    public final boolean isDemo() {
-        return this.demo;
     }
 
     public final boolean canSwitchGameMode() {

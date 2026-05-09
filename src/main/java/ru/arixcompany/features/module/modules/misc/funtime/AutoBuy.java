@@ -5,6 +5,8 @@ import lombok.Setter;
 import net.minecraft.client.gui.screens.inventory.ContainerScreen;
 import net.minecraft.network.protocol.game.ClientboundSystemChatPacket;
 import ru.arixcompany.features.event.EventHandler;
+import ru.arixcompany.features.event.player.EventMouseScroll;
+import ru.arixcompany.features.event.render.EventScreen;
 import ru.arixcompany.features.event.world.EventPacket;
 import ru.arixcompany.features.event.world.EventTick;
 import ru.arixcompany.features.module.Category;
@@ -12,8 +14,11 @@ import ru.arixcompany.features.module.Module;
 import ru.arixcompany.features.module.modules.misc.funtime.autobuy.*;
 import ru.arixcompany.features.module.modules.misc.funtime.autobuy.items.ItemTarget;
 import ru.arixcompany.features.module.modules.misc.funtime.autobuy.items.ItemsRegistry;
+import ru.arixcompany.features.module.modules.misc.funtime.utils.FuntimeUtil;
 import ru.arixcompany.features.module.setting.implement.BooleanSetting;
 import ru.arixcompany.features.module.setting.implement.ValueSetting;
+import ru.arixcompany.utils.MessageSender;
+import ru.arixcompany.utils.math.MathUtils;
 import ru.arixcompany.utils.math.Timer;
 
 import java.util.ArrayList;
@@ -23,17 +28,22 @@ import java.util.Map;
 public class AutoBuy extends Module {
 
     public static final BooleanSetting autoBuyAfterSetup = new BooleanSetting("Включить после сетапа");
-    private final ValueSetting searchDuration =
-            new ValueSetting("Время поиска (сек)").setValue(10).range(5, 60).step(1);
-
-    private final ValueSetting updateDelay =
-            new ValueSetting("Обновление (мс)").setValue(2000).range(1000, 5000).step(100);
-
-    private final ValueSetting clickDelay =
-            new ValueSetting("Задержка клика (мс)").setValue(200).range(50, 500).step(50);
-
     private final ValueSetting discountPercent =
             new ValueSetting("Скидка покупки (%)").setValue(50).range(10, 90).step(1);
+
+    public static final BooleanSetting autoSell = new BooleanSetting("Авто-продажа");
+    private final ValueSetting sellMargin =
+            new ValueSetting("Наценка (%)").setValue(10).range(5, 300).step(5)
+                    .visible(autoSell::isValue);
+
+    private final BooleanSetting autoSetupScheduler =
+            new BooleanSetting("Авто‑рестарт сетапа");
+    private final ValueSetting autoSetupInterval =
+            new ValueSetting("Интервал (мин)")
+                    .setValue(15)
+                    .range(10, 60)
+                    .step(5)
+                    .visible(autoSetupScheduler::isValue);
 
     @Setter
     public static boolean autoBuyEnabled = false;
@@ -46,16 +56,20 @@ public class AutoBuy extends Module {
     private final Timer clickCooldown = new Timer();
     private final Timer scanWatch = new Timer();
     private final Timer updateWatch = new Timer();
+    private final Timer autoSetupTimer = new Timer();
 
     @Getter
     public static final BalanceController balanceController = new BalanceController();
-    public static final AuctionController auctionController = new AuctionController();
+    public static final AuctionRenderer auctionRenderer = new AuctionRenderer();
     public static AutoBuyEngine autoBuyEngine;
     public AutoSetupEngine autoSetupEngine;
+    public static final AutoSellEngine autoSellEngine = new AutoSellEngine();
 
     public AutoBuy() {
         super("AutoBuy", Category.Misc);
-        setup(autoBuyAfterSetup,searchDuration, updateDelay, clickDelay, discountPercent);
+        setup(autoBuyAfterSetup,discountPercent,
+                autoSell,sellMargin,
+                autoSetupScheduler,autoSetupInterval);
 
         ItemsRegistry.register(targets);
 
@@ -83,7 +97,7 @@ public class AutoBuy extends Module {
 
                 if (screen != lastScreen) {
                     lastScreen = screen;
-                    auctionController.addButtons(
+                    auctionRenderer.addButtons(
                             screen,
                             autoBuyEnabled,
                             autoSetupEnabled,
@@ -94,7 +108,6 @@ public class AutoBuy extends Module {
                                 if (autoBuyEnabled) {
                                     balanceController.request();
                                 } else {
-                                    auctionController.reset();
                                     autoBuyEngine.resetState();
                                 }
                             },
@@ -118,44 +131,86 @@ public class AutoBuy extends Module {
             autoBuyEngine.setCurrentAuctionScreen(null);
         }
 
-        auctionController.tick(
-                autoBuyEnabled
-        );
+        autoBuyEngine.setClickDelay((int) getClickDelay());
 
-        autoBuyEngine.setClickDelay((int) clickDelay.getValue());
-
-        if (autoBuyEnabled && !auctionController.isWaitingAfterAnarchy()) {
-            autoBuyEngine.tick((int) updateDelay.getValue());
+        if (autoBuyEnabled && !autoSellEngine.isSelling()) {
+            autoBuyEngine.tick((int) getUpdateDelay());
         }
 
         autoSetupEngine.tick(
-                (int) searchDuration.getValue(),
-                (int) updateDelay.getValue(),
+                (int) getSearchTime(),
+                (int) getUpdateDelay(),
                 (int) discountPercent.getValue()
         );
+
+        if (autoSetupScheduler.isValue()) {
+            // Интервал от 10 до 60 минут
+            long intervalMs = (long) autoSetupInterval.getValue() * 60_000L;
+
+            if (autoSetupTimer.finished(intervalMs)) {
+                MessageSender.print("§e Время обновлять цены...");
+
+                // 1. Выключаем автобай
+                autoBuyEnabled = false;
+                autoBuyEngine.resetState();
+
+                // 2. Включаем сетап
+                if (!autoSetupEngine.isRunning()) {
+                    autoSetupEngine.start();
+                    autoSetupEnabled = true;
+                }
+
+                autoSetupTimer.reset();
+            }
+        }
     }
+
 
     @EventHandler
     public void onPacket(EventPacket e) {
+        if (!(e.getPacket() instanceof ClientboundSystemChatPacket packet)) return;
+        String msg = packet.content().getString().toLowerCase();
 
-        if (!(e.getPacket() instanceof ClientboundSystemChatPacket packet))
-            return;
+        if (msg.contains("вы успешно купили")) {
 
-        String message = packet.content().getString().toLowerCase();
-
-        if (message.contains("вы успешно купили")) {
             autoBuyEngine.confirmPurchase();
-            balanceController.request();
 
-            return;
+            ItemTarget target = autoBuyEngine.getLastTarget();
+
+            if (target != null) {
+
+                int count = autoBuyEngine.getLastBoughtCount();
+                int totalBuyPrice = autoBuyEngine.getLastTotalPrice(); // ✅ общая сумма
+                int perOne = totalBuyPrice / (count > 0 ? count : 1);
+
+                if (autoSell.isValue()) {
+
+                    // ✅ передаём ПОЛНУЮ сумму покупки
+                    autoSellEngine.processSell(target, totalBuyPrice, (int) sellMargin.getValue());
+
+                } else {
+
+                    // ✅ если авто-селл выключен — просто записываем покупку (без продажи)
+                    auctionRenderer.addPurchase(
+                            target.getDisplayStack(),
+                            target.getDisplayName(),
+                            perOne,
+                            count,
+                            totalBuyPrice,
+                            0 // sellTotal = 0
+                    );
+                }
+            }
+
+            balanceController.request();
         }
 
-        if (message.contains("не хватает")
-                || message.contains("уже купили")
-                || message.contains("уже куплен")
-                || message.contains("не удалось купить")
-                || message.contains("лот недоступен")
-                || message.contains("этот товар уже")) {
+        if (msg.contains("не хватает")
+                || msg.contains("уже купили")
+                || msg.contains("уже куплен")
+                || msg.contains("не удалось купить")
+                || msg.contains("лот недоступен")
+                || msg.contains("этот товар уже")) {
 
             autoBuyEngine.failAndReopen();
             return;
@@ -165,11 +220,61 @@ public class AutoBuy extends Module {
         autoBuyEngine.setCurrentBalance(balanceController.getBalance());
     }
 
+    @EventHandler
+    public void onMouseScroll(EventMouseScroll e) {
+        if (mc.screen instanceof ContainerScreen screen) {
+            String title = screen.getTitle().getString().toLowerCase();
+
+            if (title.contains("аукцион") || title.contains("auction")) {
+                auctionRenderer.handleScroll(
+                        e.getDeltaY(),
+                        e.getMouseX(),
+                        e.getMouseY()
+                );
+            }
+        }
+    }
+
+    @EventHandler
+    public void onRender2D(EventScreen e) {
+        if (mc.screen instanceof ContainerScreen screen) {
+
+            String title = screen.getTitle().getString().toLowerCase();
+
+            if (title.contains("аукцион") || title.contains("auction")) {
+
+                auctionRenderer.render(
+                        e.getGuiGraphics(),
+                        screen,
+                        targets
+                );
+            }
+        }
+    }
+
     public void setPriceForItem(String itemId, int price) {
         ItemTarget target = targets.get(itemId);
         if (target != null) {
             target.setBuyPrice(price);
         }
+    }
+
+    public static float getUpdateDelay() {
+        float min = 750;
+        float max = 2000;
+        return MathUtils.getSmartRandom(min,max);
+    }
+
+    public static float getClickDelay() {
+        float min = 50;
+        float max = 500;
+        return MathUtils.getSmartRandom(min,max);
+    }
+    public static float getSearchTime() {
+        float min = 5;
+        float max = 20;
+
+        return MathUtils.getSmartRandom(min,max);
     }
 }
 
