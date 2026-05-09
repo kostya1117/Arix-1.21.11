@@ -26,6 +26,7 @@ public final class Colors {
     public static int textInactive(float alpha) { return ColorUtil.rgba(160, 160, 170, (int) (255.0F * alpha)); }
     public static int moduleEnabledColor(float alpha, float animPC) { return ColorUtil.overCol(textInactive(alpha), textActive(alpha), animPC); }
     public static int friend(float alpha) {
-        return ColorUtil.replAlpha(0x8028FF28, (int) (255.0F * alpha));
+        // Зелёный цвет для друзей — отдельный от акцента темы
+        return ColorUtil.rgba(40, 200, 80, (int)(255.0F * alpha));
     }
 }

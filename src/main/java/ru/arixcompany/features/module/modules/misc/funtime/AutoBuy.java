@@ -131,6 +131,7 @@ public class AutoBuy extends Module {
             autoBuyEngine.setCurrentAuctionScreen(null);
         }
 
+        autoSellEngine.tick();
         autoBuyEngine.setClickDelay((int) getClickDelay());
 
         if (autoBuyEnabled && !autoSellEngine.isSelling()) {
@@ -172,36 +173,22 @@ public class AutoBuy extends Module {
         String msg = packet.content().getString().toLowerCase();
 
         if (msg.contains("вы успешно купили")) {
-
             autoBuyEngine.confirmPurchase();
-
             ItemTarget target = autoBuyEngine.getLastTarget();
 
             if (target != null) {
-
                 int count = autoBuyEngine.getLastBoughtCount();
-                int totalBuyPrice = autoBuyEngine.getLastTotalPrice(); // ✅ общая сумма
+                int totalBuyPrice = autoBuyEngine.getLastTotalPrice();
                 int perOne = totalBuyPrice / (count > 0 ? count : 1);
 
                 if (autoSell.isValue()) {
-
-                    // ✅ передаём ПОЛНУЮ сумму покупки
+                    // Это запускает процесс: ищет предмет в инвентаре и начинает цепочку действий
                     autoSellEngine.processSell(target, totalBuyPrice, (int) sellMargin.getValue());
-
                 } else {
-
-                    // ✅ если авто-селл выключен — просто записываем покупку (без продажи)
-                    auctionRenderer.addPurchase(
-                            target.getDisplayStack(),
-                            target.getDisplayName(),
-                            perOne,
-                            count,
-                            totalBuyPrice,
-                            0 // sellTotal = 0
-                    );
+                    auctionRenderer.addPurchase(target.getDisplayStack(), target.getDisplayName(),
+                            perOne, count, totalBuyPrice, 0);
                 }
             }
-
             balanceController.request();
         }
 
@@ -218,6 +205,7 @@ public class AutoBuy extends Module {
 
         balanceController.handlePacket(packet);
         autoBuyEngine.setCurrentBalance(balanceController.getBalance());
+        autoSellEngine.onChat(msg);
     }
 
     @EventHandler

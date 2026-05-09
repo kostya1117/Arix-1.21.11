@@ -41,6 +41,7 @@ public class ModuleRepo implements IMinecraft {
        modules.add(new NoRender());
        modules.add(new TriggerBot());
        modules.add(new Interface());
+       modules.add(new Animations());
        modules.add(new NoPush());
    }
 

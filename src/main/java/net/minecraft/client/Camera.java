@@ -83,8 +83,13 @@ public class Camera implements TrackedWaypoint.Camera {
             this.cameraTransition = 0.0F;
             this.interpolatedDistance = 0.0F;
         } else {
-            this.cameraTransition += (1.0F - this.cameraTransition) * (p_90580_ * 0.1F);
-            this.cameraTransition = Mth.clamp(this.cameraTransition, 0.0F, 1.0F);
+            // Если анимация перспективы включена — плавный переход, иначе мгновенно
+            if (ru.arixcompany.features.module.modules.render.Animations.isEnabled("Перспектива")) {
+                this.cameraTransition += (1.0F - this.cameraTransition) * (p_90580_ * 0.1F);
+                this.cameraTransition = Mth.clamp(this.cameraTransition, 0.0F, 1.0F);
+            } else {
+                this.cameraTransition = 1.0F;
+            }
         }
 
         if (p_90577_ != null) {

@@ -91,6 +91,7 @@ import ru.arixcompany.features.draggable.DraggableComponent;
 import ru.arixcompany.features.draggable.DraggableRepo;
 import ru.arixcompany.features.event.EventRepo;
 import ru.arixcompany.features.event.render.EventScreen;
+import ru.arixcompany.features.module.modules.render.Animations;
 import ru.arixcompany.features.module.modules.render.NoRender;
 import ru.arixcompany.utils.math.MathUtils;
 
@@ -165,7 +166,17 @@ public class Gui {
     private final Map<Gui.ContextualInfo, Supplier<ContextualBarRenderer>> contextualInfoBarRenderers;
     private float scopeScale;
 
-    private float hotbarChatOffset = 0.0F;
+    public float hotbarChatOffset = 0.0F;
+    private float chatSlideOffset = 0.0F;
+
+    // Анимация подъёма хотбара — используется и хотбаром и ArmorHUD
+    public static final ru.arixcompany.utils.animation.Animation hotbarRiseAnim =
+            new ru.arixcompany.utils.animation.impl.EaseInOutQuad(200, 1.0);
+
+    static {
+        hotbarRiseAnim.setDirection(ru.arixcompany.utils.animation.Direction.BACKWARDS);
+        hotbarRiseAnim.timerUtil.setTime(System.currentTimeMillis() - 9999);
+    }
 
     public Gui(Minecraft p_330021_) {
         this.minecraft = p_330021_;
@@ -230,6 +241,28 @@ public class Gui {
 
         if (!(this.minecraft.screen instanceof ChatScreen)) {
             renderDraggableOverlay(p_282884_, p_342095_);
+        } else {
+            // При открытом чате всё равно рендерим ArmorHUD (он поднимается с хотбаром)
+            renderArmorHudOnly(p_282884_, p_342095_);
+        }
+    }
+
+    private void renderArmorHudOnly(GuiGraphics graphics, DeltaTracker delta) {
+        if (Arix.getInstance() == null) return;
+        DraggableRepo repo = Arix.getInstance().getDraggableRepo();
+        if (repo == null) return;
+
+        Window window = this.minecraft.getWindow();
+        int mouseX = (int)(this.minecraft.mouseHandler.xpos() * window.getGuiScaledWidth() / window.getWidth());
+        int mouseY = (int)(this.minecraft.mouseHandler.ypos() * window.getGuiScaledHeight() / window.getHeight());
+
+        // Обновляем все компоненты (позиция ArmorHUD должна обновляться)
+        repo.updateAll();
+
+        // Рендерим только ArmorHUD
+        ru.arixcompany.features.draggable.draggables.ArmorHudDraggable armorHud = repo.getArmorHud();
+        if (armorHud != null && armorHud.shouldRender()) {
+            armorHud.renderComponent(graphics, mouseX, mouseY, delta.getGameTimeDeltaPartialTick(false));
         }
     }
 
@@ -407,10 +440,25 @@ public class Gui {
             int i = Mth.floor(this.minecraft.mouseHandler.getScaledXPos(window));
             int j = Mth.floor(this.minecraft.mouseHandler.getScaledYPos(window));
             p_329202_.nextStratum();
+
+            // Анимация чата: плавный слайд снизу при появлении
+            if (Animations.isEnabled("Чат")) {
+                boolean isChatOpen = this.minecraft.screen instanceof ChatScreen;
+                float targetChatSlide = isChatOpen ? 0.0F : 8.0F;
+                this.chatSlideOffset = Mth.lerp(0.2F, this.chatSlideOffset, targetChatSlide);
+
+                p_329202_.pose().pushMatrix();
+                p_329202_.pose().translate(0.0F, this.chatSlideOffset);
+            }
+
             if (Reflector.ForgeHooksClient_onCustomizeChatEvent.exists()) {
                 Reflector.ForgeHooksClient_onCustomizeChatEvent.callVoid(p_329202_, this.chat, window, i, j, this.tickCount, this.getFont());
             } else {
                 this.chat.render(p_329202_, this.getFont(), this.tickCount, i, j, false, false);
+            }
+
+            if (Animations.isEnabled("Чат")) {
+                p_329202_.pose().popMatrix();
             }
         }
     }
@@ -543,10 +591,19 @@ public class Gui {
 
     private void renderHotbarAndDecorations(GuiGraphics p_333625_, DeltaTracker p_344796_) {
         boolean isChatOpen = this.minecraft.screen instanceof ChatScreen;
-        float targetOffset = isChatOpen ? 14.0F : 0.0F;
 
-        float partialTick = p_344796_.getGameTimeDeltaPartialTick(false);
-        this.hotbarChatOffset = Mth.lerp(0.2F, this.hotbarChatOffset, targetOffset);
+        // Анимация подъёма хотбара через EaseInOutQuad — та же анимация что читает ArmorHUD
+        if (Animations.isEnabled("Хотбар")) {
+            ru.arixcompany.utils.animation.Direction target = isChatOpen
+                    ? ru.arixcompany.utils.animation.Direction.FORWARDS
+                    : ru.arixcompany.utils.animation.Direction.BACKWARDS;
+            if (hotbarRiseAnim.getDirection() != target) hotbarRiseAnim.setDirection(target);
+            this.hotbarChatOffset = (float) hotbarRiseAnim.getOutput() * 14.0F;
+        } else {
+            hotbarRiseAnim.setDirection(ru.arixcompany.utils.animation.Direction.BACKWARDS);
+            hotbarRiseAnim.timerUtil.setTime(System.currentTimeMillis() - 9999);
+            this.hotbarChatOffset = isChatOpen ? 14.0F : 0.0F;
+        }
 
         p_333625_.pose().pushMatrix();
         p_333625_.pose().translate(0.0F, -this.hotbarChatOffset);

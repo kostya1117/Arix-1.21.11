@@ -9,27 +9,31 @@ import net.minecraft.world.item.ItemStack;
 import ru.arixcompany.Arix;
 import ru.arixcompany.features.draggable.DraggableComponent;
 import ru.arixcompany.features.module.modules.render.Interface;
-import ru.arixcompany.features.module.setting.implement.BooleanSetting;
-import ru.arixcompany.features.module.setting.implement.SelectSetting;
 
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * ArmorHUD — горизонтальный, статично справа от хотбара.
+ * Поднимается вместе с хотбаром при открытии чата.
+ * Не перетаскивается (pinned).
+ *
+ * Позиция считается в renderDraggable через guiWidth/guiHeight из GuiGraphics
+ * — те же значения что использует ванильный хотбар, поэтому рассинхрона нет.
+ */
 public class ArmorHudDraggable extends DraggableComponent {
 
     private static final Identifier HOTBAR_SPRITE = Identifier.withDefaultNamespace("hud/hotbar");
 
-    private static final int HOTBAR_TEX_WIDTH = 182;
+    private static final int HOTBAR_TEX_WIDTH  = 182;
     private static final int HOTBAR_TEX_HEIGHT = 22;
 
-    private static final int SLOT_U = 0;
-    private static final int SLOT_V = 0;
-    private static final int SLOT_WIDTH = 22;
+    // Ширина одного слота — как у ванильного хотбара (182 / 9 ≈ 20, но слот = 20px)
+    private static final int SLOT_WIDTH  = 20;
     private static final int SLOT_HEIGHT = 22;
 
-    private static final int ITEM_X_OFFSET = 3;
+    private static final int ITEM_X_OFFSET = 2;
     private static final int ITEM_Y_OFFSET = 3;
-    private static final int SLOT_GAP = 0;
 
     private static final EquipmentSlot[] ARMOR_SLOTS = {
             EquipmentSlot.HEAD,
@@ -38,14 +42,12 @@ public class ArmorHudDraggable extends DraggableComponent {
             EquipmentSlot.FEET
     };
 
-    public SelectSetting style = new SelectSetting("Стиль")
-            .value("Вертикальный", "Горизонтальный");
-    public BooleanSetting showHands = new BooleanSetting("Руки");
-
     public ArmorHudDraggable() {
-        super("ArmorHUD", 4, 40, SLOT_WIDTH, SLOT_HEIGHT * 4);
-        setup(style, showHands);
+        super("ArmorHUD", 0, 0, SLOT_WIDTH * 4, SLOT_HEIGHT);
+        setPinned(true);
     }
+
+    // ── Видимость ─────────────────────────────────────────────────────────────
 
     @Override
     protected void updateVisibility() {
@@ -53,94 +55,82 @@ public class ArmorHudDraggable extends DraggableComponent {
             this.visible = false;
             return;
         }
-
         Interface iface = Arix.getInstance().getModuleRepo().getModule(Interface.class);
         this.visible = iface != null && iface.isState() && iface.elements.isSelected("ArmorHUD");
     }
+
+    // ── update: только видимость, позиция — в рендере ─────────────────────────
+    // НЕ переопределяем updatePosition здесь — позиция считается в renderDraggable
+    // через guiWidth/guiHeight из GuiGraphics, те же что у хотбара.
+
+    // ── Рендер ────────────────────────────────────────────────────────────────
 
     @Override
     protected void renderDraggable(GuiGraphics graphics, int mouseX, int mouseY, float delta,
                                    float rx, float ry, float w, float h, float alpha) {
         if (mc.player == null) return;
 
-        Player player = mc.player;
-        boolean vertical = style.is("Вертикальный");
+        // Используем guiWidth/guiHeight из GuiGraphics — ТОЧНО те же значения что у хотбара
+        int guiW = graphics.guiWidth();
+        int guiH = graphics.guiHeight();
 
-        List<SlotEntry> entries = collectEntries(
-                player,
-                true,
-                showHands.isValue(),
-                showHands.isValue()
-        );
+        // hotbarChatOffset из mc.gui — то же поле что двигает хотбар
+        float chatLift = mc.gui != null ? mc.gui.hotbarChatOffset : 0.0F;
 
-        if (entries.isEmpty()) {
-            return;
-        }
+        // Правый край хотбара: center + 91 (хотбар 182px, центрирован)
+        int hotbarRight = guiW / 2 + 91;
+
+        // Y совпадает с хотбаром: guiH - 22 - chatLift
+        // (хотбар рисуется на guiH-22 внутри translate(0, -chatLift))
+        int slotY = (int)(guiH - SLOT_HEIGHT - chatLift);
+
+        List<SlotEntry> entries = collectEntries();
+        if (entries.isEmpty()) return;
 
         int count = entries.size();
 
-        this.width = vertical
-                ? SLOT_WIDTH
-                : count * SLOT_WIDTH + (count - 1) * SLOT_GAP;
+        // Обновляем размер компонента для корректного isMouseOver
+        this.width  = count * SLOT_WIDTH;
+        this.height = SLOT_HEIGHT;
 
-        this.height = vertical
-                ? count * SLOT_HEIGHT + (count - 1) * SLOT_GAP
-                : SLOT_HEIGHT;
+        for (int i = 0; i < count; i++) {
+            int slotX = hotbarRight + 2 + i * SLOT_WIDTH;
 
-        for (int i = 0; i < entries.size(); i++) {
+            renderHotbarSlot(graphics, slotX, slotY, i, count);
+
             SlotEntry entry = entries.get(i);
-
-            int slotX = (int) (rx + (vertical ? 0 : i * (SLOT_WIDTH + SLOT_GAP)));
-            int slotY = (int) (ry + (vertical ? i * (SLOT_HEIGHT + SLOT_GAP) : 0));
-
-            renderVanillaHotbarSlot(graphics, slotX, slotY, i, entries.size(), vertical);
-
             if (!entry.stack.isEmpty()) {
-                renderItemInSlot(graphics, entry.stack, slotX, slotY, i + 1);
+                renderItem(graphics, entry.stack, slotX, slotY, i + 1);
             }
         }
     }
 
-    private List<SlotEntry> collectEntries(Player player, boolean emptySlots, boolean mainHand, boolean offHand) {
+    // ── Вспомогательные ───────────────────────────────────────────────────────
+
+    private List<SlotEntry> collectEntries() {
         List<SlotEntry> entries = new ArrayList<>();
-
+        if (mc.player == null) return entries;
+        Player player = mc.player;
         for (EquipmentSlot slot : ARMOR_SLOTS) {
-            ItemStack stack = player.getItemBySlot(slot);
-            if (!stack.isEmpty() || emptySlots) {
-                entries.add(new SlotEntry(stack, slot));
-            }
+            entries.add(new SlotEntry(player.getItemBySlot(slot), slot));
         }
-
-        if (mainHand) {
-            ItemStack stack = player.getMainHandItem();
-            if (!stack.isEmpty() || emptySlots) {
-                entries.add(new SlotEntry(stack, EquipmentSlot.MAINHAND));
-            }
-        }
-
-        if (offHand) {
-            ItemStack stack = player.getOffhandItem();
-            if (!stack.isEmpty() || emptySlots) {
-                entries.add(new SlotEntry(stack, EquipmentSlot.OFFHAND));
-            }
-        }
-
         return entries;
     }
 
-    private void renderVanillaHotbarSlot(GuiGraphics graphics, int x, int y, int index, int total, boolean vertical) {
+    /**
+     * Рисуем кусок текстуры хотбара как фон слота.
+     * u=0 — левый край, u=162 — правый, u=20 — средние.
+     */
+    private void renderHotbarSlot(GuiGraphics graphics, int x, int y, int index, int total) {
         int u;
-
-        if (vertical) {
+        if (total == 1) {
             u = 0;
+        } else if (index == 0) {
+            u = 0;
+        } else if (index == total - 1) {
+            u = HOTBAR_TEX_WIDTH - SLOT_WIDTH; // 162
         } else {
-            if (index == 0) {
-                u = 0;
-            } else if (index == total - 1) {
-                u = HOTBAR_TEX_WIDTH - SLOT_WIDTH;
-            } else {
-                u = 21;
-            }
+            u = 20;
         }
 
         graphics.blitSprite(
@@ -148,23 +138,24 @@ public class ArmorHudDraggable extends DraggableComponent {
                 HOTBAR_SPRITE,
                 HOTBAR_TEX_WIDTH,
                 HOTBAR_TEX_HEIGHT,
-                u,
-                SLOT_V,
-                x,
-                y,
+                u, 0,
+                x, y,
                 SLOT_WIDTH,
                 SLOT_HEIGHT
         );
     }
 
-    private void renderItemInSlot(GuiGraphics graphics, ItemStack stack, int slotX, int slotY, int seed) {
-        int itemX = slotX + ITEM_X_OFFSET;
-        int itemY = slotY + ITEM_Y_OFFSET;
-
-        graphics.renderItem(mc.player, stack, itemX, itemY, seed);
-        graphics.renderItemDecorations(mc.font, stack, itemX, itemY);
+    private void renderItem(GuiGraphics graphics, ItemStack stack, int slotX, int slotY, int seed) {
+        graphics.renderItem(mc.player, stack, slotX + ITEM_X_OFFSET, slotY + ITEM_Y_OFFSET, seed);
+        graphics.renderItemDecorations(mc.font, stack, slotX + ITEM_X_OFFSET, slotY + ITEM_Y_OFFSET);
     }
 
-    private record SlotEntry(ItemStack stack, EquipmentSlot slot) {
+    // ── Запрещаем перетаскивание ──────────────────────────────────────────────
+
+    @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        return false;
     }
+
+    private record SlotEntry(ItemStack stack, EquipmentSlot slot) {}
 }

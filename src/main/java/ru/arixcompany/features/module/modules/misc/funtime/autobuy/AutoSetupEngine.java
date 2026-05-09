@@ -38,7 +38,6 @@ public class AutoSetupEngine implements IMinecraft {
     @Getter private int completed = 0;
     @Getter private int processed = 0;
 
-    // Флаг для повторной попытки (если не найдено или цена ниже покупки)
     private boolean hasRetriedCurrent = false;
 
     private final TreeSet<Integer> foundPrices = new TreeSet<>();
@@ -129,7 +128,6 @@ public class AutoSetupEngine implements IMinecraft {
         retryTimer.reset();
 
         if (mc.player != null) {
-            // Закрываем GUI перед новой командой, чтобы сервер корректно открыл новое
             mc.execute(() -> {
                 if (mc.screen != null) mc.screen.onClose();
                 mc.player.connection.sendCommand("ah search " + data.getSearchTerm());
@@ -178,19 +176,17 @@ public class AutoSetupEngine implements IMinecraft {
 
         ItemTarget target = searchList.get(currentIndex);
 
-        // 1. Если цена найдена
         if (!foundPrices.isEmpty()) {
             int minPrice = foundPrices.first();
 
-            // ПРОВЕРКА: Если мин. цена на ауке меньше нашей цены покупки, перенастраиваем
             if (minPrice < target.getBuyPrice() && !hasRetriedCurrent) {
                 MessageSender.print(" Цена на §e" + target.getDisplayName() + " §7упала. Перенастройка...");
                 hasRetriedCurrent = true;
-                finishingCurrent = true; // чтобы выйти из текущего цикла
+                finishingCurrent = true;
                 if (mc.screen != null) mc.screen.onClose();
                 transitioning = true;
                 transitionTimer.reset();
-                return; // Не инкрементируем currentIndex
+                return;
             }
 
             int buyPrice = (int) (minPrice * (1 - discountPercent / 100.0));
@@ -207,7 +203,6 @@ public class AutoSetupEngine implements IMinecraft {
             hasRetriedCurrent = false;
             currentIndex++;
         }
-        // 2. Если цена НЕ найдена
         else {
             if (!hasRetriedCurrent) {
                 MessageSender.print("§e[-] " + target.getDisplayName() + " не найден. Пробую еще раз...");
@@ -216,7 +211,7 @@ public class AutoSetupEngine implements IMinecraft {
                 if (mc.screen != null) mc.screen.onClose();
                 transitioning = true;
                 transitionTimer.reset();
-                return; // Пробуем этот же индекс еще раз
+                return;
             } else {
                 MessageSender.print("§c[-] " + target.getDisplayName() + " (не найден после 2-х попыток)");
                 processed++;

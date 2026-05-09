@@ -93,14 +93,25 @@ public class PlayerTabOverlay {
         if (p_94557_ && !this.visible && !this.animatingOut) {
             this.visible = true;
             this.animatingOut = false;
-            this.tabAnimation.setDirection(Direction.FORWARDS);
+            // Если анимация таба включена — плавно, иначе мгновенно
+            if (ru.arixcompany.features.module.modules.render.Animations.isEnabled("Таб")) {
+                this.tabAnimation.setDirection(Direction.FORWARDS);
+            } else {
+                this.tabAnimation.setDirection(Direction.FORWARDS);
+                this.tabAnimation.timerUtil.setTime(System.currentTimeMillis() - 9999);
+            }
             this.healthStates.clear();
             Component component = ComponentUtils.formatList(this.getPlayerInfos(), Component.literal(", "), this::getNameForDisplay);
             this.minecraft.getNarrator().saySystemNow(Component.translatable("multiplayer.player.list.narration", component));
         } else if (!p_94557_ && this.visible) {
             this.visible = false;
             this.animatingOut = true;
-            this.tabAnimation.setDirection(Direction.BACKWARDS);
+            if (ru.arixcompany.features.module.modules.render.Animations.isEnabled("Таб")) {
+                this.tabAnimation.setDirection(Direction.BACKWARDS);
+            } else {
+                this.tabAnimation.setDirection(Direction.BACKWARDS);
+                this.tabAnimation.timerUtil.setTime(System.currentTimeMillis() - 9999);
+            }
         }
 
         if (this.animatingOut && this.tabAnimation.finished(Direction.BACKWARDS)) {
@@ -114,6 +125,9 @@ public class PlayerTabOverlay {
     }
 
     public float getAnimationProgress() {
+        if (!ru.arixcompany.features.module.modules.render.Animations.isEnabled("Таб")) {
+            return this.visible ? 1.0f : 0.0f;
+        }
         return (float) this.tabAnimation.getOutput();
     }
 
@@ -129,6 +143,8 @@ public class PlayerTabOverlay {
 
         int alpha = (int)(animProgress * 255.0f);
         alpha = Mth.clamp(alpha, 0, 255);
+        // normalised 0.0–1.0 для Colors.* которые ожидают именно такой диапазон
+        float alphaN = alpha / 255.0f;
 
         float slideOffset = (1.0f - animProgress) * -20.0f;
 
@@ -220,7 +236,6 @@ public class PlayerTabOverlay {
 
         int bgAlpha = (int)(alpha * 0.5f);
         int bgColor = (bgAlpha << 24);
-        int bgColorAnimated = ARGB.color(bgAlpha * 2 > 255 ? 255 : bgAlpha * 2, 0, 0, 0) | 0x80808000;
         int textAlpha = alpha;
 
         int headerFooterBg = ARGB.color(Math.min((int)(alpha * 0.502f), 128), 0, 0, 0);
@@ -252,11 +267,13 @@ public class PlayerTabOverlay {
 
                 int rowColor;
                 if (isMe) {
-                    rowColor = Colors.accent(95);
+                    // Себя — цвет акцента темы
+                    rowColor = Colors.accent(alphaN * 0.45f);
                 } else if (isFriend) {
-                    rowColor = Colors.accent(95);
+                    // Друга — зелёный (отдельный от акцента)
+                    rowColor = Colors.friend(alphaN * 0.45f);
                 } else {
-                    rowColor = ARGB.color(Math.min((int)(alpha * 0.33f), 255), 20, 20, 20);
+                    rowColor = ARGB.color(Math.min((int)(alphaN * 0.33f * 255), 255), 20, 20, 20);
                 }
 
                 p_281484_.fill(l1, i2, l1 + j3, i2 + 8, rowColor);
