@@ -124,6 +124,7 @@ import net.minecraft.world.scores.PlayerTeam;
 import net.minecraft.world.scores.Team;
 import org.jspecify.annotations.Nullable;
 import ru.arixcompany.features.event.EventRepo;
+import ru.arixcompany.features.event.player.EventMovementTick;
 import ru.arixcompany.features.event.player.EventPush;
 
 public abstract class Player extends Avatar implements ContainerUser {
@@ -241,7 +242,7 @@ public abstract class Player extends Avatar implements ContainerUser {
         if (this.isSpectator() || this.isPassenger()) {
             this.setOnGround(false);
         }
-
+        EventRepo.call(new EventMovementTick());
         if (this.takeXpDelay > 0) {
             this.takeXpDelay--;
         }

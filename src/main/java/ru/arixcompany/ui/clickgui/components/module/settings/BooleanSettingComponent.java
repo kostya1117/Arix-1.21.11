@@ -36,12 +36,12 @@ public final class BooleanSettingComponent implements IComponent {
         float toggleX = x + width - TOGGLE_W - 3.0F;
         float toggleY = y + (getHeight() / 2.0F) - (TOGGLE_H / 2.0F);
 
-        RenderUtils.fillRoundRect(toggleX, toggleY, TOGGLE_W, TOGGLE_H, TOGGLE_H / 2.0F, bgColor);
+        RenderUtils.fillRoundRect(guiGraphics, toggleX, toggleY, TOGGLE_W, TOGGLE_H, TOGGLE_H / 2.0F, bgColor);
 
         float thumbX = toggleX + 2.0F + (TOGGLE_W - thumb_size - 4.0F) * anim;
         float thumbY = toggleY + (TOGGLE_H / 2.0F) - (thumb_size / 2.0F);
         int thumbColor = ColorUtil.overCol(textInactive, accentColor, anim);
-        RenderUtils.fillRoundRect(thumbX, thumbY, thumb_size, thumb_size, thumb_size / 2.0F, thumbColor);
+        RenderUtils.fillRoundRect(guiGraphics, thumbX, thumbY, thumb_size, thumb_size, thumb_size / 2.0F, thumbColor);
 
         float textY = y + (getHeight() / 2.0F) - (FontManager.get(10).getHeight() / 2.0F);
         FontManager.get(10).drawString(guiGraphics, setting.getName(), x, textY, textInactive);

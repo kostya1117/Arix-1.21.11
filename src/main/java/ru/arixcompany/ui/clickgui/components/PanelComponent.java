@@ -49,21 +49,21 @@ public final class PanelComponent implements IComponent {
         float totalH = PANEL_HEADER_HEIGHT + bodyH;
 
         // Главный фон панели (Body)
-        RenderUtils.fillRoundRect(panelX, panelY, PANEL_WIDTH, totalH, 6.0F, Colors.bgPrimary(mainAlpha));
+        RenderUtils.fillRoundRect(guiGraphics, panelX, panelY, PANEL_WIDTH, totalH, 6.0F, Colors.bgPrimary(mainAlpha));
         // Красивая обводка всей панели
         RenderUtils.drawRoundRectOutline(panelX, panelY, PANEL_WIDTH, totalH, 6.0F, 1.0F, Colors.outline(mainAlpha));
 
         // Фон шапки (Header)
         RenderUtils.pushClipRect(panelX, panelY, PANEL_WIDTH, PANEL_HEADER_HEIGHT);
-        RenderUtils.fillRoundRect(panelX, panelY, PANEL_WIDTH, PANEL_HEADER_HEIGHT, 0, Colors.bgSecondary(mainAlpha));
+        RenderUtils.fillRoundRect(guiGraphics, panelX, panelY, PANEL_WIDTH, PANEL_HEADER_HEIGHT, 0, Colors.bgSecondary(mainAlpha));
         if (hoverAnim > 0.001F) {
-            RenderUtils.fillRoundRect(panelX, panelY, PANEL_WIDTH, PANEL_HEADER_HEIGHT, 0, Colors.hoverBg(mainAlpha, hoverAnim));
+            RenderUtils.fillRoundRect(guiGraphics, panelX, panelY, PANEL_WIDTH, PANEL_HEADER_HEIGHT, 0, Colors.hoverBg(mainAlpha, hoverAnim));
         }
         RenderUtils.popClipRect();
 
         // Разделительная линия между шапкой и телом, если панель открыта
         if (openAnim > 0.01F) {
-            RenderUtils.fillRoundRect(panelX, panelY + PANEL_HEADER_HEIGHT - 1, PANEL_WIDTH, 1, 0, Colors.outline(mainAlpha * openAnim));
+            RenderUtils.fillRoundRect(guiGraphics, panelX, panelY + PANEL_HEADER_HEIGHT - 1, PANEL_WIDTH, 1, 0, Colors.outline(mainAlpha * openAnim));
         }
 
         // Текст категории (по центру для стиля Dropdown)
@@ -112,7 +112,7 @@ public final class PanelComponent implements IComponent {
             float scrollBarH = Math.max(15.0F, (targetBodyH / contentH) * targetBodyH);
             float scrollBarY = panelY + PANEL_HEADER_HEIGHT + 2 + ((targetBodyH - scrollBarH - 4) * scrollProgress);
 
-            RenderUtils.fillRoundRect(panelX + PANEL_WIDTH - 4, scrollBarY, 2, scrollBarH, 1, Colors.accent(mainAlpha * 0.7f));
+            RenderUtils.fillRoundRect(guiGraphics, panelX + PANEL_WIDTH - 4, scrollBarY, 2, scrollBarH, 1, Colors.accent(mainAlpha * 0.7f));
         }
     }
 

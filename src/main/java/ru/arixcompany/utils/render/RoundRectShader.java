@@ -12,6 +12,7 @@ import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.MeshData;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
@@ -84,6 +85,40 @@ public final class RoundRectShader {
                 color, color, color, color,
                 "round_rect"
         );
+    }
+
+    // ── Перегрузки с GuiGraphics — рендерятся через систему страт ──────────────
+
+    public static void drawRoundRect(GuiGraphics ctx, float x, float y, float w, float h, float radius, int color) {
+        if (!initialized) init();
+        if (w <= 0.0f || h <= 0.0f) return;
+        radius = Mth.clamp(radius, 0.0f, Math.min(w, h) * 0.5f);
+        ctx.getGuiRenderState().submitGuiElement(
+                new RoundRectRenderState(ROUND_RECT_PIPELINE, x, y, w, h, radius,
+                        color, color, color, color,
+                        ctx.getCurrentScissor()));
+    }
+
+    public static void drawRoundRectGradient(GuiGraphics ctx, float x, float y, float w, float h,
+                                             float radius, int topColor, int bottomColor) {
+        if (!initialized) init();
+        if (w <= 0.0f || h <= 0.0f) return;
+        radius = Mth.clamp(radius, 0.0f, Math.min(w, h) * 0.5f);
+        ctx.getGuiRenderState().submitGuiElement(
+                new RoundRectRenderState(ROUND_RECT_PIPELINE, x, y, w, h, radius,
+                        bottomColor, bottomColor, topColor, topColor,
+                        ctx.getCurrentScissor()));
+    }
+
+    public static void drawHorizontalGradient(GuiGraphics ctx, float x, float y, float w, float h,
+                                              float radius, int leftColor, int rightColor) {
+        if (!initialized) init();
+        if (w <= 0.0f || h <= 0.0f) return;
+        radius = Mth.clamp(radius, 0.0f, Math.min(w, h) * 0.5f);
+        ctx.getGuiRenderState().submitGuiElement(
+                new RoundRectRenderState(ROUND_RECT_PIPELINE, x, y, w, h, radius,
+                        leftColor, rightColor, rightColor, leftColor,
+                        ctx.getCurrentScissor()));
     }
 
     public static void drawRoundRect(float x, float y, float w, float h,

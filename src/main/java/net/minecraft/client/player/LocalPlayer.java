@@ -1133,7 +1133,7 @@ public class LocalPlayer extends AbstractClientPlayer {
         return !this.isMobilityRestricted() && (this.isPassenger() ? this.vehicleCanSprint(this.getVehicle()) : this.hasEnoughFoodToDoExhaustiveManoeuvres()) && (p_425414_ || !this.isInShallowWater());
     }
 
-    private boolean canStartSprinting() {
+    public boolean canStartSprinting() {
         return !this.isSprinting()
                 && this.input.hasForwardImpulse()
                 && this.isSprintingPossible(this.getAbilities().flying)

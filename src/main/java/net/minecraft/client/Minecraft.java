@@ -257,6 +257,7 @@ import ru.arixcompany.Arix;
 import ru.arixcompany.features.event.EventRepo;
 import ru.arixcompany.features.event.render.RenderFrameEvent;
 import ru.arixcompany.features.event.world.EventGameTick;
+import ru.arixcompany.features.event.world.EventPreTick;
 import ru.arixcompany.features.event.world.EventTick;
 
 public class Minecraft extends ReentrantBlockableEventLoop<Runnable> implements WindowEventHandler {
@@ -1732,6 +1733,8 @@ public class Minecraft extends ReentrantBlockableEventLoop<Runnable> implements 
             this.rightClickDelay--;
         }
 
+        EventRepo.call(new EventTick());
+
         ProfilerFiller profilerfiller = Profiler.get();
         profilerfiller.push("gui");
         this.chatListener.tick();
@@ -1784,6 +1787,7 @@ public class Minecraft extends ReentrantBlockableEventLoop<Runnable> implements 
                 this.missTime--;
             }
         }
+        EventRepo.call(new EventPreTick());
 
         if (this.level != null) {
             if (!this.pause) {
@@ -1851,8 +1855,6 @@ public class Minecraft extends ReentrantBlockableEventLoop<Runnable> implements 
         profilerfiller.popPush("keyboard");
         this.keyboardHandler.tick();
         profilerfiller.pop();
-
-        EventRepo.call(new EventTick());
     }
 
     private boolean isLevelRunningNormally() {

@@ -41,7 +41,7 @@ public final class StringSettingComponent implements IComponent {
 
         // Поле ввода
         RenderUtils.drawRoundRectOutline(fieldX, y, FIELD_W, FIELD_H, 3.0F, 0.1F, outlineColor);
-        RenderUtils.fillRoundRect(fieldX, y, FIELD_W, FIELD_H, 3.0F, bgColor);
+        RenderUtils.fillRoundRect(guiGraphics, fieldX, y, FIELD_W, FIELD_H, 3.0F, bgColor);
 
         String input = setting.getText();
         float cursorX = textX;
@@ -69,7 +69,7 @@ public final class StringSettingComponent implements IComponent {
         // Курсор
         if (Gui.activeStringSetting == setting && setting.active
                 && System.currentTimeMillis() / 500L % 2L == 0L) {
-            RenderUtils.fillRoundRect(cursorX, textY - 1.0F, 1.0F, FontManager.get(10).getHeight() + 2.0F, 0.5F, accentColor);
+            RenderUtils.fillRoundRect(guiGraphics, cursorX, textY - 1.0F, 1.0F, FontManager.get(10).getHeight() + 2.0F, 0.5F, accentColor);
         }
     }
 

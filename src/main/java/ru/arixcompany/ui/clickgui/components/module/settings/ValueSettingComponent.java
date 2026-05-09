@@ -32,16 +32,16 @@ public final class ValueSettingComponent implements IComponent {
 
         // Фон слайдера
         RenderUtils.drawRoundRectOutline(x, sliderY + 2.0F, sliderW, 4.0F, 2.0F, 0.3F, outlineColor);
-        RenderUtils.fillRoundRect(x, sliderY + 2.0F, sliderW, 4.0F, 2.0F, bgColor);
+        RenderUtils.fillRoundRect(guiGraphics, x, sliderY + 2.0F, sliderW, 4.0F, 2.0F, bgColor);
 
         // Заполненная часть слайдера
         if (progressW > 2.0F) {
-            RenderUtils.fillRoundRect(x + 1.0F, sliderY + 2.5F, progressW - 2.0F, 3.0F, 2.0F, accentColor);
+            RenderUtils.fillRoundRect(guiGraphics, x + 1.0F, sliderY + 2.5F, progressW - 2.0F, 3.0F, 2.0F, accentColor);
         }
 
         // Thumb (кружочек)
         float thumbX = x + 1.0F + progressW - 5.0F + (progressW < 1.0F ? 5 : 2);
-        RenderUtils.fillRoundRect(thumbX, sliderY + 2.2F, 5.0F, 3.88F, 2.0F, textActive);
+        RenderUtils.fillRoundRect(guiGraphics, thumbX, sliderY + 2.2F, 5.0F, 3.88F, 2.0F, textActive);
 
         // Текст значения
         String valueText = formatValue();

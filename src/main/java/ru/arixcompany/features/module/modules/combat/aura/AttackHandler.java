@@ -56,7 +56,7 @@ public final class AttackHandler implements IMinecraft {
         return mc.player.hasEffect(MobEffects.BLINDNESS)
                 || mc.player.hasEffect(MobEffects.LEVITATION)
                 || PlayerIntersectionUtil.isPlayerInBlock(Blocks.COBWEB)
-                || mc.player.isInWater()
+                || mc.player.isUnderWater()
                 || mc.player.isInLava()
                 || mc.player.onClimbable()
                 || !PlayerIntersectionUtil.canChangeIntoPose(Pose.STANDING) && mc.player.isCrouching()
@@ -148,16 +148,17 @@ public final class AttackHandler implements IMinecraft {
         if (target == null || mc.gameMode == null || mc.player == null) return false;
 
         HitAura hitAura = Arix.getInstance().getModuleRepo().getModule(HitAura.class);
-        preAttack();
+        //preAttack();
         mc.gameMode.attack(mc.player, target);
         mc.player.swing(hand);
-        postAttack();
+       // postAttack();
         hitAura.count = (hitAura.count + 1) % 2;
         cooldownTimer.reset();
         skipTicks = 0;
 
         return true;
     }
+
     public boolean shouldAttack() {
         if (!msCooldownReached(0))
             return false;

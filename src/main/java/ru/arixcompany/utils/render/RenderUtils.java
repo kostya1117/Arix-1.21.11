@@ -179,6 +179,10 @@ public class RenderUtils {
         RoundRectShader.drawRoundRect(x, y, w, h, radius, color);
     }
 
+    public static void fillRoundRect(GuiGraphics ctx, float x, float y, float w, float h, float radius, int color) {
+        RoundRectShader.drawRoundRect(ctx, x, y, w, h, radius, color);
+    }
+
     public static void fillRoundRect(float x, float y, float w, float h,
                                      float tl, float tr, float br, float bl, int color) {
         RoundRectShader.drawRoundRect(x, y, w, h, tl, tr, br, bl, color);
@@ -199,10 +203,20 @@ public class RenderUtils {
         RoundRectShader.drawRoundRectGradient(x, y, w, h, radius, topColor, bottomColor);
     }
 
+    public static void fillRoundRectGradient(GuiGraphics ctx, float x, float y, float w, float h,
+                                             float radius, int topColor, int bottomColor) {
+        RoundRectShader.drawRoundRectGradient(ctx, x, y, w, h, radius, topColor, bottomColor);
+    }
+
     public static void fillRoundRectGradient(float x, float y, float w, float h,
                                              float tl, float tr, float br, float bl,
                                              int topColor, int bottomColor) {
         RoundRectShader.drawRoundRectGradient(x, y, w, h, tl, tr, br, bl, topColor, bottomColor);
+    }
+
+    public static void horizontalGradient(GuiGraphics ctx, float x, float y, float w, float h,
+                                          int leftColor, int rightColor) {
+        RoundRectShader.drawHorizontalGradient(ctx, x, y, w, h, 0, leftColor, rightColor);
     }
 
     public static void horizontalGradient(float x, float y, float w, float h,

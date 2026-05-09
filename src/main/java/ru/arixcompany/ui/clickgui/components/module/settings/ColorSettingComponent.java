@@ -47,7 +47,7 @@ public final class ColorSettingComponent implements IComponent {
 
         Color hueColor = setting.getColor();
         RenderUtils.drawRoundRectOutline(colorX - 15.0F,  y + (getHeight() / 2.0F) - (FontManager.get(10).getHeight() / 2.0F), BTN_W, BTN_H, 3.0F,0.1F, outlineColor);
-        RenderUtils.fillRoundRect(colorX - 15.0F,  y + (getHeight() / 2.0F) - (FontManager.get(10).getHeight() / 2.0F), BTN_W, BTN_H, 3.0F, bgColor);
+        RenderUtils.fillRoundRect(guiGraphics, colorX - 15.0F,  y + (getHeight() / 2.0F) - (FontManager.get(10).getHeight() / 2.0F), BTN_W, BTN_H, 3.0F, bgColor);
         RenderUtils.fillRoundRect(
                 colorX + 32.0F - 10.0F, y + (getHeight() / 2.0F) - (FontManager.get(10).getHeight() / 2.0F), 13.285F, 8.315F,
                 0.0F, 3.0F, 3.0F, 0.0F,

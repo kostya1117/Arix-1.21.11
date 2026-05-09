@@ -49,7 +49,7 @@ public final class SnapRotation implements IMinecraft, AbstractRotation {
                 float speed = MathUtils.randomValue(190.0F, 245.0F);
 
                 RotationRepo.update(
-                        new Rotation(yaw, pitch),
+                        new Rotation(yaw, pitch).adjustSensitivity(),
                         speed, speed, 40.0F, 40.0F,
                         1, 7, false
                 );
@@ -73,7 +73,7 @@ public final class SnapRotation implements IMinecraft, AbstractRotation {
                 }
 
                 RotationRepo.update(
-                        new Rotation(yaw, pitch),
+                        new Rotation(yaw, pitch).adjustSensitivity(),
                         speed, speed, 40.0F, 40.0F,
                         1, 7, false
                 );
@@ -111,7 +111,7 @@ public final class SnapRotation implements IMinecraft, AbstractRotation {
                           * (float) (MathUtils.randomValue(1.0F, 2.0F) * Math.cos(t / 350.0));
 
                 RotationRepo.update(
-                        new Rotation(yaw + noiseYaw / 4.0F, pitch + noisePitch),
+                        new Rotation(yaw + noiseYaw / 4.0F, pitch + noisePitch).adjustSensitivity(),
                         speed, speed, 40.0F, 40.0F,
                         1, 7, false
                 );

@@ -237,14 +237,14 @@ public class Gui {
             }
         }
 
-        EventRepo.call(new EventScreen(p_282884_));
-
         if (!(this.minecraft.screen instanceof ChatScreen)) {
             renderDraggableOverlay(p_282884_, p_342095_);
         } else {
             // При открытом чате всё равно рендерим ArmorHUD (он поднимается с хотбаром)
             renderArmorHudOnly(p_282884_, p_342095_);
         }
+
+        EventRepo.call(new EventScreen(p_282884_));
     }
 
     private void renderArmorHudOnly(GuiGraphics graphics, DeltaTracker delta) {

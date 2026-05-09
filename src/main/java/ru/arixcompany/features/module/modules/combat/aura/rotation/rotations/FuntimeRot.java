@@ -49,10 +49,10 @@ public class FuntimeRot implements AbstractRotation, IMinecraft {
         Rotation rotation = new Rotation(
                 mc.player.yRot + (float) Math.ceil(Mth.wrapDegrees(finalYaw) - Mth.wrapDegrees(mc.player.yRot)),
                 mc.player.xRot + (float) Math.ceil(Mth.wrapDegrees(finalPitch) - Mth.wrapDegrees(mc.player.xRot))
-        );
+        ).adjustSensitivity();
 
         boolean toFast = cooldownFromLastSwing() > 0.5F;
-        RotationRepo.update(rotation, toFast && rayTrace() ? 15 : 25F, 10F, 3F, 3F, 0, 5, false);
+        RotationRepo.update(rotation, toFast && rayTrace() ? 15 : 25F, 10F, 6F, 4F, 0, 5, false);
     }
 
     private Vec3 getTargetPoint(LivingEntity entity) {

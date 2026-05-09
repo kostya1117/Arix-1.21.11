@@ -103,8 +103,8 @@ public final class ModuleComponent implements IComponent {
         int baseBg = Colors.bgElement(mainAlpha);
         int accentBg = ColorUtil.multAlpha(Colors.accent(mainAlpha), 0.15F); // Полупрозрачный акцент
         int moduleBg = ColorUtil.overCol(baseBg, accentBg, toggleAnim);
-        RenderUtils.fillRoundRect(moduleX, moduleY, moduleW, MODULE_HEIGHT, 4.0F, moduleBg);
-        if (hoverAnim > 0.001F) RenderUtils.fillRoundRect(moduleX, moduleY, moduleW, MODULE_HEIGHT, 4.0F, Colors.hoverBg(mainAlpha, hoverAnim));
+        RenderUtils.fillRoundRect(guiGraphics, moduleX, moduleY, moduleW, MODULE_HEIGHT, 4.0F, moduleBg);
+        if (hoverAnim > 0.001F) RenderUtils.fillRoundRect(guiGraphics, moduleX, moduleY, moduleW, MODULE_HEIGHT, 4.0F, Colors.hoverBg(mainAlpha, hoverAnim));
 
         // Название модуля (вертикальное центрирование: середина блока - половина высоты шрифта)
         float textY = moduleY + (MODULE_HEIGHT / 2.0F) - (FontManager.get(13).getHeight() / 2.0F);
@@ -117,18 +117,18 @@ public final class ModuleComponent implements IComponent {
         }
 
         // Красивый тумблер (iOS/Modern style)
-        renderModernToggle(moduleX + moduleW - 20, moduleY + (MODULE_HEIGHT / 2) - 4, toggleAnim, mainAlpha);
+        renderModernToggle(guiGraphics, moduleX + moduleW - 20, moduleY + (MODULE_HEIGHT / 2) - 4, toggleAnim, mainAlpha);
 
         return renderSettingsBox(guiGraphics, mouseX, mouseY, mainAlpha, panelX, moduleY, module, cache);
     }
 
-    private void renderModernToggle(float x, float y, float anim, float alpha) {
+    private void renderModernToggle(GuiGraphics guiGraphics, float x, float y, float anim, float alpha) {
         float w = 16, h = 8;
         // Фон тумблера
-        RenderUtils.fillRoundRect(x, y, w, h, 4, ColorUtil.overCol(Colors.bgSecondary(alpha), Colors.accent(alpha), anim));
+        RenderUtils.fillRoundRect(guiGraphics, x, y, w, h, 4, ColorUtil.overCol(Colors.bgSecondary(alpha), Colors.accent(alpha), anim));
         // Кружочек (Thumb)
         float thumbX = x + 1 + (w - 10) * anim;
-        RenderUtils.fillRoundRect(thumbX, y + 1, 6, 6, 3, Colors.textActive(alpha));
+        RenderUtils.fillRoundRect(guiGraphics, thumbX, y + 1, 6, 6, 3, Colors.textActive(alpha));
     }
 
     private float renderSettingsBox(GuiGraphics guiGraphics, int mouseX, int mouseY, float mainAlpha, float panelX, float moduleY, Module module, Map<Setting, IComponent> cache) {
@@ -147,7 +147,7 @@ public final class ModuleComponent implements IComponent {
         float effectiveAlpha = mainAlpha * settingsAnim;
 
         // Фон настроек — обрезается clip'ом панели (pushClipRect + enableScissor из PanelComponent)
-        RenderUtils.fillRoundRect(boxX, boxY, boxW, visH, 4.0F, Colors.bgSecondary(effectiveAlpha));
+        RenderUtils.fillRoundRect(guiGraphics, boxX, boxY, boxW, visH, 4.0F, Colors.bgSecondary(effectiveAlpha));
         RenderUtils.drawRoundRectOutline(boxX, boxY, boxW, visH, 4.0F, 0.5F, Colors.outline(effectiveAlpha));
 
         // Рендерим настройки

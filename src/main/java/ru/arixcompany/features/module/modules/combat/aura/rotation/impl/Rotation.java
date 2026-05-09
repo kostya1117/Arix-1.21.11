@@ -19,6 +19,26 @@ public class Rotation implements IMinecraft {
       this.yaw = yawN;
       this.pitch = pitchN;
    }
+   public float getDelta(Rotation target) {
+      float yawDelta = Mth.wrapDegrees(target.yaw - this.yaw);
+      float pitchDelta = target.pitch - this.pitch;
+      return (float) Math.hypot((double) Math.abs(yawDelta), (double) Math.abs(pitchDelta));
+   }
+   public Rotation adjustSensitivity() {
+      double gcd = RotationRepo.getGCD();
+
+      Rotation previousAngle = RotationRepo.getServerAngle();
+
+      float adjustedYaw = adjustAxis(yaw, previousAngle.yaw, gcd);
+      float adjustedPitch = adjustAxis(pitch, previousAngle.pitch, gcd);
+
+      return new Rotation(adjustedYaw, Mth.clamp(adjustedPitch, -90f, 90f));
+   }
+
+   private float adjustAxis(float axisValue, float previousValue, double gcd) {
+      float delta = Mth.wrapDegrees(axisValue - previousValue);
+      return previousValue + Math.round(delta / gcd / 0.15F) * (float) gcd * 0.15F;
+   }
 
    public static Vec2 camera() {
       return new Vec2(cameraYaw(), cameraPitch());

@@ -31,7 +31,7 @@ public final class SearchComponent implements IComponent {
         float searchY = getSearchY();
 
         // Рисуем фон
-        RenderUtils.fillRoundRect(searchX, searchY, SEARCH_WIDTH, SEARCH_HEIGHT, 6.0F, Colors.bgSecondary(alpha));
+        RenderUtils.fillRoundRect(guiGraphics, searchX, searchY, SEARCH_WIDTH, SEARCH_HEIGHT, 6.0F, Colors.bgSecondary(alpha));
 
         // Если поиск активен, делаем красивую обводку акцентным цветом
         int outlineColor = Gui.activeSearch ? Colors.accent(alpha) : Colors.outline(alpha);
@@ -46,16 +46,16 @@ public final class SearchComponent implements IComponent {
         FontManager.get(12).drawString(guiGraphics, displayText, textX, textY, textColor);
 
         // Красивый мигающий курсор
-        renderCaret(textX, searchY, alpha);
+        renderCaret(guiGraphics, textX, searchY, alpha);
     }
 
-    private void renderCaret(float textStartX, float searchY, float alpha) {
+    private void renderCaret(GuiGraphics guiGraphics, float textStartX, float searchY, float alpha) {
         if (!Gui.activeSearch) return;
         // Мигание каждые 500мс
         if (System.currentTimeMillis() % 1000L < 500L) {
             float textW = Gui.searchText.isEmpty() ? 0 : FontManager.get(12).getWidth(Gui.searchText);
             // Палочка курсора
-            RenderUtils.fillRoundRect(textStartX + textW + 1.0F, searchY + 5.0F, 1.0F, SEARCH_HEIGHT - 10.0F, 0.5F, Colors.textActive(alpha));
+            RenderUtils.fillRoundRect(guiGraphics, textStartX + textW + 1.0F, searchY + 5.0F, 1.0F, SEARCH_HEIGHT - 10.0F, 0.5F, Colors.textActive(alpha));
         }
     }
 

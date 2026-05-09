@@ -1458,6 +1458,10 @@ public class GuiGraphics implements IForgeGuiGraphics {
         return this.scissorStack;
     }
 
+    public net.minecraft.client.gui.navigation.@Nullable ScreenRectangle getCurrentScissor() {
+        return this.scissorStack.peek();
+    }
+
     public enum HoveredTextEffects {
         NONE(false, false),
         TOOLTIP_ONLY(true, false),

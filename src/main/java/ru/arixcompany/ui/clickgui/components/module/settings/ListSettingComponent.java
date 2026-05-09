@@ -94,6 +94,7 @@ public final class ListSettingComponent implements IComponent {
             int rectColor = selected ? accentColor : bgColor;
 
             RenderUtils.fillRoundRect(
+                    guiGraphics,
                     xCursor,
                     yCursor,
                     btnW,

@@ -95,6 +95,7 @@ public final class SelectSettingComponent implements IComponent {
             int rectColor = selected ? accentColor : bgColor;
 
             RenderUtils.fillRoundRect(
+                    guiGraphics,
                     xCursor,
                     yCursor,
                     btnW,

@@ -125,11 +125,11 @@ public final class Gui extends Screen implements IMinecraft {
 
     @Override
     public void render(GuiGraphics ctx, int mouseX, int mouseY, float delta) {
-        super.render(ctx,mouseX,mouseY,delta);
+        super.render(ctx, mouseX, mouseY, delta);
         if (mc.getWindow() == null) return;
         float mainAlpha = (float) alphaPC.getOutput();
 
-        RenderUtils.fillRoundRect(0, 0, mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight(), 0,
+        RenderUtils.fillRoundRect(ctx, 0, 0, mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight(), 0,
                 ColorUtil.rgba(0, 0, 0, (int) (120.0F * mainAlpha)));
 
         if (draggingCategory != null) {

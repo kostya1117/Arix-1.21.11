@@ -83,7 +83,7 @@ public class FunTimeRotation implements AbstractRotation, IMinecraft {
                 : randomLerp(9.0F, 12.0F);
 
         RotationRepo.update(
-                new Rotation(baseYaw + yawJitter, finalPitch + pitchJitter),
+                new Rotation(baseYaw + yawJitter, finalPitch + pitchJitter).adjustSensitivity(),
                 yawChangeSpeed,
                 pitchSpeed,
                 12.0F,

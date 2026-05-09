@@ -1,12 +1,16 @@
 package ru.arixcompany.features.module.modules.combat;
 
 import lombok.Getter;
+import net.minecraft.network.protocol.game.ServerboundPlayerCommandPacket;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ShieldItem;
+import ru.arixcompany.Arix;
 import ru.arixcompany.features.event.EventHandler;
+import ru.arixcompany.features.event.player.EventMovementTick;
 import ru.arixcompany.features.event.player.EventSprint;
 import ru.arixcompany.features.event.world.EventGameTick;
+import ru.arixcompany.features.event.world.EventPreTick;
 import ru.arixcompany.features.event.world.EventTick;
 import ru.arixcompany.features.event.world.EventUpdate;
 import ru.arixcompany.features.module.Category;
@@ -16,6 +20,7 @@ import ru.arixcompany.features.module.modules.combat.aura.TargetHandler;
 import ru.arixcompany.features.module.modules.combat.aura.rotation.rotations.FunTimeRotation;
 import ru.arixcompany.features.module.modules.combat.aura.rotation.rotations.FuntimeRot;
 import ru.arixcompany.features.module.modules.combat.aura.rotation.rotations.SnapRotation;
+import ru.arixcompany.features.module.modules.movement.AutoSprint;
 import ru.arixcompany.features.module.setting.implement.ListSetting;
 import ru.arixcompany.features.module.setting.implement.SelectSetting;
 import ru.arixcompany.features.module.setting.implement.ValueSetting;
@@ -112,14 +117,27 @@ public class HitAura extends Module {
             this.updateRotation();
         }
     }
+//    @EventHandler
+//    public void onTickMovement(EventMovementTick e) {
+//        if (this.target != null) {
+//            if (mc.player.isSprinting() && !mc.player.onGround() && !mc.player.isSwimming() && AttackHandler.shouldAttack() && AttackHandler.anyEntityOnRay(target,attackRange.getValue())) {
+//                mc.player.setSprinting(false);
+//                mc.getConnection().send(new ServerboundPlayerCommandPacket(mc.player, ServerboundPlayerCommandPacket.Action.STOP_SPRINTING));
+//                if (Arix.getInstance().getModuleRepo().getModule(AutoSprint.class).isState()) {
+//                    mc.options.keySprint.setDown(false);
+//                }
+//            }
+//        }
+//    }
 
     public boolean hasStopSprint() {
         return !AttackHandler.hasMovementRestrictions();
     }
 
 
+
     @EventHandler
-    public void onEventsss(EventGameTick e) {
+    public void onEventsss(EventPreTick e) {
         if (!mc.player.isAlive() || mc.player == null) {
             this.toggle();
             return;

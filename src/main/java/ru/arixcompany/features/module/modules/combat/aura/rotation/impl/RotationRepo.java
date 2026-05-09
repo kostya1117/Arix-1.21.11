@@ -1,10 +1,15 @@
 package ru.arixcompany.features.module.modules.combat.aura.rotation.impl;
 
+import lombok.Getter;
+import lombok.Setter;
+import net.minecraft.network.protocol.game.ClientboundPlayerPositionPacket;
+import net.minecraft.network.protocol.game.ServerboundMovePlayerPacket;
 import net.minecraft.util.Mth;
 import ru.arixcompany.features.event.EventHandler;
 import ru.arixcompany.features.event.player.EventInput;
 import ru.arixcompany.features.event.render.EventRender3D;
 import ru.arixcompany.features.event.world.EventGameTick;
+import ru.arixcompany.features.event.world.EventPacket;
 import ru.arixcompany.features.event.world.EventTick;
 import ru.arixcompany.features.module.modules.combat.aura.rotation.Component;
 import ru.arixcompany.utils.player.MoveUtils;
@@ -21,7 +26,9 @@ public class RotationRepo extends Component {
     public static int   currentTimeout;
     public static int   idleTicks;
     public static Rotation targetRotation;
-
+    @Getter
+    @Setter
+    public static Rotation serverAngle = new Rotation(0,0);
     public static boolean isRotating() {
         return currentTask != RotationTask.IDLE;
     }
@@ -104,8 +111,8 @@ public class RotationRepo extends Component {
         float clampedYaw   = Math.min(Math.abs(yawDelta),   yawSpeed);
         float clampedPitch = Math.min(Math.abs(pitchDelta), pitchSpeed);
 
-        float yawStep   = getSensitivity(Mth.clamp(yawDelta,   -clampedYaw,   clampedYaw));
-        float pitchStep = getSensitivity(Mth.clamp(pitchDelta, -clampedPitch, clampedPitch));
+        float yawStep   = Mth.clamp(yawDelta,   -clampedYaw,   clampedYaw);
+        float pitchStep = Mth.clamp(pitchDelta, -clampedPitch, clampedPitch);
 
         float finalYaw   = mc.player.getYRot() + yawStep;
         float finalPitch = Mth.clamp(mc.player.getXRot() + pitchStep, -90.0F, 90.0F);
@@ -136,6 +143,14 @@ public class RotationRepo extends Component {
     public static float getGCD() {
         float f = (float) ((double) mc.options.sensitivity().get() * 0.6 + 0.2);
         return f * f * f * 8.0F;
+    }
+    @EventHandler
+    public void onPacket(EventPacket event) {
+        if (!event.isCancelled()) switch (event.getPacket()) {
+            case ServerboundMovePlayerPacket player when player.hasRotation() -> serverAngle = new Rotation(player.getYRot(1), player.getXRot(1));
+            case ClientboundPlayerPositionPacket player -> serverAngle = new Rotation(player.change().yRot(), player.change().xRot());
+            default -> {}
+        }
     }
 
     public static float getDeltaMouse(float delta) {

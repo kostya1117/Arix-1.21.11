@@ -44,7 +44,7 @@ public final class ThemeComponent implements IComponent {
         float h = CIRCLE_SIZE + (PADDING * 2);
 
         // Фон плашки тем (закругление h / 2.0F делает идеальную форму таблетки / Pill)
-        RenderUtils.fillRoundRect(x, y, w, h, h / 2.0F, Colors.bgSecondary(alpha));
+        RenderUtils.fillRoundRect(guiGraphics, x, y, w, h, h / 2.0F, Colors.bgSecondary(alpha));
         RenderUtils.drawRoundRectOutline(x, y, w, h, h / 2.0F, 1.0F, Colors.outline(alpha));
 
         float curX = x + PADDING;
@@ -70,7 +70,7 @@ public final class ThemeComponent implements IComponent {
 
             // Сам кружок темы
             int circleColor = ColorUtil.replAlpha(themeColor, (int) (255.0F * alpha));
-            RenderUtils.fillRoundRect(curX, curY, CIRCLE_SIZE, CIRCLE_SIZE, CIRCLE_SIZE / 2.0F, circleColor);
+            RenderUtils.fillRoundRect(guiGraphics, curX, curY, CIRCLE_SIZE, CIRCLE_SIZE, CIRCLE_SIZE / 2.0F, circleColor);
 
             curX += CIRCLE_SIZE + GAP;
         }
