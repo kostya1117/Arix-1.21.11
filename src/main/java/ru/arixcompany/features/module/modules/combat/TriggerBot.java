@@ -99,16 +99,11 @@ public class TriggerBot extends Module {
             AttackHandler.performAttack(
                     target,
                     false,
-                    extraSettings.isSelected("Легитный спринт"),
-                    getRanges()
+                    attackRange.getValue()
             );
         } else {
             this.reset();
         }
-    }
-
-    public static float[] getRanges() {
-        return new float[]{attackRange.getValue()};
     }
 
    @Override
