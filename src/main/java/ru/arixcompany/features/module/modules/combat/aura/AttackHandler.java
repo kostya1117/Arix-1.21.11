@@ -17,6 +17,7 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import ru.arixcompany.Arix;
 import ru.arixcompany.features.module.modules.combat.HitAura;
+import ru.arixcompany.features.module.modules.combat.aura.rotation.impl.RotationRepo;
 import ru.arixcompany.features.module.modules.combat.aura.rotation.impl.SprintServerRepo;
 import ru.arixcompany.features.module.modules.combat.aura.utils.AuraUtil;
 import ru.arixcompany.features.module.modules.combat.aura.utils.RayTraceUtil;
@@ -36,12 +37,8 @@ import static ru.arixcompany.features.module.modules.combat.HitAura.attackRange;
 public final class AttackHandler implements IMinecraft {
     public final Timer cooldownTimer = new Timer();
     HitAura hitAura = Arix.getInstance().getModuleRepo().getModule(HitAura.class);
-    public final Timer sprintTimer = new Timer();
-    @NonFinal
-    public int skipTicks;
     public Player getSelf()  { return mc.player; }
     public Level  getWorld() { return mc.level;  }
-    boolean isStopSprintPacketSent;
     public void performAttack(LivingEntity target, boolean rayCast, float ranges) {
         if (target == null || mc.player == null) return;
         if (AuraUtil.getStrictDistance(target) >= ranges) return;
@@ -50,6 +47,9 @@ public final class AttackHandler implements IMinecraft {
         if (!canAttack)
             return;
 
+        if (hitAura.sprintReset.isSelected("Пакет") && hitAura.extraSettings.isSelected("Сброс спринта") && SprintServerRepo.serverSprint) {
+            disableSprint();
+        }
         useEntity(target, InteractionHand.MAIN_HAND);
     }
     public boolean hasMovementRestrictions() {
@@ -108,6 +108,9 @@ public final class AttackHandler implements IMinecraft {
         if (yCapacity > .2) {
             adaptiveFallValue = maxFallOff;
         }
+        if (hitAura.extraSettings.isSelected("Умные криты"))
+            adaptiveFallValue = 0;
+
         return adaptiveFallValue;
     }
 
@@ -148,15 +151,17 @@ public final class AttackHandler implements IMinecraft {
         if (target == null || mc.gameMode == null || mc.player == null) return false;
 
         HitAura hitAura = Arix.getInstance().getModuleRepo().getModule(HitAura.class);
-        //preAttack();
         mc.gameMode.attack(mc.player, target);
         mc.player.swing(hand);
-       // postAttack();
         hitAura.count = (hitAura.count + 1) % 2;
         cooldownTimer.reset();
-        skipTicks = 0;
 
         return true;
+    }
+    private void disableSprint() {
+        mc.player.setSprinting(false);
+        mc.options.keySprint.setDown(false);
+        mc.getConnection().send(new ServerboundPlayerCommandPacket(mc.player, ServerboundPlayerCommandPacket.Action.STOP_SPRINTING));
     }
 
     public boolean shouldAttack() {
@@ -164,32 +169,8 @@ public final class AttackHandler implements IMinecraft {
             return false;
         return isBestMomentToHit();
     }
-    public void preAttack() {
-        if (hitAura.sprintReset.isSelected("Пакет")) {
-            if (SprintServerRepo.serverSprint && mc.player.wasSprinting) {
-                mc.player.setSprinting(false);
-                mc.player.connection.send(new ServerboundPlayerCommandPacket(mc.player, ServerboundPlayerCommandPacket.Action.STOP_SPRINTING));
-                isStopSprintPacketSent = true;
-            }
-        } else if (hitAura.sprintReset.isSelected("Легит")) {
-            mc.player.setSprinting(false);
-            isStopSprintPacketSent = true;
-        }
-    }
-
-    public void postAttack() {
-        if (hitAura.sprintReset.isSelected("Пакет")) {
-            if (isStopSprintPacketSent && (!SprintServerRepo.serverSprint && mc.player.wasSprinting)) {
-                mc.player.setSprinting(true);
-                mc.player.connection.send(new ServerboundPlayerCommandPacket(mc.player, ServerboundPlayerCommandPacket.Action.START_SPRINTING));
-                isStopSprintPacketSent = false;
-            }
-        } else if (hitAura.sprintReset.isSelected("Легит")) {
-            if (isStopSprintPacketSent) {
-                mc.player.setSprinting(true);
-                isStopSprintPacketSent = false;
-            }
-        }
+    public boolean shouldAttackMS() {
+        return msCooldownReached(0);
     }
 
     public long getMsCooldown() {
@@ -207,17 +188,17 @@ public final class AttackHandler implements IMinecraft {
         return cooldownTimer.finished(getMsCooldown() + msOffset);
     }
 
-
     public boolean anyEntityOnRay(LivingEntity target, float range) {
         if (target == null || mc.player == null) return false;
 
-        return RayTraceUtil.checkRtx(
-                mc.player.getYRot(),
-                mc.player.getXRot(),
-                range,
-                range,
-                target
-        );
+//        return RayTraceUtil.checkRtx(
+//                mc.player.getYRot(),
+//                mc.player.getXRot(),
+//                range,
+//                range,
+//                target
+//        );
+        return RayTraceUtil.getServerHitResult(mc.player, RotationRepo.serverAngle.yaw,RotationRepo.serverAngle.pitch, e -> e == target, range).getType() == HitResult.Type.ENTITY;
     }
 
     public boolean shouldAttack(

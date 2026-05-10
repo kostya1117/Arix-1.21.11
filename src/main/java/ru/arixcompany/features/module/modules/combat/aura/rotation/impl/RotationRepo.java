@@ -7,13 +7,12 @@ import net.minecraft.network.protocol.game.ServerboundMovePlayerPacket;
 import net.minecraft.util.Mth;
 import ru.arixcompany.features.event.EventHandler;
 import ru.arixcompany.features.event.player.EventInput;
-import ru.arixcompany.features.event.render.EventRender3D;
+import ru.arixcompany.features.event.player.EventMotion;
 import ru.arixcompany.features.event.world.EventGameTick;
 import ru.arixcompany.features.event.world.EventPacket;
-import ru.arixcompany.features.event.world.EventTick;
 import ru.arixcompany.features.module.modules.combat.aura.rotation.Component;
+import ru.arixcompany.features.module.modules.combat.aura.utils.Rotation;
 import ru.arixcompany.utils.player.MoveUtils;
-import ru.arixcompany.utils.player.PlayerUtil;
 
 public class RotationRepo extends Component {
 
@@ -70,7 +69,7 @@ public class RotationRepo extends Component {
         if (currentPriority > priority) return;
 
         if (currentTask == RotationTask.IDLE && !clientRotation) {
-            FreeLookUtil.active = true;
+            FreeLookRepo.active = true;
         }
 
         currentYawSpeed         = yawSpeed;
@@ -96,7 +95,7 @@ public class RotationRepo extends Component {
     }
 
     private void resetRotation() {
-        Rotation freeRot = new Rotation(FreeLookUtil.freeYaw, FreeLookUtil.freePitch);
+        Rotation freeRot = new Rotation(FreeLookRepo.freeYaw, FreeLookRepo.freePitch);
         if (updateRotation(freeRot, currentYawReturnSpeed, currentPitchReturnSpeed)) {
             stopRotation();
         }
@@ -125,36 +124,32 @@ public class RotationRepo extends Component {
         return Math.abs(Mth.wrapDegrees(target.yaw - mc.player.getYRot())) < 1.0F
                 && Math.abs(target.pitch - mc.player.getXRot()) < 1.0F;
     }
+    @EventHandler
+    public void onSwimming(EventMotion eventMotion) {
+        if (mc.player == null) return;
+        if (FreeLookRepo.active) {
+            eventMotion.setYaw(mc.player.getYRot());
+            eventMotion.setPitch(mc.player.getXRot());
+        }
+    }
 
     public void stopRotation() {
         currentTask     = RotationTask.IDLE;
         currentPriority = 0;
-        FreeLookUtil.active = false;
-    }
-
-    public static float getSensitivity(float rot) {
-        return getDeltaMouse(rot) * getGCDValue();
-    }
-
-    public static float getGCDValue() {
-        return (float) (getGCD() * 0.15);
-    }
-
-    public static float getGCD() {
-        float f = (float) ((double) mc.options.sensitivity().get() * 0.6 + 0.2);
-        return f * f * f * 8.0F;
+        FreeLookRepo.active = false;
     }
     @EventHandler
     public void onPacket(EventPacket event) {
-        if (!event.isCancelled()) switch (event.getPacket()) {
-            case ServerboundMovePlayerPacket player when player.hasRotation() -> serverAngle = new Rotation(player.getYRot(1), player.getXRot(1));
-            case ClientboundPlayerPositionPacket player -> serverAngle = new Rotation(player.change().yRot(), player.change().xRot());
+        if (event.isCancelled()) return;
+        switch (event.getPacket()) {
+            case ServerboundMovePlayerPacket.Rot packet ->
+                    serverAngle = new Rotation(packet.getYRot(0), packet.getXRot(0));
+            case ServerboundMovePlayerPacket.PosRot packet ->
+                    serverAngle = new Rotation(packet.getYRot(0), packet.getXRot(0));
+            case ClientboundPlayerPositionPacket packet ->
+                    serverAngle = new Rotation(packet.change().yRot(), packet.change().xRot());
             default -> {}
         }
-    }
-
-    public static float getDeltaMouse(float delta) {
-        return Math.round(delta / getGCDValue());
     }
 
     public enum RotationTask {

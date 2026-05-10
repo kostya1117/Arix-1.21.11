@@ -104,10 +104,12 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
+import ru.arixcompany.Arix;
 import ru.arixcompany.features.event.EventRepo;
 import ru.arixcompany.features.event.player.EventSprint;
 import ru.arixcompany.features.event.world.EventUpdate;
-import ru.arixcompany.features.module.modules.combat.aura.rotation.impl.FreeLookUtil;
+import ru.arixcompany.features.module.modules.combat.aura.rotation.impl.FreeLookRepo;
+import ru.arixcompany.features.module.modules.movement.AutoSprint;
 
 
 public class LocalPlayer extends AbstractClientPlayer {
@@ -687,7 +689,7 @@ public class LocalPlayer extends AbstractClientPlayer {
             this.xBobO = this.xBob;
 //            this.xBob = this.xBob + (this.getXRot() - this.xBob) * 0.5F;
 //            this.yBob = this.yBob + (this.getYRot() - this.yBob) * 0.5F;
-            if (FreeLookUtil.active) {
+            if (FreeLookRepo.active) {
                 this.xBob = (float) ((double) this.xBob + (double) (minecraft.gameRenderer.getMainCamera().xRot() - this.xBob) * 0.5D);
                 this.yBob = (float) ((double) this.yBob + (double) (minecraft.gameRenderer.getMainCamera().yRot() - this.yBob) * 0.5D);
             } else {
@@ -798,7 +800,7 @@ public class LocalPlayer extends AbstractClientPlayer {
             this.sprintTriggerTime = 0;
         }
 
-        if (this.canStartSprinting()) {
+        if (!Arix.getInstance().getModuleRepo().getModule(AutoSprint.class).isState() && this.canStartSprinting()) {
             if (!flag2) {
                 if (this.sprintTriggerTime > 0) {
                     this.setSprinting(true);
@@ -810,6 +812,22 @@ public class LocalPlayer extends AbstractClientPlayer {
             if (this.input.keyPresses.sprint()) {
                 this.setSprinting(true);
             }
+        }
+        if (Arix.getInstance().getModuleRepo().getModule(AutoSprint.class).isState() && this.input.hasForwardImpulse()
+                && this.isSprintingPossible(this.getAbilities().flying)
+                && !this.isSlowDueToUsingItem()
+                && (!this.isFallFlying() || this.isUnderWater())
+                && (!this.isMovingSlowly() || this.isUnderWater())) {
+            if (!flag2) {
+                if (this.sprintTriggerTime > 0) {
+                    this.setSprinting(true);
+                } else {
+                    this.sprintTriggerTime = this.minecraft.options.sprintWindow().get();
+                }
+            }
+            EventSprint eventSprint = new EventSprint(this.input.keyPresses.forward());
+            EventRepo.call(eventSprint);
+            this.setSprinting(eventSprint.isSprinting());
         }
 
         if (this.isSprinting()) {

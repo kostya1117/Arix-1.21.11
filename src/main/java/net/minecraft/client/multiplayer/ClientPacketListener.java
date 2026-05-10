@@ -342,6 +342,7 @@ import org.slf4j.Logger;
 import ru.arixcompany.Arix;
 import ru.arixcompany.features.command.CommandRepo;
 import ru.arixcompany.features.event.EventRepo;
+import ru.arixcompany.features.event.player.EventMotion;
 import ru.arixcompany.features.event.world.EventChat;
 
 
@@ -805,12 +806,19 @@ public class ClientPacketListener extends ClientCommonPacketListenerImpl impleme
         }
 
         this.connection.send(new ServerboundAcceptTeleportationPacket(p_105056_.id()));
-        this.connection
-            .send(
-                new ServerboundMovePlayerPacket.PosRot(
-                    player.getX(), player.getY(), player.getZ(), player.getYRot(), player.getXRot(), false, false
-                )
-            );
+//        this.connection
+//            .send(
+//                new ServerboundMovePlayerPacket.PosRot(
+//                    player.getX(), player.getY(), player.getZ(), player.getYRot(), player.getXRot(), false, false
+//                )
+//            );
+        if (player instanceof LocalPlayer) {
+            EventMotion eventSync = new EventMotion(player.getYRot(), player.getXRot(), player.getX(), player.getY(), player.getZ(), false, false);
+            EventRepo.call(eventSync);
+            this.connection.send(new ServerboundMovePlayerPacket.PosRot(eventSync.getX(), eventSync.getY(), eventSync.getZ(), eventSync.getYaw(), eventSync.getPitch(),false, false));
+        } else {
+            this.connection.send(new ServerboundMovePlayerPacket.PosRot(player.getX(), player.getY(), player.getZ(), player.getYRot(), player.getXRot(),false, false));
+        }
     }
 
     private static boolean setValuesFromPositionPacket(PositionMoveRotation p_361901_, Set<Relative> p_362559_, Entity p_368395_, boolean p_366293_) {

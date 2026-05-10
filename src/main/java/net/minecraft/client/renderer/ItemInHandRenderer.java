@@ -3,7 +3,6 @@ package net.minecraft.client.renderer;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.MoreObjects;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import java.util.Objects;
 import net.minecraft.client.Minecraft;
@@ -45,7 +44,7 @@ import ru.arixcompany.Arix;
 import ru.arixcompany.features.event.EventRepo;
 import ru.arixcompany.features.event.render.EventArmRender;
 import ru.arixcompany.features.event.render.EventHeldItemRenderer;
-import ru.arixcompany.features.module.modules.combat.aura.rotation.impl.FreeLookUtil;
+import ru.arixcompany.features.module.modules.combat.aura.rotation.impl.FreeLookRepo;
 import ru.arixcompany.features.module.modules.render.HandView;
 
 public class ItemInHandRenderer {
@@ -376,7 +375,7 @@ public class ItemInHandRenderer {
         ItemInHandRenderer.HandRenderSelection iteminhandrenderer$handrenderselection = evaluateWhichHandsToRender(p_109318_);
         float f2 = Mth.lerp(p_109315_, p_109318_.xBobO, p_109318_.xBob);
         float f3 = Mth.lerp(p_109315_, p_109318_.yBobO, p_109318_.yBob);
-        if (FreeLookUtil.active) {
+        if (FreeLookRepo.active) {
             p_109316_.mulPose(Axis.XP.rotationDegrees((minecraft.gameRenderer.getMainCamera().xRot() - f2) * 0.1F));
             p_109316_.mulPose(Axis.YP.rotationDegrees((minecraft.gameRenderer.getMainCamera().yRot() - f3) * 0.1F));
         } else {

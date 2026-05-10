@@ -20,6 +20,7 @@ import ru.arixcompany.features.module.modules.combat.aura.TargetHandler;
 import ru.arixcompany.features.module.modules.combat.aura.rotation.rotations.FunTimeRotation;
 import ru.arixcompany.features.module.modules.combat.aura.rotation.rotations.FuntimeRot;
 import ru.arixcompany.features.module.modules.combat.aura.rotation.rotations.SnapRotation;
+import ru.arixcompany.features.module.modules.combat.aura.utils.AuraUtil;
 import ru.arixcompany.features.module.modules.movement.AutoSprint;
 import ru.arixcompany.features.module.setting.implement.ListSetting;
 import ru.arixcompany.features.module.setting.implement.SelectSetting;
@@ -87,12 +88,6 @@ public class HitAura extends Module {
     public static LivingEntity target;
     private final TargetHandler targetHandler = new TargetHandler();
 
-    public static long lastLookUpTime = 0L;
-    public static long nextLookUpDelay =
-            ThreadLocalRandom.current().nextLong(90000L, 180000L);
-    public static boolean isLookingUp = false;
-    public static long lookUpStartTime = 0L;
-    public static int lookUpDuration = 0;
     public int count;
 
     public HitAura() {
@@ -117,28 +112,44 @@ public class HitAura extends Module {
             this.updateRotation();
         }
     }
-//    @EventHandler
-//    public void onTickMovement(EventMovementTick e) {
-//        if (this.target != null) {
-//            if (mc.player.isSprinting() && !mc.player.onGround() && !mc.player.isSwimming() && AttackHandler.shouldAttack() && AttackHandler.anyEntityOnRay(target,attackRange.getValue())) {
-//                mc.player.setSprinting(false);
-//                mc.getConnection().send(new ServerboundPlayerCommandPacket(mc.player, ServerboundPlayerCommandPacket.Action.STOP_SPRINTING));
-//                if (Arix.getInstance().getModuleRepo().getModule(AutoSprint.class).isState()) {
-//                    mc.options.keySprint.setDown(false);
-//                }
-//            }
-//        }
-//    }
+
+    @EventHandler
+    public void onPreAttack(EventPreTick e) {
+        if (target == null || mc.player == null || mc.level == null)
+            return;
+
+        boolean needSprintReset = shouldResetSprintForCrit();
+        
+        if (needSprintReset && hasStopSprint() && AuraUtil.validDistance(target, attackRange.getValue())) {
+            if (sprintReset.isSelected("Легит") && extraSettings.isSelected("Сброс спринта")) {
+                mc.player.setSprinting(false);
+            }
+        }
+    }
+    @EventHandler
+    public void onPreAttack(EventSprint e) {
+        if (target == null || mc.player == null || mc.level == null)
+            return;
+
+        boolean needSprintReset = shouldResetSprintForCrit();
+        if (needSprintReset && hasStopSprint() && AuraUtil.validDistance(target, attackRange.getValue())) {
+            if (sprintReset.isSelected("Легит") && extraSettings.isSelected("Сброс спринта")) {
+                e.setSprinting(false);
+            }
+        }
+    }
+
+    private boolean shouldResetSprintForCrit() {
+        return mc.player.fallDistance > 0.0F || mc.player.getDeltaMovement().y < -0.08;
+    }
 
     public boolean hasStopSprint() {
         return !AttackHandler.hasMovementRestrictions();
     }
 
-
-
     @EventHandler
     public void onEventsss(EventPreTick e) {
-        if (!mc.player.isAlive() || mc.player == null) {
+        if (!mc.player.isAlive() || mc.player.isDeadOrDying() || mc.player == null) {
             this.toggle();
             return;
         }
@@ -209,11 +220,7 @@ public class HitAura extends Module {
    private void reset() {
       target = null;
       if (mc.player != null) {
-         isLookingUp = false;
-         lookUpStartTime = 0L;
          count = 0;
-         AttackHandler.sprintTimer.reset();
-         AttackHandler.skipTicks = 1;
       }
    }
 
@@ -224,6 +231,10 @@ public class HitAura extends Module {
             && !mc.player.getMainHandItem().is(ItemTags.AXES)
             && misc.isSelected("Бить только оружием");
    }
+    @Override
+    public void activate() {
+        super.activate();
+    }
 
    @Override
    public void deactivate() {
