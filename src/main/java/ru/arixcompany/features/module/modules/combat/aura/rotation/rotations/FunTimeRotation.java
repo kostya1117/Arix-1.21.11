@@ -3,15 +3,17 @@ package ru.arixcompany.features.module.modules.combat.aura.rotation.rotations;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
+import ru.arixcompany.Arix;
 import ru.arixcompany.features.module.modules.combat.HitAura;
+import ru.arixcompany.features.module.modules.combat.aura.AttackHandler;
 import ru.arixcompany.features.module.modules.combat.aura.utils.AuraUtil;
-import ru.arixcompany.features.module.modules.combat.aura.utils.UBoxPoints;
 import ru.arixcompany.features.module.modules.combat.aura.rotation.AbstractRotation;
-import ru.arixcompany.features.module.modules.combat.aura.rotation.impl.FreeLookUtil;
-import ru.arixcompany.features.module.modules.combat.aura.rotation.impl.Rotation;
+import ru.arixcompany.features.module.modules.combat.aura.rotation.impl.FreeLookRepo;
+import ru.arixcompany.features.module.modules.combat.aura.utils.Rotation;
 import ru.arixcompany.features.module.modules.combat.aura.rotation.impl.RotationRepo;
 import ru.arixcompany.utils.IMinecraft;
 import ru.arixcompany.utils.math.MathUtils;
+import ru.arixcompany.utils.player.FallingPlayer;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -29,42 +31,32 @@ public class FunTimeRotation implements AbstractRotation, IMinecraft {
 
         long now = System.currentTimeMillis();
 
-        if (!HitAura.isLookingUp && now - HitAura.lastLookUpTime >= HitAura.nextLookUpDelay) {
-            HitAura.isLookingUp    = true;
-            HitAura.lookUpStartTime = now;
-            HitAura.lookUpDuration  = ThreadLocalRandom.current().nextInt(270, 390);
-            HitAura.lastLookUpTime  = now;
-            HitAura.nextLookUpDelay = ThreadLocalRandom.current().nextLong(10500L, 13200L);
-        }
-
-        if (HitAura.isLookingUp && now - HitAura.lookUpStartTime >= HitAura.lookUpDuration) {
-            HitAura.isLookingUp = false;
-        }
-
-        boolean fastspeed = now - HitAura.lookUpStartTime >= HitAura.lookUpDuration + 60L;
-
         Vec3 targetPos = getTargetPoint(target);
         double maxHeight = (AuraUtil.getStrictDistance(target) / attackDistance);
         Vec3 directionVec = targetPos
-                .add(0, Mth.clamp(mc.player.getEyePosition().y - target.getY(), 0, maxHeight), 0)
-                .subtract(mc.player.getEyePosition())
+                .add(0, Mth.clamp(mc.player.getEyePosition(1.0f).y - target.getY(), 0, maxHeight), 0)
+                .subtract(mc.player.getEyePosition(1.0f))
                 .normalize();
 
-        float baseYaw = FreeLookUtil.freeYaw;
+        float baseYaw = FreeLookRepo.freeYaw;
 
-        if (isAttack && AuraUtil.getStrictDistance(target) < attackDistance && !check) {
-            tick = MathUtils.randomValue(20.0F, 25.0F);
+        if (isAttack && AuraUtil.getStrictDistance(target) < attackDistance && !check && (FallingPlayer.fromPlayer(mc.player).findFall(AttackHandler.getfalldistance()))) {
+            tick = MathUtils.randomValue(25.0F, 30.0F);
         }
 
-        float yawChangeSpeed   = randomLerp(35.0F, 45.0F);
+        float yawChangeSpeed   = randomLerp(20.0F, 30.0F);
 
         float waveA = (float) Math.cos(now / 40.0);
         float waveB = (float) Math.sin(now / 70.0);
-
+        float yawJitter   = waveA * randomLerp(5.0F, 8.0F);
+        float pitchJitter = waveB * randomLerp(8.0F,  10.0F);
         if (tick > 0.0F) {
-            yawChangeSpeed = randomLerp(65.0F, 75.0F);
-
             baseYaw = (float) Math.toDegrees(Math.atan2(-directionVec.x, directionVec.z));
+            yawChangeSpeed = randomLerp(40.0F, 50.0F);
+            waveA = (float) Math.cos(now / 25.0);
+            waveB = (float) Math.sin(now / 45.0);
+            yawJitter = waveA * randomLerp(3.0F, 5.0F);
+            pitchJitter = waveB * randomLerp(4.0F,  8.0F);
             tick--;
         }
 
@@ -73,17 +65,11 @@ public class FunTimeRotation implements AbstractRotation, IMinecraft {
                 -90.0, 90.0
         );
 
-        float yawJitter   = waveA * randomLerp(5.0F, 9.0F);
-        float pitchJitter = waveB * randomLerp(4.0F,  7.0F);
 
-        float finalPitch = basePitch;
-
-        float pitchSpeed = HitAura.isLookingUp || fastspeed
-                ? randomLerp(60.0F, 90.0F)
-                : randomLerp(9.0F, 12.0F);
+        float pitchSpeed = randomLerp(4.0F, 8.0F);
 
         RotationRepo.update(
-                new Rotation(baseYaw + yawJitter, finalPitch + pitchJitter).adjustSensitivity(),
+                new Rotation(baseYaw + yawJitter, basePitch + pitchJitter).adjustSensitivity(),
                 yawChangeSpeed,
                 pitchSpeed,
                 12.0F,

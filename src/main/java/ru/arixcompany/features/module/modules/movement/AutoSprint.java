@@ -15,10 +15,10 @@ public class AutoSprint extends Module {
     public AutoSprint() {
         super("AutoSprint", Category.Movement);
     }
-    @EventHandler
-    public void onUpdate(EventMovementTick event) {
-        if (mc.player == null || mc.level == null)
-            return;
-        mc.options.keySprint.setDown(true);
-    }
+//    @EventHandler
+//    public void onUpdate(EventMovementTick event) {
+//        if (mc.player == null || mc.level == null)
+//            return;
+//        mc.options.keySprint.setDown(true);
+//    }
 }

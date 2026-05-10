@@ -1,9 +1,10 @@
-package ru.arixcompany.features.module.modules.combat.aura.rotation.impl;
+package ru.arixcompany.features.module.modules.combat.aura.utils;
 
 
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec2;
+import ru.arixcompany.features.module.modules.combat.aura.rotation.impl.RotationRepo;
 import ru.arixcompany.utils.IMinecraft;
 
 public class Rotation implements IMinecraft {
@@ -25,7 +26,7 @@ public class Rotation implements IMinecraft {
       return (float) Math.hypot((double) Math.abs(yawDelta), (double) Math.abs(pitchDelta));
    }
    public Rotation adjustSensitivity() {
-      double gcd = RotationRepo.getGCD();
+      double gcd = SensitivityUtil.getGCD();
 
       Rotation previousAngle = RotationRepo.getServerAngle();
 

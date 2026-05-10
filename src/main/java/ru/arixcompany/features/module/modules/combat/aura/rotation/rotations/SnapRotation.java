@@ -5,8 +5,8 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 import ru.arixcompany.features.module.modules.combat.HitAura;
 import ru.arixcompany.features.module.modules.combat.aura.rotation.AbstractRotation;
-import ru.arixcompany.features.module.modules.combat.aura.rotation.impl.FreeLookUtil;
-import ru.arixcompany.features.module.modules.combat.aura.rotation.impl.Rotation;
+import ru.arixcompany.features.module.modules.combat.aura.rotation.impl.FreeLookRepo;
+import ru.arixcompany.features.module.modules.combat.aura.utils.Rotation;
 import ru.arixcompany.features.module.modules.combat.aura.rotation.impl.RotationRepo;
 import ru.arixcompany.utils.IMinecraft;
 import ru.arixcompany.utils.math.MathUtils;
@@ -44,8 +44,8 @@ public final class SnapRotation implements IMinecraft, AbstractRotation {
         switch (HitAura.snapSetting.getSelected()) {
 
             case "Быстрый" -> {
-                float yaw   = attack ? targetYaw   : FreeLookUtil.freeYaw;
-                float pitch = attack ? targetPitch : FreeLookUtil.freePitch;
+                float yaw   = attack ? targetYaw   : FreeLookRepo.freeYaw;
+                float pitch = attack ? targetPitch : FreeLookRepo.freePitch;
                 float speed = MathUtils.randomValue(190.0F, 245.0F);
 
                 RotationRepo.update(
@@ -63,8 +63,8 @@ public final class SnapRotation implements IMinecraft, AbstractRotation {
                     speed = 88.0F;
                 }
 
-                float yaw   = FreeLookUtil.freeYaw;
-                float pitch = FreeLookUtil.freePitch;
+                float yaw   = FreeLookRepo.freeYaw;
+                float pitch = FreeLookRepo.freePitch;
 
                 if (tick > 0) {
                     yaw   = targetYaw;
@@ -85,8 +85,8 @@ public final class SnapRotation implements IMinecraft, AbstractRotation {
                 }
 
                 float speed = MathUtils.randomValue(30.0F, 35.0F);
-                float yaw   = FreeLookUtil.freeYaw;
-                float pitch = FreeLookUtil.freePitch;
+                float yaw   = FreeLookRepo.freeYaw;
+                float pitch = FreeLookRepo.freePitch;
 
                 if (tick > 0) {
                     speed = MathUtils.randomValue(140.0F, 220.0F);

@@ -180,8 +180,12 @@ public class Nametags extends Module {
                 mc.player.getBoundingBox().inflate(64)
         )) {
 
+            float partialticks = mc.getDeltaTracker().getGameTimeDeltaPartialTick(true);
+            double xitem = Mth.lerp(partialticks, item.xo, item.getX());
+            double yitem = Mth.lerp(partialticks, item.yo, item.getY());
+            double zitem = Mth.lerp(partialticks, item.zo, item.getZ());
             Vec3 screen = ProjectUtils.worldSpaceToScreenSpace(
-                    new Vec3(item.getX(), item.getY() + 0.2, item.getZ())
+                    new Vec3(xitem, yitem + 0.2, zitem)
             );
 
             if (screen == null || screen.z < 0 || screen.z > 1) continue;

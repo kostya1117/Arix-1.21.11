@@ -8,13 +8,12 @@ import net.minecraft.world.phys.Vec3;
 import ru.arixcompany.Arix;
 import ru.arixcompany.features.module.modules.combat.HitAura;
 import ru.arixcompany.features.module.modules.combat.aura.rotation.AbstractRotation;
-import ru.arixcompany.features.module.modules.combat.aura.rotation.impl.Rotation;
+import ru.arixcompany.features.module.modules.combat.aura.utils.Rotation;
 import ru.arixcompany.features.module.modules.combat.aura.rotation.impl.RotationRepo;
 import ru.arixcompany.features.module.modules.combat.aura.utils.AuraUtil;
 import ru.arixcompany.utils.IMinecraft;
 
 import java.security.SecureRandom;
-import java.util.Random;
 
 public class FuntimeRot implements AbstractRotation, IMinecraft {
     private static float randomLerp(float min, float max) {

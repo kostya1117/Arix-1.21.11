@@ -6,7 +6,7 @@ import ru.arixcompany.features.event.player.EventLook;
 import ru.arixcompany.features.event.player.EventRotation;
 import ru.arixcompany.features.module.modules.combat.aura.rotation.Component;
 
-public class FreeLookUtil extends Component {
+public class FreeLookRepo extends Component {
    public static boolean active;
    public static float freeYaw;
    public static float freePitch;
