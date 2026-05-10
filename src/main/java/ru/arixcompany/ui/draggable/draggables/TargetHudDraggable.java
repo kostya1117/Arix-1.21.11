@@ -17,7 +17,6 @@ import ru.arixcompany.features.event.EventHandler;
 import ru.arixcompany.features.event.EventRepo;
 import ru.arixcompany.features.event.render.EventRender3D;
 import ru.arixcompany.features.module.modules.combat.HitAura;
-import ru.arixcompany.features.module.modules.combat.TriggerBot;
 import ru.arixcompany.features.module.modules.render.Interface;
 import ru.arixcompany.features.module.setting.implement.BooleanSetting;
 import ru.arixcompany.features.module.setting.implement.SelectSetting;
@@ -257,11 +256,6 @@ public class TargetHudDraggable extends DraggableComponent {
     private LivingEntity resolveTarget() {
         HitAura ka = Arix.getInstance().getModuleRepo().getModule(HitAura.class);
         if (ka != null && ka.isState() && ka.getTarget() instanceof LivingEntity le) {
-            return le;
-        }
-
-        TriggerBot tr = Arix.getInstance().getModuleRepo().getModule(TriggerBot.class);
-        if (tr != null && tr.isState() && tr.getTarget() instanceof LivingEntity le) {
             return le;
         }
 

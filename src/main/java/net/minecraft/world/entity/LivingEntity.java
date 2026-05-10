@@ -3231,6 +3231,7 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
         if (this instanceof LocalPlayer && eventPush.isCancelled()) {
             return false;
         }
+
         return this.isAlive() && !this.isSpectator() && !this.onClimbable();
     }
 
