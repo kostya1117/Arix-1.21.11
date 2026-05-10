@@ -22,7 +22,7 @@ import net.optifine.Config;
 import net.optifine.shaders.Shaders;
 import org.apache.commons.lang3.StringUtils;
 import ru.arixcompany.Arix;
-import ru.arixcompany.features.draggable.DraggableRepo;
+import ru.arixcompany.ui.draggable.DraggableRepo;
 
 public class ChatScreen extends Screen {
     private static final Component USAGE_TEXT = Component.translatable("chat_screen.usage");

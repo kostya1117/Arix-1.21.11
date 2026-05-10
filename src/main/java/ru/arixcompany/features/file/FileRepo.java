@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;
 import ru.arixcompany.features.file.files.AltFile;
+import ru.arixcompany.features.file.files.DraggableFile;
 import ru.arixcompany.features.file.files.FriendFile;
 import ru.arixcompany.features.file.files.ModuleFile;
 
@@ -19,6 +20,7 @@ public class FileRepo {
     public void setup() {
         register(new FriendFile(),
                 new AltFile(),
+                new DraggableFile(),
                 new ModuleFile());
     }
 

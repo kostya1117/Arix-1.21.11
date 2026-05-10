@@ -9,11 +9,6 @@ import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
 import org.jspecify.annotations.Nullable;
 
-/**
- * Реализация GuiElementRenderState для round rect шейдера.
- * Позволяет рендерить скруглённые прямоугольники через систему страт GuiGraphics,
- * гарантируя правильный порядок рендеринга относительно шрифтов и других элементов.
- */
 public record RoundRectRenderState(
         RenderPipeline pipeline,
         float x, float y, float w, float h,

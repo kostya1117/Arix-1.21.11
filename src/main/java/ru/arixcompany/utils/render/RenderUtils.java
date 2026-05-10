@@ -1,7 +1,10 @@
 package ru.arixcompany.utils.render;
 
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.optifine.render.BufferUploader;
 import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayDeque;
@@ -260,6 +263,45 @@ public class RenderUtils {
                                 float tl, float tr, float br, float bl,
                                 int c00, int c10, int c11, int c01) {
         RoundRectShader.drawGradient4(x, y, w, h, tl, tr, br, bl, c00, c10, c11, c01);
+    }
+
+    public static void drawCircle(float cx, float cy, float startDeg, float endDeg,
+                                  float radius, float thickness, int color) {
+        if (radius <= 0.0f || thickness <= 0.0f) return;
+
+        float diff = endDeg - startDeg;
+        if (Math.abs(diff) < 0.05f) return;
+
+        // Длина дуги в пикселях
+        float arcLength = (float) (2.0 * Math.PI * radius * (Math.abs(diff) / 360.0f));
+
+        // Чем меньше шаг, тем глаже круг
+        float stepPx = Math.max(0.18f, thickness * 0.12f);
+
+        // Для маленьких радиусов принудительно много сегментов
+        int steps = Math.max(80, (int) Math.ceil(arcLength / stepPx));
+
+        // Чуть больше толщины, чтобы сегменты красиво перекрывались
+        float dotSize = thickness + 0.9f;
+        float dotRadius = dotSize * 0.5f;
+
+        for (int i = 0; i <= steps; i++) {
+            float t = i / (float) steps;
+            float angle = startDeg + diff * t - 90.0f;
+
+            double rad = Math.toRadians(angle);
+            float x = cx + (float) Math.cos(rad) * radius;
+            float y = cy + (float) Math.sin(rad) * radius;
+
+            fillRoundRect(
+                    x - dotRadius,
+                    y - dotRadius,
+                    dotSize,
+                    dotSize,
+                    dotRadius,
+                    color
+            );
+        }
     }
 
     private static float[] identity() {

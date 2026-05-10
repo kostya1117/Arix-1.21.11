@@ -3,6 +3,7 @@ package ru.arixcompany.features.module.modules.render;
 import ru.arixcompany.features.module.Category;
 import ru.arixcompany.features.module.Module;
 import ru.arixcompany.features.module.setting.implement.BooleanSetting;
+import ru.arixcompany.features.module.setting.implement.ListSetting;
 
 public class NoRender extends Module {
     public BooleanSetting noBadEffects      = new BooleanSetting("Плохие эффекты");
@@ -23,5 +24,4 @@ public class NoRender extends Module {
     public boolean noBadEffects()         { return state && noBadEffects.isValue(); }
     public boolean noOverlays()       { return state && overlays.isValue(); }
     public boolean noGuiBackground()       { return state && noGuiBackground.isValue(); }
-    public boolean noFog()                 { return state && noFog.isValue(); }
 }

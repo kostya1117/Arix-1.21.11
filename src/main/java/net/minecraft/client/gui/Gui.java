@@ -6,7 +6,6 @@ import com.mojang.blaze3d.opengl.GlStateManager;
 import com.mojang.blaze3d.platform.Window;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 import net.minecraft.ChatFormatting;
@@ -48,7 +47,6 @@ import net.minecraft.tags.FluidTags;
 import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
-import net.minecraft.util.StringUtil;
 import net.minecraft.util.Util;
 import net.minecraft.util.profiling.Profiler;
 import net.minecraft.world.MenuProvider;
@@ -85,15 +83,15 @@ import net.optifine.CustomItems;
 import net.optifine.TextureAnimations;
 import net.optifine.reflect.Reflector;
 import org.apache.commons.lang3.tuple.Pair;
-import org.jspecify.annotations.Nullable;
 import ru.arixcompany.Arix;
-import ru.arixcompany.features.draggable.DraggableComponent;
-import ru.arixcompany.features.draggable.DraggableRepo;
+import ru.arixcompany.ui.draggable.DraggableRepo;
+import ru.arixcompany.ui.draggable.draggables.ArmorHudDraggable;
+import ru.arixcompany.ui.draggable.draggables.CrosshairDraggable;
+import ru.arixcompany.ui.draggable.draggables.ScoreboardDraggable;
 import ru.arixcompany.features.event.EventRepo;
 import ru.arixcompany.features.event.render.EventScreen;
 import ru.arixcompany.features.module.modules.render.Animations;
 import ru.arixcompany.features.module.modules.render.NoRender;
-import ru.arixcompany.utils.math.MathUtils;
 
 public class Gui {
     private static final Identifier CROSSHAIR_SPRITE = Identifier.withDefaultNamespace("hud/crosshair");
@@ -240,7 +238,6 @@ public class Gui {
         if (!(this.minecraft.screen instanceof ChatScreen)) {
             renderDraggableOverlay(p_282884_, p_342095_);
         } else {
-            // При открытом чате всё равно рендерим ArmorHUD (он поднимается с хотбаром)
             renderArmorHudOnly(p_282884_, p_342095_);
         }
 
@@ -256,11 +253,9 @@ public class Gui {
         int mouseX = (int)(this.minecraft.mouseHandler.xpos() * window.getGuiScaledWidth() / window.getWidth());
         int mouseY = (int)(this.minecraft.mouseHandler.ypos() * window.getGuiScaledHeight() / window.getHeight());
 
-        // Обновляем все компоненты (позиция ArmorHUD должна обновляться)
         repo.updateAll();
 
-        // Рендерим только ArmorHUD
-        ru.arixcompany.features.draggable.draggables.ArmorHudDraggable armorHud = repo.getArmorHud();
+        ArmorHudDraggable armorHud = repo.getArmorHud();
         if (armorHud != null && armorHud.shouldRender()) {
             armorHud.renderComponent(graphics, mouseX, mouseY, delta.getGameTimeDeltaPartialTick(false));
         }
@@ -441,7 +436,6 @@ public class Gui {
             int j = Mth.floor(this.minecraft.mouseHandler.getScaledYPos(window));
             p_329202_.nextStratum();
 
-            // Анимация чата: плавный слайд снизу при появлении
             if (Animations.isEnabled("Чат")) {
                 boolean isChatOpen = this.minecraft.screen instanceof ChatScreen;
                 float targetChatSlide = isChatOpen ? 0.0F : 8.0F;
@@ -464,6 +458,10 @@ public class Gui {
     }
 
     private void renderScoreboardSidebar(GuiGraphics p_332744_, DeltaTracker p_344235_) {
+        if (ScoreboardDraggable.isCustomScoreboardActive()) {
+            return;
+        }
+
         Scoreboard scoreboard = this.minecraft.level.getScoreboard();
         Objective objective = null;
         PlayerTeam playerteam = scoreboard.getPlayersTeam(this.minecraft.player.getScoreboardName());
@@ -497,10 +495,14 @@ public class Gui {
     }
 
     private void renderCrosshair(GuiGraphics p_282828_, DeltaTracker p_343490_) {
+        if (CrosshairDraggable.isCustomCrosshairActive()) {
+            return;
+        }
+
         Options options = this.minecraft.options;
         if (options.getCameraType().isFirstPerson()
-            && (this.minecraft.gameMode.getPlayerMode() != GameType.SPECTATOR || this.canRenderCrosshairForSpectator(this.minecraft.hitResult))
-            && !this.minecraft.debugEntries.isCurrentlyEnabled(DebugScreenEntries.THREE_DIMENSIONAL_CROSSHAIR)) {
+                && (this.minecraft.gameMode.getPlayerMode() != GameType.SPECTATOR || this.canRenderCrosshairForSpectator(this.minecraft.hitResult))
+                && !this.minecraft.debugEntries.isCurrentlyEnabled(DebugScreenEntries.THREE_DIMENSIONAL_CROSSHAIR)) {
             p_282828_.nextStratum();
             int i = 15;
             p_282828_.blitSprite(RenderPipelines.CROSSHAIR, CROSSHAIR_SPRITE, (p_282828_.guiWidth() - 15) / 2, (p_282828_.guiHeight() - 15) / 2, 15, 15);

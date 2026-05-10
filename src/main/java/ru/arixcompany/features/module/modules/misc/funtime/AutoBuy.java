@@ -31,11 +31,6 @@ public class AutoBuy extends Module {
     private final ValueSetting discountPercent =
             new ValueSetting("Скидка покупки (%)").setValue(50).range(10, 90).step(1);
 
-    public static final BooleanSetting autoSell = new BooleanSetting("Авто-продажа");
-    private final ValueSetting sellMargin =
-            new ValueSetting("Наценка (%)").setValue(10).range(5, 300).step(5)
-                    .visible(autoSell::isValue);
-
     private final BooleanSetting autoSetupScheduler =
             new BooleanSetting("Авто‑рестарт сетапа");
     private final ValueSetting autoSetupInterval =
@@ -63,12 +58,10 @@ public class AutoBuy extends Module {
     public static final AuctionRenderer auctionRenderer = new AuctionRenderer();
     public static AutoBuyEngine autoBuyEngine;
     public AutoSetupEngine autoSetupEngine;
-    public static final AutoSellEngine autoSellEngine = new AutoSellEngine();
 
     public AutoBuy() {
         super("AutoBuy", Category.Misc);
         setup(autoBuyAfterSetup,discountPercent,
-                autoSell,sellMargin,
                 autoSetupScheduler,autoSetupInterval);
 
         ItemsRegistry.register(targets);
@@ -131,10 +124,9 @@ public class AutoBuy extends Module {
             autoBuyEngine.setCurrentAuctionScreen(null);
         }
 
-        autoSellEngine.tick();
         autoBuyEngine.setClickDelay((int) getClickDelay());
 
-        if (autoBuyEnabled && !autoSellEngine.isSelling()) {
+        if (autoBuyEnabled) {
             autoBuyEngine.tick((int) getUpdateDelay());
         }
 
@@ -181,13 +173,8 @@ public class AutoBuy extends Module {
                 int totalBuyPrice = autoBuyEngine.getLastTotalPrice();
                 int perOne = totalBuyPrice / (count > 0 ? count : 1);
 
-                if (autoSell.isValue()) {
-                    // Это запускает процесс: ищет предмет в инвентаре и начинает цепочку действий
-                    autoSellEngine.processSell(target, totalBuyPrice, (int) sellMargin.getValue());
-                } else {
-                    auctionRenderer.addPurchase(target.getDisplayStack(), target.getDisplayName(),
-                            perOne, count, totalBuyPrice, 0);
-                }
+                auctionRenderer.addPurchase(target.getDisplayStack(), target.getDisplayName(),
+                        perOne, count, totalBuyPrice, 0);
             }
             balanceController.request();
         }
@@ -205,7 +192,6 @@ public class AutoBuy extends Module {
 
         balanceController.handlePacket(packet);
         autoBuyEngine.setCurrentBalance(balanceController.getBalance());
-        autoSellEngine.onChat(msg);
     }
 
     @EventHandler

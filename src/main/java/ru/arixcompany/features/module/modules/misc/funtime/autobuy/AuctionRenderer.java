@@ -21,14 +21,12 @@ import java.util.Map;
 public class AuctionRenderer implements IMinecraft {
     private final List<PurchaseRecord> purchaseHistory = new ArrayList<>();
 
-    // Раздельный скролл
     private float historyTargetScroll = 0, historyCurrentScroll = 0;
     private float pricesTargetScroll = 0, pricesCurrentScroll = 0;
 
     private final int itemHeight = 40;
     private final int priceItemHeight = 12;
 
-    // Зоны
     private float historyX, historyY, historyW, historyH;
     private float pricesX, pricesY, pricesW, pricesH;
 
@@ -50,7 +48,6 @@ public class AuctionRenderer implements IMinecraft {
     }
 
     public void render(GuiGraphics g, ContainerScreen screen, Map<String, ItemTarget> targets) {
-        // Плавная интерполяция
         historyCurrentScroll = historyCurrentScroll + (historyTargetScroll - historyCurrentScroll) * 0.15f;
         pricesCurrentScroll = pricesCurrentScroll + (pricesTargetScroll - pricesCurrentScroll) * 0.15f;
 
@@ -67,11 +64,9 @@ public class AuctionRenderer implements IMinecraft {
 
         historyX = x; historyY = y; historyW = width; historyH = height;
 
-        // Фон
         RenderUtils.fillRoundRect(x, y, width, height, 4f, 0x90000000);
         FontManager.get(10).drawString(g, "История", x + 5, y + 5, -1);
 
-        // --- SCISSOR START ---
         float clipY = y + headerH;
         float clipH = height - headerH - 5;
 
@@ -93,9 +88,7 @@ public class AuctionRenderer implements IMinecraft {
 
         g.disableScissor();
         RenderUtils.popClipRect();
-        // --- SCISSOR END ---
 
-        // Скроллбар
         if (contentHeight > clipH) {
             renderScrollBar(g, x + width - 3, clipY, 2, clipH, historyCurrentScroll, maxScroll, contentHeight);
         }
@@ -113,7 +106,6 @@ public class AuctionRenderer implements IMinecraft {
         RenderUtils.fillRoundRect(x, y, width, height, 4f, 0x90000000);
         FontManager.get(10).drawString(g, "Мониторинг цен", x + 5, y + 5,Color.white.getRGB());
 
-        // --- SCISSOR START ---
         float clipY = y + headerH;
         float clipH = height - headerH - 5;
 
@@ -136,7 +128,6 @@ public class AuctionRenderer implements IMinecraft {
 
         g.disableScissor();
         RenderUtils.popClipRect();
-        // --- SCISSOR END ---
 
         if (contentHeight > clipH) {
             renderScrollBar(g, x + width - 3, clipY, 2, clipH, pricesCurrentScroll, maxScroll, contentHeight);

@@ -61,6 +61,7 @@ public final class RoundRectShader {
                     .build()
     );
 
+
     private RoundRectShader() {
     }
 
@@ -86,8 +87,6 @@ public final class RoundRectShader {
                 "round_rect"
         );
     }
-
-    // ── Перегрузки с GuiGraphics — рендерятся через систему страт ──────────────
 
     public static void drawRoundRect(GuiGraphics ctx, float x, float y, float w, float h, float radius, int color) {
         if (!initialized) init();
@@ -404,6 +403,13 @@ public final class RoundRectShader {
                 c00,
                 "gradient_4corner"
         );
+    }
+
+    private static float[] rotatePoint(float x, float y, float cos, float sin, float ox, float oy) {
+        return new float[]{
+                ox + x * cos - y * sin,
+                oy + x * sin + y * cos
+        };
     }
 
     private static float toClipX(float x) {
