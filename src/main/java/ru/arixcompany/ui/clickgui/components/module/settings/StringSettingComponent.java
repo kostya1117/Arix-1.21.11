@@ -47,7 +47,7 @@ public final class StringSettingComponent implements IComponent {
         float cursorX = textX;
 
         if (input.isEmpty()) {
-            FontManager.get(10).drawString(guiGraphics, "Enter text", textX, textY, ColorUtil.replAlpha(textInactive, (int)(ColorUtil.getAlpha(textInactive) * 0.5f)));
+            FontManager.get(10).drawString(guiGraphics, "Enter text", textX, textY, ColorUtil.replAlpha(textInactive, (int)(ColorUtil.alpha(textInactive) * 0.5f)));
         } else {
             float curX = textX;
             float maxX = fieldX + FIELD_W - 5.0F;

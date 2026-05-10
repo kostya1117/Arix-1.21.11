@@ -1,12 +1,36 @@
 package ru.arixcompany.utils.render;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.UtilityClass;
 import net.minecraft.util.Mth;
 import ru.arixcompany.ui.clickgui.Gui;
 import ru.arixcompany.features.module.Theme;
 
 import java.awt.*;
+import java.util.concurrent.*;
 
+@UtilityClass
 public class ColorUtil {
+
+    private final long CACHE_EXPIRATION_TIME = 60 * 1000;
+    private final ConcurrentHashMap<ColorKey, CacheEntry> colorCache = new ConcurrentHashMap<>();
+    private final ScheduledExecutorService cacheCleaner = Executors.newScheduledThreadPool(1);
+    private final DelayQueue<CacheEntry> cleanupQueue = new DelayQueue<>();
+
+    static {
+        cacheCleaner.scheduleWithFixedDelay(() -> {
+            CacheEntry entry = cleanupQueue.poll();
+            while (entry != null) {
+                if (entry.isExpired()) {
+                    colorCache.remove(entry.getKey());
+                }
+                entry = cleanupQueue.poll();
+            }
+        }, 0, 1, TimeUnit.SECONDS);
+    }
+
     public static float getRed(int color) {
         return (color >> 16 & 0xFF) / 255.0F;
     }
@@ -245,7 +269,7 @@ public class ColorUtil {
         int angle = (int) ((System.currentTimeMillis() / speed + index) % 360L);
         float hue = angle / 360.0F;
         int color = Color.HSBtoRGB(hue, saturation, brightness);
-        return getColor(red(color), green(color), blue(color), Math.max(0, Math.min(255, (int) (opacity * 255.0F))));
+        return rgba(red(color), green(color), blue(color), Math.max(0, Math.min(255, (int) (opacity * 255.0F))));
     }
 
     public static int gradient(int speed, int index, int... colors) {
@@ -298,11 +322,7 @@ public class ColorUtil {
     }
 
     public static int applyOpacity(int n, float f) {
-        return rgba2(getRedInt(n), getGreenInt(n), getBlueInt(n), (int) (getAlphaInt(n) * f / 255.0F));
-    }
-
-    public static int rgba2(int n, int n2, int n3, int n4) {
-        return n4 << 24 | n << 16 | n2 << 8 | n3;
+        return rgba(getRedInt(n), getGreenInt(n), getBlueInt(n), (int) (getAlphaInt(n) * f / 255.0F));
     }
 
     public static int getRedInt(int n) {
@@ -336,63 +356,48 @@ public class ColorUtil {
                 index);
     }
 
-    public static int swapAlpha(int color, float alpha) {
-        int f = color >> 16 & 0xFF;
-        int f1 = color >> 8 & 0xFF;
-        int f2 = color & 0xFF;
-        return getColor(f, f1, f2, (int) alpha);
+    public static int rgb(int r, int g, int b) {
+        return 255 << 24 | r << 16 | g << 8 | b;
     }
-
-    public static Color getColor(int color) {
-        int r = color >> 16 & 0xFF;
-        int g = color >> 8 & 0xFF;
-        int b = color & 0xFF;
-        int a = color >> 24 & 0xFF;
-        return new Color(r, g, b, a);
+    public static int rgba(int r, int g, int b, double a) {
+        return (int)a << 24 | r << 16 | g << 8 | b;
     }
 
     public static int replAlpha(int c, int a) {
-        return getColor(red(c), green(c), blue(c), a);
+        return rgba(red(c), green(c), blue(c), a);
     }
 
-    public static int multDark(int c, float brpc) {
-        return getColor(red(c) * brpc, green(c) * brpc, blue(c) * brpc, (float) alpha(c));
-    }
-
-    public static int red(int c) {
+    public int red(int c) {
         return c >> 16 & 0xFF;
     }
 
-    public static int green(int c) {
+    public int green(int c) {
         return c >> 8 & 0xFF;
     }
 
-    public static int blue(int c) {
+    public int blue(int c) {
         return c & 0xFF;
     }
 
-    public static int alpha(int c) {
+    public int alpha(int c) {
         return c >> 24 & 0xFF;
     }
 
-    public static int getColor(float r, float g, float b, float a) {
-        int ri = Math.clamp(Math.round(r), 0, 255);
-        int gi = Math.clamp(Math.round(g), 0, 255);
-        int bi = Math.clamp(Math.round(b), 0, 255);
-        int ai = Math.clamp(Math.round(a), 0, 255);
-        return (ai << 24) | (ri << 16) | (gi << 8) | bi;
+    public int rgba(int red, int green, int blue, int alpha) {
+        ColorKey key = new ColorKey(red, green, blue, alpha);
+        CacheEntry cacheEntry = colorCache.computeIfAbsent(key, k -> {
+            CacheEntry newEntry = new CacheEntry(k, computeColor(red, green, blue, alpha), CACHE_EXPIRATION_TIME);
+            cleanupQueue.offer(newEntry);
+            return newEntry;
+        });
+        return cacheEntry.getColor();
     }
 
-    public static int getColor(int red, int green, int blue) {
-        return getColor(red, green, blue, 255);
-    }
-
-    public static int getColor(int red, int green, int blue, int alpha) {
-        int color = 0;
-        color |= alpha << 24;
-        color |= red << 16;
-        color |= green << 8;
-        return color | blue;
+    public int computeColor(int red, int green, int blue, int alpha) {
+        return ((Mth.clamp(alpha, 0, 255) << 24) |
+                (Mth.clamp(red, 0, 255) << 16) |
+                (Mth.clamp(green, 0, 255) << 8) |
+                Mth.clamp(blue, 0, 255));
     }
 
     public static int getRedFromColor(int color) {
@@ -416,11 +421,7 @@ public class ColorUtil {
                 (color >> 24 & 0xFF) / 255.0F };
     }
 
-    public static int rgba(int r, int g, int b, int a) {
-        return a << 24 | r << 16 | g << 8 | b;
-    }
-
-    public static int colorToHex(Color color) {
+    public int colorToHex(Color color) {
         int a = color.getAlpha();
         int r = color.getRed();
         int g = color.getGreen();
@@ -428,22 +429,70 @@ public class ColorUtil {
         return a << 24 | r << 16 | g << 8 | b;
     }
 
-    public static float[] rgba(int color) {
+    public float[] rgba(int color) {
         return new float[] { (color >> 16 & 0xFF) / 255.0F, (color >> 8 & 0xFF) / 255.0F, (color & 0xFF) / 255.0F,
                 (color >> 24 & 0xFF) / 255.0F };
     }
 
-    public static int overCol(int color1, int color2, float percent01) {
-        float percent = Mth.clamp(percent01, 0.0F, 1.0F);
-        return getColor(
-                Mth.lerp(percent, red(color1),   red(color2)),
-                Mth.lerp(percent, green(color1), green(color2)),
-                Mth.lerp(percent, blue(color1),  blue(color2)),
-                Mth.lerp(percent, alpha(color1), alpha(color2))
+    public int overCol(int color1, int color2, float percent01) {
+        final float percent = clamp(percent01, 0F, 1F);
+        return rgba(
+                lerp(percent, red(color1), red(color2)),
+                lerp(percent, green(color1), green(color2)),
+                lerp(percent, blue(color1), blue(color2)),
+                lerp(percent, alpha(color1), alpha(color2))
         );
+    }
+    public static float clamp(float value, float min, float max) {
+        return value < min ? min : Math.min(value, max);
+    }
+    public static int lerp(float delta, int start, int end) {
+        return start + floor(delta * (float)(end - start));
+    }
+    public static int floor(float value) {
+        int i = (int) value;
+        return value < (float) i ? i - 1 : i;
     }
 
     public static int multAlpha(int color, float percent01) {
-        return getColor(red(color), green(color), blue(color), Math.round(alpha(color) * percent01));
+        return rgba(red(color), green(color), blue(color), Math.round(alpha(color) * percent01));
+    }
+    @Getter
+    @RequiredArgsConstructor
+    @EqualsAndHashCode
+    private static class ColorKey {
+        final int red, green, blue, alpha;
+    }
+
+    @Getter
+    private static class CacheEntry implements Delayed {
+        private final ColorKey key;
+        private final int color;
+        private final long expirationTime;
+
+        CacheEntry(ColorKey key, int color, long ttl) {
+            this.key = key;
+            this.color = color;
+            this.expirationTime = System.currentTimeMillis() + ttl;
+        }
+
+        @Override
+        public long getDelay(TimeUnit unit) {
+            long delay = expirationTime - System.currentTimeMillis();
+            return unit.convert(delay, TimeUnit.MILLISECONDS);
+        }
+
+        @Override
+        public int compareTo(Delayed other) {
+            if (other instanceof CacheEntry) {
+                return Long.compare(this.expirationTime, ((CacheEntry) other).expirationTime);
+            }
+            return 0;
+        }
+
+        public boolean isExpired() {
+            return System.currentTimeMillis() > expirationTime;
+        }
+
     }
 }

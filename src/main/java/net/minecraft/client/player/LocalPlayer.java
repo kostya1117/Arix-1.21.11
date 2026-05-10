@@ -106,6 +106,7 @@ import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import ru.arixcompany.Arix;
 import ru.arixcompany.features.event.EventRepo;
+import ru.arixcompany.features.event.player.EventMotion;
 import ru.arixcompany.features.event.player.EventSprint;
 import ru.arixcompany.features.event.world.EventUpdate;
 import ru.arixcompany.features.module.modules.combat.aura.rotation.impl.FreeLookRepo;
@@ -268,36 +269,38 @@ public class LocalPlayer extends AbstractClientPlayer {
 
     private void sendPosition() {
         this.sendIsSprintingIfNeeded();
+        EventMotion eventSync = new EventMotion(this.getYRot(), this.getXRot(), this.getX(), this.getY(), this.getZ(), this.onGround(), this.isSprinting());
+        EventRepo.call(eventSync);
         if (this.isControlledCamera()) {
-            double d0 = this.getX() - this.xLast;
-            double d1 = this.getY() - this.yLast;
-            double d2 = this.getZ() - this.zLast;
-            double d3 = this.getYRot() - this.yRotLast;
-            double d4 = this.getXRot() - this.xRotLast;
+            double d0 = eventSync.getX() - this.xLast;
+            double d1 = eventSync.getY() - this.yLast;
+            double d2 = eventSync.getZ() - this.zLast;
+            double d3 = eventSync.getYaw() - this.yRotLast;
+            double d4 = eventSync.getPitch() - this.xRotLast;
             this.positionReminder++;
             boolean flag = Mth.lengthSquared(d0, d1, d2) > Mth.square(2.0E-4) || this.positionReminder >= 20;
             boolean flag1 = d3 != 0.0 || d4 != 0.0;
             if (flag && flag1) {
                 this.connection
-                        .send(new ServerboundMovePlayerPacket.PosRot(this.position(), this.getYRot(), this.getXRot(), this.onGround(), this.horizontalCollision));
+                        .send(new ServerboundMovePlayerPacket.PosRot(this.position(), eventSync.getYaw(), eventSync.getPitch(), this.onGround(), this.horizontalCollision));
             } else if (flag) {
                 this.connection.send(new ServerboundMovePlayerPacket.Pos(this.position(), this.onGround(), this.horizontalCollision));
             } else if (flag1) {
-                this.connection.send(new ServerboundMovePlayerPacket.Rot(this.getYRot(), this.getXRot(), this.onGround(), this.horizontalCollision));
+                this.connection.send(new ServerboundMovePlayerPacket.Rot(eventSync.getYaw(), eventSync.getPitch(), this.onGround(), this.horizontalCollision));
             } else if (this.lastOnGround != this.onGround() || this.lastHorizontalCollision != this.horizontalCollision) {
                 this.connection.send(new ServerboundMovePlayerPacket.StatusOnly(this.onGround(), this.horizontalCollision));
             }
 
             if (flag) {
-                this.xLast = this.getX();
-                this.yLast = this.getY();
-                this.zLast = this.getZ();
+                this.xLast = eventSync.getX();
+                this.yLast = eventSync.getY();
+                this.zLast = eventSync.getZ();
                 this.positionReminder = 0;
             }
 
             if (flag1) {
-                this.yRotLast = this.getYRot();
-                this.xRotLast = this.getXRot();
+                this.yRotLast = eventSync.getYaw();
+                this.xRotLast = eventSync.getPitch();
             }
             if (onGround()) ++ticksOnGround;
             else ticksOnGround = 0;

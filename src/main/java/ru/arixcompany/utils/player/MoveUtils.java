@@ -21,7 +21,7 @@ public class MoveUtils implements IMinecraft {
     public static void fixMovement(final EventInput event, float yaw) {
         final float forward = event.getForward();
         final float strafe = event.getStrafe();
-        final double angle = Mth.wrapDegrees(Math.toDegrees(direction(mc.player.isFallFlying() ? yaw : mc.player.getYRot(), forward, strafe)));
+        final double angle = Mth.wrapDegrees(Math.toDegrees(direction(yaw, forward, strafe)));
 
         if (forward == 0 && strafe == 0) {
             return;
