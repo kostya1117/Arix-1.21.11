@@ -418,9 +418,6 @@ public abstract class Screen extends AbstractContainerEventHandler implements Re
     }
 
     public void renderTransparentBackground(GuiGraphics p_300203_) {
-        NoRender mod = (NoRender) Arix.getInstance().getModuleRepo().getModule(NoRender.class);
-        if (mod != null && mod.noGuiBackground()) return;
-
         p_300203_.fillGradient(0, 0, this.width, this.height, -1072689136, -804253680);
     }
 

@@ -10,6 +10,7 @@ import ru.arixcompany.ui.draggable.DraggableComponent;
 import ru.arixcompany.utils.Colors;
 import ru.arixcompany.utils.math.MathUtils;
 import ru.arixcompany.utils.render.RenderUtils;
+import static ru.arixcompany.utils.render.ColorUtil.argb;
 
 public class CrosshairDraggable extends DraggableComponent {
 
@@ -192,11 +193,6 @@ public class CrosshairDraggable extends DraggableComponent {
                     accentColor
             );
         }
-    }
-
-    private int argb(int r, int g, int b, float alpha) {
-        int a = (int) (Mth.clamp(alpha, 0f, 1f) * 255f);
-        return (a << 24) | (r << 16) | (g << 8) | b;
     }
 
     @Override

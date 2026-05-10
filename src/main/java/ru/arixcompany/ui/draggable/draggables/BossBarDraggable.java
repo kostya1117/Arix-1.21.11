@@ -12,6 +12,7 @@ import ru.arixcompany.features.module.modules.render.Interface;
 import ru.arixcompany.utils.render.RenderUtils;
 import ru.arixcompany.utils.render.font.CustomFont;
 import ru.arixcompany.utils.render.font.FontManager;
+import static ru.arixcompany.utils.render.ColorUtil.argb;
 
 import java.util.Collection;
 
@@ -134,11 +135,6 @@ public class BossBarDraggable extends DraggableComponent {
             case PURPLE -> argb(170,  90, 255, alpha);
             default     -> argb(245, 245, 245, alpha);
         };
-    }
-
-    private int argb(int r, int g, int b, float alpha) {
-        int a = (int) (Mth.clamp(alpha, 0f, 1f) * 255f);
-        return (a << 24) | (r << 16) | (g << 8) | b;
     }
 
     @Override

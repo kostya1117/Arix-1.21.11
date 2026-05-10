@@ -31,6 +31,7 @@ import ru.arixcompany.utils.render.font.FontManager;
 
 import java.util.ArrayList;
 import java.util.List;
+import static ru.arixcompany.utils.render.ColorUtil.argb;
 
 public class TargetHudDraggable extends DraggableComponent {
 
@@ -57,13 +58,16 @@ public class TargetHudDraggable extends DraggableComponent {
     private float settingsAnchorY = 0;
 
     public BooleanSetting render3d = new BooleanSetting("3D на таргете");
+    public SelectSetting pos3d = new SelectSetting("3D позиция")
+            .value("Над головой", "По центру")
+            .visible(() -> render3d.isValue());
 
     public SelectSetting hpMode = new SelectSetting("Отображение HP")
             .value("Проценты", "Значение", "Оба");
 
     public TargetHudDraggable() {
         super("TargetHUD", 0, 0, 100, 36);
-        setup(render3d, hpMode);
+        setup(render3d,pos3d, hpMode);
         EventRepo.register(this);
         if (mc.getWindow() != null) {
             this.x = mc.getWindow().getGuiScaledWidth() / 2f - 50;
@@ -96,9 +100,14 @@ public class TargetHudDraggable extends DraggableComponent {
         double y = Mth.lerp(tickDelta, target.yo, target.getY());
         double z = Mth.lerp(tickDelta, target.zo, target.getZ());
 
-        Vec3 screen = ProjectUtils.worldSpaceToScreenSpace(
-                new Vec3(x, y + target.getBbHeight() + 0.5, z)
-        );
+        double projY;
+        if (pos3d.isSelected("По центру")) {
+            projY = y + target.getBbHeight() / 2.0;
+        } else {
+            projY = y + target.getBbHeight() + 0.5;
+        }
+
+        Vec3 screen = ProjectUtils.worldSpaceToScreenSpace(new Vec3(x, projY, z));
 
         if (screen != null && screen.z > 0 && screen.z < 1) {
             projected3dX = (float) screen.x;
@@ -167,7 +176,12 @@ public class TargetHudDraggable extends DraggableComponent {
             if (!has3dPos) return;
 
             drawX = projected3dX - totalW / 2.0f;
-            drawY = projected3dY - totalH - 4;
+
+            if (pos3d.isSelected("По центру")) {
+                drawY = projected3dY - totalH / 2.0f;
+            } else {
+                drawY = projected3dY - totalH - 4;
+            }
         } else {
             drawX = rx;
             drawY = ry;
@@ -311,11 +325,6 @@ public class TargetHudDraggable extends DraggableComponent {
         int g = Math.min(255, (int) (((color >> 8) & 0xFF) * (1.0f + amount)));
         int b = Math.min(255, (int) ((color & 0xFF) * (1.0f + amount)));
         return (color & 0xFF000000) | (r << 16) | (g << 8) | b;
-    }
-
-    private int argb(int r, int g, int b, float alpha) {
-        int a = (int) (Mth.clamp(alpha, 0f, 1f) * 255f);
-        return (a << 24) | (r << 16) | (g << 8) | b;
     }
 
     @Override

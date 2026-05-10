@@ -178,6 +178,10 @@ public class RenderUtils {
         GL11.glScissor(applied.x, applied.y, applied.w, applied.h);
     }
 
+    public static void fillRect(float x, float y, float w, float h, int color) {
+        fillRoundRect(x, y, w, h, 0f, color);
+    }
+
     public static void fillRoundRect(float x, float y, float w, float h, float radius, int color) {
         RoundRectShader.drawRoundRect(x, y, w, h, radius, color);
     }
@@ -272,16 +276,12 @@ public class RenderUtils {
         float diff = endDeg - startDeg;
         if (Math.abs(diff) < 0.05f) return;
 
-        // Длина дуги в пикселях
         float arcLength = (float) (2.0 * Math.PI * radius * (Math.abs(diff) / 360.0f));
 
-        // Чем меньше шаг, тем глаже круг
         float stepPx = Math.max(0.18f, thickness * 0.12f);
 
-        // Для маленьких радиусов принудительно много сегментов
         int steps = Math.max(80, (int) Math.ceil(arcLength / stepPx));
 
-        // Чуть больше толщины, чтобы сегменты красиво перекрывались
         float dotSize = thickness + 0.9f;
         float dotRadius = dotSize * 0.5f;
 

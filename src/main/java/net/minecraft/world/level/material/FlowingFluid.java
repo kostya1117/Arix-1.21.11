@@ -30,6 +30,8 @@ import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import ru.arixcompany.Arix;
+import ru.arixcompany.features.module.modules.player.NoPush;
 
 public abstract class FlowingFluid extends Fluid {
     public static final BooleanProperty FALLING = BlockStateProperties.FALLING;

@@ -125,7 +125,6 @@ import net.minecraft.world.scores.Team;
 import org.jspecify.annotations.Nullable;
 import ru.arixcompany.features.event.EventRepo;
 import ru.arixcompany.features.event.player.EventMovementTick;
-import ru.arixcompany.features.event.player.EventPush;
 
 public abstract class Player extends Avatar implements ContainerUser {
     public static final int MAX_HEALTH = 20;
@@ -1698,12 +1697,6 @@ public abstract class Player extends Avatar implements ContainerUser {
 
     @Override
     public boolean isPushedByFluid() {
-        EventPush eventPush = new EventPush(EventPush.PushEnum.Fluids);
-        EventRepo.call(eventPush);
-
-        if (this instanceof LocalPlayer && eventPush.isCancelled()) {
-            return false;
-        }
         return !this.abilities.flying;
     }
 
