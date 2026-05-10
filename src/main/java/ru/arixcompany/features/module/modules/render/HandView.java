@@ -48,8 +48,7 @@ public class HandView extends Module {
                             "Twist",
                             "Novoline",
                             "FDP",
-                            "Sigma",
-                            "Exhibition"
+                            "Sigma"
                     );
 
     private final ValueSetting hitStrength =

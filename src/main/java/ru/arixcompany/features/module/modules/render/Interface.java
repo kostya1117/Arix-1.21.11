@@ -7,7 +7,7 @@ import ru.arixcompany.features.module.setting.implement.ListSetting;
 public class Interface extends Module {
 
     public static final ListSetting elements = new ListSetting("Элементы")
-            .value("ArrayList","ArmorHUD","BossBar","Scoreboard","Crosshair","TargetHUD");
+            .value("ArrayList","ArmorHUD","BossBar","Scoreboard","Crosshair","TargetHUD","Hotbar");
 
     public Interface() {
         super("Interface", Category.Render);

@@ -2671,7 +2671,7 @@ public abstract class Entity implements SyncedDataHolder, DebugValueSource, Name
 
     public boolean isCurrentlyGlowing() {
         NoRender mod = (NoRender) Arix.getInstance().getModuleRepo().getModule(NoRender.class);
-        if (mod != null && mod.state && mod.noGlowing.isValue()) {
+        if (mod != null && mod.noGlowing()) {
             return false;
         }
         return this.level().isClientSide() ? this.getSharedFlag(6) : this.hasGlowingTag;

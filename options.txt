@@ -95,7 +95,7 @@ skipMultiplayerWarning:true
 hideMatchedNames:true
 joinedFirstServer:true
 syncChunkWrites:true
-showAutosaveIndicator:true
+showAutosaveIndicator:false
 allowServerListing:true
 onlyShowSecureChat:false
 saveChatDrafts:false

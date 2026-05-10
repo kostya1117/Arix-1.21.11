@@ -29,6 +29,13 @@ public class TargetHandler implements IMinecraft {
             return;
         }
 
+        if (currentTarget != null
+                && currentTarget.isAlive()
+                && isValidTarget(currentTarget)
+                && mc.player.distanceTo(currentTarget) <= auraDist()) {
+            return;
+        }
+
         LivingEntity bestTarget = null;
         double bestScore = Double.MAX_VALUE;
 
@@ -41,10 +48,8 @@ public class TargetHandler implements IMinecraft {
             double dist = mc.player.distanceTo(living);
             if (dist > maxDist) continue;
 
-            double score = dist;
-
-            if (score < bestScore) {
-                bestScore = score;
+            if (dist < bestScore) {
+                bestScore = dist;
                 bestTarget = living;
             }
         }

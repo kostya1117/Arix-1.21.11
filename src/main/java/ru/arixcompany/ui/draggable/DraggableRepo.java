@@ -24,6 +24,8 @@ public class DraggableRepo {
     private CrosshairDraggable crosshair;
     @Getter
     private TargetHudDraggable targetHud;
+    @Getter
+    public HotbarDraggable hotbar;
 
     private IDraggable draggingComponent;
 
@@ -36,6 +38,7 @@ public class DraggableRepo {
         scoreboard = register(new ScoreboardDraggable());
         crosshair = register(new CrosshairDraggable());
         targetHud = register(new TargetHudDraggable());
+        hotbar = register(new HotbarDraggable());
     }
 
     public <T extends IDraggable> T register(T c) {

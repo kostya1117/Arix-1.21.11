@@ -146,7 +146,6 @@ import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import ru.arixcompany.Arix;
 import ru.arixcompany.features.event.EventRepo;
-import ru.arixcompany.features.event.player.EventPush;
 import ru.arixcompany.features.module.modules.render.NoRender;
 
 public abstract class LivingEntity extends Entity implements Attackable, WaypointTransmitter {
@@ -3225,13 +3224,6 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
 
     @Override
     public boolean isPushable() {
-        EventPush eventPush = new EventPush(EventPush.PushEnum.Players);
-        EventRepo.call(eventPush);
-
-        if (this instanceof LocalPlayer && eventPush.isCancelled()) {
-            return false;
-        }
-
         return this.isAlive() && !this.isSpectator() && !this.onClimbable();
     }
 
