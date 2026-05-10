@@ -108,7 +108,7 @@ public class RenderPipelines {
         .withBlend(BlendFunction.TRANSLUCENT)
         .withCull(false)
         .buildSnippet();
-    private static final RenderPipeline.Snippet GUI_SNIPPET = RenderPipeline.builder(MATRICES_PROJECTION_SNIPPET)
+    public static final RenderPipeline.Snippet GUI_SNIPPET = RenderPipeline.builder(MATRICES_PROJECTION_SNIPPET)
         .withVertexShader("core/gui")
         .withFragmentShader("core/gui")
         .withBlend(BlendFunction.TRANSLUCENT)

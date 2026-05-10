@@ -558,11 +558,6 @@ public class ClientPacketListener extends ClientCommonPacketListenerImpl impleme
         this.telemetryManager.onPlayerInfoReceived(commonplayerspawninfo.gameType(), p_105030_.hardcore());
         this.minecraft.quickPlayLog().log(this.minecraft);
         this.serverEnforcesSecureChat = p_105030_.enforcesSecureChat();
-        if (this.serverData != null && !this.seenInsecureChatWarning && !this.enforcesSecureChat()) {
-            SystemToast systemtoast = SystemToast.multiline(this.minecraft, SystemToast.SystemToastId.UNSECURE_SERVER_WARNING, UNSECURE_SERVER_TOAST_TITLE, UNSERURE_SERVER_TOAST);
-            this.minecraft.getToastManager().addToast(systemtoast);
-            this.seenInsecureChatWarning = true;
-        }
     }
 
     @Override

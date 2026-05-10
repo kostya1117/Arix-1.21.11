@@ -16,6 +16,7 @@ import ru.arixcompany.features.module.modules.misc.funtime.utils.FuntimeUtil;
 import ru.arixcompany.features.module.setting.implement.*;
 
 import java.awt.*;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List; // ИСПРАВЛЕНО: добавлен импорт
 
@@ -105,7 +106,6 @@ public class TestModule extends Module {
 
     @Override
     public void deactivate() {
-        // Сбрасываем при выключении модуля
         lastPrintedScreen = "";
         super.deactivate();
     }

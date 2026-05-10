@@ -50,8 +50,4 @@ public class ListSetting extends Setting {
             selected.add(name);
         }
     }
-
-    public boolean is(String name) {
-        return selected.contains(name);
-    }
 }

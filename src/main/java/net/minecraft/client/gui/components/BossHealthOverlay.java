@@ -17,6 +17,7 @@ import net.minecraft.world.BossEvent;
 import net.optifine.Config;
 import net.optifine.CustomColors;
 import net.optifine.reflect.Reflector;
+import ru.arixcompany.ui.draggable.draggables.BossBarDraggable;
 
 public class BossHealthOverlay {
     private static final int BAR_WIDTH = 182;
@@ -52,13 +53,17 @@ public class BossHealthOverlay {
         Identifier.withDefaultNamespace("boss_bar/notched_20_progress")
     };
     private final Minecraft minecraft;
-    final Map<UUID, LerpingBossEvent> events = Maps.newLinkedHashMap();
+    public final Map<UUID, LerpingBossEvent> events = Maps.newLinkedHashMap();
 
     public BossHealthOverlay(Minecraft p_93702_) {
         this.minecraft = p_93702_;
     }
 
     public void render(GuiGraphics p_283175_) {
+        if (BossBarDraggable.isCustomBossBarActive()) {
+            return;
+        }
+
         if (!this.events.isEmpty()) {
             p_283175_.nextStratum();
             ProfilerFiller profilerfiller = Profiler.get();
@@ -72,7 +77,7 @@ public class BossHealthOverlay {
                 int l = 19;
                 if (Reflector.ForgeHooksClient_onCustomizeBossEventProgress.exists()) {
                     Object object = Reflector.ForgeHooksClient_onCustomizeBossEventProgress
-                        .call(p_283175_, this.minecraft.getWindow(), lerpingbossevent, k, j, 10 + 9);
+                            .call(p_283175_, this.minecraft.getWindow(), lerpingbossevent, k, j, 10 + 9);
                     flag = object != null;
                     l = Reflector.callInt(object, Reflector.CustomizeGuiOverlayEvent_BossEventProgress_getIncrement);
                 }
