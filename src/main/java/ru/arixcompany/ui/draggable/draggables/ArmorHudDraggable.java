@@ -119,9 +119,7 @@ public class ArmorHudDraggable extends DraggableComponent {
         Player player = mc.player;
         for (EquipmentSlot slot : ARMOR_SLOTS) {
             ItemStack stack = player.getItemBySlot(slot);
-            if (!stack.isEmpty()) {
                 entries.add(new SlotEntry(stack, slot));
-            }
         }
         return entries;
     }

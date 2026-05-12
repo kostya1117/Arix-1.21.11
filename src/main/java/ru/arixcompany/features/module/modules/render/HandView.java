@@ -6,6 +6,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemUseAnimation;
 import ru.arixcompany.features.event.EventHandler;
 import ru.arixcompany.features.event.render.EventArmRender;
 import ru.arixcompany.features.event.render.EventHeldItemRenderer;
@@ -66,14 +67,16 @@ public class HandView extends Module {
     @EventHandler
     public void onHeldItemRender(EventHeldItemRenderer event) {
         if (!isState() || mc.player == null) return;
+        
+        boolean isOffHand = event.getHand() == InteractionHand.OFF_HAND;
 
         if (mc.player.isUsingItem() && mc.player.getUsedItemHand() == event.getHand()) {
             ItemStack useItem = mc.player.getUseItem();
             if (!useItem.isEmpty()) {
                 var useAnimation = useItem.getUseAnimation();
 
-                if (useAnimation == net.minecraft.world.item.ItemUseAnimation.EAT ||
-                    useAnimation == net.minecraft.world.item.ItemUseAnimation.DRINK) {
+                if (useAnimation == ItemUseAnimation.EAT ||
+                    useAnimation == ItemUseAnimation.DRINK) {
                     HumanoidArm arm = resolveArm(event.getHand());
                     applyBaseTransform(event.getMatrix(), arm);
                     applyVanillaEatAnimation(event.getMatrix(), arm, useItem);
@@ -81,15 +84,36 @@ public class HandView extends Module {
                     return;
                 }
 
-                if (useAnimation == net.minecraft.world.item.ItemUseAnimation.BOW ||
-                    useAnimation == net.minecraft.world.item.ItemUseAnimation.CROSSBOW ||
-                    useAnimation == net.minecraft.world.item.ItemUseAnimation.TRIDENT ||
-                    useAnimation == net.minecraft.world.item.ItemUseAnimation.SPEAR ||
-                    useAnimation == net.minecraft.world.item.ItemUseAnimation.BLOCK ||
-                    useAnimation == net.minecraft.world.item.ItemUseAnimation.BRUSH) {
+                if (useAnimation == ItemUseAnimation.BOW ||
+                    useAnimation == ItemUseAnimation.CROSSBOW ||
+                    useAnimation == ItemUseAnimation.TRIDENT ||
+                    useAnimation == ItemUseAnimation.SPEAR ||
+                    useAnimation == ItemUseAnimation.BLOCK ||
+                    useAnimation == ItemUseAnimation.BRUSH) {
                     return;
                 }
             }
+        }
+        
+        if (mc.player.isUsingItem() && mc.player.getUsedItemHand() != event.getHand()) {
+            ItemStack useItem = mc.player.getUseItem();
+            if (!useItem.isEmpty()) {
+                var useAnimation = useItem.getUseAnimation();
+                if (useAnimation == ItemUseAnimation.EAT ||
+                    useAnimation == ItemUseAnimation.DRINK) {
+                    
+                    HumanoidArm arm = resolveArm(event.getHand());
+                    applyBaseTransform(event.getMatrix(), arm);
+                    event.cancel();
+                    return;
+                }
+            }
+        }
+        
+        if (isOffHand) {
+            applyBaseTransform(event.getMatrix(), resolveArm(event.getHand()));
+            event.cancel();
+            return;
         }
 
         HumanoidArm arm = resolveArm(event.getHand());

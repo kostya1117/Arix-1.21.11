@@ -14,7 +14,7 @@ import ru.arixcompany.features.command.arguments.WayPointArgumentType;
 import ru.arixcompany.features.event.EventHandler;
 import ru.arixcompany.features.event.EventRepo;
 import ru.arixcompany.features.event.render.EventRender3D;
-import ru.arixcompany.features.event.render.EventScreen;
+import ru.arixcompany.features.event.render.EventRender2D;
 import ru.arixcompany.features.repos.WayPointRepo;
 import ru.arixcompany.utils.MessageSender;
 import ru.arixcompany.utils.math.ProjectUtils;
@@ -169,7 +169,7 @@ public class WayPointCommand extends AbstractCommand {
     }
 
     @EventHandler
-    public void onRender2D(EventScreen event) {
+    public void onRender2D(EventRender2D event) {
         if (mc.level == null || mc.player == null) return;
         if (waypointScreenData.isEmpty()) return;
 

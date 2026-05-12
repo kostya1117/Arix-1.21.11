@@ -255,7 +255,6 @@ import org.lwjgl.util.tinyfd.TinyFileDialogs;
 import org.slf4j.Logger;
 import ru.arixcompany.Arix;
 import ru.arixcompany.features.event.EventRepo;
-import ru.arixcompany.features.event.render.RenderFrameEvent;
 import ru.arixcompany.features.event.world.EventGameTick;
 import ru.arixcompany.features.event.world.EventPreTick;
 import ru.arixcompany.features.event.world.EventTick;
@@ -1223,8 +1222,6 @@ public class Minecraft extends ReentrantBlockableEventLoop<Runnable> implements 
         }
 
         int k = this.deltaTracker.advanceTime(Util.getMillis(), p_91384_);
-        if (p_91384_)
-            EventRepo.call(new RenderFrameEvent.Pre(this.deltaTracker.getGameTimeDeltaTicks()));
         ProfilerFiller profilerfiller = Profiler.get();
         if (p_91384_) {
             try (Gizmos.TemporaryCollection gizmos$temporarycollection = this.collectPerTickGizmos()) {
@@ -1349,8 +1346,6 @@ public class Minecraft extends ReentrantBlockableEventLoop<Runnable> implements 
         }
 
         profilerfiller.pop();
-        if (p_91384_)
-            EventRepo.call(new RenderFrameEvent.Post(this.deltaTracker.getGameTimeDeltaTicks()));
     }
 
     private ProfilerFiller constructProfiler(boolean p_167971_, @Nullable SingleTickProfiler p_167972_) {

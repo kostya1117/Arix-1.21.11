@@ -15,7 +15,7 @@ import net.minecraft.world.phys.Vec3;
 import ru.arixcompany.Arix;
 import ru.arixcompany.features.event.EventHandler;
 import ru.arixcompany.features.event.render.EventRender3D;
-import ru.arixcompany.features.event.render.EventScreen;
+import ru.arixcompany.features.event.render.EventRender2D;
 import ru.arixcompany.features.module.Category;
 import ru.arixcompany.features.module.Module;
 import ru.arixcompany.features.module.setting.implement.BooleanSetting;
@@ -157,7 +157,7 @@ public class Esp extends Module {
     }
 
     @EventHandler
-    public void onRender2D(EventScreen e) {
+    public void onRender2D(EventRender2D e) {
         if (mc.level == null) return;
 
         if (mode.isSelected("Предметы")) {
@@ -339,7 +339,7 @@ public class Esp extends Module {
         RenderUtils.fillRect(barX, y + (h - filledH), barW, filledH, hpColor);
     }
 
-    private void renderNametag(EventScreen e, Player player, float screenX, float screenY) {
+    private void renderNametag(EventRender2D e, Player player, float screenX, float screenY) {
         Component displayName = player.getDisplayName();
         float health = player.getHealth();
 

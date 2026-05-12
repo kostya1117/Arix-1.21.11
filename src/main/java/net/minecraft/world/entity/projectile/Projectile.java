@@ -39,7 +39,7 @@ import org.jspecify.annotations.Nullable;
 public abstract class Projectile extends Entity implements TraceableEntity {
     private static final boolean DEFAULT_LEFT_OWNER = false;
     private static final boolean DEFAULT_HAS_BEEN_SHOT = false;
-    protected  EntityReference<Entity> owner;
+    public EntityReference<Entity> owner;
     private boolean leftOwner = false;
     private boolean leftOwnerChecked;
     private boolean hasBeenShot = false;

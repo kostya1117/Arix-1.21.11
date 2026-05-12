@@ -32,6 +32,7 @@ public class AutoSellEngine implements IMinecraft {
     @Getter private boolean running = false;
     private Phase    phase          = Phase.IDLE;
     private SellTask task           = null;
+    @Getter
     private int      sellPrice      = 0;
     private boolean  transitioning  = false;
     private Runnable onDone         = null;
@@ -272,9 +273,4 @@ public class AutoSellEngine implements IMinecraft {
             }).start();
         }
     }
-
-    public SellTask getCurrentTask()  { return task; }
-    public int getQueueSize()         { return queue.size(); }
-    public int getSellPrice()         { return sellPrice; }
-    public int getPricesCount()       { return prices.size(); }
 }

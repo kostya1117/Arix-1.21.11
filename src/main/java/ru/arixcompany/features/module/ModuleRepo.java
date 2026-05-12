@@ -37,6 +37,9 @@ public class ModuleRepo implements IMinecraft {
        modules.add(new AutoBuy());
        modules.add(new AuctionUtils());
        modules.add(new FullBright());
+       modules.add(new StorageEsp());
+       modules.add(new HitBubbles());
+       modules.add(new CrosshairArrows());
        modules.add(new NoRender());
        modules.add(new Interface());
        modules.add(new Animations());

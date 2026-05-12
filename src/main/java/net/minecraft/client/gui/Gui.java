@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.Map;
 import java.util.function.Supplier;
+
 import net.minecraft.ChatFormatting;
 import net.minecraft.Optionull;
 import net.minecraft.client.AttackIndicatorStatus;
@@ -89,7 +90,7 @@ import ru.arixcompany.ui.draggable.draggables.ArmorHudDraggable;
 import ru.arixcompany.ui.draggable.draggables.CrosshairDraggable;
 import ru.arixcompany.ui.draggable.draggables.ScoreboardDraggable;
 import ru.arixcompany.features.event.EventRepo;
-import ru.arixcompany.features.event.render.EventScreen;
+import ru.arixcompany.features.event.render.EventRender2D;
 import ru.arixcompany.features.module.modules.render.Animations;
 import ru.arixcompany.features.module.modules.render.NoRender;
 
@@ -241,7 +242,7 @@ public class Gui {
             renderArmorHudOnly(p_282884_, p_342095_);
         }
 
-        EventRepo.call(new EventScreen(p_282884_));
+        EventRepo.call(new EventRender2D(p_282884_));
     }
 
     private void renderArmorHudOnly(GuiGraphics graphics, DeltaTracker delta) {
