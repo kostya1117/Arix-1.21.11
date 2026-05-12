@@ -87,7 +87,6 @@ import ru.arixcompany.Arix;
 import ru.arixcompany.ui.draggable.DraggableRepo;
 import ru.arixcompany.ui.draggable.draggables.ArmorHudDraggable;
 import ru.arixcompany.ui.draggable.draggables.CrosshairDraggable;
-import ru.arixcompany.ui.draggable.draggables.HotbarDraggable;
 import ru.arixcompany.ui.draggable.draggables.ScoreboardDraggable;
 import ru.arixcompany.features.event.EventRepo;
 import ru.arixcompany.features.event.render.EventScreen;
@@ -259,11 +258,6 @@ public class Gui {
         ArmorHudDraggable armorHud = repo.getArmorHud();
         if (armorHud != null && armorHud.shouldRender()) {
             armorHud.renderComponent(graphics, mouseX, mouseY, delta.getGameTimeDeltaPartialTick(false));
-        }
-
-        HotbarDraggable hotbar = repo.getHotbar();
-        if (hotbar != null && hotbar.shouldRender()) {
-            hotbar.renderComponent(graphics, mouseX, mouseY, delta.getGameTimeDeltaPartialTick(false));
         }
     }
 
@@ -621,31 +615,25 @@ public class Gui {
             this.renderItemHotbar(p_333625_, p_344796_);
         }
 
-        if (!HotbarDraggable.isCustomHotbarActive()) {
-            if (this.minecraft.gameMode.canHurtPlayer()) {
-                this.renderPlayerHealth(p_333625_);
-            }
-            this.renderVehicleHealth(p_333625_);
+        if (this.minecraft.gameMode.canHurtPlayer()) {
+            this.renderPlayerHealth(p_333625_);
         }
+        this.renderVehicleHealth(p_333625_);
 
         Gui.ContextualInfo gui$contextualinfo = this.nextContextualInfoState();
         if (gui$contextualinfo != this.contextualInfoBar.getKey()) {
             this.contextualInfoBar = Pair.of(gui$contextualinfo, this.contextualInfoBarRenderers.get(gui$contextualinfo).get());
         }
 
-        if (!HotbarDraggable.isCustomHotbarActive()) {
-            this.contextualInfoBar.getValue().renderBackground(p_333625_, p_344796_);
-            if (this.minecraft.gameMode.hasExperience() && this.minecraft.player.experienceLevel > 0) {
-                ContextualBarRenderer.renderExperienceLevel(p_333625_, this.minecraft.font,
-                        this.minecraft.player.experienceLevel);
-            }
-            this.contextualInfoBar.getValue().render(p_333625_, p_344796_);
+        this.contextualInfoBar.getValue().renderBackground(p_333625_, p_344796_);
+        if (this.minecraft.gameMode.hasExperience() && this.minecraft.player.experienceLevel > 0) {
+            ContextualBarRenderer.renderExperienceLevel(p_333625_, this.minecraft.font,
+                    this.minecraft.player.experienceLevel);
         }
+        this.contextualInfoBar.getValue().render(p_333625_, p_344796_);
 
         if (this.minecraft.gameMode.getPlayerMode() != GameType.SPECTATOR) {
-            if (!HotbarDraggable.isCustomHotbarActive()) {
-                this.renderSelectedItemName(p_333625_);
-            }
+            this.renderSelectedItemName(p_333625_);
         } else if (this.minecraft.player.isSpectator()) {
             this.spectatorGui.renderAction(p_333625_);
         }
@@ -654,10 +642,6 @@ public class Gui {
     }
 
     private void renderItemHotbar(GuiGraphics p_332738_, DeltaTracker p_342619_) {
-        if (HotbarDraggable.isCustomHotbarActive()) {
-            return;
-        }
-
         Player player = this.getCameraPlayer();
         if (player != null) {
             ItemStack itemstack = player.getOffhandItem();

@@ -14,6 +14,7 @@ public final class SettingComponentFactory {
     }
 
     public IComponent create(Setting setting) {
+        if (setting instanceof GroupSetting s) return new GroupSettingComponent(s, this);
         if (setting instanceof BooleanSetting s) return new BooleanSettingComponent(s);
         if (setting instanceof BindSetting s) return new BindSettingComponent(s);
         if (setting instanceof ValueSetting s) return new ValueSettingComponent(s);

@@ -1,50 +1,50 @@
-/clan home b
+/ah search голова дракона
+/ah sell 6499999
+/ah sell 649999
 /ah
-/clan home b
-/ah search Сатира
-/clan money
-/clan invest 1000000
-/ah search Таер вайт
-/ah sell 150,000
-/ah search Элитры
-/ah search Пузырек с уровнем 30
-/ah sell 200,000
-/kit
-/god
-/ac
-/l 1
-/an509
-/ah search алмазный меч
-/ah search Жареная свинина
-/an509
-/ah search алмазный шлем
-/фр
+/ah search алмаз
+/ah sell 249999
+/ah sell 149999
 /ah
 /an509
-/ac
+/ah
+/ah search золотое яблоко
+/ah sell 333333
+/ah sell 333333w
+/ah sell 333333
+/ah
+/ah search золотое яблоко
+/ah search золотое яблокофр
+/ah
+/ah sell 333333
+/ah search золотое яблокофр
+/ah search золотое яблоко
+/ah
+/ah sell 633333
+/ah search золотое яблоко
+/ah sell 23333
+/ah sell 233333
+/ah
+/ah search вайт
+/ah sell 179999
+/ah search вайт
+/ah
+/ah search золотое яблоко
+/ah sell 999999
+/ah search вайт
+/ah sell 179999
+/ah
+/ah search золотое яблоко
+/ah sell 799999
+/ah sell 179999
+/ah
+/ah sell 179999
+/ah
+/ah sell 179999
 /gamemode survival
-/ac
 /gamemode creative
 /gamemode survival
 /gamemode creative
+/gamemode survival
+/gamemode creative
 /kit
-/ac
-/kit pvp
-/pvp
-/reg 123qwe111a
-/kit pvp
-/pvp
-/hub
-/gl 155
-/tick freeze
-/tick unfreeze
-/tick freeze
-/tick step 1s
-/tick step 1t
-/tick step 1s
-/tick unfreeze
-/tick rate 15
-/tick rate 20
-/l 1
-/reg 123qwe111a
-/warp pvp

@@ -24,7 +24,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public final class ModuleComponent implements IComponent {
 
-    public static final float MODULE_HEIGHT = 20.0F; // Ширина модуля для нового дизайна
+    public static final float MODULE_HEIGHT = 20.0F;
     public static final float MODULE_GAP = 3.0F;
 
     private final SettingComponentFactory settingFactory;
@@ -40,7 +40,6 @@ public final class ModuleComponent implements IComponent {
             float moduleY = drawY;
             float settingsAnim = Gui.getModuleSettingsAnimation(module).getOutput();
 
-            // Клики по настройкам (если меню открыто)
             if (settingsAnim > 0.98F && Gui.openSettingsModules.contains(module)) {
                 float sX = getSettingsX(panelX);
                 float sY = getSettingsStartY(moduleY);
@@ -53,7 +52,6 @@ public final class ModuleComponent implements IComponent {
                 }
             }
 
-            // Клики по самому модулю
             float moduleX = getModuleX(panelX);
             float moduleW = getModuleWidth();
             if (PanelComponent.isHovered(mouseX, mouseY, moduleX, moduleY, moduleW, MODULE_HEIGHT)) {
@@ -99,24 +97,20 @@ public final class ModuleComponent implements IComponent {
         Gui.animRun(Gui.getModuleHoverAnimation(module), hovered ? 1.0 : 0.0);
         float hoverAnim = Gui.getModuleHoverAnimation(module).getOutput();
 
-        // Фон самого модуля с плавным окрашиванием при включении
         int baseBg = Colors.bgElement(mainAlpha);
-        int accentBg = ColorUtil.multAlpha(Colors.accent(mainAlpha), 0.15F); // Полупрозрачный акцент
+        int accentBg = ColorUtil.multAlpha(Colors.accent(mainAlpha), 0.15F);
         int moduleBg = ColorUtil.overCol(baseBg, accentBg, toggleAnim);
         RenderUtils.fillRoundRect(guiGraphics, moduleX, moduleY, moduleW, MODULE_HEIGHT, 4.0F, moduleBg);
         if (hoverAnim > 0.001F) RenderUtils.fillRoundRect(guiGraphics, moduleX, moduleY, moduleW, MODULE_HEIGHT, 4.0F, Colors.hoverBg(mainAlpha, hoverAnim));
 
-        // Название модуля (вертикальное центрирование: середина блока - половина высоты шрифта)
         float textY = moduleY + (MODULE_HEIGHT / 2.0F) - (FontManager.get(13).getHeight() / 2.0F);
         FontManager.get(13).drawString(guiGraphics, module.name, moduleX + 6, textY, Colors.textActive(mainAlpha));
 
-        // Отображение бинда (привязки клавиши)
         if (module.bind != -1 || module.binding) {
             String keyText = module.binding ? "..." : StringUtil.getBindName(module.bind);
             FontManager.get(10).drawString(guiGraphics, "[" + keyText + "]", moduleX + 6 + FontManager.get(13).getWidth(module.name) + 4, textY + 1, Colors.textInactive(mainAlpha));
         }
 
-        // Красивый тумблер (iOS/Modern style)
         renderModernToggle(guiGraphics, moduleX + moduleW - 20, moduleY + (MODULE_HEIGHT / 2) - 4, toggleAnim, mainAlpha);
 
         return renderSettingsBox(guiGraphics, mouseX, mouseY, mainAlpha, panelX, moduleY, module, cache);
@@ -124,9 +118,9 @@ public final class ModuleComponent implements IComponent {
 
     private void renderModernToggle(GuiGraphics guiGraphics, float x, float y, float anim, float alpha) {
         float w = 16, h = 8;
-        // Фон тумблера
+
         RenderUtils.fillRoundRect(guiGraphics, x, y, w, h, 4, ColorUtil.overCol(Colors.bgSecondary(alpha), Colors.accent(alpha), anim));
-        // Кружочек (Thumb)
+
         float thumbX = x + 1 + (w - 10) * anim;
         RenderUtils.fillRoundRect(guiGraphics, thumbX, y + 1, 6, 6, 3, Colors.textActive(alpha));
     }
@@ -143,14 +137,11 @@ public final class ModuleComponent implements IComponent {
         float boxY = getSettingsBoxY(moduleY);
         float boxW = getSettingsBoxWidth();
 
-        // Эффективная alpha с учётом анимации открытия/закрытия
         float effectiveAlpha = mainAlpha * settingsAnim;
 
-        // Фон настроек — обрезается clip'ом панели (pushClipRect + enableScissor из PanelComponent)
         RenderUtils.fillRoundRect(guiGraphics, boxX, boxY, boxW, visH, 4.0F, Colors.bgSecondary(effectiveAlpha));
         RenderUtils.drawRoundRectOutline(boxX, boxY, boxW, visH, 4.0F, 0.5F, Colors.outline(effectiveAlpha));
 
-        // Рендерим настройки
         float sY = getSettingsStartY(moduleY);
         float sX = getSettingsX(panelX);
         float sW = getSettingsWidth();
@@ -211,8 +202,6 @@ public final class ModuleComponent implements IComponent {
         return false;
     }
 
-    // --- Методы для ColorPicker'а ---
-
     public  float[] findColorPickerPosition(ColorSetting colorSetting) {
         if (colorSetting == null || Gui.categories == null) return null;
         for (Category category : Gui.categories) {
@@ -248,8 +237,6 @@ public final class ModuleComponent implements IComponent {
             colorComp.renderColorPicker(mainAlpha);
         }
     }
-
-    // --- Утилитные методы позиционирования ---
 
     public float calcSettingsHeight(Module m, Map<Setting, IComponent> cache) {
         float total = 4;

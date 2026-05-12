@@ -360,7 +360,16 @@ public class ItemInHandRenderer {
     private void applyItemArmTransform(PoseStack poseStack, HumanoidArm arm, float equipProgress) {
         HandView mod = getHandView();
 
+        // Не пропускаем трансформацию если игрок использует предмет (еда, лук и т.д.)
         if (mod != null && mod.isState() && this.currentHand == InteractionHand.MAIN_HAND) {
+            // Проверяем, использует ли игрок предмет
+            if (this.minecraft.player != null && this.minecraft.player.isUsingItem()) {
+                // Если использует - применяем стандартную трансформацию
+                int i = arm == HumanoidArm.RIGHT ? 1 : -1;
+                poseStack.translate(i * 0.56F, -0.52F + equipProgress * -0.6F, -0.72F);
+                return;
+            }
+            // Если не использует - пропускаем (для кастомной анимации взмаха)
             return;
         }
 
@@ -539,7 +548,13 @@ public class ItemInHandRenderer {
                             .applyForgeHandTransform(p_109379_, this.minecraft.player, humanoidarm, p_109377_, p_109373_, p_109378_, p_109376_)) {
                         if (p_109372_.isUsingItem() && p_109372_.getUseItemRemainingTicks() > 0 && p_109372_.getUsedItemHand() == p_109375_) {
                             ItemUseAnimation itemuseanimation = p_109377_.getUseAnimation();
-                            if (!itemuseanimation.hasCustomArmTransform()) {
+                            boolean eatEventCancelled = false;
+                            if (itemuseanimation == ItemUseAnimation.EAT || itemuseanimation == ItemUseAnimation.DRINK) {
+                                EventHeldItemRenderer eatEvent = new EventHeldItemRenderer(p_109375_, p_109379_, p_109376_);
+                                EventRepo.call(eatEvent);
+                                eatEventCancelled = eatEvent.isCancelled();
+                            }
+                            if (!eatEventCancelled && !itemuseanimation.hasCustomArmTransform()) {
                                 this.applyItemArmTransform(p_109379_, humanoidarm, p_109378_);
                             }
 
@@ -548,10 +563,13 @@ public class ItemInHandRenderer {
                                 default:
                                     break;
                                 case EAT:
-                                case DRINK:
-                                    this.applyEatTransform(p_109379_, p_109373_, humanoidarm, p_109377_, p_109372_);
-                                    this.applyItemArmTransform(p_109379_, humanoidarm, p_109378_);
+                                case DRINK: {
+                                    if (!eatEventCancelled) {
+                                        this.applyEatTransform(p_109379_, p_109373_, humanoidarm, p_109377_, p_109372_);
+                                        this.applyItemArmTransform(p_109379_, humanoidarm, p_109378_);
+                                    }
                                     break;
+                                }
                                 case BLOCK:
                                     if (!(p_109377_.getItem() instanceof ShieldItem)) {
                                         p_109379_.translate(i * -0.14142136F, 0.08F, 0.14142136F);
