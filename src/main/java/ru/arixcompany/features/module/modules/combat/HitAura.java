@@ -179,7 +179,6 @@ public class HitAura extends Module {
                 );
 
         switch (rotationType.getSelected()) {
-
             case "Funtime":
                 funTimeRotation.rotate(
                         target,
@@ -204,6 +203,7 @@ public class HitAura extends Module {
                 );
                 break;
         }
+        AttackHandler.testGCDSystem();
     }
    @Override
    public void toggle() {

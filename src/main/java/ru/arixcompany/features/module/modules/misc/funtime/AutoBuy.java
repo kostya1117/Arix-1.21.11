@@ -40,6 +40,16 @@ public class AutoBuy extends Module {
                     .step(5)
                     .visible(autoSetupScheduler::isValue);
 
+    // ── Авто продажа ──────────────────────────────────────────────────────────
+    private final BooleanSetting autoSell =
+            new BooleanSetting("Авто продажа");
+    private final ValueSetting sellDiscountPercent =
+            new ValueSetting("Скидка продажи (%)")
+                    .setValue(25)
+                    .range(5, 70)
+                    .step(5)
+                    .visible(autoSell::isValue);
+
     @Setter
     public static boolean autoBuyEnabled = false;
     public boolean autoSetupEnabled = false;
@@ -58,11 +68,13 @@ public class AutoBuy extends Module {
     public static final AuctionRenderer auctionRenderer = new AuctionRenderer();
     public static AutoBuyEngine autoBuyEngine;
     public AutoSetupEngine autoSetupEngine;
+    public static AutoSellEngine autoSellEngine;
 
     public AutoBuy() {
         super("AutoBuy", Category.Misc);
-        setup(autoBuyAfterSetup,discountPercent,
-                autoSetupScheduler,autoSetupInterval);
+        setup(autoBuyAfterSetup, discountPercent,
+                autoSetupScheduler, autoSetupInterval,
+                autoSell, sellDiscountPercent);
 
         ItemsRegistry.register(targets);
 
@@ -77,56 +89,79 @@ public class AutoBuy extends Module {
                 new ArrayList<>(targets.values()),
                 this
         );
+
+        autoSellEngine = new AutoSellEngine();
+        autoSellEngine.setOnDoneCallback(() -> {
+            if (mc.player != null) {
+                autoBuyEngine.resetState();
+                balanceController.request();
+                autoBuyEnabled = true;
+                mc.player.connection.sendCommand("ah");
+            }
+        });
     }
 
     @EventHandler
     public void onTick(EventTick e) {
 
-        if (mc.screen instanceof ContainerScreen screen) {
+        // Обновляем параметры AutoSell и тикаем движок (всегда, чтобы не зависал)
+        autoSellEngine.setParams(
+                (int) sellDiscountPercent.getValue(),
+                5000,
+                2500
+        );
+        if (autoSell.isValue()) {
+            autoSellEngine.tick();
+        }
+        // Пока AutoSell активен — AutoBuy полностью не трогает экран
+        boolean sellActive = autoSell.isValue() && autoSellEngine.isActive();
 
-            String title = screen.getTitle().getString().toLowerCase();
+        if (!sellActive) {
+            if (mc.screen instanceof ContainerScreen screen) {
 
-            if (title.contains("аукцион") || title.contains("auction")) {
+                String title = screen.getTitle().getString().toLowerCase();
 
-                if (screen != lastScreen) {
-                    lastScreen = screen;
-                    auctionRenderer.addButtons(
-                            screen,
-                            autoBuyEnabled,
-                            autoSetupEnabled,
-                            () -> {
+                if (title.contains("аукцион") || title.contains("auction")) {
 
-                                autoBuyEnabled = !autoBuyEnabled;
-
-                                if (autoBuyEnabled) {
-                                    balanceController.request();
-                                } else {
-                                    autoBuyEngine.resetState();
+                    if (screen != lastScreen) {
+                        lastScreen = screen;
+                        auctionRenderer.addButtons(
+                                screen,
+                                autoBuyEnabled,
+                                autoSetupEnabled,
+                                () -> {
+                                    autoBuyEnabled = !autoBuyEnabled;
+                                    if (autoBuyEnabled) {
+                                        balanceController.request();
+                                    } else {
+                                        autoBuyEngine.resetState();
+                                    }
+                                },
+                                () -> {
+                                    if (!autoSetupEngine.isRunning()) {
+                                        autoSetupEngine.start();
+                                        autoSetupEnabled = true;
+                                    } else {
+                                        autoSetupEngine.stop();
+                                        autoSetupEnabled = false;
+                                    }
                                 }
-                            },
-                            () -> {
-                                if (!autoSetupEngine.isRunning()) {
-                                    autoSetupEngine.start();
-                                    autoSetupEnabled = true;
-                                } else {
-                                    autoSetupEngine.stop();
-                                    autoSetupEnabled = false;
-                                }
-                            }
-                    );
+                        );
+                    }
+
+                    autoBuyEngine.setCurrentAuctionScreen(screen);
                 }
 
-                autoBuyEngine.setCurrentAuctionScreen(screen);
+            } else {
+                lastScreen = null;
+                autoBuyEngine.setCurrentAuctionScreen(null);
             }
-
-        } else {
-            lastScreen = null;
-            autoBuyEngine.setCurrentAuctionScreen(null);
         }
 
         autoBuyEngine.setClickDelay((int) getClickDelay());
 
-        if (autoBuyEnabled) {
+        // AutoBuy работает только если AutoSell не активен
+        if (autoBuyEnabled && !sellActive) {
             autoBuyEngine.tick((int) getUpdateDelay());
         }
 
@@ -175,8 +210,17 @@ public class AutoBuy extends Module {
 
                 auctionRenderer.addPurchase(target.getDisplayStack(), target.getDisplayName(),
                         perOne, count, totalBuyPrice, 0);
+
+                if (autoSell.isValue()) {
+                    autoSellEngine.enqueueSell(target, count, perOne);
+                }
             }
             balanceController.request();
+        }
+
+        // Передаём сообщения в AutoSellEngine
+        if (autoSell.isValue()) {
+            autoSellEngine.handleMessage(msg);
         }
 
         if (msg.contains("не хватает")
@@ -234,21 +278,21 @@ public class AutoBuy extends Module {
     }
 
     public static float getUpdateDelay() {
-        float min = 750;
-        float max = 2000;
-        return MathUtils.getSmartRandom(min,max);
+        float min = 650;
+        float max = 1100;
+        return MathUtils.randomValue(min,max);
     }
 
     public static float getClickDelay() {
         float min = 50;
         float max = 500;
-        return MathUtils.getSmartRandom(min,max);
+        return MathUtils.randomValue(min,max);
     }
     public static float getSearchTime() {
         float min = 5;
         float max = 20;
 
-        return MathUtils.getSmartRandom(min,max);
+        return MathUtils.randomValue(min,max);
     }
 }
 

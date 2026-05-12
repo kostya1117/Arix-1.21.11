@@ -15,11 +15,12 @@ import ru.arixcompany.utils.render.font.FontManager;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 public class AuctionRenderer implements IMinecraft {
-    private final List<PurchaseRecord> purchaseHistory = new ArrayList<>();
+    private final List<PurchaseRecord> purchaseHistory = Collections.synchronizedList(new ArrayList<>());
 
     private float historyTargetScroll = 0, historyCurrentScroll = 0;
     private float pricesTargetScroll = 0, pricesCurrentScroll = 0;
@@ -73,13 +74,19 @@ public class AuctionRenderer implements IMinecraft {
         RenderUtils.pushClipRect(x, clipY, width, clipH);
         g.enableScissor((int) x, (int) clipY, (int) (x + width), (int) (clipY + clipH));
 
-        float contentHeight = purchaseHistory.size() * itemHeight;
+        // Создаём копию списка для безопасной итерации
+        List<PurchaseRecord> historySnapshot;
+        synchronized (purchaseHistory) {
+            historySnapshot = new ArrayList<>(purchaseHistory);
+        }
+
+        float contentHeight = historySnapshot.size() * itemHeight;
         float maxScroll = Math.max(0, contentHeight - clipH);
         if (historyTargetScroll < 0) historyTargetScroll = 0;
         if (historyTargetScroll > maxScroll) historyTargetScroll = maxScroll;
 
         float drawY = clipY - historyCurrentScroll;
-        for (PurchaseRecord record : purchaseHistory) {
+        for (PurchaseRecord record : historySnapshot) {
             if (drawY + itemHeight > clipY && drawY < clipY + clipH) {
                 renderHistoryEntry(g, record, x + 5, drawY);
             }

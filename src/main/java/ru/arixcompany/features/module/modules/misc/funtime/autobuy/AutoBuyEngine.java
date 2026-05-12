@@ -200,6 +200,9 @@ public class AutoBuyEngine implements IMinecraft {
         isBuying = false;
         waitingForConfirm = false;
         reopenRequested = true;
+        lastTarget = null;
+        lastTotalPrice = 0;
+        lastBoughtCount = 0;
     }
 
     public void resetState() {

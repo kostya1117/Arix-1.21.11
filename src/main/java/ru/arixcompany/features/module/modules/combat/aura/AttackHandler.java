@@ -1,6 +1,5 @@
 package ru.arixcompany.features.module.modules.combat.aura;
 
-import lombok.experimental.NonFinal;
 import lombok.experimental.UtilityClass;
 import net.minecraft.network.protocol.game.ServerboundPlayerCommandPacket;
 import net.minecraft.tags.FluidTags;
@@ -9,10 +8,7 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ClipContext;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
@@ -22,17 +18,14 @@ import ru.arixcompany.features.module.modules.combat.aura.rotation.impl.Rotation
 import ru.arixcompany.features.module.modules.combat.aura.rotation.impl.SprintServerRepo;
 import ru.arixcompany.features.module.modules.combat.aura.utils.AuraUtil;
 import ru.arixcompany.features.module.modules.combat.aura.utils.RayTraceUtil;
-import ru.arixcompany.features.module.modules.movement.AutoSprint;
+import ru.arixcompany.features.module.modules.combat.aura.utils.SensitivityUtil;
 import ru.arixcompany.utils.IMinecraft;
+import ru.arixcompany.utils.MessageSender;
 import ru.arixcompany.utils.math.MathUtils;
 import ru.arixcompany.utils.math.Timer;
-import ru.arixcompany.utils.player.FallingPlayer;
 import ru.arixcompany.utils.player.PlayerIntersectionUtil;
 
 import java.util.Arrays;
-import java.util.concurrent.ThreadLocalRandom;
-
-import static ru.arixcompany.features.module.modules.combat.HitAura.attackRange;
 
 @UtilityClass
 public final class AttackHandler implements IMinecraft {
@@ -146,6 +139,7 @@ public final class AttackHandler implements IMinecraft {
         HitAura hitAura = Arix.getInstance().getModuleRepo().getModule(HitAura.class);
         mc.gameMode.attack(mc.player, target);
         mc.player.swing(hand);
+        MessageSender.print(mc.player.fallDistance + "");
         hitAura.count = (hitAura.count + 1) % 2;
         cooldownTimer.reset();
 
@@ -206,5 +200,13 @@ public final class AttackHandler implements IMinecraft {
 
     public float randomfall(){
         return MathUtils.randomValue(0.2f, 0.8f);
+    }
+
+    /**
+     * Тестирует GCD систему (для дебага)
+     * Вызови это из консоли или команды
+     */
+    public void testGCDSystem() {
+        SensitivityUtil.fullGCDCheck();
     }
 }

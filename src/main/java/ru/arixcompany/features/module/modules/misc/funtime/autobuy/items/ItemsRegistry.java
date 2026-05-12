@@ -106,6 +106,14 @@ public final class ItemsRegistry {
                 List.of("Мрак сгущается рядом"),
                 "Мрака");
 
+        lore(targets, "disorientation_lore", "[★] Дезориентация", Items.ENDER_EYE,
+                List.of("● Каст: Звуковая волна"),
+                "Дезориентация");
+
+        lore(targets, "obvious_dust_lore", "[★] Явная пыль", Items.SUGAR,
+                List.of("● Каст: Световая вспышка"),
+                "Явная пыль");
+
         // ===== NAME =====
         name(targets, "potion_assassin", "[★] Зелье Ассасина", Items.SPLASH_POTION, "зелье Ассасина");
         name(targets, "potion_holy_water", "[★] Святая вода", Items.SPLASH_POTION, "Святая вода");
@@ -114,6 +122,10 @@ public final class ItemsRegistry {
         name(targets, "potion_clapper", "[★] Хлопушка", Items.SPLASH_POTION, "Хлопушка");
         name(targets, "potion_wrath", "[★] Зелье Гнева", Items.SPLASH_POTION, "зелье Гнева");
         name(targets, "potion_radiation", "[★] Зелье Радиации", Items.SPLASH_POTION, "зелье Радиации");
+
+        // ===== NEW ITEMS =====
+        name(targets, "disorientation", "[★] Дезориентация", Items.ENDER_EYE, "Дезориентация");
+        name(targets, "obvious_dust", "[★] Явная пыль", Items.SUGAR, "Явная пыль");
     }
 
     private static void item(Map<String, ItemTarget> targets,

@@ -18,8 +18,16 @@ import java.security.SecureRandom;
 
 public class FuntimeRot implements AbstractRotation, IMinecraft {
 
+    private static Rotation lastRotation = null;
+    private static float targetPitchSmooth = 0;
+    private static boolean wasOnTarget = false;
+
     @Override
     public void rotate(LivingEntity target, boolean isAttack, float attackDistance, boolean check) {
+        if (target == null || mc.player == null) return;
+
+        long now = System.currentTimeMillis();
+
         Vec3 targetPos = getTargetPoint(target);
         double maxHeight = (AuraUtil.getStrictDistance(target) / attackDistance);
         Vec3 vec = targetPos
@@ -30,20 +38,63 @@ public class FuntimeRot implements AbstractRotation, IMinecraft {
         float rawYaw = (float) Math.toDegrees(Math.atan2(-vec.x, vec.z));
         float rawPitch = (float) Mth.clamp(-Math.toDegrees(Math.atan2(vec.y, Math.hypot(vec.x, vec.z))), -90F, 90F);
 
-        float cos = (float) Math.cos(System.currentTimeMillis() / 100D);
-        float sin = (float) Math.sin(System.currentTimeMillis() / 100D);
-        float yawOffset =  (MathUtils.randomValue(4, 8) * cos);
-        float pitchOffset = (MathUtils.randomValue(4, 8) * sin);
+        // Проверяем находимся ли на таргете
+        boolean onTarget = isAttack && AuraUtil.getStrictDistance(target) < attackDistance && !check;
+
+        // Более плавные волны для естественного движения
+        float cos = (float) Math.cos(now / 150D);
+        float sin = (float) Math.sin(now / 200D);
+        
+        // Меньше смещения для менее заметного движения
+        float yawOffset = (MathUtils.randomValue(2.5f, 5.5f) * cos);
+        float pitchOffset = (MathUtils.randomValue(2.5f, 5.5f) * sin);
 
         float targetYaw = rawYaw + yawOffset;
-        float targetPitch = Mth.clamp(rawPitch + pitchOffset, -90F, 90F);
+        
+        // Логика для питча:
+        // Когда на таргете - питч почти не меняется
+        // Когда не на таргете - плавно вводится к целевому питчу
+        float targetPitch;
+        if (onTarget) {
+            // На таргете - питч остается стабильным
+            targetPitch = rawPitch;
+            targetPitchSmooth = rawPitch;
+            wasOnTarget = true;
+        } else {
+            // Не на таргете - плавно вводим питч
+            if (wasOnTarget) {
+                targetPitchSmooth = mc.player.getXRot();
+                wasOnTarget = false;
+            }
+            
+            // Плавно интерполируем к целевому питчу
+            float pitchDelta = rawPitch - targetPitchSmooth;
+            float pitchSpeed = 0.15f;  // Скорость интерполяции
+            targetPitchSmooth += pitchDelta * pitchSpeed;
+            
+            targetPitch = Mth.clamp(targetPitchSmooth + pitchOffset, -90F, 90F);
+        }
 
-        Rotation rotation = new Rotation(
-                targetYaw,
-                targetPitch
-        ).adjustSensitivity();
+        Rotation rotation = new Rotation(targetYaw, targetPitch).normalize();
 
-        RotationRepo.update(rotation,10F, 3, 8F, 3F, 0, 5, false);
+        // Интерполируем для плавности используя partialTicks из Minecraft
+        if (lastRotation != null) {
+            float partialTicks = mc.getDeltaTracker().getGameTimeDeltaPartialTick(true);
+            rotation = lastRotation.interpolateTo(rotation, partialTicks);
+        }
+        lastRotation = rotation;
+
+        // Более естественные скорости
+        RotationRepo.update(
+                rotation,
+                25F,  // yawSpeed - более плавный
+                onTarget ? 3F : 6F,   // pitchSpeed - медленнее когда на таргете
+                15F,  // yawReturnSpeed
+                8F,   // pitchReturnSpeed
+                0,
+                5,
+                false
+        );
     }
 
     private Vec3 getTargetPoint(LivingEntity entity) {

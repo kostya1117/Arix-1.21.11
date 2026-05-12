@@ -248,16 +248,16 @@ public class AutoSetupEngine implements IMinecraft {
         new Thread(() -> {
             try {
                 Thread.sleep(300);
-                if (AutoBuy.autoBuyAfterSetup.isValue()) {
-                    mc.execute(() -> {
-                        if (mc.player != null) {
+                mc.execute(() -> {
+                    if (mc.player != null) {
+                        mc.player.connection.sendCommand("ah");
+                        if (AutoBuy.autoBuyAfterSetup.isValue()) {
                             AutoBuy.balanceController.request();
-                            mc.player.connection.sendCommand("ah");
-                            AutoBuy.setAutoBuyEnabled(true);
+                            AutoBuy.autoBuyEnabled = true;
                             AutoBuy.autoBuyEngine.resetState();
                         }
-                    });
-                }
+                    }
+                });
             } catch (Exception ignored) {}
         }).start();
     }

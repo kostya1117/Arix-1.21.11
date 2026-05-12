@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.network.protocol.game.ClientboundPlayerPositionPacket;
 import net.minecraft.network.protocol.game.ServerboundMovePlayerPacket;
+import net.minecraft.network.protocol.game.ServerboundUseItemPacket;
 import net.minecraft.util.Mth;
 import ru.arixcompany.features.event.EventHandler;
 import ru.arixcompany.features.event.player.EventInput;
@@ -12,6 +13,7 @@ import ru.arixcompany.features.event.world.EventGameTick;
 import ru.arixcompany.features.event.world.EventPacket;
 import ru.arixcompany.features.module.modules.combat.aura.rotation.Component;
 import ru.arixcompany.features.module.modules.combat.aura.utils.Rotation;
+import ru.arixcompany.features.module.modules.combat.aura.utils.SensitivityUtil;
 import ru.arixcompany.utils.player.MoveUtils;
 
 public class RotationRepo extends Component {
@@ -94,6 +96,28 @@ public class RotationRepo extends Component {
         update(target, turnSpeed, turnSpeed, returnSpeed, returnSpeed, timeout, priority, false);
     }
 
+    /**
+     * Обновляет ротацию с интерполяцией (как в LiquidBounce)
+     * Обеспечивает более плавное движение
+     */
+    public static void updateWithInterpolation(
+            Rotation target,
+            float yawSpeed,
+            float pitchSpeed,
+            float interpolationFactor,
+            int timeout,
+            int priority
+    ) {
+        if (currentPriority > priority) return;
+
+        if (mc.player == null) return;
+
+        Rotation current = new Rotation(mc.player);
+        Rotation interpolated = current.interpolateTo(target, interpolationFactor);
+        
+        update(interpolated, yawSpeed, pitchSpeed, yawSpeed, pitchSpeed, timeout, priority, false);
+    }
+
     private void resetRotation() {
         Rotation freeRot = new Rotation(FreeLookRepo.freeYaw, FreeLookRepo.freePitch);
         if (updateRotation(freeRot, currentYawReturnSpeed, currentPitchReturnSpeed)) {
@@ -104,16 +128,17 @@ public class RotationRepo extends Component {
     static boolean updateRotation(Rotation target, float yawSpeed, float pitchSpeed) {
         if (mc.player == null) return false;
 
-        float yawDelta   = Mth.wrapDegrees(target.yaw   - mc.player.getYRot());
-        float pitchDelta = target.pitch - mc.player.getXRot();
+        // Ротация должна быть уже нормализована перед вызовом
+        Rotation fixedTarget = target;
 
-        float clampedYaw   = Math.min(Math.abs(yawDelta),   yawSpeed);
-        float clampedPitch = Math.min(Math.abs(pitchDelta), pitchSpeed);
+        float yawDelta = Mth.wrapDegrees(fixedTarget.yaw - mc.player.getYRot());
+        float pitchDelta = fixedTarget.pitch - mc.player.getXRot();
 
-        float yawStep   = Mth.clamp(yawDelta,   -clampedYaw,   clampedYaw);
-        float pitchStep = Mth.clamp(pitchDelta, -clampedPitch, clampedPitch);
+        // Ограничиваем скорость поворота
+        float yawStep = Mth.clamp(yawDelta, -yawSpeed, yawSpeed);
+        float pitchStep = Mth.clamp(pitchDelta, -pitchSpeed, pitchSpeed);
 
-        float finalYaw   = mc.player.getYRot() + yawStep;
+        float finalYaw = mc.player.getYRot() + yawStep;
         float finalPitch = Mth.clamp(mc.player.getXRot() + pitchStep, -90.0F, 90.0F);
 
         mc.player.setYRot(finalYaw);
@@ -121,8 +146,9 @@ public class RotationRepo extends Component {
 
         idleTicks = 0;
 
-        return Math.abs(Mth.wrapDegrees(target.yaw - mc.player.getYRot())) < 1.0F
-                && Math.abs(target.pitch - mc.player.getXRot()) < 1.0F;
+        // Проверяем, достаточно ли близко к целевой ротации
+        return Math.abs(Mth.wrapDegrees(fixedTarget.yaw - mc.player.getYRot())) < 1
+                && Math.abs(fixedTarget.pitch - mc.player.getXRot()) < 1;
     }
     @EventHandler
     public void onSwimming(EventMotion eventMotion) {
@@ -142,8 +168,9 @@ public class RotationRepo extends Component {
     public void onPacket(EventPacket event) {
         if (event.isCancelled()) return;
         switch (event.getPacket()) {
-            case ServerboundMovePlayerPacket player when player.hasRotation() -> serverAngle = new Rotation(player.getYRot(0), player.getXRot(0));
+            case ServerboundMovePlayerPacket player when player.hasRotation() -> serverAngle = new Rotation(player.yRot, player.xRot);
             case ClientboundPlayerPositionPacket player -> serverAngle = new Rotation(player.change().yRot(), player.change().xRot());
+            case ServerboundUseItemPacket player -> new Rotation(player.getYRot(), player.getXRot());
             default -> {}
         }
     }
