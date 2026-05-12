@@ -266,13 +266,13 @@ public class WayPointCommand extends AbstractCommand {
 
     private int getDistanceColor(double distance) {
         if (distance < 50) {
-            return ColorUtil.getColor(100, 255, 100, 255);
+            return ColorUtil.rgba(100, 255, 100, 255);
         } else if (distance < 200) {
-            return ColorUtil.getColor(255, 255, 100, 255);
+            return ColorUtil.rgba(255, 255, 100, 255);
         } else if (distance < 1000) {
-            return ColorUtil.getColor(255, 165, 50, 255);
+            return ColorUtil.rgba(255, 165, 50, 255);
         } else {
-            return ColorUtil.getColor(255, 80, 80, 255);
+            return ColorUtil.rgba(255, 80, 80, 255);
         }
     }
 

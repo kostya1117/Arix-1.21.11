@@ -1,14 +1,63 @@
 package ru.arixcompany.utils.render;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.UtilityClass;
 import net.minecraft.util.Mth;
 import ru.arixcompany.ui.clickgui.Gui;
 import ru.arixcompany.features.module.Theme;
 
 import java.awt.*;
+import java.util.concurrent.*;
 
+@UtilityClass
 public class ColorUtil {
+
+    private final long CACHE_EXPIRATION_TIME = 60 * 1000;
+    private final ConcurrentHashMap<ColorKey, CacheEntry> colorCache = new ConcurrentHashMap<>();
+    private final ScheduledExecutorService cacheCleaner = Executors.newScheduledThreadPool(1);
+    private final DelayQueue<CacheEntry> cleanupQueue = new DelayQueue<>();
+
+    static {
+        cacheCleaner.scheduleWithFixedDelay(() -> {
+            CacheEntry entry = cleanupQueue.poll();
+            while (entry != null) {
+                if (entry.isExpired()) {
+                    colorCache.remove(entry.getKey());
+                }
+                entry = cleanupQueue.poll();
+            }
+        }, 0, 1, TimeUnit.SECONDS);
+    }
+
+    public static float getRed(int color) {
+        return (color >> 16 & 0xFF) / 255.0F;
+    }
+
+    public static float getGreen(int color) {
+        return (color >> 8 & 0xFF) / 255.0F;
+    }
+
+    public static float getBlue(int color) {
+        return (color & 0xFF) / 255.0F;
+    }
+
     public static float getAlpha(int color) {
         return (color >> 24 & 0xFF) / 255.0F;
+    }
+
+    public static Color injectAlpha(Color color, int alpha) {
+        return new Color(color.getRed(), color.getGreen(), color.getBlue(), alpha);
+    }
+
+    public static Color TwoColoreffect(Color color, Color color2, double n) {
+        float clamp = Mth.clamp((float) Math.sin((Math.PI * 6) * (n / 4.0 % 1.0)) / 2.0F + 0.5F, 0.0F, 1.0F);
+        return new Color(
+                Mth.lerp(color.getRed() / 255.0F, color2.getRed() / 255.0F, clamp),
+                Mth.lerp(color.getGreen() / 255.0F, color2.getGreen() / 255.0F, clamp),
+                Mth.lerp(color.getBlue() / 255.0F, color2.getBlue() / 255.0F, clamp),
+                Mth.lerp(color.getAlpha() / 255.0F, color2.getAlpha() / 255.0F, clamp));
     }
 
     public static Color setAlpha(Color c, int alpha) {
@@ -19,12 +68,77 @@ public class ColorUtil {
         return color & 16777215 | alpha << 24;
     }
 
+    public static int getClientColor() {
+        return getMainColor(10, 255);
+    }
+
     private static Theme getTheme() {
         return Gui.selectedTheme != null ? Gui.selectedTheme : Theme.PURPLE;
     }
 
     private static Theme getPreTheme() {
         return Gui.preSelectedTheme != null ? Gui.preSelectedTheme : Theme.PURPLE;
+    }
+
+    public static int[] getClientColor(int speed, int alpha) {
+        Theme theme = getTheme();
+        Theme preTheme = getPreTheme();
+        return new int[] {
+                applyOpacity(
+                        gradient(speed, 0,
+                                interpolate(theme.getMain().getRGB(), preTheme.getMain().getRGB(),
+                                        1.0F - Gui.animation14.getOutput())),
+                        alpha),
+                applyOpacity(
+                        gradient(speed, 90,
+                                interpolate(theme.getMain().getRGB(), preTheme.getMain().getRGB(),
+                                        1.0F - Gui.animation14.getOutput())),
+                        alpha),
+                applyOpacity(
+                        gradient(speed, 180,
+                                interpolate(theme.getMain().getRGB(), preTheme.getMain().getRGB(),
+                                        1.0F - Gui.animation14.getOutput())),
+                        alpha),
+                applyOpacity(
+                        gradient(speed, 270,
+                                interpolate(theme.getMain().getRGB(), preTheme.getMain().getRGB(),
+                                        1.0F - Gui.animation14.getOutput())),
+                        alpha)
+        };
+    }
+
+    public static int getBackGroundColor(int speed, int index) {
+        Theme theme = getTheme();
+        Theme preTheme = getPreTheme();
+        return gradient2(
+                interpolate(theme.getBg().getRGB(), preTheme.getBg().getRGB(), 1.0F - Gui.animation14.getOutput()),
+                interpolate(theme.getBg().getRGB(), preTheme.getBg().getRGB(), 1.0F - Gui.animation14.getOutput()),
+                speed,
+                index);
+    }
+
+    public static int getBackGroundTwoColor(int speed, int index) {
+        Theme theme = getTheme();
+        Theme preTheme = getPreTheme();
+        return gradient2(
+                interpolate(theme.getBg2().getRGB(), preTheme.getBg2().getRGB(),
+                        1.0F - Gui.animation14.getOutput()),
+                interpolate(theme.getBg2().getRGB(), preTheme.getBg2().getRGB(),
+                        1.0F - Gui.animation14.getOutput()),
+                speed,
+                index);
+    }
+
+    public static int getOutLineColor(int speed, int index) {
+        Theme theme = getTheme();
+        Theme preTheme = getPreTheme();
+        return gradient2(
+                interpolate(theme.getOutline().getRGB(), preTheme.getOutline().getRGB(),
+                        1.0F - Gui.animation14.getOutput()),
+                interpolate(theme.getOutline().getRGB(), preTheme.getOutline().getRGB(),
+                        1.0F - Gui.animation14.getOutput()),
+                speed,
+                index);
     }
 
     public static int getMainColor(int speed, int index) {
@@ -51,6 +165,18 @@ public class ColorUtil {
                 index);
     }
 
+    public static int getTextTwoColor(int speed, int index) {
+        Theme theme = getTheme();
+        Theme preTheme = getPreTheme();
+        return gradient2(
+                interpolate(theme.getText2().getRGB(), preTheme.getText2().getRGB(),
+                        1.0F - Gui.animation14.getOutput()),
+                interpolate(theme.getText2().getRGB(), preTheme.getText2().getRGB(),
+                        1.0F - Gui.animation14.getOutput()),
+                speed,
+                index);
+    }
+
     public Color interpolate(Color color1, Color color2, double amount) {
         amount = 1.0 - amount;
         amount = (float) Mth.clamp(amount, 0.0, 1.0);
@@ -59,6 +185,42 @@ public class ColorUtil {
                 (int) Mth.lerp(color1.getGreen(), color2.getGreen(), amount),
                 (int) Mth.lerp(color1.getBlue(), color2.getBlue(), amount),
                 (int) Mth.lerp(color1.getAlpha(), color2.getAlpha(), amount));
+    }
+
+    public static Color interpolateTwoColors(int speed, int index, Color start, Color end, boolean trueColor) {
+        int angle = 0;
+        if (speed == 0) {
+            angle = index % 360;
+        } else {
+            angle = (int) ((System.currentTimeMillis() / speed + index) % 360L);
+        }
+
+        angle = (angle >= 180 ? 360 - angle : angle) * 2;
+        return trueColor ? interpolateColorHue(start, end, angle / 360.0F)
+                : interpolateColorC(start, end, angle / 360.0F);
+    }
+
+    public static Color interpolateColorHue(Color color1, Color color2, float amount) {
+        amount = Math.min(1.0F, Math.max(0.0F, amount));
+        float[] color1HSB = Color.RGBtoHSB(color1.getRed(), color1.getGreen(), color1.getBlue(), null);
+        float[] color2HSB = Color.RGBtoHSB(color2.getRed(), color2.getGreen(), color2.getBlue(), null);
+        Color resultColor = Color.getHSBColor(
+                Mth.lerp(color1HSB[0], color2HSB[0], amount),
+                Mth.lerp(color1HSB[1], color2HSB[1], amount),
+                Mth.lerp(color1HSB[2], color2HSB[2], amount));
+        return new Color(
+                resultColor.getRed(),
+                resultColor.getGreen(),
+                resultColor.getBlue(),
+                (int) Mth.lerp((float) color1.getAlpha(), (float) color2.getAlpha(), amount));
+    }
+
+    public static Color interpolateColorC(Color color1, Color color2, float amount) {
+        return new Color(
+                Mth.lerp((float) color1.getRed(), (float) color2.getRed(), amount),
+                Mth.lerp((float) color1.getGreen(), (float) color2.getGreen(), amount),
+                Mth.lerp((float) color1.getBlue(), (float) color2.getBlue(), amount),
+                Mth.lerp((float) color1.getAlpha(), (float) color2.getAlpha(), amount));
     }
 
     public static int gradient2(int color1, int color2, int speed, int index) {
@@ -90,11 +252,24 @@ public class ColorUtil {
         return ((a & 0xFF) << 24) | ((r & 0xFF) << 16) | ((g & 0xFF) << 8) | (b & 0xFF);
     }
 
+    public static int[] getRainbowColor(int speed) {
+        int[] color1 = new int[4];
+        if (speed == 0) {
+            speed = 1;
+        }
+
+        color1[0] = rainbow(speed, 1, 1.0F, 1.0F, 1.0F);
+        color1[1] = rainbow(speed, 90, 1.0F, 1.0F, 1.0F);
+        color1[2] = rainbow(speed, 180, 1.0F, 1.0F, 1.0F);
+        color1[3] = rainbow(speed, 270, 1.0F, 1.0F, 1.0F);
+        return color1;
+    }
+
     public static int rainbow(int speed, int index, float saturation, float brightness, float opacity) {
         int angle = (int) ((System.currentTimeMillis() / speed + index) % 360L);
         float hue = angle / 360.0F;
         int color = Color.HSBtoRGB(hue, saturation, brightness);
-        return getColor(red(color), green(color), blue(color), Math.max(0, Math.min(255, (int) (opacity * 255.0F))));
+        return rgba(red(color), green(color), blue(color), Math.max(0, Math.min(255, (int) (opacity * 255.0F))));
     }
 
     public static int gradient(int speed, int index, int... colors) {
@@ -124,12 +299,30 @@ public class ColorUtil {
         return new float[] { red(c) / 255.0F, green(c) / 255.0F, blue(c) / 255.0F, alpha(c) / 255.0F };
     }
 
-    public static int applyOpacity(int n, float f) {
-        return rgba2(getRedInt(n), getGreenInt(n), getBlueInt(n), (int) (getAlphaInt(n) * f / 255.0F));
+    public static int skyRainbow(int speed, int index) {
+        double angle = (int) ((System.currentTimeMillis() / speed + index) % 360L);
+        double var4;
+        return Color
+                .getHSBColor((var4 = angle % 360.0) / 360.0 < 0.5 ? -((float) (var4 / 360.0)) : (float) (var4 / 360.0),
+                        0.5F, 1.0F)
+                .hashCode();
     }
 
-    public static int rgba2(int n, int n2, int n3, int n4) {
-        return n4 << 24 | n << 16 | n2 << 8 | n3;
+    public static int[] getAstolfoColor(int speed) {
+        int[] color1 = new int[4];
+        if (speed == 0) {
+            int var2 = 1;
+        }
+
+        color1[0] = skyRainbow(25, 1);
+        color1[1] = skyRainbow(25, 90);
+        color1[2] = skyRainbow(25, 180);
+        color1[3] = skyRainbow(25, 270);
+        return color1;
+    }
+
+    public static int applyOpacity(int n, float f) {
+        return rgba(getRedInt(n), getGreenInt(n), getBlueInt(n), (int) (getAlphaInt(n) * f / 255.0F));
     }
 
     public static int getRedInt(int n) {
@@ -148,86 +341,158 @@ public class ColorUtil {
         return n >> 24 & 0xFF;
     }
 
-    public static Color getColor(int color) {
-        int r = color >> 16 & 0xFF;
-        int g = color >> 8 & 0xFF;
-        int b = color & 0xFF;
-        int a = color >> 24 & 0xFF;
-        return new Color(r, g, b, a);
+    public static float[] getColorComps(Color color) {
+        return new float[] { color.getRed() / 255.0F, color.getGreen() / 255.0F, color.getBlue() / 255.0F,
+                color.getAlpha() / 255.0F };
+    }
+
+    public static int getClientColorOne(int speed, int index) {
+        return gradient(
+                interpolate(Gui.selectedTheme.getMain().getRGB(), Gui.preSelectedTheme.getMain().getRGB(),
+                        1.0F - Gui.animation14.getOutput()),
+                interpolate(Gui.selectedTheme.getMain().getRGB(), Gui.preSelectedTheme.getMain().getRGB(),
+                        1.0F - Gui.animation14.getOutput()),
+                speed,
+                index);
+    }
+
+    public static int rgb(int r, int g, int b) {
+        return 255 << 24 | r << 16 | g << 8 | b;
+    }
+    public static int rgba(int r, int g, int b, double a) {
+        return (int)a << 24 | r << 16 | g << 8 | b;
     }
 
     public static int replAlpha(int c, int a) {
-        return getColor(red(c), green(c), blue(c), a);
+        return rgba(red(c), green(c), blue(c), a);
     }
 
-    public static int red(int c) {
+    public int red(int c) {
         return c >> 16 & 0xFF;
     }
 
-    public static int green(int c) {
+    public int green(int c) {
         return c >> 8 & 0xFF;
     }
 
-    public static int blue(int c) {
+    public int blue(int c) {
         return c & 0xFF;
     }
 
-    public static int alpha(int c) {
+    public int alpha(int c) {
         return c >> 24 & 0xFF;
     }
 
-    public static int getColor(float r, float g, float b, float a) {
-        int ri = Math.clamp(Math.round(r), 0, 255);
-        int gi = Math.clamp(Math.round(g), 0, 255);
-        int bi = Math.clamp(Math.round(b), 0, 255);
-        int ai = Math.clamp(Math.round(a), 0, 255);
-        return (ai << 24) | (ri << 16) | (gi << 8) | bi;
+    public int rgba(int red, int green, int blue, int alpha) {
+        ColorKey key = new ColorKey(red, green, blue, alpha);
+        CacheEntry cacheEntry = colorCache.computeIfAbsent(key, k -> {
+            CacheEntry newEntry = new CacheEntry(k, computeColor(red, green, blue, alpha), CACHE_EXPIRATION_TIME);
+            cleanupQueue.offer(newEntry);
+            return newEntry;
+        });
+        return cacheEntry.getColor();
     }
 
-    public static int getColor(int red, int green, int blue) {
-        return getColor(red, green, blue, 255);
+    public int computeColor(int red, int green, int blue, int alpha) {
+        return ((Mth.clamp(alpha, 0, 255) << 24) |
+                (Mth.clamp(red, 0, 255) << 16) |
+                (Mth.clamp(green, 0, 255) << 8) |
+                Mth.clamp(blue, 0, 255));
     }
 
-    public static int getColor(int red, int green, int blue, int alpha) {
-        int color = 0;
-        color |= alpha << 24;
-        color |= red << 16;
-        color |= green << 8;
-        return color | blue;
+    public static int getRedFromColor(int color) {
+        return color >> 16 & 0xFF;
     }
 
+    public static int getGreenFromColor(int color) {
+        return color >> 8 & 0xFF;
+    }
+
+    public static int getBlueFromColor(int color) {
+        return color & 0xFF;
+    }
+
+    public static int getAlphaFromColor(int color) {
+        return color >> 24 & 0xFF;
+    }
 
     public static float[] rgb(int color) {
         return new float[] { (color >> 16 & 0xFF) / 255.0F, (color >> 8 & 0xFF) / 255.0F, (color & 0xFF) / 255.0F,
                 (color >> 24 & 0xFF) / 255.0F };
     }
 
-    public static int rgba(int r, int g, int b, int a) {
+    public int colorToHex(Color color) {
+        int a = color.getAlpha();
+        int r = color.getRed();
+        int g = color.getGreen();
+        int b = color.getBlue();
         return a << 24 | r << 16 | g << 8 | b;
     }
 
-
-    public static float[] rgba(int color) {
+    public float[] rgba(int color) {
         return new float[] { (color >> 16 & 0xFF) / 255.0F, (color >> 8 & 0xFF) / 255.0F, (color & 0xFF) / 255.0F,
                 (color >> 24 & 0xFF) / 255.0F };
     }
 
-    public static int overCol(int color1, int color2, float percent01) {
-        float percent = Mth.clamp(percent01, 0.0F, 1.0F);
-        return getColor(
-                Mth.lerp(percent, red(color1),   red(color2)),
-                Mth.lerp(percent, green(color1), green(color2)),
-                Mth.lerp(percent, blue(color1),  blue(color2)),
-                Mth.lerp(percent, alpha(color1), alpha(color2))
+    public int overCol(int color1, int color2, float percent01) {
+        final float percent = clamp(percent01, 0F, 1F);
+        return rgba(
+                lerp(percent, red(color1), red(color2)),
+                lerp(percent, green(color1), green(color2)),
+                lerp(percent, blue(color1), blue(color2)),
+                lerp(percent, alpha(color1), alpha(color2))
         );
+    }
+    public static float clamp(float value, float min, float max) {
+        return value < min ? min : Math.min(value, max);
+    }
+    public static int lerp(float delta, int start, int end) {
+        return start + floor(delta * (float)(end - start));
+    }
+    public static int floor(float value) {
+        int i = (int) value;
+        return value < (float) i ? i - 1 : i;
     }
 
     public static int multAlpha(int color, float percent01) {
-        return getColor(red(color), green(color), blue(color), Math.round(alpha(color) * percent01));
+        return rgba(red(color), green(color), blue(color), Math.round(alpha(color) * percent01));
+    }
+    @Getter
+    @RequiredArgsConstructor
+    @EqualsAndHashCode
+    private static class ColorKey {
+        final int red, green, blue, alpha;
     }
 
-    public static int argb(int r, int g, int b, float alpha) {
-        int a = (int)(Mth.clamp(alpha, 0f, 1f) * 255f);
-        return (a << 24) | (r << 16) | (g << 8) | b;
+    @Getter
+    private static class CacheEntry implements Delayed {
+        private final ColorKey key;
+        private final int color;
+        private final long expirationTime;
+
+        CacheEntry(ColorKey key, int color, long ttl) {
+            this.key = key;
+            this.color = color;
+            this.expirationTime = System.currentTimeMillis() + ttl;
+        }
+
+        @Override
+        public long getDelay(TimeUnit unit) {
+            long delay = expirationTime - System.currentTimeMillis();
+            return unit.convert(delay, TimeUnit.MILLISECONDS);
+        }
+
+        @Override
+        public int compareTo(Delayed other) {
+            if (other instanceof CacheEntry) {
+                return Long.compare(this.expirationTime, ((CacheEntry) other).expirationTime);
+            }
+            return 0;
+        }
+
+        public boolean isExpired() {
+            return System.currentTimeMillis() > expirationTime;
+        }
+
     }
 }

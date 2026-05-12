@@ -57,10 +57,6 @@ public class HitAura extends Module {
                     .value("Игроки", "Инвизки", "Голые", "Мобы")
                     .selected("Игроки");
 
-    public static final SelectSetting attackDelay =
-            new SelectSetting("Тайминг удара")
-                    .value("Быстрый", "Динамичный");
-
     public static final ListSetting misc =
             new ListSetting("Проверки до удара")
                     .value(
@@ -98,7 +94,6 @@ public class HitAura extends Module {
                 rotationType,
                 snapSetting,
                 targets,
-                attackDelay,
                 misc,
                 extraSettings,
                 motion,
@@ -140,7 +135,7 @@ public class HitAura extends Module {
     }
 
     private boolean shouldResetSprintForCrit() {
-        return mc.player.fallDistance > 0.0F || mc.player.getDeltaMovement().y < -0.08;
+        return mc.player.fallDistance > 0.0F;
     }
 
     public boolean hasStopSprint() {
@@ -149,7 +144,7 @@ public class HitAura extends Module {
 
     @EventHandler
     public void onEventsss(EventPreTick e) {
-        if (!mc.player.isAlive() || mc.player.isDeadOrDying() || mc.player == null) {
+        if (mc.player == null || !mc.player.isAlive() || mc.player.isDeadOrDying()) {
             this.toggle();
             return;
         }
@@ -180,7 +175,6 @@ public class HitAura extends Module {
                         target,
                         false,
                         true,
-                        -50L,
                         attackRange.getValue()
                 );
 

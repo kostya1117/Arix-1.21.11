@@ -34,7 +34,7 @@ public class RotationRepo extends Component {
     @EventHandler
     public void onEvent(EventInput event) {
         if (isRotating()) {
-            MoveUtils.fixMovement(event, Mth.wrapDegrees(mc.player.getYRot()));
+            MoveUtils.fixMovement(event, mc.gameRenderer.getMainCamera().yRot());
         }
     }
 
@@ -142,12 +142,8 @@ public class RotationRepo extends Component {
     public void onPacket(EventPacket event) {
         if (event.isCancelled()) return;
         switch (event.getPacket()) {
-            case ServerboundMovePlayerPacket.Rot packet ->
-                    serverAngle = new Rotation(packet.getYRot(0), packet.getXRot(0));
-            case ServerboundMovePlayerPacket.PosRot packet ->
-                    serverAngle = new Rotation(packet.getYRot(0), packet.getXRot(0));
-            case ClientboundPlayerPositionPacket packet ->
-                    serverAngle = new Rotation(packet.change().yRot(), packet.change().xRot());
+            case ServerboundMovePlayerPacket player when player.hasRotation() -> serverAngle = new Rotation(player.getYRot(0), player.getXRot(0));
+            case ClientboundPlayerPositionPacket player -> serverAngle = new Rotation(player.change().yRot(), player.change().xRot());
             default -> {}
         }
     }
