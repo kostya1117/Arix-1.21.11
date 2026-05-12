@@ -457,6 +457,13 @@ public class ColorUtil {
     public static int multAlpha(int color, float percent01) {
         return rgba(red(color), green(color), blue(color), Math.round(alpha(color) * percent01));
     }
+
+    public static int argb(int alpha, int red, int green, float blue) {
+        int b = Math.round(Math.max(0f, Math.min(blue, 255f)));
+
+        return (alpha << 24) | (red << 16) | (green << 8) | b;
+    }
+
     @Getter
     @RequiredArgsConstructor
     @EqualsAndHashCode

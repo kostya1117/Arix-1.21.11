@@ -14,7 +14,7 @@ public class ButtonSetting extends Setting {
     private Runnable runnable;
     private String buttonName;
 
-    public ButtonSetting(String name, String description) {
+    public ButtonSetting(String name) {
         super(name);
     }
 

@@ -1,0 +1,16 @@
+{
+  "stats": {
+    "minecraft:used": {
+      "minecraft:ender_pearl": 1
+    },
+    "minecraft:custom": {
+      "minecraft:time_since_rest": 185,
+      "minecraft:walk_one_cm": 324,
+      "minecraft:total_world_time": 208,
+      "minecraft:leave_game": 1,
+      "minecraft:play_time": 185,
+      "minecraft:time_since_death": 185
+    }
+  },
+  "DataVersion": 4671
+}

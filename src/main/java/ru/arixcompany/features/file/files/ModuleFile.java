@@ -94,6 +94,13 @@ public class ModuleFile extends ClientFile {
     }
 
     private void addSettingToJsonObject(JsonObject moduleObject, Setting setting) {
+        if (setting instanceof GroupSetting groupSetting) {
+            JsonObject groupObj = new JsonObject();
+            groupObj.addProperty("__open", groupSetting.isOpen());
+            groupSetting.getChildren().forEach(child -> addSettingToJsonObject(groupObj, child));
+            moduleObject.add(setting.getName(), groupObj);
+            return;
+        }
         if (setting instanceof BooleanSetting booleanSetting) {
             moduleObject.addProperty(setting.getName(), booleanSetting.isValue());
         }
@@ -146,6 +153,16 @@ public class ModuleFile extends ClientFile {
         if (settingElement == null || settingElement.isJsonNull()) return;
 
         try {
+            if (setting instanceof GroupSetting groupSetting) {
+                if (!settingElement.isJsonObject()) return;
+                JsonObject groupObj = settingElement.getAsJsonObject();
+                if (groupObj.has("__open")) {
+                    boolean open = groupObj.get("__open").getAsBoolean();
+                    if (open != groupSetting.isOpen()) groupSetting.toggle();
+                }
+                groupSetting.getChildren().forEach(child -> updateSettingFromJsonObject(groupObj, child));
+                return;
+            }
             if (setting instanceof BooleanSetting booleanSetting) {
                 booleanSetting.setValue(settingElement.getAsBoolean());
             }

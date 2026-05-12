@@ -158,8 +158,6 @@ public class CustomFont implements AutoCloseable {
         }
     }
 
-    // ==================== RENDER ====================
-
     public void drawString(GuiGraphics g, String t, float x, float y, int col) {
         drawString(g, t, x, y, col, false);
     }

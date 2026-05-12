@@ -83,7 +83,7 @@ public class RenderPipelines {
         .withUniform("CloudInfo", UniformType.UNIFORM_BUFFER)
         .withUniform("CloudFaces", UniformType.TEXEL_BUFFER, TextureFormat.RED8I)
         .buildSnippet();
-    private static final RenderPipeline.Snippet LINES_SNIPPET = RenderPipeline.builder(MATRICES_FOG_SNIPPET, GLOBALS_SNIPPET)
+    public static final RenderPipeline.Snippet LINES_SNIPPET = RenderPipeline.builder(MATRICES_FOG_SNIPPET, GLOBALS_SNIPPET)
         .withVertexShader("core/rendertype_lines")
         .withFragmentShader("core/rendertype_lines")
         .withBlend(BlendFunction.TRANSLUCENT)

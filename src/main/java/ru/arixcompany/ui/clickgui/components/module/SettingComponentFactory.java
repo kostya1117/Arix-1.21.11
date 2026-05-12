@@ -14,12 +14,14 @@ public final class SettingComponentFactory {
     }
 
     public IComponent create(Setting setting) {
+        if (setting instanceof GroupSetting s) return new GroupSettingComponent(s, this);
         if (setting instanceof BooleanSetting s) return new BooleanSettingComponent(s);
         if (setting instanceof BindSetting s) return new BindSettingComponent(s);
         if (setting instanceof ValueSetting s) return new ValueSettingComponent(s);
         if (setting instanceof SelectSetting s) return new SelectSettingComponent(s);
         if (setting instanceof TextSetting  s) return new StringSettingComponent(s);
         if (setting instanceof ListSetting s) return new ListSettingComponent(s);
+        if (setting instanceof ButtonSetting s) return new ButtonSettingComponent(s);
 
         if (setting instanceof ColorSetting s) {
             ColorSettingComponent comp = new ColorSettingComponent(s);

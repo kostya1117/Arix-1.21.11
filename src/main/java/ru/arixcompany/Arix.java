@@ -9,7 +9,7 @@ import org.lwjgl.glfw.GLFW;
 import ru.arixcompany.ui.draggable.DraggableRepo;
 import ru.arixcompany.features.module.modules.combat.aura.rotation.ComponentRepo;
 import ru.arixcompany.features.repos.AltRepo;
-import ru.arixcompany.ui.alt.SessionUtil;
+import ru.arixcompany.ui.title.alt.SessionUtil;
 import ru.arixcompany.ui.clickgui.Gui;
 import ru.arixcompany.features.command.CommandRepo;
 import ru.arixcompany.features.event.EventHandler;
@@ -22,7 +22,7 @@ import ru.arixcompany.features.file.exception.FileProcessingException;
 import ru.arixcompany.features.module.ModuleRepo;
 import ru.arixcompany.features.module.Theme;
 import ru.arixcompany.utils.IMinecraft;
-import ru.arixcompany.utils.render.RoundRectShader;
+import ru.arixcompany.utils.render.shader.ShadersRepo;
 import ru.arixcompany.utils.render.font.FontManager;
 
 import java.io.File;
@@ -57,6 +57,8 @@ public class Arix implements IMinecraft {
     public ComponentRepo componentRepo;
     @NonFinal
     DraggableRepo draggableRepo;
+    @NonFinal
+    ShadersRepo shadersRepo;
 
     public Arix(){
         instance = this;
@@ -64,7 +66,9 @@ public class Arix implements IMinecraft {
         ViaMCP.INSTANCE.initAsyncSlider();
         FontManager.init();
 
-        RoundRectShader.init();
+        shadersRepo = new ShadersRepo();
+        shadersRepo.init();
+
         moduleRepo = new ModuleRepo();
         moduleRepo.init();
 

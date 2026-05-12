@@ -14,10 +14,9 @@ public final class SearchComponent implements IComponent {
 
     private static final float SEARCH_WIDTH  = 220.0F;
     private static final float SEARCH_HEIGHT = 22.0F;
-    private static final float SEARCH_Y      = 15.0F; // Отступ от верха экрана
+    private static final float SEARCH_Y      = 15.0F;
 
     private float getSearchX() {
-        // Используем getGuiScaledWidth() чтобы работало на любых мониторах и GUI Scale!
         return (mc.getWindow().getGuiScaledWidth() / 2.0F) - (SEARCH_WIDTH / 2.0F);
     }
 
@@ -30,14 +29,11 @@ public final class SearchComponent implements IComponent {
         float searchX = getSearchX();
         float searchY = getSearchY();
 
-        // Рисуем фон
         RenderUtils.fillRoundRect(guiGraphics, searchX, searchY, SEARCH_WIDTH, SEARCH_HEIGHT, 6.0F, Colors.bgSecondary(alpha));
 
-        // Если поиск активен, делаем красивую обводку акцентным цветом
         int outlineColor = Gui.activeSearch ? Colors.accent(alpha) : Colors.outline(alpha);
         RenderUtils.drawRoundRectOutline(searchX, searchY, SEARCH_WIDTH, SEARCH_HEIGHT, 6.0F, 1.0F, outlineColor);
 
-        // Текст поиска
         String displayText = Gui.searchText.isEmpty() ? (Gui.activeSearch ? "" : "Search modules...") : Gui.searchText;
         int textColor = Gui.searchText.isEmpty() && !Gui.activeSearch ? Colors.textInactive(alpha) : Colors.textActive(alpha);
 
@@ -45,16 +41,13 @@ public final class SearchComponent implements IComponent {
         float textY = searchY + (SEARCH_HEIGHT / 2.0F) - (FontManager.get(12).getHeight() / 2.0F) + 1.0F;
         FontManager.get(12).drawString(guiGraphics, displayText, textX, textY, textColor);
 
-        // Красивый мигающий курсор
         renderCaret(guiGraphics, textX, searchY, alpha);
     }
 
     private void renderCaret(GuiGraphics guiGraphics, float textStartX, float searchY, float alpha) {
         if (!Gui.activeSearch) return;
-        // Мигание каждые 500мс
         if (System.currentTimeMillis() % 1000L < 500L) {
             float textW = Gui.searchText.isEmpty() ? 0 : FontManager.get(12).getWidth(Gui.searchText);
-            // Палочка курсора
             RenderUtils.fillRoundRect(guiGraphics, textStartX + textW + 1.0F, searchY + 5.0F, 1.0F, SEARCH_HEIGHT - 10.0F, 0.5F, Colors.textActive(alpha));
         }
     }
@@ -64,13 +57,11 @@ public final class SearchComponent implements IComponent {
         float searchX = getSearchX();
         float searchY = getSearchY();
 
-        // Кликнули по поиску - активируем
         if (button == 0 && isHovered(mouseX, mouseY, searchX, searchY, SEARCH_WIDTH, SEARCH_HEIGHT)) {
             Gui.activeSearch = true;
             return true;
         }
 
-        // Кликнули в другое место - закрываем ввод поиска
         if (Gui.activeSearch && button == 0) {
             Gui.activeSearch = false;
         }
@@ -83,7 +74,6 @@ public final class SearchComponent implements IComponent {
 
         if (codePoint == '\b') return true;
 
-        // Лимит 40 символов и только адекватные символы
         if (isValidSearchChar(codePoint) && Gui.searchText.length() < 40) {
             Gui.searchText += codePoint;
             return true;
@@ -101,7 +91,7 @@ public final class SearchComponent implements IComponent {
             return true;
         }
 
-        if (keyCode == 259) return true; // Backspace обрабатывается в tick()
+        if (keyCode == 259) return true;
 
         return false;
     }
@@ -123,7 +113,6 @@ public final class SearchComponent implements IComponent {
     }
 
     private void processBackspaceHold() {
-        // 259 = код Backspace в GLFW
         boolean backspaceDown = StringUtil.isKeyDown(259);
         long now = System.currentTimeMillis();
 
@@ -134,7 +123,6 @@ public final class SearchComponent implements IComponent {
                 Gui.lastBackspaceTime = now;
                 deleteLastChar();
             } else if (now - Gui.firstBackspacePressTime > 500L && now - Gui.lastBackspaceTime > 30L) {
-                // Если зажали дольше 500мс, стираем быстро каждые 30мс
                 deleteLastChar();
                 Gui.lastBackspaceTime = now;
             }
