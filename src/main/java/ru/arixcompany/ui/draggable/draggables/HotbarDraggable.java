@@ -159,6 +159,8 @@ public class HotbarDraggable extends DraggableComponent {
 
         float maxHp     = (float) player.getAttributeValue(Attributes.MAX_HEALTH);
         float currentHp = player.getHealth();
+        float absorption = player.getAbsorptionAmount();
+        float totalHp = currentHp + absorption;
         float hpPct     = Mth.clamp(currentHp / maxHp, 0f, 1f);
         healthAnim += (hpPct - healthAnim) / 6.0f;
 
@@ -170,7 +172,13 @@ public class HotbarDraggable extends DraggableComponent {
                     argb(255, 60, 60, anim * 0.9f));
         }
 
-        String hpText  = (int) currentHp + "/" + (int) maxHp;
+        if (absorption > 0.001f) {
+            float absorbPct = Mth.clamp(absorption / maxHp, 0f, 1f);
+            RenderUtils.fillRoundRect(contentX, hpBarY, halfW * Mth.clamp((currentHp + absorption) / maxHp, 0f, 1f), BAR_H, BAR_RADIUS,
+                    argb(255, 200, 50, anim * 0.7f));
+        }
+
+        String hpText  = (int) totalHp + "/" + (int) maxHp;
         float hpTextY  = hpBarY + (BAR_H - barTextFont.getHeight()) / 2.0f;
         barTextFont.drawString(graphics, hpText,
                 contentX + 2f, hpTextY,
@@ -224,6 +232,20 @@ public class HotbarDraggable extends DraggableComponent {
                 graphics.renderItem(player, stack, itemX, itemY, i + 1);
                 graphics.renderItemDecorations(mc.font, stack, itemX, itemY);
             }
+        }
+
+        ItemStack offhandStack = player.getOffhandItem();
+        if (!offhandStack.isEmpty()) {
+            float offhandX = contentX + 9 * (SLOT_SIZE + SLOT_GAP) + SLOT_GAP * 2;
+            float offhandY = slotsY;
+
+            RenderUtils.fillRoundRect(offhandX, offhandY, SLOT_SIZE, SLOT_SIZE, SLOT_RADIUS,
+                    Colors.bgElement(anim * 0.5f));
+
+            int itemX = (int)(offhandX + (SLOT_SIZE - 16) / 2.0f);
+            int itemY = (int)(offhandY + (SLOT_SIZE - 16) / 2.0f);
+            graphics.renderItem(player, offhandStack, itemX, itemY, 100);
+            graphics.renderItemDecorations(mc.font, offhandStack, itemX, itemY);
         }
 
         float expPct = Mth.clamp(player.experienceProgress, 0f, 1f);

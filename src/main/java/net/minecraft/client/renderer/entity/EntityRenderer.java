@@ -39,9 +39,8 @@ import net.optifine.entity.model.IEntityRenderer;
 import net.optifine.reflect.Reflector;
 import net.optifine.shaders.Shaders;
 import net.optifine.util.Either;
-import org.jspecify.annotations.Nullable;
 import ru.arixcompany.Arix;
-import ru.arixcompany.features.module.modules.render.Nametags;
+import ru.arixcompany.features.module.modules.render.Esp;
 
 public abstract class EntityRenderer<T extends Entity, S extends EntityRenderState> implements IEntityRenderer {
     private static final float SHADOW_POWER_FALLOFF_Y = 0.5F;
@@ -143,7 +142,7 @@ public abstract class EntityRenderer<T extends Entity, S extends EntityRenderSta
     protected boolean shouldShowName(T entity, double distance) {
         if (Arix.getInstance()
                 .getModuleRepo()
-                .getModule(Nametags.class)
+                .getModule(Esp.class)
                 .isState()) {
             return false;
         }
@@ -160,7 +159,7 @@ public abstract class EntityRenderer<T extends Entity, S extends EntityRenderSta
     protected void submitNameTag(S p_429896_, PoseStack p_428845_, SubmitNodeCollector p_426439_, CameraRenderState p_428408_) {
         if (Arix.getInstance()
                 .getModuleRepo()
-                .getModule(Nametags.class)
+                .getModule(Esp.class)
                 .isState()) {
             return;
         }
@@ -229,7 +228,7 @@ public abstract class EntityRenderer<T extends Entity, S extends EntityRenderSta
 
             boolean nametagsEnabled = Arix.getInstance()
                     .getModuleRepo()
-                    .getModule(Nametags.class)
+                    .getModule(Esp.class)
                     .isState();
 
             boolean flag1 = !nametagsEnabled && p_367427_.distanceToCameraSq < 4096.0

@@ -32,7 +32,6 @@ import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.FormattedText;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
@@ -43,7 +42,8 @@ import net.minecraft.world.level.storage.LevelStorageSource;
 import net.optifine.reflect.Reflector;
 import net.optifine.reflect.ReflectorForge;
 import org.slf4j.Logger;
-import ru.arixcompany.ui.alt.AltManagerScreen;
+import ru.arixcompany.ui.title.alt.AltManagerScreen;
+import ru.arixcompany.ui.title.CustomTitleScreen;
 
 public class TitleScreen extends Screen {
     private static final Logger LOGGER = LogUtils.getLogger();
@@ -91,6 +91,8 @@ public class TitleScreen extends Screen {
     }
 
     protected void init() {
+        minecraft.setScreen(new CustomTitleScreen());
+
         int j;
         if (this.splash == null) {
             this.splash = this.minecraft.getSplashManager().getSplash();
@@ -131,7 +133,6 @@ public class TitleScreen extends Screen {
             this.minecraft.stop();
         }).bounds(this.width / 2 + 2, l + 15, 98, 20).build());
 
-        // Alt Manager button (ниже Settings)
         this.addRenderableWidget(
                 Button.builder(Component.literal("Alt Manager"),
                                 b -> this.minecraft.setScreen(new AltManagerScreen(this)))

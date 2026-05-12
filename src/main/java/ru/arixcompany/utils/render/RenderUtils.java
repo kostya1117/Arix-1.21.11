@@ -1,15 +1,44 @@
 package ru.arixcompany.utils.render;
 
+import com.mojang.blaze3d.pipeline.BlendFunction;
+import com.mojang.blaze3d.pipeline.RenderPipeline;
+import com.mojang.blaze3d.platform.DepthTestFunction;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
+import com.mojang.math.Axis;
+import lombok.experimental.UtilityClass;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.renderer.rendertype.RenderSetup;
+import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.ARGB;
 import net.optifine.render.BufferUploader;
+import org.joml.Matrix3x2f;
+import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL11;
+import ru.arixcompany.utils.IMinecraft;
+import ru.arixcompany.utils.render.shader.shaders.RoundRectShader;
 
 import java.util.ArrayDeque;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
-public class RenderUtils {
+@UtilityClass
+public class RenderUtils implements IMinecraft {
+
+    private static final RenderPipeline GUI_IMAGE_PIPELINE = RenderPipelines.register(
+            RenderPipeline.builder(RenderPipelines.GUI_TEXTURED_SNIPPET)
+                    .withLocation(Identifier.fromNamespaceAndPath("arix", "pipeline/gui/image"))
+                    .withVertexFormat(DefaultVertexFormat.POSITION_TEX_COLOR, VertexFormat.Mode.QUADS)
+                    .withCull(false)
+                    .withDepthTestFunction(DepthTestFunction.NO_DEPTH_TEST)
+                    .withDepthWrite(false)
+                    .withBlend(BlendFunction.TRANSLUCENT)
+                    .build()
+    );
 
     private static final ArrayDeque<float[]> transformStack = new ArrayDeque<>();
 
@@ -302,6 +331,54 @@ public class RenderUtils {
                     color
             );
         }
+    }
+
+    private static final Map<Identifier, RenderType> imageRenderTypeCache = new ConcurrentHashMap<>();
+
+    public static void drawImage(Identifier texture, float x, float y, float width, float height, int color) {
+        RenderType renderType = imageRenderTypeCache.computeIfAbsent(texture, tex ->
+                RenderType.create(
+                        tex.toString(),
+                        RenderSetup.builder(GUI_IMAGE_PIPELINE)
+                                .bufferSize(1024)
+                                .withTexture(RenderType.SAMPLER0, tex)
+                                .createRenderSetup()
+                )
+        );
+
+        ByteBufferBuilder allocator = new ByteBufferBuilder(256);
+        MultiBufferSource.BufferSource buffer = MultiBufferSource.immediate(allocator);
+
+        try {
+            Matrix4f matrix = RenderSystem.getModelViewStack();
+            VertexConsumer vertex = buffer.getBuffer(renderType);
+
+            int r = ARGB.red(color);
+            int g = ARGB.green(color);
+            int b = ARGB.blue(color);
+            int a = ARGB.alpha(color);
+
+            vertex.addVertex(matrix, x, y + height, 0)
+                    .setColor(r, g, b, a)
+                    .setUv(0, 1);
+            vertex.addVertex(matrix, x + width, y + height, 0)
+                    .setColor(r, g, b, a)
+                    .setUv(1, 1);
+            vertex.addVertex(matrix, x + width, y, 0)
+                    .setColor(r, g, b, a)
+                    .setUv(1, 0);
+            vertex.addVertex(matrix, x, y, 0)
+                    .setColor(r, g, b, a)
+                    .setUv(0, 0);
+
+            buffer.endBatch();
+        } finally {
+            allocator.close();
+        }
+    }
+
+    public static void drawImage(Identifier texture, float x, float y, float width, float height) {
+        drawImage(texture, x, y, width, height, 0xFFFFFFFF);
     }
 
     private static float[] identity() {

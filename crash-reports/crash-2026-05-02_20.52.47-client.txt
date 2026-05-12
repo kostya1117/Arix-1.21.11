@@ -13,7 +13,7 @@ Caused by: net.minecraft.IdentifierException: Non [a-z0-9/._-] character in path
 	at net.minecraft.resources.Identifier.assertValidPath(Identifier.java:280)
 	at net.minecraft.resources.Identifier.withDefaultNamespace(Identifier.java:61)
 	at com.mojang.blaze3d.pipeline.RenderPipeline$Builder.withLocation(RenderPipeline.java:218)
-	at ru.arixcompany.utils.render.RoundRectShader.<clinit>(RoundRectShader.java:31)
+	at ru.arixcompany.utils.render.shader.shaders.RoundRectShader.<clinit>(RoundRectShader.java:31)
 	... 4 more
 
 

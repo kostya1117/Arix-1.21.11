@@ -20,6 +20,7 @@ public final class SettingComponentFactory {
         if (setting instanceof SelectSetting s) return new SelectSettingComponent(s);
         if (setting instanceof TextSetting  s) return new StringSettingComponent(s);
         if (setting instanceof ListSetting s) return new ListSettingComponent(s);
+        if (setting instanceof ButtonSetting s) return new ButtonSettingComponent(s);
 
         if (setting instanceof ColorSetting s) {
             ColorSettingComponent comp = new ColorSettingComponent(s);

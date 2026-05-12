@@ -26,7 +26,7 @@ public class ModuleRepo implements IMinecraft {
    public ModuleRepo() {
        modules.add(new TestModule());
        modules.add(new CameraTweaks());
-       modules.add(new Nametags());
+       modules.add(new Esp());
        modules.add(new HandView());
        modules.add(new NoFriendDMG());
        modules.add(new AutoAccept());
@@ -41,6 +41,7 @@ public class ModuleRepo implements IMinecraft {
        modules.add(new Interface());
        modules.add(new Animations());
        modules.add(new NoPush());
+       modules.add(new PearlPrediction());
    }
 
    public void init() {

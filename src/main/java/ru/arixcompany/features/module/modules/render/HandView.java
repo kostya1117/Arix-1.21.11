@@ -78,7 +78,8 @@ public class HandView extends Module {
 
         applyBaseTransform(event.getMatrix(), arm);
 
-        if (event.getHand() == InteractionHand.MAIN_HAND) {
+        // Применяем анимацию взмаха только если игрок не использует предмет (не ест, не пьет, не блокирует)
+        if (event.getHand() == InteractionHand.MAIN_HAND && !mc.player.isUsingItem()) {
             applySwingAnimation(
                     event.getMatrix(),
                     arm,

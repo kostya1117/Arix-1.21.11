@@ -1,22 +1,3 @@
-/clan withdraw 1500000
-/ah search Сила
-/ah search инвиз
-/ah search Дезориентация
-/ah search Явная пыль
-/clan invest 5700000
-/clan invest 570000
-/clan home v
-/clan home m
-/clan home b
-/clan withdraw 500000
-/ah search Чарка
-/clan home m
-/hub
-/ah sell 9,999,999
-/ah sell 800,000
-/ah sell 1800,000
-/hub
-/an306
 /clan home b
 /ah
 /clan home b
@@ -48,3 +29,22 @@
 /gamemode creative
 /kit
 /ac
+/kit pvp
+/pvp
+/reg 123qwe111a
+/kit pvp
+/pvp
+/hub
+/gl 155
+/tick freeze
+/tick unfreeze
+/tick freeze
+/tick step 1s
+/tick step 1t
+/tick step 1s
+/tick unfreeze
+/tick rate 15
+/tick rate 20
+/l 1
+/reg 123qwe111a
+/warp pvp

@@ -23,10 +23,10 @@ public final class Colors {
     public static int hoverBg(float alpha, float anim) { return ColorUtil.rgba(45, 45, 50, (int) (180.0F * alpha * anim)); }
 
     public static int textActive(float alpha) { return ColorUtil.rgba(255, 255, 255, (int) (255.0F * alpha)); }
+
     public static int textInactive(float alpha) { return ColorUtil.rgba(160, 160, 170, (int) (255.0F * alpha)); }
-    public static int moduleEnabledColor(float alpha, float animPC) { return ColorUtil.overCol(textInactive(alpha), textActive(alpha), animPC); }
+
     public static int friend(float alpha) {
-        // Зелёный цвет для друзей — отдельный от акцента темы
         return ColorUtil.rgba(40, 200, 80, (int)(255.0F * alpha));
     }
 }
