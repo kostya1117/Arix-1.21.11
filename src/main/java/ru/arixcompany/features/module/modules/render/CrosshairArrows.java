@@ -130,8 +130,8 @@ public class CrosshairArrows extends Module {
             animatedFwd    = fast(animatedFwd,    fwd    * 10f, 5f);
 
             float targetRadius = anim * 50f;
-            if (mc.screen instanceof AbstractContainerScreen) targetRadius += 200f;
-            else if (mc.screen instanceof InventoryScreen)    targetRadius += 150f;
+            if (mc.screen instanceof AbstractContainerScreen) targetRadius += 150f;
+            else if (mc.screen instanceof InventoryScreen)    targetRadius += 130f;
             if (moving)                                        targetRadius += 20f;
             animStep = fast(animStep, targetRadius, 6f);
 
@@ -174,8 +174,6 @@ public class CrosshairArrows extends Module {
             pose.pushMatrix();
 
             pose.translate((float) xPos, (float) yPos);
-            // Matrix3x2f.rotate() — против часовой, поэтому инвертируем знак.
-            // angle - 90° в оригинале = -(angleRad - PI/2) = -angleRad + PI/2
             pose.rotate((float)(-angleRad + Math.PI / 2.0));
             float half = sz / 2f;
             RenderUtils.drawImage(e.getGuiGraphics(), TEX_ARROW,
