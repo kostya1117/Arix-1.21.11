@@ -48,6 +48,7 @@ public class ModuleRepo implements IMinecraft {
        modules.add(new Interface());
        modules.add(new Animations());
        modules.add(new NoPush());
+       modules.add(new BreadCrumbs());
        modules.add(new PearlPrediction());
        modules.add(new AutoRespawn());
    }

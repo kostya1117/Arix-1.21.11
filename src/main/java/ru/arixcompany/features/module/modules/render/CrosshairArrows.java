@@ -1,6 +1,5 @@
 package ru.arixcompany.features.module.modules.render;
 
-import net.minecraft.client.gui.screens.ChatScreen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.resources.Identifier;
@@ -73,20 +72,13 @@ public class CrosshairArrows extends Module {
             en.update(players);
         }
 
-        float fwd    = mc.player.input != null ? mc.player.input.forwardImpulse : 0f;
-        float strafe = mc.player.input != null ? mc.player.input.leftImpulse    : 0f;
-        boolean moving = fwd != 0 || strafe != 0
-                || mc.player.isCrouching()
-                || mc.player.isSwimming()
-                || mc.screen instanceof ChatScreen;
-
         float sz = arrowSize.getValue();
 
         for (ArrowEntry en : entries) {
             float anim = en.animation.getOutput();
             if (anim <= 0.001f) continue;
 
-            en.render(e, cx, cy, sz, moving, fwd, strafe);
+            en.render(e, cx, cy, sz);
         }
 
         entries.removeIf(en ->
@@ -94,16 +86,14 @@ public class CrosshairArrows extends Module {
                         && en.animation.getOutput() == 0f);
     }
 
+    private static float fast(float current, float target, float speed) {
+        return current + (target - current) / speed;
+    }
+
     private class ArrowEntry {
         final Player player;
         final Animation animation = new EaseInOutQuad(300, 1.0);
-
         float smoothYaw;
-
-        float animStep;
-
-        float animatedStrafe;
-        float animatedFwd;
 
         ArrowEntry(Player player) {
             this.player = player;
@@ -111,29 +101,21 @@ public class CrosshairArrows extends Module {
 
         void update(List<Player> alivePlayers) {
             boolean alive = alivePlayers.contains(player) && player.isAlive();
-
             boolean isTarget = player == HitAura.getTarget();
             animation.setDirection(alive && !isTarget ? Direction.FORWARDS : Direction.BACKWARDS);
         }
 
-        void render(EventRender2D e, float cx, float cy, float sz,
-                    boolean moving, float fwd, float strafe) {
-
+        void render(EventRender2D e, float cx, float cy, float sz) {
             float anim = animation.getOutput();
 
             float realYaw = FreeLookRepo.active
-                    ? mc.gameRenderer.getMainCamera().yRot()
-                    : FreeLookRepo.freeYaw;
+                    ? FreeLookRepo.freeYaw
+                    : mc.gameRenderer.getMainCamera().yRot();
             smoothYaw = fast(smoothYaw, realYaw, 10f);
-
-            animatedStrafe = fast(animatedStrafe, strafe * 10f, 5f);
-            animatedFwd    = fast(animatedFwd,    fwd    * 10f, 5f);
 
             float targetRadius = anim * 50f;
             if (mc.screen instanceof AbstractContainerScreen) targetRadius += 150f;
             else if (mc.screen instanceof InventoryScreen)    targetRadius += 130f;
-
-            animStep = fast(animStep, targetRadius, 6f);
 
             float tickDelta = mc.getDeltaTracker().getGameTimeDeltaPartialTick(true);
             double ex = player.xo + (player.getX() - player.xo) * tickDelta
@@ -156,10 +138,8 @@ public class CrosshairArrows extends Module {
             double angleDeg = Math.atan2(rotateYaw, rotatePitch) * 180.0 / Math.PI;
             double angleRad = Math.toRadians(angleDeg);
 
-            double distanceFactor = Math.min(1.0, distance / 20.0);
-
-            double xPos = animStep * Math.cos(angleRad) + cx + animatedStrafe;
-            double yPos = animStep * Math.sin(angleRad) + cy + animatedFwd + distanceFactor;
+            double xPos = targetRadius * Math.cos(angleRad) + cx;
+            double yPos = targetRadius * Math.sin(angleRad) + cy;
 
             int color;
             if (FriendRepo.isFriend(player)) {
@@ -174,7 +154,7 @@ public class CrosshairArrows extends Module {
             pose.pushMatrix();
 
             pose.translate((float) xPos, (float) yPos);
-            pose.rotate((float)(-angleRad + Math.PI / 2.0));
+            pose.rotate((float)(angleRad - Math.PI / 2.0));
             float half = sz / 2f;
             RenderUtils.drawImage(e.getGuiGraphics(), TEX_ARROW,
                     -half, -half, sz, sz, color);
@@ -187,7 +167,7 @@ public class CrosshairArrows extends Module {
                 float tw = FontManager.get(fontSize).getWidth(distText);
                 float th = FontManager.get(fontSize).getHeight();
 
-                float textDist = animStep + half + 4f;
+                float textDist = targetRadius + half + 4f;
                 float tx = (float)(textDist * Math.cos(angleRad) + cx - tw / 2f);
                 float ty = (float)(textDist * Math.sin(angleRad) + cy - th / 2f);
 
@@ -197,9 +177,5 @@ public class CrosshairArrows extends Module {
                 );
             }
         }
-    }
-
-    private static float fast(float current, float target, float speed) {
-        return current + (target - current) / speed;
     }
 }

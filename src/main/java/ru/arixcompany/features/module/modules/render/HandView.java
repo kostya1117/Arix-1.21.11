@@ -52,15 +52,20 @@ public class HandView extends Module {
     private final ValueSetting swingSpeed =
             new ValueSetting("Длительность взмаха").range(0.5f, 4f).setValue(1f).setStep(0.1f);
 
+    private final BooleanSetting changEat = new BooleanSetting("Изменять еду")
+            .setValue(false);
+
     private final ValueSetting eatShake =
-            new ValueSetting("Шейк при еде").range(0f, 2f).setValue(1f).setStep(0.1f);
+            new ValueSetting("Шейк при еде")
+                    .range(0f, 2f).setValue(1f).setStep(0.1f)
+                    .visible(changEat::isValue);
 
     public HandView() {
         super("HandView", Category.Render);
         setup(
                 new GroupSetting("Правая рука", rightPosX, rightPosY, rightPosZ),
                 new GroupSetting("Левая рука",  leftPosX,  leftPosY,  leftPosZ),
-                new GroupSetting("Взмах",skipSwapping, swingType, hitStrength, swingSpeed,eatShake)
+                new GroupSetting("Взмах",skipSwapping, swingType, hitStrength, swingSpeed,changEat,eatShake)
         );
     }
 
@@ -79,8 +84,10 @@ public class HandView extends Module {
                     useAnimation == ItemUseAnimation.DRINK) {
                     HumanoidArm arm = resolveArm(event.getHand());
                     applyBaseTransform(event.getMatrix(), arm);
-                    applyVanillaEatAnimation(event.getMatrix(), arm, useItem);
-                    event.cancel();
+                    if (changEat.isValue()) {
+                        applyEatAnim(event.getMatrix(), arm, useItem);
+                        event.cancel();
+                    }
                     return;
                 }
 
@@ -104,7 +111,9 @@ public class HandView extends Module {
                     
                     HumanoidArm arm = resolveArm(event.getHand());
                     applyBaseTransform(event.getMatrix(), arm);
-                    event.cancel();
+                    if (changEat.isValue()) {
+                        event.cancel();
+                    }
                     return;
                 }
             }
@@ -146,7 +155,7 @@ public class HandView extends Module {
         }
     }
 
-    private void applyVanillaEatAnimation(PoseStack poseStack, HumanoidArm arm, ItemStack item) {
+    private void applyEatAnim(PoseStack poseStack, HumanoidArm arm, ItemStack item) {
         if (mc.player == null) return;
 
         float f  = (float) mc.player.getUseItemRemainingTicks();
@@ -154,15 +163,14 @@ public class HandView extends Module {
         int   i  = arm == HumanoidArm.RIGHT ? 1 : -1;
 
         if (f1 < 0.8F) {
-            float jiggle = Mth.abs(Mth.cos(f / 4.0F * (float) Math.PI) * 0.1F) * eatShake.getValue();
+            float jiggle = Mth.sin(f / 4.0F * (float) Math.PI) * 0.08F * eatShake.getValue();
             poseStack.translate(0.0F, jiggle, 0.0F);
         }
 
-        float f3 = 1.0F - (float) Math.pow(f1, 27.0);
-        poseStack.translate(f3 * 0.6F * i, f3 * -0.5F, 0.0F);
-        poseStack.mulPose(Axis.YP.rotationDegrees(i * f3 * 90.0F));
-        poseStack.mulPose(Axis.XP.rotationDegrees(f3 * 10.0F));
-        poseStack.mulPose(Axis.ZP.rotationDegrees(i * f3 * 30.0F));
+        poseStack.translate(0.6F * i, -0.5F, 0.0F);
+        poseStack.mulPose(Axis.YP.rotationDegrees(i * 90.0F));
+        poseStack.mulPose(Axis.XP.rotationDegrees(10.0F));
+        poseStack.mulPose(Axis.ZP.rotationDegrees(i * 30.0F));
 
         poseStack.translate(i * 0.56F, -0.52F, -0.72F);
     }
