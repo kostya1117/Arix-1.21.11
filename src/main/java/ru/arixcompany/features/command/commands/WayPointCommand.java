@@ -14,8 +14,9 @@ import ru.arixcompany.features.command.arguments.WayPointArgumentType;
 import ru.arixcompany.features.event.EventHandler;
 import ru.arixcompany.features.event.EventRepo;
 import ru.arixcompany.features.event.render.EventRender3D;
-import ru.arixcompany.features.event.render.EventScreen;
+import ru.arixcompany.features.event.render.EventRender2D;
 import ru.arixcompany.features.repos.WayPointRepo;
+import ru.arixcompany.utils.Colors;
 import ru.arixcompany.utils.MessageSender;
 import ru.arixcompany.utils.math.ProjectUtils;
 import ru.arixcompany.utils.render.ColorUtil;
@@ -27,6 +28,8 @@ import java.util.Map;
 
 public class WayPointCommand extends AbstractCommand {
     private static final Map<WayPointRepo.WayPoint, WaypointScreenData> waypointScreenData = new HashMap<>();
+    private static final net.minecraft.resources.Identifier WAYPOINT_TEX =
+            net.minecraft.resources.Identifier.withDefaultNamespace("textures/arix/waypoint.png");
 
     public WayPointCommand() {
         super("waypoint", "Управление вейпоинтами");
@@ -169,7 +172,7 @@ public class WayPointCommand extends AbstractCommand {
     }
 
     @EventHandler
-    public void onRender2D(EventScreen event) {
+    public void onRender2D(EventRender2D event) {
         if (mc.level == null || mc.player == null) return;
         if (waypointScreenData.isEmpty()) return;
 
@@ -183,74 +186,39 @@ public class WayPointCommand extends AbstractCommand {
             float screenY = (float) data.y;
 
             String nameText = wp.getName();
-            String coordsText = wp.getX() + ", " + wp.getY() + ", " + wp.getZ();
-            String distanceText = formatDistance(distance);
+            String distText = formatDistance(distance);
 
-            float fontSize = 12f;
-            float smallFontSize = 10f;
+            float fontSize = 10f;
 
-            float padding = 3f;
-            float spacing = 2f;
+            int distColor = getDistanceColor(distance);
+            int gray = ColorUtil.rgba(160, 160, 160, 255);
 
-            float nameWidth = FontManager.get(fontSize).getWidth(nameText);
-            float coordsWidth = FontManager.get(smallFontSize).getWidth(coordsText);
-            float distWidth = FontManager.get(smallFontSize).getWidth(distanceText);
+            MutableComponent label =
+                    Component.literal(nameText).withColor(-1)
+                            .append(Component.literal(" (").withColor(gray))
+                            .append(Component.literal(distText).withColor(distColor))
+                            .append(Component.literal(")").withColor(gray));
 
-            float contentWidth = Math.max(nameWidth, Math.max(coordsWidth, distWidth));
-            float boxWidth = contentWidth + padding * 2;
+            float labelW = FontManager.get(fontSize).getComponentWidth(label);
 
-            float lineHeightBig = fontSize;
-            float lineHeightSmall = smallFontSize;
+            float iconSize = 20f;
+            float iconX = screenX - iconSize / 2f;
+            float iconY = screenY - 35f;
 
-            float boxHeight =
-                    padding +
-                            lineHeightBig +
-                            spacing +
-                            lineHeightSmall +
-                            spacing +
-                            lineHeightSmall +
-                            padding;
-
-            float boxX = screenX - boxWidth / 2f;
-            float boxY = screenY - boxHeight - 6f;
-
-            RenderUtils.fillRoundRect(
-                    boxX,
-                    boxY,
-                    boxWidth,
-                    boxHeight,
-                    6f,
-                    0x90000000
+            RenderUtils.drawImage(
+                    event.getGuiGraphics(),
+                    WAYPOINT_TEX,
+                    iconX, iconY,
+                    iconSize, iconSize,
+                    Colors.accent(1f)
             );
 
-            float textY = boxY + padding;
-
-            FontManager.get(fontSize).drawString(
+            FontManager.get(fontSize).drawComponent(
                     event.getGuiGraphics(),
-                    nameText,
-                    screenX - nameWidth / 2f,
-                    textY,
-                    ColorUtil.getMainColor(1, 1)
-            );
-
-            textY += lineHeightBig + spacing;
-
-            FontManager.get(smallFontSize).drawString(
-                    event.getGuiGraphics(),
-                    coordsText,
-                    screenX - coordsWidth / 2f,
-                    textY,
-                    ColorUtil.getTextColor(1, 1)
-            );
-
-            textY += lineHeightSmall + spacing;
-
-            FontManager.get(smallFontSize).drawString(
-                    event.getGuiGraphics(),
-                    distanceText,
-                    screenX - distWidth / 2f,
-                    textY,
-                    getDistanceColor(distance)
+                    label,
+                    screenX - labelW / 2f,
+                    screenY - 10f,
+                    -1
             );
         }
     }
@@ -276,9 +244,7 @@ public class WayPointCommand extends AbstractCommand {
         }
     }
 
-    @AllArgsConstructor
-    private static class WaypointScreenData {
-        final double x, y, z;
-        final double distance;
+
+        private record WaypointScreenData(double x, double y, double z, double distance) {
     }
 }

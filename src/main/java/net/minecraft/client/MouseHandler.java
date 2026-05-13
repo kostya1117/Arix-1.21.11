@@ -31,6 +31,7 @@ import org.jspecify.annotations.Nullable;
 import org.lwjgl.glfw.GLFWDropCallback;
 import org.slf4j.Logger;
 import ru.arixcompany.features.event.EventRepo;
+import ru.arixcompany.features.event.player.EventKey;
 import ru.arixcompany.features.event.player.EventLook;
 import ru.arixcompany.features.event.player.EventMouseScroll;
 
@@ -69,6 +70,9 @@ public class MouseHandler {
     }
 
     private void onButton(long p_428888_, MouseButtonInfo p_424132_, @MouseButtonInfo.Action int p_423948_) {
+        EventKey event = new EventKey(p_424132_.button(),p_423948_);
+        EventRepo.call(event);
+
         Window window = this.minecraft.getWindow();
         if (p_428888_ == window.handle()) {
             this.minecraft.getFramerateLimitTracker().onInputReceived();

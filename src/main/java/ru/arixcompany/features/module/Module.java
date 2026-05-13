@@ -73,4 +73,8 @@ public class Module extends SettingAdder implements IMinecraft {
             this.deactivate();
         }
     }
+
+    public static boolean fullNullCheck() {
+        return mc.player == null || mc.level == null;
+    }
 }

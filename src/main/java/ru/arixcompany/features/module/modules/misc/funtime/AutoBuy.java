@@ -6,7 +6,7 @@ import net.minecraft.client.gui.screens.inventory.ContainerScreen;
 import net.minecraft.network.protocol.game.ClientboundSystemChatPacket;
 import ru.arixcompany.features.event.EventHandler;
 import ru.arixcompany.features.event.player.EventMouseScroll;
-import ru.arixcompany.features.event.render.EventScreen;
+import ru.arixcompany.features.event.render.EventRender2D;
 import ru.arixcompany.features.event.world.EventPacket;
 import ru.arixcompany.features.event.world.EventTick;
 import ru.arixcompany.features.module.Category;
@@ -14,7 +14,6 @@ import ru.arixcompany.features.module.Module;
 import ru.arixcompany.features.module.modules.misc.funtime.autobuy.*;
 import ru.arixcompany.features.module.modules.misc.funtime.autobuy.items.ItemTarget;
 import ru.arixcompany.features.module.modules.misc.funtime.autobuy.items.ItemsRegistry;
-import ru.arixcompany.features.module.modules.misc.funtime.utils.FuntimeUtil;
 import ru.arixcompany.features.module.setting.implement.BooleanSetting;
 import ru.arixcompany.features.module.setting.implement.ValueSetting;
 import ru.arixcompany.utils.MessageSender;
@@ -254,7 +253,7 @@ public class AutoBuy extends Module {
     }
 
     @EventHandler
-    public void onRender2D(EventScreen e) {
+    public void onRender2D(EventRender2D e) {
         if (mc.screen instanceof ContainerScreen screen) {
 
             String title = screen.getTitle().getString().toLowerCase();

@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.Map;
 import java.util.function.Supplier;
+
 import net.minecraft.ChatFormatting;
 import net.minecraft.Optionull;
 import net.minecraft.client.AttackIndicatorStatus;
@@ -89,7 +90,7 @@ import ru.arixcompany.ui.draggable.draggables.ArmorHudDraggable;
 import ru.arixcompany.ui.draggable.draggables.CrosshairDraggable;
 import ru.arixcompany.ui.draggable.draggables.ScoreboardDraggable;
 import ru.arixcompany.features.event.EventRepo;
-import ru.arixcompany.features.event.render.EventScreen;
+import ru.arixcompany.features.event.render.EventRender2D;
 import ru.arixcompany.features.module.modules.render.Animations;
 import ru.arixcompany.features.module.modules.render.NoRender;
 
@@ -133,7 +134,8 @@ public class Gui {
     private final RandomSource random = RandomSource.create();
     private final Minecraft minecraft;
     private final ChatComponent chat;
-    private int tickCount;
+    public int tickCount;
+
     private  Component overlayMessageString;
     private int overlayMessageTime;
     private boolean animateOverlayMessageColor;
@@ -241,7 +243,7 @@ public class Gui {
             renderArmorHudOnly(p_282884_, p_342095_);
         }
 
-        EventRepo.call(new EventScreen(p_282884_));
+        EventRepo.call(new EventRender2D(p_282884_));
     }
 
     private void renderArmorHudOnly(GuiGraphics graphics, DeltaTracker delta) {
@@ -879,6 +881,9 @@ public class Gui {
             Profiler.get().popPush("air");
             this.renderAirBubbles(p_283143_, player, l2, j2, i1);
             Profiler.get().pop();
+
+            if (appleskin.client.HUDOverlayHandler.INSTANCE != null)
+                appleskin.client.HUDOverlayHandler.INSTANCE.onRenderHealth(p_283143_, player, l, j1);
         }
     }
 
@@ -1017,6 +1022,10 @@ public class Gui {
     }
 
     private void renderFood(GuiGraphics p_330960_, Player p_328268_, int p_331606_, int p_330339_) {
+        // AppleSkin: exhaustion underlay (before vanilla food)
+        if (appleskin.client.HUDOverlayHandler.INSTANCE != null)
+            appleskin.client.HUDOverlayHandler.INSTANCE.onPreRenderFood(p_330960_, p_328268_, p_331606_, p_330339_);
+
         FoodData fooddata = p_328268_.getFoodData();
         int i = fooddata.getFoodLevel();
 
@@ -1049,6 +1058,10 @@ public class Gui {
                 p_330960_.blitSprite(RenderPipelines.GUI_TEXTURED, identifier1, l, k, 9, 9);
             }
         }
+
+        // AppleSkin: saturation + hunger overlay (after vanilla food)
+        if (appleskin.client.HUDOverlayHandler.INSTANCE != null)
+            appleskin.client.HUDOverlayHandler.INSTANCE.onRenderFood(p_330960_, p_328268_, p_331606_, p_330339_);
     }
 
     private void renderVehicleHealth(GuiGraphics p_283368_) {

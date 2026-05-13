@@ -192,7 +192,6 @@ public class TargetESP extends Module {
         float animVal = spiritsAnim.getOutput();
         int alphaValue = (int) (animVal * 255f);
 
-        // hurtTime: sin-дуга, пик в момент удара, плавное затухание
         float rawHurt = clamp01((lastTarget.hurtTime - e.getTickDelta()) / 10.0f);
         float hurtProgress = (float) Math.sin(rawHurt * Math.PI);
 

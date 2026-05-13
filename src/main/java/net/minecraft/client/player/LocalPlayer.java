@@ -111,6 +111,7 @@ import ru.arixcompany.features.event.player.EventSprint;
 import ru.arixcompany.features.event.world.EventUpdate;
 import ru.arixcompany.features.module.modules.combat.aura.rotation.impl.FreeLookRepo;
 import ru.arixcompany.features.module.modules.movement.AutoSprint;
+import ru.arixcompany.features.module.modules.player.NoPush;
 
 
 public class LocalPlayer extends AbstractClientPlayer {
@@ -441,6 +442,11 @@ public class LocalPlayer extends AbstractClientPlayer {
     }
 
     private void moveTowardsClosestSpace(double p_108705_, double p_108706_) {
+        NoPush noPush = Arix.getInstance().getModuleRepo().getModule(NoPush.class);
+        if (noPush.isState() && noPush.cancelPush.isSelected("Блоков")) {
+            return;
+        }
+
         BlockPos blockpos = BlockPos.containing(p_108705_, this.getY(), p_108706_);
         if (this.suffocatesAt(blockpos)) {
             double d0 = p_108705_ - blockpos.getX();

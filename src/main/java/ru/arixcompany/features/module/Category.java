@@ -1,21 +1,16 @@
 package ru.arixcompany.features.module;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+@AllArgsConstructor
+@Getter
 public enum Category {
-   Combat("Combat", "a"),
-   Movement("Movement", "c"),
-   Render("Render", "e"),
-   Player("Player", "g"),
-   Misc("Misc", "h");
+   Combat("Combat"),
+   Movement("Movement"),
+   Render("Render"),
+   Player("Player"),
+   Misc("Misc");
 
-   @Getter
-   private final String name;
-   @Getter
-   private final String icon;
-
-   private Category(String name, String icon) {
-      this.name = name;
-      this.icon = icon;
-   }
+    private final String name;
 }

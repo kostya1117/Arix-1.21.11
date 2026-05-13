@@ -112,4 +112,13 @@ public class FoodData {
     public void setSaturation(float p_38718_) {
         this.saturationLevel = p_38718_;
     }
+
+    // AppleSkin: expose exhaustion level
+    public float getExhaustionLevel() {
+        return this.exhaustionLevel;
+    }
+
+    public void setExhaustionLevel(float value) {
+        this.exhaustionLevel = value;
+    }
 }

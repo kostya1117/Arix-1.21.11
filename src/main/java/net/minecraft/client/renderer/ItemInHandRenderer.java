@@ -360,16 +360,15 @@ public class ItemInHandRenderer {
     private void applyItemArmTransform(PoseStack poseStack, HumanoidArm arm, float equipProgress) {
         HandView mod = getHandView();
 
-        // Не пропускаем трансформацию если игрок использует предмет (еда, лук и т.д.)
         if (mod != null && mod.isState() && this.currentHand == InteractionHand.MAIN_HAND) {
-            // Проверяем, использует ли игрок предмет
             if (this.minecraft.player != null && this.minecraft.player.isUsingItem()) {
-                // Если использует - применяем стандартную трансформацию
+                // Player is using an item — apply standard position but ignore equipProgress
+                // so the main hand doesn't slide down when the off-hand is eating/drinking.
                 int i = arm == HumanoidArm.RIGHT ? 1 : -1;
-                poseStack.translate(i * 0.56F, -0.52F + equipProgress * -0.6F, -0.72F);
+                poseStack.translate(i * 0.56F, -0.52F, -0.72F);
                 return;
             }
-            // Если не использует - пропускаем (для кастомной анимации взмаха)
+            // Not using item — skip transform, HandView's swingArm handles it
             return;
         }
 

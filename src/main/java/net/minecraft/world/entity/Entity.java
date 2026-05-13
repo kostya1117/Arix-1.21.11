@@ -153,7 +153,10 @@ import org.jetbrains.annotations.Contract;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import ru.arixcompany.Arix;
+import ru.arixcompany.features.module.modules.player.NoPush;
 import ru.arixcompany.features.module.modules.render.NoRender;
+
+import static ru.arixcompany.utils.IMinecraft.mc;
 
 public abstract class Entity implements SyncedDataHolder, DebugValueSource, Nameable, ItemOwner, SlotProvider, EntityAccess, ScoreHolder, DataComponentGetter {
     private static final Logger LOGGER = LogUtils.getLogger();
@@ -1772,6 +1775,11 @@ public abstract class Entity implements SyncedDataHolder, DebugValueSource, Name
     }
 
     public void push(Entity p_20293_) {
+        NoPush noPush = Arix.getInstance().getModuleRepo().getModule(NoPush.class);
+        if ((Object) this == mc.player && noPush.isState() && noPush.cancelPush.isSelected("Игроков")) {
+            return;
+        }
+
         if (!this.isPassengerOfSameVehicle(p_20293_)) {
             if (!p_20293_.noPhysics && !this.noPhysics) {
                 double d0 = p_20293_.getX() - this.getX();

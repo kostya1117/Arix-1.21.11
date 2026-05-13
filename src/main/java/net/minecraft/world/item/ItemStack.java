@@ -7,7 +7,6 @@ import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.DataResult.Error;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import com.mojang.serialization.codecs.RecordCodecBuilder.Instance;
 import io.netty.handler.codec.DecoderException;
 import io.netty.handler.codec.EncoderException;
 import java.util.List;
@@ -41,7 +40,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentUtils;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.Style;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.RegistryOps;
@@ -101,7 +99,6 @@ import net.minecraft.world.level.block.state.pattern.BlockInWorld;
 import net.minecraft.world.level.gameevent.GameEvent;
 import org.apache.commons.lang3.function.TriConsumer;
 import org.apache.commons.lang3.mutable.MutableBoolean;
-import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 
 public final class ItemStack implements DataComponentHolder {
@@ -228,6 +225,16 @@ public final class ItemStack implements DataComponentHolder {
     }
 
     public Optional<TooltipComponent> getTooltipImage() {
+        // ShulkerView: show inventory preview for shulker boxes and other containers
+        Optional<TooltipComponent> shulkerView = shulkerview.ShulkerViewHook.getTooltipImage(this);
+        if (shulkerView.isPresent()) return shulkerView;
+
+        // AppleSkin: food overlay
+        if (appleskin.client.TooltipOverlayHandler.INSTANCE != null) {
+            Optional<TooltipComponent> foodOverlay = appleskin.client.TooltipOverlayHandler.INSTANCE.getFoodTooltipImage(this);
+            if (foodOverlay.isPresent()) return foodOverlay;
+        }
+
         return this.getItem().getTooltipImage(this);
     }
 

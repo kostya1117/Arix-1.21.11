@@ -14,7 +14,7 @@ import net.minecraft.world.phys.Vec3;
 import ru.arixcompany.Arix;
 import ru.arixcompany.features.event.EventHandler;
 import ru.arixcompany.features.event.render.EventRender3D;
-import ru.arixcompany.features.event.render.EventScreen;
+import ru.arixcompany.features.event.render.EventRender2D;
 import ru.arixcompany.features.module.Category;
 import ru.arixcompany.features.module.Module;
 import ru.arixcompany.features.module.modules.combat.HitAura;
@@ -51,7 +51,7 @@ public class PearlPrediction extends Module {
             Vec3 pos = pearl.position();
             int ticks = 0;
 
-            String ownerName = pearl.getOwner() != null ? pearl.getOwner().getName().getString() : "Unknown";
+            String owner = pearl.getOwner().getName().getString();
 
             List<Vec3> trajectory = new ArrayList<>();
             trajectory.add(pos);
@@ -77,7 +77,7 @@ public class PearlPrediction extends Module {
                 trajectory.add(pos);
 
                 if (hitResult.getType() == HitResult.Type.BLOCK || pos.y < -128.0) {
-                    pearlPoints.add(new PearlPoint(pos, ticks, ownerName));
+                    pearlPoints.add(new PearlPoint(pos, ticks, owner));
                     break;
                 }
                 ticks++;
@@ -99,14 +99,14 @@ public class PearlPrediction extends Module {
                         trajectory.get(i - 1),
                         trajectory.get(i),
                         lineColor,
-                        2.0f
+                        3.0f
                 );
             }
         }
     }
 
     @EventHandler
-    public void onRender2D(EventScreen e) {
+    public void onRender2D(EventRender2D e) {
         if (mc.level == null || mc.player == null) return;
 
         float fontSize = 13;
@@ -126,8 +126,8 @@ public class PearlPrediction extends Module {
             String nameText = point.ownerName;
 
             int nameColor;
-            boolean isTarget = HitAura.getTarget() != null && 
-                             HitAura.getTarget().getName().getString().equals(point.ownerName);
+            boolean isTarget = HitAura.getTarget() != null &&
+                    HitAura.getTarget().getName().getString().equals(point.ownerName);
             boolean isFriend = FriendRepo.isFriend(point.ownerName);
             boolean isPlayer = mc.player.getName().getString().equals(point.ownerName);
 
@@ -199,8 +199,7 @@ public class PearlPrediction extends Module {
         }
     }
 
-    private Vec3 getNextMotion(ThrowableProjectile throwable, Vec3 prevPos, Vec3 motion) {
-        boolean inWater = mc.level.getBlockState(BlockPos.containing(prevPos))
+    private Vec3 getNextMotion(ThrowableProjectile throwable, Vec3 prevPos, Vec3 motion) {        boolean inWater = mc.level.getBlockState(BlockPos.containing(prevPos))
                 .getFluidState()
                 .is(FluidTags.WATER);
 
