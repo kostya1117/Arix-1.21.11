@@ -132,7 +132,7 @@ public class CrosshairArrows extends Module {
             float targetRadius = anim * 50f;
             if (mc.screen instanceof AbstractContainerScreen) targetRadius += 150f;
             else if (mc.screen instanceof InventoryScreen)    targetRadius += 130f;
-            if (moving)                                        targetRadius += 20f;
+
             animStep = fast(animStep, targetRadius, 6f);
 
             float tickDelta = mc.getDeltaTracker().getGameTimeDeltaPartialTick(true);

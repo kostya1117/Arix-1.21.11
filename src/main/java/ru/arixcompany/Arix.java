@@ -86,6 +86,10 @@ public class Arix implements IMinecraft {
 
         EventRepo.register(this);
         initialized = true;
+
+        // AppleSkin
+        appleskin.client.HUDOverlayHandler.init();
+        appleskin.client.TooltipOverlayHandler.init();
         Runtime.getRuntime().addShutdownHook(new Thread(this::onExit));
     }
 

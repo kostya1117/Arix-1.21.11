@@ -10,6 +10,10 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.ItemContainerContents;
+import net.minecraft.world.level.block.ShulkerBoxBlock;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import ru.arixcompany.Arix;
@@ -57,6 +61,10 @@ public class Esp extends Module {
     private final BooleanSetting stackItems = new BooleanSetting("Стакать предметы")
             .visible(() -> mode.isSelected("Предметы"));
 
+    private final BooleanSetting shulkerContents = new BooleanSetting("Содержимое шалкера")
+            .setValue(true)
+            .visible(() -> mode.isSelected("Предметы"));
+
     private final Map<Player, double[]> entityPositions = new HashMap<>();
     private final List<ItemGroup> itemGroups = new ArrayList<>();
 
@@ -64,7 +72,7 @@ public class Esp extends Module {
 
     public Esp() {
         super("Esp", Category.Render);
-        setup(mode, boxes, boxDimension, boxStyle3D, boxStyle2D, stackItems);
+        setup(mode, boxes, boxDimension, boxStyle3D, boxStyle2D, stackItems, shulkerContents);
     }
 
     @EventHandler
@@ -210,25 +218,37 @@ public class Esp extends Module {
                 float iconSize = 14;
                 float iconPadding = 4;
                 float padding = 4;
+
+                // Проверяем содержимое шалкера
+                List<ItemStack> shulkerItems = getShulkerContents(entry.stack);
+                boolean hasShulker = shulkerContents.isValue() && !shulkerItems.isEmpty();
+
+                float shulkerRowH = hasShulker ? (9 * 2f + 4f) : 0f; // иконки 9px + отступы
                 float rectW = padding + iconSize + iconPadding + textWidth + padding;
-                float rectH = 16;
+                float rectH = 16 + (hasShulker ? shulkerRowH + 2f : 0f);
 
                 RenderUtils.fillRoundRect(sx - rectW / 2f, sy - rectH / 2f, rectW, rectH, 4f, 0x90000000);
 
                 g.pose().pushMatrix();
-                g.pose().translate(sx - rectW / 2f + padding, sy - iconSize / 2f);
+                g.pose().translate(sx - rectW / 2f + padding, sy - rectH / 2f + (rectH - iconSize) / 2f - (hasShulker ? shulkerRowH / 2f : 0f));
                 g.pose().scale(iconSize / 16f, iconSize / 16f);
                 g.renderItem(entry.stack, 0, 0);
                 g.renderItemDecorations(mc.font, entry.stack, 0, 0);
                 g.pose().popMatrix();
 
                 float textX = sx - rectW / 2f + padding + iconSize + iconPadding;
-                float textY = sy - FontManager.get(fontSize).getHeight() / 2f;
+                float textY = sy - rectH / 2f + (rectH - FontManager.get(fontSize).getHeight() - (hasShulker ? shulkerRowH + 2f : 0f)) / 2f;
 
                 FontManager.get(fontSize).drawComponent(g, name, textX, textY, 0xFFFFFFFF);
 
                 if (entry.totalCount > 1) {
                     FontManager.get(fontSize).drawString(g, countStr, textX + nameWidth, textY, mainColor.getRGB());
+                }
+
+                // Рендер содержимого шалкера
+                if (hasShulker) {
+                    renderShulkerContents(g, shulkerItems, sx - rectW / 2f + padding,
+                            sy - rectH / 2f + rectH - shulkerRowH - 2f, rectW - padding * 2f);
                 }
             } else {
                 float padding = 5f;
@@ -276,6 +296,40 @@ public class Esp extends Module {
                     currentY += lineHeight + gap;
                 }
             }
+        }
+    }
+
+    private List<ItemStack> getShulkerContents(ItemStack stack) {
+        if (stack.isEmpty()) return List.of();
+        if (!(stack.getItem() instanceof BlockItem bi)) return List.of();
+        if (!(bi.getBlock() instanceof ShulkerBoxBlock)) return List.of();
+
+        ItemContainerContents contents = stack.get(DataComponents.CONTAINER);
+        if (contents == null) return List.of();
+
+        List<ItemStack> result = new ArrayList<>();
+        contents.nonEmptyItems().forEach(result::add);
+        return result;
+    }
+
+    private void renderShulkerContents(GuiGraphics g, List<ItemStack> items, float x, float y, float maxWidth) {
+        float iconSize = 9f;
+        float spacing  = 1f;
+        int   maxPerRow = Math.min(9, (int)(maxWidth / (iconSize + spacing)));
+        int   count     = Math.min(items.size(), maxPerRow);
+
+        float totalW = count * (iconSize + spacing) - spacing;
+        float startX = x + (maxWidth - totalW) / 2f;
+
+        for (int i = 0; i < count; i++) {
+            ItemStack s = items.get(i);
+            if (s.isEmpty()) continue;
+            float ix = startX + i * (iconSize + spacing);
+            g.pose().pushMatrix();
+            g.pose().translate(ix, y);
+            g.pose().scale(iconSize / 16f, iconSize / 16f);
+            g.renderItem(s, 0, 0);
+            g.pose().popMatrix();
         }
     }
 

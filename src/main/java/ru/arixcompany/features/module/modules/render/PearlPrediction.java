@@ -99,7 +99,7 @@ public class PearlPrediction extends Module {
                         trajectory.get(i - 1),
                         trajectory.get(i),
                         lineColor,
-                        2.0f
+                        3.0f
                 );
             }
         }

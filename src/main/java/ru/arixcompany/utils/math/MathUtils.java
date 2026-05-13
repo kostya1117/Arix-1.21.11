@@ -32,6 +32,10 @@ public class MathUtils implements IMinecraft {
         }
     }
 
+    public static float getRandom(float min, float max) {
+        return (float) (Math.random() * (max - min) + min);
+    }
+
     public static float getSmartRandom(float min,float max) {
         Random random = ThreadLocalRandom.current();
 

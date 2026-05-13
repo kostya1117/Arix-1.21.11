@@ -13,6 +13,7 @@ import ru.arixcompany.features.module.modules.misc.ClientSounds;
 import ru.arixcompany.features.module.modules.misc.funtime.AuctionUtils;
 import ru.arixcompany.features.module.modules.misc.funtime.AutoBuy;
 import ru.arixcompany.features.module.modules.movement.AutoSprint;
+import ru.arixcompany.features.module.modules.player.AutoRespawn;
 import ru.arixcompany.features.module.modules.player.NoPush;
 import ru.arixcompany.features.module.modules.player.TestModule;
 import ru.arixcompany.features.module.modules.render.*;
@@ -40,11 +41,15 @@ public class ModuleRepo implements IMinecraft {
        modules.add(new StorageEsp());
        modules.add(new HitBubbles());
        modules.add(new CrosshairArrows());
+       modules.add(new BlockHighLight());
+       modules.add(new JumpCircle());
+       modules.add(new ChinaHat());
        modules.add(new NoRender());
        modules.add(new Interface());
        modules.add(new Animations());
        modules.add(new NoPush());
        modules.add(new PearlPrediction());
+       modules.add(new AutoRespawn());
    }
 
    public void init() {

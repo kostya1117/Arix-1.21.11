@@ -10,8 +10,6 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.InteractionHand;
 
 public class AttackOrder {
-    // private static final Minecraft mc = Minecraft.getInstance(); // Можно так, если используется часто
-    // Либо получать экземпляр по месту, что более безопасно в статических методах, если класс загружается очень рано
 
     /**
      * Sends a swing packet if the hit result is not an entity.
@@ -58,10 +56,7 @@ public class AttackOrder {
         }
     }
 
-    // Если вы хотите сохранить оригинальную сигнатуру sendFixedAttack и всегда использовать MAIN_HAND:
-    /*
     public static void sendFixedAttack(Player attacker, Entity target) {
         sendFixedAttack(attacker, target, InteractionHand.MAIN_HAND);
     }
-    */
 }

@@ -1,6 +1,5 @@
 package ru.arixcompany.features.module.modules.player;
 
-import ru.arixcompany.features.event.EventHandler;
 import ru.arixcompany.features.module.Category;
 import ru.arixcompany.features.module.Module;
 import ru.arixcompany.features.module.setting.implement.ListSetting;
@@ -12,5 +11,5 @@ public class NoPush extends Module {
     }
 
    public ListSetting cancelPush = new ListSetting("Отменить от")
-            .value("Блоков","Игроков","Жидкостей");
+            .value("Блоков","Игроков");
 }

@@ -1730,6 +1730,10 @@ public class Minecraft extends ReentrantBlockableEventLoop<Runnable> implements 
 
         EventRepo.call(new EventTick());
 
+        // AppleSkin: client tick for flash animation
+        if (appleskin.client.HUDOverlayHandler.INSTANCE != null)
+            appleskin.client.HUDOverlayHandler.INSTANCE.onClientTick();
+
         ProfilerFiller profilerfiller = Profiler.get();
         profilerfiller.push("gui");
         this.chatListener.tick();
