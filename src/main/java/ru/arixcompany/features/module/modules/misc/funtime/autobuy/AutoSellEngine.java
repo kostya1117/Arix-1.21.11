@@ -150,7 +150,6 @@ public class AutoSellEngine implements IMinecraft {
     public boolean handleMessage(String msg) {
         if (!running || task == null) return false;
 
-        // Сервер просит подтвердить высокую цену — повторяем команду
         if (msg.contains("слишком дорого") && msg.contains("введите команду продажи")) {
             if (sellPrice > 0 && phase == Phase.WAIT_SELL) {
                 int total = sellPrice * task.count();
@@ -168,18 +167,27 @@ public class AutoSellEngine implements IMinecraft {
             if (msg.contains("выставлен на продажу") || msg.contains("лот выставлен")
                     || msg.contains("товар выставлен") || msg.contains("выставлен на аукцион")
                     || msg.contains("успешно выставлен")) {
-                int profit = (sellPrice - task.buyPricePerOne()) * task.count();
-                MessageSender.print("§a[Продажа] §f" + task.target().getDisplayName()
-                        + " §7x" + task.count()
-                        + " §7| Цена: §e" + FuntimeUtil.formatPrice(sellPrice) + "/шт"
-                        + " §7| Прибыль: " + (profit >= 0 ? "§a+" : "§c") + FuntimeUtil.formatPrice(profit));
-                mc.execute(this::finish);
+                final int profit = (sellPrice - task.buyPricePerOne()) * task.count();
+                final String name = task.target().getDisplayName();
+                final int cnt = task.count();
+                final int sp = sellPrice;
+                mc.execute(() -> {
+                    MessageSender.print("§a[Продажа] §f" + name
+                            + " §7x" + cnt
+                            + " §7| Цена: §e" + FuntimeUtil.formatPrice(sp) + "/шт"
+                            + " §7| Прибыль: " + (profit >= 0 ? "§a+" : "§c") + FuntimeUtil.formatPrice(profit));
+                    phase = Phase.DONE_DELAY; // сразу меняем фазу чтобы таймаут не сработал
+                    timer.reset();
+                    finish();
+                });
                 return true;
             }
             if (msg.contains("нет предмета") || msg.contains("инвентарь пуст")
                     || msg.contains("не удалось выставить") || msg.contains("не найден в инвентаре")) {
-                MessageSender.print("§c[Продажа] Ошибка выставления " + task.target().getDisplayName());
-                mc.execute(this::finish);
+                mc.execute(() -> {
+                    MessageSender.print("§c[Продажа] Ошибка выставления " + task.target().getDisplayName());
+                    finish();
+                });
                 return true;
             }
         }

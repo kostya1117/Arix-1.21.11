@@ -68,8 +68,7 @@ public class TickRateManager {
     private boolean hasPlayerPassengers(Entity entity) {
         List<Entity> list = entity.getPassengers();
 
-        for (int i = 0; i < list.size(); i++) {
-            Entity entityx = list.get(i);
+        for (Entity entityx : list) {
             if (entityx instanceof Player) {
                 return true;
             }
