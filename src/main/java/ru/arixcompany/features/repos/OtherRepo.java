@@ -14,7 +14,6 @@ public class OtherRepo implements IMinecraft {
     public static int serverSideSlot;
     public final Timer switchTimer = new Timer();
 
-
     public OtherRepo() {
         EventRepo.register(this);
     }
