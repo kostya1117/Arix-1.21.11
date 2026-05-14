@@ -62,18 +62,19 @@ public class ModuleRepo implements IMinecraft {
 
    @EventHandler
    public void onKeyInput(EventKey event) {
-      if (event.getAction() == 1) {
-         if (Arix.getInstance().getModuleRepo() == null) {
-            return;
-         }
+      if (Arix.getInstance().getModuleRepo() == null) return;
+      if (mc.screen != null) return;
 
-         Module[] modules = Arix.getInstance().getModuleRepo().getBind(event.getKey());
-         if (modules != null) {
-            for (Module module : modules) {
-                if (mc.screen == null) {
-                    module.toggle();
-                }
-            }
+      Module[] modules = Arix.getInstance().getModuleRepo().getBind(event.getKey());
+      if (modules == null) return;
+
+      for (Module module : modules) {
+         if (event.getAction() == 1) {
+            // Нажатие — press
+            module.onBindPress();
+         } else if (event.getAction() == 0) {
+            // Отпускание — release (только для HOLD)
+            module.onBindRelease();
          }
       }
    }

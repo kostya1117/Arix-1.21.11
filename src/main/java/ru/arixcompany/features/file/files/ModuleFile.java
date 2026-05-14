@@ -84,6 +84,7 @@ public class ModuleFile extends ClientFile {
             JsonObject moduleObject = new JsonObject();
             moduleObject.addProperty("bind", module.getBind());
             moduleObject.addProperty("state", module.isState());
+            moduleObject.addProperty("bindMode", module.getBindMode().name());
 
             module.settings().forEach(setting -> addSettingToJsonObject(moduleObject, setting));
 
@@ -142,6 +143,11 @@ public class ModuleFile extends ClientFile {
             if (moduleObject.has("bind") && moduleObject.has("state")) {
                 module.setBind(moduleObject.get("bind").getAsInt());
                 module.setState(moduleObject.get("state").getAsBoolean());
+            }
+            if (moduleObject.has("bindMode")) {
+                try {
+                    module.setBindMode(Module.BindMode.valueOf(moduleObject.get("bindMode").getAsString()));
+                } catch (Exception ignored) {}
             }
 
             module.settings().forEach(setting -> updateSettingFromJsonObject(moduleObject, setting));

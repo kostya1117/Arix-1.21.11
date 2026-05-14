@@ -164,6 +164,10 @@ public final class PanelComponent implements IComponent {
             if (sAnim > 0.001F) {
                 total += moduleComponent.calcSettingsHeight(module, moduleComponent.getSettingComponentCache()) * sAnim + ModuleComponent.MODULE_GAP;
             }
+            // Добавляем высоту попапа биндов если модуль в режиме бинда
+            if (module.binding || (Gui.activeModuleBind == module && Gui.moduleBindAwaitingMode)) {
+                total += 42.0F + ModuleComponent.MODULE_GAP; // POPUP_H = 42.0F
+            }
         }
         return total + PANEL_PADDING;
     }

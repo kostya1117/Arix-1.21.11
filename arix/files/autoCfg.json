@@ -3,6 +3,7 @@
     "testmodule": {
       "bind": -1,
       "state": false,
+      "bindMode": "TOGGLE",
       "Test bind Setting": -1,
       "Боалеан": false,
       "Цвет сеттинг": {
@@ -18,12 +19,14 @@
     "cameratweaks": {
       "bind": -1,
       "state": true,
+      "bindMode": "TOGGLE",
       "Приближение": 1.0,
       "Камера через стенки": true
     },
     "esp": {
       "bind": -1,
       "state": true,
+      "bindMode": "TOGGLE",
       "Отображать": "Игроки,Предметы",
       "Боксы": false,
       "Измерение": "3D",
@@ -35,6 +38,7 @@
     "handview": {
       "bind": -1,
       "state": true,
+      "bindMode": "TOGGLE",
       "Правая рука": {
         "__open": false,
         "X": 0.4,
@@ -59,25 +63,30 @@
     },
     "nofrienddmg": {
       "bind": -1,
-      "state": true
+      "state": true,
+      "bindMode": "TOGGLE"
     },
     "autoaccept": {
       "bind": -1,
       "state": false,
+      "bindMode": "TOGGLE",
       "Только друзья": false
     },
     "targetesp": {
       "bind": -1,
       "state": true,
+      "bindMode": "TOGGLE",
       "Режим": "Призраки"
     },
     "autosprint": {
       "bind": -1,
-      "state": true
+      "state": true,
+      "bindMode": "TOGGLE"
     },
     "clientsounds": {
       "bind": -1,
       "state": true,
+      "bindMode": "TOGGLE",
       "Громкость": 1.0,
       "Тон": 1.0,
       "Звуки ударов": "Без"
@@ -85,21 +94,23 @@
     "hitaura": {
       "bind": 82,
       "state": false,
+      "bindMode": "TOGGLE",
       "Радиус атаки": 3.0,
       "Радиус обнаружения": 1.0,
       "Режим ротации": "Funtime",
       "Режим снапа": "Рандомный",
-      "Цели": "Игроки,Голые,Инвизки",
+      "Цели": "Игроки,Голые,Инвизки,Мобы",
       "Проверки до удара": "Не бить если кушаеш,Райкаст",
       "Доп.настройка": "Сброс спринта",
       "Режим движения": "Свободная",
       "Режим сброса спринта": "Легит",
       "FOV режим": true,
-      "FOV угол": 127.0
+      "FOV угол": 115.0
     },
     "autobuy": {
       "bind": 79,
       "state": true,
+      "bindMode": "TOGGLE",
       "Включить после сетапа": true,
       "Скидка покупки (%)": 30.0,
       "Авто‑рестарт сетапа": true,
@@ -110,6 +121,7 @@
     "auctionutils": {
       "bind": -1,
       "state": true,
+      "bindMode": "TOGGLE",
       "Проверка чар": false,
       "Проверка зелий": false,
       "Больше 65% прочности": false,
@@ -122,11 +134,13 @@
     },
     "fullbright": {
       "bind": -1,
-      "state": true
+      "state": true,
+      "bindMode": "TOGGLE"
     },
     "storageesp": {
       "bind": -1,
       "state": true,
+      "bindMode": "TOGGLE",
       "Стиль": "Оба",
       "Показывать": {
         "__open": false,
@@ -145,29 +159,34 @@
     "hitbubbles": {
       "bind": -1,
       "state": true,
+      "bindMode": "TOGGLE",
       "Время жизни": 30.0
     },
     "crosshairarrows": {
       "bind": -1,
       "state": true,
+      "bindMode": "TOGGLE",
       "Размер": 16.0,
       "Расстояние": true
     },
     "blockhighlight": {
       "bind": -1,
       "state": true,
+      "bindMode": "TOGGLE",
       "Режим": "Заливка",
       "Толщина": 4.9
     },
     "jumpcircle": {
       "bind": -1,
       "state": true,
+      "bindMode": "TOGGLE",
       "Размер": 1.0,
       "Время жизни": 1500.0
     },
     "chinahat": {
       "bind": -1,
       "state": true,
+      "bindMode": "TOGGLE",
       "Показывать": "Себе,Друзьям",
       "Ширина": 0.7,
       "Высота": 0.45,
@@ -176,40 +195,48 @@
     "norender": {
       "bind": -1,
       "state": true,
+      "bindMode": "TOGGLE",
       "Отменить": "Огонь,Плохие эффекты,Оверлеи,Свечение"
     },
     "interface": {
       "bind": -1,
       "state": true,
-      "Элементы": "ArmorHUD,TargetHUD,BossBar,ArrayList,Scoreboard"
+      "bindMode": "TOGGLE",
+      "Элементы": "ArmorHUD,TargetHUD,BossBar,ArrayList,Scoreboard,Crosshair"
     },
     "animations": {
       "bind": -1,
       "state": true,
+      "bindMode": "TOGGLE",
       "Анимации": "Чат,Таб,Перспектива,Хотбар,Зум"
     },
     "nopush": {
       "bind": -1,
       "state": true,
+      "bindMode": "TOGGLE",
       "Отменить от": "Блоков,Игроков"
     },
     "pearlprediction": {
       "bind": -1,
-      "state": true
+      "state": true,
+      "bindMode": "TOGGLE"
     },
     "autorespawn": {
       "bind": -1,
       "state": true,
+      "bindMode": "TOGGLE",
       "Действия": "Сохранить корды,Вейпоинт"
     },
     "clickgui": {
       "bind": -1,
       "state": false,
+      "bindMode": "TOGGLE",
       "Кнопка": 344
     },
     "strafe": {
       "bind": -1,
       "state": false,
+      "bindMode": "TOGGLE",
       "Сила": 1.05,
       "Буст при уроне": true,
       "Сила буста": 1.06

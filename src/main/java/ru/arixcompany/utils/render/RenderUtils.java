@@ -21,6 +21,7 @@ import org.joml.Matrix3x2f;
 import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL11;
 import ru.arixcompany.utils.IMinecraft;
+import ru.arixcompany.utils.render.shader.shaders.CircleShader;
 import ru.arixcompany.utils.render.shader.shaders.RoundRectShader;
 
 import java.awt.*;
@@ -305,32 +306,7 @@ public class RenderUtils implements IMinecraft {
         float diff = endDeg - startDeg;
         if (Math.abs(diff) < 0.05f) return;
 
-        float arcLength = (float) (2.0 * Math.PI * radius * (Math.abs(diff) / 360.0f));
-
-        float stepPx = Math.max(0.18f, thickness * 0.12f);
-
-        int steps = Math.max(80, (int) Math.ceil(arcLength / stepPx));
-
-        float dotSize = thickness + 0.9f;
-        float dotRadius = dotSize * 0.5f;
-
-        for (int i = 0; i <= steps; i++) {
-            float t = i / (float) steps;
-            float angle = startDeg + diff * t - 90.0f;
-
-            double rad = Math.toRadians(angle);
-            float x = cx + (float) Math.cos(rad) * radius;
-            float y = cy + (float) Math.sin(rad) * radius;
-
-            fillRoundRect(
-                    x - dotRadius,
-                    y - dotRadius,
-                    dotSize,
-                    dotSize,
-                    dotRadius,
-                    color
-            );
-        }
+        CircleShader.drawCircle(cx, cy, startDeg, endDeg, radius, thickness, color);
     }
 
     private static float[] identity() {
