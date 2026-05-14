@@ -14,6 +14,7 @@ import ru.arixcompany.features.module.modules.misc.ClientSounds;
 import ru.arixcompany.features.module.modules.misc.funtime.AuctionUtils;
 import ru.arixcompany.features.module.modules.misc.funtime.AutoBuy;
 import ru.arixcompany.features.module.modules.movement.AutoSprint;
+import ru.arixcompany.features.module.modules.movement.Strafe;
 import ru.arixcompany.features.module.modules.player.AutoRespawn;
 import ru.arixcompany.features.module.modules.player.NoPush;
 import ru.arixcompany.features.module.modules.player.TestModule;
@@ -52,6 +53,7 @@ public class ModuleRepo implements IMinecraft {
        modules.add(new PearlPrediction());
        modules.add(new AutoRespawn());
        modules.add(new ClickGui());
+       modules.add(new Strafe());
    }
 
    public void init() {

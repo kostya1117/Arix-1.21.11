@@ -18,6 +18,11 @@ import java.util.Set;
 @UtilityClass
 public class MoveUtils implements IMinecraft {
 
+    public static boolean isMoving() {
+        if (mc.player == null) return false;
+        return mc.player.input.forwardImpulse != 0 || mc.player.input.leftImpulse != 0;
+    }
+
     public static void fixMovement(final EventInput event, float yaw) {
         final float forward = event.getForward();
         final float strafe = event.getStrafe();
@@ -60,5 +65,29 @@ public class MoveUtils implements IMinecraft {
         if (moveStrafing < 0F) rotationYaw += 90F * forward;
 
         return Math.toRadians(rotationYaw);
+    }
+
+    public static float getPlayerDirection() {
+        float yaw = mc.player.getYRot();
+        float strafe = 45;
+
+        if(mc.player.input.forwardImpulse < 0){
+            strafe = -45;
+            yaw += 180;
+        }
+        if (mc.player.input.leftImpulse > 0) {
+            yaw -= strafe;
+
+            if (mc.player.input.forwardImpulse == 0) {
+                yaw -= 45;
+            }
+        } else if (mc.player.input.leftImpulse < 0) {
+            yaw += strafe;
+
+            if (mc.player.input.forwardImpulse == 0) {
+                yaw += 45;
+            }
+        }
+        return yaw;
     }
 }
