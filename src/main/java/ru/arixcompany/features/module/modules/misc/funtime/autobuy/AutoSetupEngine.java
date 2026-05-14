@@ -247,9 +247,11 @@ public class AutoSetupEngine implements IMinecraft {
 
         new Thread(() -> {
             try {
-                Thread.sleep(300);
+                Thread.sleep(500);
                 mc.execute(() -> {
                     if (mc.player != null) {
+                        // Сбрасываем AutoSell чтобы он не блокировал AutoBuy
+                        AutoBuy.autoSellEngine.stop();
                         mc.player.connection.sendCommand("ah");
                         if (AutoBuy.autoBuyAfterSetup.isValue()) {
                             AutoBuy.balanceController.request();

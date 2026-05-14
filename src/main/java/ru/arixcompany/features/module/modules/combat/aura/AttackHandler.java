@@ -201,12 +201,4 @@ public final class AttackHandler implements IMinecraft {
     public float randomfall(){
         return MathUtils.randomValue(0.2f, 0.8f);
     }
-
-    /**
-     * Тестирует GCD систему (для дебага)
-     * Вызови это из консоли или команды
-     */
-    public void testGCDSystem() {
-        SensitivityUtil.fullGCDCheck();
-    }
 }

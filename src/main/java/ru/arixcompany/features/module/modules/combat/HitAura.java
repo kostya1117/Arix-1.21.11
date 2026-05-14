@@ -20,6 +20,7 @@ import ru.arixcompany.features.module.modules.combat.aura.TargetHandler;
 import ru.arixcompany.features.module.modules.combat.aura.rotation.rotations.FunTimeRotation;
 import ru.arixcompany.features.module.modules.combat.aura.rotation.rotations.FuntimeRot;
 import ru.arixcompany.features.module.modules.combat.aura.rotation.rotations.SnapRotation;
+import ru.arixcompany.features.module.modules.combat.aura.rotation.rotations.SpookyTimeRot;
 import ru.arixcompany.features.module.modules.combat.aura.utils.AuraUtil;
 import ru.arixcompany.features.module.modules.movement.AutoSprint;
 import ru.arixcompany.features.module.setting.implement.ListSetting;
@@ -45,7 +46,7 @@ public class HitAura extends Module {
 
     public static final SelectSetting rotationType =
             new SelectSetting("Режим ротации")
-                    .value("Funtime","FuntimeRot", "Snap");
+                    .value("Funtime","FuntimeRot", "Snap","SpookyTime");
 
     public static final SelectSetting snapSetting =
             new SelectSetting("Режим снапа")
@@ -167,6 +168,7 @@ public class HitAura extends Module {
     private final FunTimeRotation funTimeRotation = new FunTimeRotation();
     private final FuntimeRot funTimeRot = new FuntimeRot();
     private final SnapRotation snapRotation = new SnapRotation();
+    private final SpookyTimeRot spookyTimeRot = new SpookyTimeRot();
     private void updateRotation() {
         if (target == null) return;
 
@@ -181,6 +183,14 @@ public class HitAura extends Module {
         switch (rotationType.getSelected()) {
             case "Funtime":
                 funTimeRotation.rotate(
+                        target,
+                        shouldAttack,
+                        attackRange.getValue(),
+                        this.checkToAttack()
+                );
+                break;
+            case "SpookyTime":
+                spookyTimeRot.rotate(
                         target,
                         shouldAttack,
                         attackRange.getValue(),
@@ -203,7 +213,6 @@ public class HitAura extends Module {
                 );
                 break;
         }
-        AttackHandler.testGCDSystem();
     }
    @Override
    public void toggle() {
