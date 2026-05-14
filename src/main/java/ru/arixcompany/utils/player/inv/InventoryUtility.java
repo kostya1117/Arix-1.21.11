@@ -382,9 +382,10 @@ public final class InventoryUtility implements IMinecraft {
 
     public static void switchTo(int slot) {
         if (mc.player == null || mc.gameMode == null) return;
-        if (mc.player.getInventory().getSelectedSlot() == slot && OtherRepo.serverSideSlot == slot)
-            return;
-        mc.gameMode.ensureHasSentCarriedItem();
+        if (mc.player.getInventory().getSelectedSlot() == slot && OtherRepo.serverSideSlot == slot) return;
+
+        mc.player.getInventory().setSelectedSlot(slot);
+
         mc.gameMode.ensureHasSentCarriedItem();
     }
 
