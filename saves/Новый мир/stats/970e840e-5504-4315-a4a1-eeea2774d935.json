@@ -1,0 +1,31 @@
+{
+  "stats": {
+    "minecraft:dropped": {
+      "minecraft:player_head": 1,
+      "minecraft:bow": 1,
+      "minecraft:shulker_box": 1
+    },
+    "minecraft:custom": {
+      "minecraft:sprint_one_cm": 6892,
+      "minecraft:time_since_rest": 5018,
+      "minecraft:walk_one_cm": 1500,
+      "minecraft:total_world_time": 5025,
+      "minecraft:leave_game": 1,
+      "minecraft:fly_one_cm": 8305,
+      "minecraft:sneak_time": 27,
+      "minecraft:play_time": 5018,
+      "minecraft:jump": 50,
+      "minecraft:time_since_death": 5018,
+      "minecraft:drop": 3
+    },
+    "minecraft:picked_up": {
+      "minecraft:shulker_box": 1,
+      "minecraft:player_head": 1,
+      "minecraft:bow": 1
+    },
+    "minecraft:used": {
+      "minecraft:enchanted_golden_apple": 1
+    }
+  },
+  "DataVersion": 4671
+}

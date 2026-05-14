@@ -219,11 +219,10 @@ public class Esp extends Module {
                 float iconPadding = 4;
                 float padding = 4;
 
-                // Проверяем содержимое шалкера
                 List<ItemStack> shulkerItems = getShulkerContents(entry.stack);
                 boolean hasShulker = shulkerContents.isValue() && !shulkerItems.isEmpty();
 
-                float shulkerRowH = hasShulker ? (9 * 2f + 4f) : 0f; // иконки 9px + отступы
+                float shulkerRowH = hasShulker ? (9 * 2f + 4f) : 0f;
                 float rectW = padding + iconSize + iconPadding + textWidth + padding;
                 float rectH = 16 + (hasShulker ? shulkerRowH + 2f : 0f);
 
@@ -264,7 +263,16 @@ public class Esp extends Module {
                 }
 
                 float rectW = padding + 16 + 4 + maxTextWidth + padding;
-                float rectH = padding + entries.size() * lineHeight + (entries.size() - 1) * gap + padding;
+
+                float shulkerExtraH = 0f;
+                List<List<ItemStack>> shulkerContentsList = new ArrayList<>();
+                for (ItemGroup.Entry entry : entries) {
+                    List<ItemStack> sc = shulkerContents.isValue() ? getShulkerContents(entry.stack) : List.of();
+                    shulkerContentsList.add(sc);
+                    if (!sc.isEmpty()) shulkerExtraH += 9 * 2f + 4f + 2f;
+                }
+
+                float rectH = padding + entries.size() * lineHeight + (entries.size() - 1) * gap + shulkerExtraH + padding;
 
                 float rectX = sx - rectW / 2f;
                 float rectY = sy - rectH / 2f;
@@ -272,7 +280,9 @@ public class Esp extends Module {
                 RenderUtils.fillRoundRect(rectX, rectY, rectW, rectH, 5f, 0x90000000);
 
                 float currentY = rectY + padding;
-                for (ItemGroup.Entry entry : entries) {
+                for (int ei = 0; ei < entries.size(); ei++) {
+                    ItemGroup.Entry entry = entries.get(ei);
+
                     g.pose().pushMatrix();
                     g.pose().translate(rectX + padding, currentY);
                     g.pose().scale(0.85f, 0.85f);
@@ -294,6 +304,13 @@ public class Esp extends Module {
                     }
 
                     currentY += lineHeight + gap;
+
+                    List<ItemStack> sc = shulkerContentsList.get(ei);
+                    if (!sc.isEmpty()) {
+                        float shulkerRowH = 9 * 2f + 4f;
+                        renderShulkerContents(g, sc, rectX + padding, currentY, rectW - padding * 2f);
+                        currentY += shulkerRowH + 2f;
+                    }
                 }
             }
         }
