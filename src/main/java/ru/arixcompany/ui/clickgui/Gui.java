@@ -129,17 +129,27 @@ public final class Gui extends Screen implements IMinecraft {
         if (mc.getWindow() == null) return;
         float mainAlpha = (float) alphaPC.getOutput();
 
-        RenderUtils.fillRoundRect(ctx, 0, 0, mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight(), 0,
-                ColorUtil.rgba(0, 0, 0, (int) (120.0F * mainAlpha)));
+        RenderUtils.fillRoundRect(ctx, 0, 0,
+                mc.getWindow().getGuiScaledWidth(),
+                mc.getWindow().getGuiScaledHeight(),
+                0, ColorUtil.rgba(0, 0, 0, (int)(120.0F * mainAlpha)));
 
         if (draggingCategory != null) {
             categoryPanelX.put(draggingCategory, mouseX - dragXOffset);
             categoryPanelY.put(draggingCategory, mouseY - dragYOffset);
         }
 
+        if (!Gui.searchText.isEmpty()) {
+            for (Category c : categories) {
+                Animation anim = getCategoryDropdownAnimation(c);
+                if (anim.getDirection() != Direction.FORWARDS) {
+                    anim.setDirection(Direction.FORWARDS);
+                }
+            }
+        }
+
         searchComponent.render(ctx, mouseX, mouseY, mainAlpha);
         themeComponent.render(ctx, mouseX, mouseY, mainAlpha);
-
         panelComponent.render(ctx, mouseX, mouseY, mainAlpha);
         moduleComponent.renderOverlay(mainAlpha);
     }

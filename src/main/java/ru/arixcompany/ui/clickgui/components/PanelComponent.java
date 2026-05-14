@@ -171,7 +171,18 @@ public final class PanelComponent implements IComponent {
     public static List<Module> getDisplayModules(Category category) {
         if (Arix.getInstance() == null || Arix.getInstance().getModuleRepo() == null) return new ArrayList<>();
         List<Module> list = Arix.getInstance().getModuleRepo().getModule(category);
-        return list != null ? list : new ArrayList<>();
+        if (list == null) return new ArrayList<>();
+
+        String search = Gui.searchText.trim().toLowerCase();
+        if (search.isEmpty()) return list;
+
+        List<Module> filtered = new ArrayList<>();
+        for (Module m : list) {
+            if (m.name.toLowerCase().contains(search)) {
+                filtered.add(m);
+            }
+        }
+        return filtered;
     }
 
     public static boolean isHovered(float mx, float my, float x, float y, float w, float h) {

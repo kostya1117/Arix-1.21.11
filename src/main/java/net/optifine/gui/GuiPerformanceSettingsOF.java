@@ -44,7 +44,7 @@ public class GuiPerformanceSettingsOF extends GuiScreenOF {
             abstractwidget.setTooltip(null);
         }
 
-        this.addRenderableWidget(new GuiButtonOF(200, this.width / 2 - 100, this.height / 6 + 168 + 11, I18n.get("gui.done")));
+        this.addRenderableWidget(new GuiButtonOF(200, this.width / 2 - 100, this.height / 6 + 168 + 11 + 42, I18n.get("gui.done")));
     }
 
     @Override

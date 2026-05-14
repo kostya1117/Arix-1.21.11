@@ -9,6 +9,7 @@ import ru.arixcompany.features.module.modules.combat.HitAura;
 import ru.arixcompany.features.module.modules.combat.NoFriendDMG;
 import ru.arixcompany.features.module.modules.misc.AutoAccept;
 import ru.arixcompany.features.module.modules.misc.CameraTweaks;
+import ru.arixcompany.features.module.modules.misc.ClickGui;
 import ru.arixcompany.features.module.modules.misc.ClientSounds;
 import ru.arixcompany.features.module.modules.misc.funtime.AuctionUtils;
 import ru.arixcompany.features.module.modules.misc.funtime.AutoBuy;
@@ -48,9 +49,9 @@ public class ModuleRepo implements IMinecraft {
        modules.add(new Interface());
        modules.add(new Animations());
        modules.add(new NoPush());
-       modules.add(new BreadCrumbs());
        modules.add(new PearlPrediction());
        modules.add(new AutoRespawn());
+       modules.add(new ClickGui());
    }
 
    public void init() {

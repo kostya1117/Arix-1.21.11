@@ -1,0 +1,230 @@
+---- Minecraft Crash Report ----
+// I bet Cylons wouldn't have this problem.
+
+Time: 2026-05-13 22:09:39
+Description: Initializing game
+
+java.lang.NullPointerException: Cannot invoke "ru.arixcompany.features.module.ModuleRepo.getModule(java.lang.Class)" because the return value of "ru.arixcompany.Arix.getModuleRepo()" is null
+	at ru.arixcompany.features.repos.sound.SoundRepo.getClientVolume(SoundRepo.java:113)
+	at ru.arixcompany.features.repos.sound.SoundRepo.play(SoundRepo.java:25)
+	at ru.arixcompany.features.repos.sound.SoundRepo.playOn(SoundRepo.java:17)
+	at ru.arixcompany.features.module.Module.activate(Module.java:41)
+	at ru.arixcompany.features.module.Module.setState(Module.java:71)
+	at ru.arixcompany.features.module.modules.misc.ClickGui.<init>(ClickGui.java:20)
+	at ru.arixcompany.features.module.ModuleRepo.<init>(ModuleRepo.java:54)
+	at ru.arixcompany.Arix.<init>(Arix.java:73)
+	at net.minecraft.client.Minecraft.<init>(Minecraft.java:665)
+	at net.minecraft.client.main.Main.main(Main.java:208)
+	at mcp.client.Start.main(Start.java:20)
+
+
+A detailed walkthrough of the error, its code path and all known details is as follows:
+---------------------------------------------------------------------------------------
+
+-- Head --
+Thread: Render thread
+Stacktrace:
+	at ru.arixcompany.features.repos.sound.SoundRepo.getClientVolume(SoundRepo.java:113)
+	at ru.arixcompany.features.repos.sound.SoundRepo.play(SoundRepo.java:25)
+	at ru.arixcompany.features.repos.sound.SoundRepo.playOn(SoundRepo.java:17)
+	at ru.arixcompany.features.module.Module.activate(Module.java:41)
+	at ru.arixcompany.features.module.Module.setState(Module.java:71)
+	at ru.arixcompany.features.module.modules.misc.ClickGui.<init>(ClickGui.java:20)
+	at ru.arixcompany.features.module.ModuleRepo.<init>(ModuleRepo.java:54)
+	at ru.arixcompany.Arix.<init>(Arix.java:73)
+	at net.minecraft.client.Minecraft.<init>(Minecraft.java:665)
+
+-- Initialization --
+Details:
+	Modules: 
+		ADVAPI32.dll:Расширенная библиотека API Windows 32:10.0.17763.1 (WinBuild.160101.0800):Microsoft Corporation
+		COMCTL32.dll:Библиотека элементов управления взаимодействия с пользователем:6.10 (WinBuild.160101.0800):Microsoft Corporation
+		CRYPT32.dll:API32 криптографии:10.0.17763.1 (WinBuild.160101.0800):Microsoft Corporation
+		CRYPTBASE.dll:Base cryptographic API DLL:10.0.17763.8276 (WinBuild.160101.0800):Microsoft Corporation
+		ColorAdapterClient.dll:Microsoft Color Adapter Client:10.0.17763.6530 (WinBuild.160101.0800):Microsoft Corporation
+		CoreMessaging.dll:Microsoft CoreMessaging Dll:10.0.17763.7309:Microsoft Corporation
+		CoreUIComponents.dll:Microsoft Core UI Components Dll:10.0.17763.5830:Microsoft Corporation
+		DBGHELP.DLL:Windows Image Helper:10.0.17763.1999 (WinBuild.160101.0800):Microsoft Corporation
+		DEVOBJ.dll:Device Information Set DLL:10.0.17763.2145 (WinBuild.160101.0800):Microsoft Corporation
+		DNSAPI.dll:Динамическая библиотека API DNS-клиента:10.0.17763.1554 (WinBuild.160101.0800):Microsoft Corporation
+		GDI32.dll:GDI Client DLL:10.0.17763.7553 (WinBuild.160101.0800):Microsoft Corporation
+		GLU32.dll:Библиотека подпрограмм OpenGL:10.0.17763.1 (WinBuild.160101.0800):Microsoft Corporation
+		IMM32.DLL:Multi-User Windows IMM32 API Client DLL:10.0.17763.7553 (WinBuild.160101.0800):Microsoft Corporation
+		IPHLPAPI.DLL:API вспомогательного приложения IP:10.0.17763.1 (WinBuild.160101.0800):Microsoft Corporation
+		KERNEL32.DLL:Библиотека клиента Windows NT BASE API:10.0.17763.8276 (WinBuild.160101.0800):Microsoft Corporation
+		KERNELBASE.dll:Библиотека клиента Windows NT BASE API:10.0.17763.8276 (WinBuild.160101.0800):Microsoft Corporation
+		MMDevApi.dll:MMDevice API:10.0.17763.1 (WinBuild.160101.0800):Microsoft Corporation
+		MSACM32.dll:Фильтр диспетчера аудиосжатия Microsoft:10.0.17763.1 (WinBuild.160101.0800):Microsoft Corporation
+		MSASN1.dll:ASN.1 Runtime APIs:10.0.17763.8276 (WinBuild.160101.0800):Microsoft Corporation
+		MSCTF.dll:Серверная библиотека MSCTF:10.0.17763.1 (WinBuild.160101.0800):Microsoft Corporation
+		NLAapi.dll:Network Location Awareness 2:10.0.17763.7919 (WinBuild.160101.0800):Microsoft Corporation
+		NSI.dll:NSI User-mode interface DLL:10.0.17763.8276 (WinBuild.160101.0800):Microsoft Corporation
+		NTASN1.dll:Microsoft ASN.1 API:10.0.17763.1 (WinBuild.160101.0800):Microsoft Corporation
+		Ole32.dll:Microsoft OLE для Windows:10.0.17763.2213 (WinBuild.160101.0800):Microsoft Corporation
+		OleAut32.dll:OLEAUT32.DLL:10.0.17763.4644 (WinBuild.160101.0800):Microsoft Corporation
+		OpenAL.dll:Main implementation library:1.23.1:
+		POWRPROF.dll:DLL модуля поддержки профиля управления питанием:10.0.17763.1 (WinBuild.160101.0800):Microsoft Corporation
+		PROPSYS.dll:Система страниц свойств (Майкрософт):7.0.17763.1 (WinBuild.160101.0800):Microsoft Corporation
+		PSAPI.DLL:Process Status Helper:10.0.17763.1 (WinBuild.160101.0800):Microsoft Corporation
+		Pdh.dll:Модуль поддержки данных производительности Windows:10.0.17763.1 (WinBuild.160101.0800):Microsoft Corporation
+		RMCLIENT.dll:Resource Manager Client:10.0.17763.1697 (WinBuild.160101.0800):Microsoft Corporation
+		RPCRT4.dll:Библиотека удаленного вызова процедур:10.0.17763.1 (WinBuild.160101.0800):Microsoft Corporation
+		SETUPAPI.dll:Windows Setup API:10.0.17763.1 (WinBuild.160101.0800):Microsoft Corporation
+		SHELL32.dll:Общая библиотека оболочки Windows:10.0.17763.2145 (WinBuild.160101.0800):Microsoft Corporation
+		TextInputFramework.dll:"TextInputFramework.DYNLINK":10.0.17763.7919 (WinBuild.160101.0800):Microsoft Corporation
+		USER32.dll:Многопользовательская библиотека клиента USER API Windows:10.0.17763.1 (WinBuild.160101.0800):Microsoft Corporation
+		USERENV.dll:Userenv:10.0.17763.1 (WinBuild.160101.0800):Microsoft Corporation
+		VCRUNTIME140.dll:Microsoft® C Runtime Library:14.44.35208.0:Microsoft Corporation
+		VERSION.dll:Version Checking and File Installation Libraries:10.0.17763.1 (WinBuild.160101.0800):Microsoft Corporation
+		WINHTTP.dll:Службы HTTP Windows:10.0.17763.3469 (WinBuild.160101.0800):Microsoft Corporation
+		WINMM.dll:MCI API DLL:10.0.17763.1 (WinBuild.160101.0800):Microsoft Corporation
+		WINTRUST.dll:Microsoft Trust Verification APIs:10.0.17763.8276 (WinBuild.160101.0800):Microsoft Corporation
+		WS2_32.dll:32-разрядная библиотека Windows Socket 2.0:10.0.17763.2028 (WinBuild.160101.0800):Microsoft Corporation
+		amdihk64.dll:Radeon Settings: Host Service:2,00,00,1788:Advanced Micro Devices, Inc.
+		apphelp.dll:Клиентская библиотека совместимости приложений:10.0.17763.1 (WinBuild.160101.0800):Microsoft Corporation
+		atig6pxx.dll:atiglpxx.dll:8.14.01.6564:Advanced Micro Devices, Inc. 
+		atio6axx.dll:AMD OpenGL Driver:23.08.230531_53c0013:Advanced Micro Devices, Inc
+		awt.dll:OpenJDK Platform binary:21.0.10.0:Microsoft
+		bcrypt.dll:Библиотека криптографических примитивов Windows:10.0.17763.1 (WinBuild.160101.0800):Microsoft Corporation
+		bcryptPrimitives.dll:Windows Cryptographic Primitives Library:10.0.17763.8276 (WinBuild.160101.0800):Microsoft Corporation
+		cfgmgr32.dll:Configuration Manager DLL:10.0.17763.1 (WinBuild.160101.0800):Microsoft Corporation
+		clbcatq.dll:COM+ Configuration Catalog:2001.12.10941.16384 (WinBuild.160101.0800):Microsoft Corporation
+		combase.dll:Microsoft COM для Windows:10.0.17763.2145 (WinBuild.160101.0800):Microsoft Corporation
+		cryptsp.dll:Cryptographic Service Provider API:10.0.17763.8276 (WinBuild.160101.0800):Microsoft Corporation
+		d2d1.dll:Библиотека Microsoft D2D:10.0.17763.771 (WinBuild.160101.0800):Microsoft Corporation
+		d3d11.dll:Direct3D 11 Runtime:10.0.17763.3469 (WinBuild.160101.0800):Microsoft Corporation
+		dbgcore.DLL:Windows Core Debugging Helpers:10.0.17763.1728 (WinBuild.160101.0800):Microsoft Corporation
+		dinput8.dll:Microsoft DirectInput:10.0.17763.1 (WinBuild.160101.0800):Microsoft Corporation
+		dwmapi.dll:Интерфейс API диспетчера окон рабочего стола (Майкрософт):10.0.17763.7136 (WinBuild.160101.0800):Microsoft Corporation
+		dxgi.dll:DirectX Graphics Infrastructure:10.0.17763.2989 (WinBuild.160101.0800):Microsoft Corporation
+		extnet.dll:OpenJDK Platform binary:21.0.10.0:Microsoft
+		fastprox.dll:WMI Custom Marshaller:10.0.17763.1 (WinBuild.160101.0800):Microsoft Corporation
+		fwpuclnt.dll:API пользовательского режима FWP/IPsec:10.0.17763.1 (WinBuild.160101.0800):Microsoft Corporation
+		gdi32full.dll:GDI Client DLL:10.0.17763.8276 (WinBuild.160101.0800):Microsoft Corporation
+		glfw.dll:GLFW 3.4.0 DLL:3.4.0:GLFW
+		icm32.dll:Microsoft Color Management Module (CMM):10.0.17763.6530 (WinBuild.160101.0800):Microsoft Corporation
+		iertutil.dll:Служебная программа времени выполнения для Internet Explorer:11.00.17763.1 (WinBuild.160101.0800):Microsoft Corporation
+		inputhost.dll
+		instrument.dll:OpenJDK Platform binary:21.0.10.0:Microsoft
+		java.dll:OpenJDK Platform binary:21.0.10.0:Microsoft
+		java.exe:OpenJDK Platform binary:21.0.10.0:Microsoft
+		jemalloc.dll
+		jimage.dll:OpenJDK Platform binary:21.0.10.0:Microsoft
+		jli.dll:OpenJDK Platform binary:21.0.10.0:Microsoft
+		jna4072176333303993631.dll:JNA native library:7.0.2:Java(TM) Native Access (JNA)
+		jsvml.dll:OpenJDK Platform binary:21.0.10.0:Microsoft
+		jvm.dll:OpenJDK 64-Bit server VM:21.0.10.0:Microsoft
+		kernel.appcore.dll:AppModel API Host:10.0.17763.1 (WinBuild.160101.0800):Microsoft Corporation
+		lwjgl.dll
+		lwjgl_opengl.dll
+		lwjgl_stb.dll
+		management.dll:OpenJDK Platform binary:21.0.10.0:Microsoft
+		management_ext.dll:OpenJDK Platform binary:21.0.10.0:Microsoft
+		mscms.dll:DLL-библиотека системы сопоставления цветов Майкрософт:10.0.17763.1 (WinBuild.160101.0800):Microsoft Corporation
+		msdmo.dll:DMO Runtime:10.0.17763.1 (WinBuild.160101.0800):Microsoft Corporation
+		msvcp140.dll:Microsoft® C Runtime Library:14.44.35208.0:Microsoft Corporation
+		msvcp_win.dll:Microsoft® C Runtime Library:10.0.17763.8276 (WinBuild.160101.0800):Microsoft Corporation
+		msvcrt.dll:Windows NT CRT DLL:7.0.17763.8276 (WinBuild.160101.0800):Microsoft Corporation
+		mswsock.dll:Расширение поставщика службы API Microsoft Windows Sockets 2.0:10.0.17763.1 (WinBuild.160101.0800):Microsoft Corporation
+		napinsp.dll:Поставщик оболочки совместимости для имен электронной почты:10.0.17763.1 (WinBuild.160101.0800):Microsoft Corporation
+		ncrypt.dll:Маршрутизатор Windows NCrypt:10.0.17763.3650 (WinBuild.160101.0800):Microsoft Corporation
+		net.dll:OpenJDK Platform binary:21.0.10.0:Microsoft
+		netutils.dll:Net Win32 API Helpers DLL:10.0.17763.1 (WinBuild.160101.0800):Microsoft Corporation
+		nio.dll:OpenJDK Platform binary:21.0.10.0:Microsoft
+		ntdll.dll:Системная библиотека NT:10.0.17763.1 (WinBuild.160101.0800):Microsoft Corporation
+		ntmarta.dll:Поставщик Windows NT MARTA:10.0.17763.1 (WinBuild.160101.0800):Microsoft Corporation
+		opengl32.dll:OpenGL Client DLL:10.0.17763.1 (WinBuild.160101.0800):Microsoft Corporation
+		perfos.dll:Библиотека объектов производительности системы Windows:10.0.17763.1 (WinBuild.160101.0800):Microsoft Corporation
+		pnrpnsp.dll:Поставщик пространства имен PNRP:10.0.17763.1 (WinBuild.160101.0800):Microsoft Corporation
+		profapi.dll:User Profile Basic API:10.0.17763.2989 (WinBuild.160101.0800):Microsoft Corporation
+		rasadhlp.dll:Remote Access AutoDial Helper:10.0.17763.8276 (WinBuild.160101.0800):Microsoft Corporation
+		rsaenh.dll:Microsoft Enhanced Cryptographic Provider:10.0.17763.1 (WinBuild.160101.0800):Microsoft Corporation
+		sapi.dll:Speech API:5.3.22514.00 (WinBuild.160101.0800):Microsoft Corporation
+		sechost.dll:Host for SCM/SDDL/LSA Lookup APIs:10.0.17763.8276 (WinBuild.160101.0800):Microsoft Corporation
+		shcore.dll:SHCORE:10.0.17763.1 (WinBuild.160101.0800):Microsoft Corporation
+		shlwapi.dll:Библиотека небольших программ оболочки:10.0.17763.1 (WinBuild.160101.0800):Microsoft Corporation
+		srvcli.dll:Server Service Client DLL:10.0.17763.5458 (WinBuild.160101.0800):Microsoft Corporation
+		sunmscapi.dll:OpenJDK Platform binary:21.0.10.0:Microsoft
+		twinapi.appcore.dll:twinapi.appcore:10.0.17763.1 (WinBuild.160101.0800):Microsoft Corporation
+		ucrtbase.dll:Microsoft® C Runtime Library:10.0.17763.8276 (WinBuild.160101.0800):Microsoft Corporation
+		urlmon.dll:Расширения OLE32 для Win32:11.00.17763.1 (WinBuild.160101.0800):Microsoft Corporation
+		uxtheme.dll:Библиотека тем UxTheme (Microsoft):10.0.17763.1 (WinBuild.160101.0800):Microsoft Corporation
+		vcruntime140_1.dll:Microsoft® C Runtime Library:14.44.35208.0:Microsoft Corporation
+		verify.dll:OpenJDK Platform binary:21.0.10.0:Microsoft
+		wbemcomn.dll:WMI:10.0.17763.2989 (WinBuild.160101.0800):Microsoft Corporation
+		wbemprox.dll:WMI:10.0.17763.5933 (WinBuild.160101.0800):Microsoft Corporation
+		wbemsvc.dll:WMI:10.0.17763.5933 (WinBuild.160101.0800):Microsoft Corporation
+		win32u.dll:Win32u:10.0.17763.8276 (WinBuild.160101.0800):Microsoft Corporation
+		windows.storage.dll:API хранения Microsoft WinRT:10.0.17763.1 (WinBuild.160101.0800):Microsoft Corporation
+		winmmbase.dll:Base Multimedia Extension API DLL:10.0.17763.1 (WinBuild.160101.0800):Microsoft Corporation
+		winrnr.dll:LDAP RnR Provider DLL:10.0.17763.1 (WinBuild.160101.0800):Microsoft Corporation
+		wintypes.dll:Библиотека DLL основных типов Windows:10.0.17763.1 (WinBuild.160101.0800):Microsoft Corporation
+		wshbth.dll:Windows Sockets Helper DLL:10.0.17763.7671 (WinBuild.160101.0800):Microsoft Corporation
+		xinput1_4.dll:API общего контроллера (Майкрософт):10.0.17763.1 (WinBuild.160101.0800):Microsoft Corporation
+		zip.dll:OpenJDK Platform binary:21.0.10.0:Microsoft
+Stacktrace:
+	at net.minecraft.client.main.Main.main(Main.java:208)
+	at mcp.client.Start.main(Start.java:20)
+
+-- System Details --
+Details:
+	Minecraft Version: 1.21.11
+	Minecraft Version ID: 1.21.11
+	Operating System: Windows 10 (amd64) version 10.0
+	Java Version: 21.0.10, Microsoft
+	Java VM Version: OpenJDK 64-Bit Server VM (mixed mode, sharing), Microsoft
+	Memory: 141033472 bytes (134 MiB) / 405798912 bytes (387 MiB) up to 1591738368 bytes (1518 MiB)
+	CPUs: 4
+	Processor Vendor: AuthenticAMD
+	Processor Name: AMD Ryzen 3 3250U with Radeon Graphics         
+	Identifier: AuthenticAMD Family 23 Model 24 Stepping 1
+	Microarchitecture: Zen / Zen+
+	Frequency (GHz): 2.60
+	Number of physical packages: 1
+	Number of physical CPUs: 2
+	Number of logical CPUs: 4
+	Graphics card #0 name: AMD Radeon(TM) Vega 3 Graphics 
+	Graphics card #0 vendor: Advanced Micro Devices, Inc.
+	Graphics card #0 VRAM (MiB): 2048.00
+	Graphics card #0 deviceId: VideoController1
+	Graphics card #0 versionInfo: 31.0.21031.1005
+	Memory slot #0 capacity (MiB): 8192.00
+	Memory slot #0 clockSpeed (GHz): 3.20
+	Memory slot #0 type: DDR4
+	Virtual memory max (MiB): 16064.38
+	Virtual memory used (MiB): 11167.37
+	Swap memory total (MiB): 10000.00
+	Swap memory used (MiB): 2997.46
+	Space in storage for jna.tmpdir (MiB): <path not set>
+	Space in storage for org.lwjgl.system.SharedLibraryExtractPath (MiB): <path not set>
+	Space in storage for io.netty.native.workdir (MiB): <path not set>
+	Space in storage for java.io.tmpdir (MiB): available: 5958.75, total: 59103.00
+	Space in storage for workdir (MiB): available: 5958.75, total: 59103.00
+	JVM Flags: 0 total; 
+	Debug Flags: 0 total; 
+	Launched Version: mcp
+	Backend library: LWJGL version 3.3.3+5
+	Backend API: AMD Radeon(TM) Vega 3 Graphics  GL version 3.3.0 Core Profile Context 23.9.1.230821, ATI Technologies Inc.
+	Window size: <not initialized>
+	GFLW Platform: win32
+	Render Extensions: GL_ARB_buffer_storage, GL_KHR_debug, GL_ARB_vertex_attrib_binding, GL_ARB_direct_state_access, GL_EXT_texture_filter_anisotropic
+	GL debug messages: 
+	Is Modded: Definitely; Client brand changed to 'optifine'
+	Universe: 404
+	Type: Client (map_client.txt)
+	Locale: ru_RU
+	System encoding: Cp1251
+	File encoding: UTF-8
+	CPU: 4x AMD Ryzen 3 3250U with Radeon Graphics 
+	OptiFine Version: OptiFine_1.21.11_HD_U_J9
+	OptiFine Build: null
+	Render Distance Chunks: 2
+	Mipmaps: 0
+	Anisotropic Filtering: 1
+	Antialiasing: 0
+	Multitexture: false
+	Shaders: null
+	OpenGlVersion: 3.3.0 Core Profile Context 23.9.1.230821
+	OpenGlRenderer: AMD Radeon(TM) Vega 3 Graphics 
+	OpenGlVendor: ATI Technologies Inc.
+	CpuCount: 4
