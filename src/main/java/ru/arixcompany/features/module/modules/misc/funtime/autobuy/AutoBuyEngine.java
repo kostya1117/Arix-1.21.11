@@ -4,19 +4,15 @@ import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.inventory.ContainerScreen;
-import net.minecraft.core.component.DataComponents;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.component.ItemLore;
 import ru.arixcompany.features.module.modules.misc.funtime.autobuy.items.ItemTarget;
 import ru.arixcompany.features.module.modules.misc.funtime.utils.FuntimeUtil;
 import ru.arixcompany.utils.IMinecraft;
 import ru.arixcompany.utils.math.Timer;
-import ru.arixcompany.utils.player.InvUtil;
+import ru.arixcompany.utils.player.inv.InventoryUtility;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -178,7 +174,7 @@ public class AutoBuyEngine implements IMinecraft {
         confirmWatch.reset();
         clickCooldown.reset();
 
-        InvUtil.clickSlot(slot.index, 0, ClickType.QUICK_MOVE, false);
+        InventoryUtility.clickSlot(slot.index, 0, ClickType.QUICK_MOVE, false);
     }
 
     private void refreshPage() {
@@ -190,7 +186,7 @@ public class AutoBuyEngine implements IMinecraft {
             String name = slot.getItem().getHoverName().getString().toLowerCase();
 
             if (name.contains("обновить") || name.contains("refresh")) {
-                InvUtil.clickSlot(slot.index, 0, ClickType.PICKUP, false);
+                InventoryUtility.clickSlot(slot.index, 0, ClickType.PICKUP, false);
                 break;
             }
         }

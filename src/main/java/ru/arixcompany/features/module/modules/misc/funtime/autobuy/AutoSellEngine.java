@@ -11,7 +11,7 @@ import ru.arixcompany.features.module.modules.misc.funtime.utils.FuntimeUtil;
 import ru.arixcompany.utils.IMinecraft;
 import ru.arixcompany.utils.MessageSender;
 import ru.arixcompany.utils.math.Timer;
-import ru.arixcompany.utils.player.InvUtil;
+import ru.arixcompany.utils.player.inv.InventoryUtility;
 
 import java.util.ArrayDeque;
 import java.util.LinkedHashMap;
@@ -182,6 +182,7 @@ public class AutoSellEngine implements IMinecraft {
                 });
                 return true;
             }
+
             if (msg.contains("нет предмета") || msg.contains("инвентарь пуст")
                     || msg.contains("не удалось выставить") || msg.contains("не найден в инвентаре")) {
                 mc.execute(() -> {
@@ -285,8 +286,8 @@ public class AutoSellEngine implements IMinecraft {
         // Перемещаем в хотбар если нужно
         if (slot >= 9) {
             int hotbar = mc.player.getInventory().selected;
-            InvUtil.clickSlot(slot, 0, ClickType.PICKUP, false);
-            InvUtil.clickSlot(hotbar, 0, ClickType.PICKUP, false);
+            InventoryUtility.clickSlot(slot, 0, ClickType.PICKUP, false);
+            InventoryUtility.clickSlot(hotbar, 0, ClickType.PICKUP, false);
             count = mc.player.getInventory().getItem(hotbar).getCount();
             if (count == 0) count = task.count(); // fallback
         } else {
@@ -296,13 +297,17 @@ public class AutoSellEngine implements IMinecraft {
         mc.player.connection.sendCommand("ah sell " + (sellPrice * count));
         phase = Phase.WAIT_SELL;
         timer.reset();
+
+        mc.execute(() -> {
+            mc.player.connection.sendCommand("ah");
+        });
     }
 
     private void refresh(ContainerScreen screen) {
         for (Slot slot : screen.getMenu().slots) {
             String name = slot.getItem().getHoverName().getString().toLowerCase();
             if (name.contains("обновить") || name.contains("refresh")) {
-                InvUtil.clickSlot(slot.index, 0, ClickType.PICKUP, false);
+                InventoryUtility.clickSlot(slot.index, 0, ClickType.PICKUP, false);
                 break;
             }
         }

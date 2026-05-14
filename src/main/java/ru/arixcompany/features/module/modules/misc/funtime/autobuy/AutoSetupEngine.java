@@ -12,7 +12,7 @@ import ru.arixcompany.features.module.modules.misc.funtime.utils.FuntimeUtil;
 import ru.arixcompany.utils.IMinecraft;
 import ru.arixcompany.utils.MessageSender;
 import ru.arixcompany.utils.math.Timer;
-import ru.arixcompany.utils.player.InvUtil;
+import ru.arixcompany.utils.player.inv.InventoryUtility;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -231,7 +231,7 @@ public class AutoSetupEngine implements IMinecraft {
         for (Slot slot : handler.slots) {
             String name = slot.getItem().getHoverName().getString().toLowerCase();
             if (name.contains("обновить") || name.contains("refresh")) {
-                InvUtil.clickSlot(slot.index, 0, net.minecraft.world.inventory.ClickType.PICKUP, false);
+                InventoryUtility.clickSlot(slot.index, 0, net.minecraft.world.inventory.ClickType.PICKUP, false);
                 break;
             }
         }

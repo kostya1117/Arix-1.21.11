@@ -6,6 +6,7 @@ import lombok.Setter;
 import lombok.experimental.NonFinal;
 import net.minecraft.client.Minecraft;
 import ru.arixcompany.features.module.modules.misc.ClickGui;
+import ru.arixcompany.features.repos.OtherRepo;
 import ru.arixcompany.ui.draggable.DraggableRepo;
 import ru.arixcompany.features.module.modules.combat.aura.rotation.ComponentRepo;
 import ru.arixcompany.features.repos.AltRepo;
@@ -59,6 +60,8 @@ public class Arix implements IMinecraft {
     DraggableRepo draggableRepo;
     @NonFinal
     ShadersRepo shadersRepo;
+    @NonFinal
+    OtherRepo otherRepo;
 
     public Arix(){
         instance = this;
@@ -68,6 +71,8 @@ public class Arix implements IMinecraft {
 
         shadersRepo = new ShadersRepo();
         shadersRepo.init();
+
+        otherRepo = new OtherRepo();
 
         moduleRepo = new ModuleRepo();
         moduleRepo.init();
@@ -80,6 +85,7 @@ public class Arix implements IMinecraft {
 
         draggableRepo = new DraggableRepo();
         draggableRepo.init();
+
 
         initFileManager();
         tryAutoLogin();

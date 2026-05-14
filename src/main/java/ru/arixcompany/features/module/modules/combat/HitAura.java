@@ -187,9 +187,9 @@ public class HitAura extends Module {
     private final FuntimeRot funTimeRot = new FuntimeRot();
     private final SnapRotation snapRotation = new SnapRotation();
     private final SpookyTimeRot spookyTimeRot = new SpookyTimeRot();
+
     private void updateRotation() {
         if (target == null) return;
-        // В FOV режиме ротация не применяется
         if (fovMode.isValue()) return;
 
         boolean shouldAttack =
@@ -271,6 +271,7 @@ public class HitAura extends Module {
 
         RenderUtils.drawCircle(cx, cy, 0, 360, radius, 1.0f, color);
     }
+
    @Override
    public void toggle() {
       super.toggle();
