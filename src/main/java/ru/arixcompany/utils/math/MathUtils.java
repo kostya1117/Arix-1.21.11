@@ -35,21 +35,4 @@ public class MathUtils implements IMinecraft {
     public static float getRandom(float min, float max) {
         return (float) (Math.random() * (max - min) + min);
     }
-
-    public static float getSmartRandom(float min,float max) {
-        Random random = ThreadLocalRandom.current();
-
-        double gaussian = random.nextGaussian();
-
-        float average = (min + max) / 2.0f;
-        float deviation = (max - min) / 4.0f;
-
-        float delay = (float) (average + gaussian * deviation);
-
-        if (random.nextFloat() < 0.05f) {
-            delay += 200 + random.nextFloat() * 300;
-        }
-
-        return Math.max(min, Math.min(max, delay));
-    }
 }

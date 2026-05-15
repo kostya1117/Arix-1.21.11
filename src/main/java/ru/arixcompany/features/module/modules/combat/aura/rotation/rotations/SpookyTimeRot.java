@@ -26,19 +26,20 @@ public class SpookyTimeRot implements AbstractRotation, IMinecraft {
         double maxHeight = (AuraUtil.getStrictDistance(target) / attackDistance);
         float f = mc.getDeltaTracker().getGameTimeDeltaPartialTick(true);
         float f1 = mc.level.tickRateManager().isEntityFrozen(mc.player) ? 1.0F : f;
+        float pitchRandom = MathUtils.randomValue(0.5f,2.5f);
         pitchAcceleration = AttackHandler.anyEntityOnRay(target, Arix.getInstance().getModuleRepo().getModule(HitAura.class).attackRange.getValue() + Arix.getInstance().getModuleRepo().getModule(HitAura.class).preRange.getValue())
-                ? 0.4f : pitchAcceleration < 1 ? pitchAcceleration * 1.65f : 1;
+                ? 0.5f : pitchAcceleration < pitchRandom ? pitchAcceleration * 1.5f : pitchRandom;
 
         Vec3 vec = targetPos
-                .add(0, Mth.clamp(mc.player.getEyePosition(f1).y - target.getY(), 0, maxHeight), 0)
-                .subtract(mc.player.getEyePosition(f1))
+                .add(0, Mth.clamp(mc.player.getEyePosition(1.0f).y - target.getY(), 0, maxHeight), 0)
+                .subtract(mc.player.getEyePosition(1.0f))
                 .normalize();
 
-        float sin = (float) Math.sin((Util.getNanos() / 1.0E9 * Math.TAU * 2));
-        float cos = (float) Math.cos((Util.getNanos() / 1.0E9 * Math.TAU * 2));
+        float sin = (float) Math.sin(Util.getNanos() / 1.0E9 * Math.TAU * 2);
+        float cos = (float) Math.cos(Util.getNanos() / 1.0E9 * Math.TAU * 2);
 
-        float yawOffset = (MathUtils.randomValue(4, 8) * sin);
-        float pitchOffest = (MathUtils.randomValue(6, 8f) * cos);
+        float yawOffset = 10 * sin;
+        float pitchOffest = 5 * cos;
 
         float rawYaw = (float) Math.toDegrees(Math.atan2(-vec.x, vec.z));
         float rawPitch = (float) Mth.clamp(-Math.toDegrees(Math.atan2(vec.y, Math.hypot(vec.x, vec.z))), -90F, 90F);
@@ -49,9 +50,9 @@ public class SpookyTimeRot implements AbstractRotation, IMinecraft {
 
         RotationRepo.update(
                 rotation,
-                MathUtils.randomValue(9,12),
+                MathUtils.randomValue(9,11),
                 pitchAcceleration,
-                7,
+                MathUtils.randomValue(6,8),
                 2,
                 0,
                 5,

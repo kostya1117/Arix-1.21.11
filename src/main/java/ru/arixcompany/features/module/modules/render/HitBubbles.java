@@ -92,7 +92,6 @@ public class HitBubbles extends Module {
                 long passed = System.currentTimeMillis() - b.spawnTime;
                 float progress = (float) passed / maxLife;
                 float alpha    = 1.0f - progress;
-                if (alpha <= 0) continue;
 
                 float scale = Math.min(progress * 4f, 1.0f) * 0.35f;
 
@@ -105,7 +104,8 @@ public class HitBubbles extends Module {
                         b.z - cam.z
                 );
 
-                matrices.mulPose(mc.gameRenderer.getMainCamera().rotation());
+                matrices.mulPose(Axis.YP.rotationDegrees(b.yaw));
+                matrices.mulPose(Axis.XP.rotationDegrees(b.pitch));
 
                 matrices.mulPose(Axis.ZP.rotationDegrees(rotation));
 

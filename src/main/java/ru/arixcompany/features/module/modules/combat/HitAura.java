@@ -75,7 +75,7 @@ public class HitAura extends Module {
 
     public static final ListSetting extraSettings =
             new ListSetting("Доп.настройка")
-                    .value("Умные криты","Сброс спринта");
+                    .value("Умные криты","Сброс спринта","Фикс удара при HurtTime");
 
     public final SelectSetting sprintReset =
             new SelectSetting("Режим сброса спринта")
@@ -94,6 +94,7 @@ public class HitAura extends Module {
             .setValue(90.0f)
             .setStep(1.0f)
             .visible(fovMode::isValue);
+
 
     @Getter
     public static LivingEntity target;
@@ -152,7 +153,7 @@ public class HitAura extends Module {
     }
 
     private boolean shouldResetSprintForCrit() {
-        return mc.player.fallDistance > 0.0F;
+        return mc.player.fallDistance > 0.0F || AttackHandler.isBestMomentToHit();
     }
 
     public boolean hasStopSprint() {

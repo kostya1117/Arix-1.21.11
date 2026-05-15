@@ -39,7 +39,6 @@ public final class CircleShader implements IShader {
     public void init() {
         if (initialized) return;
         initialized = true;
-        Object a = CIRCLE_PIPELINE;
     }
 
     public static void drawCircle(float cx, float cy, float startDeg, float endDeg, float radius, float thickness, int color) {
