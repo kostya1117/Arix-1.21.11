@@ -87,7 +87,6 @@ import org.apache.commons.lang3.tuple.Pair;
 import ru.arixcompany.Arix;
 import ru.arixcompany.ui.draggable.DraggableRepo;
 import ru.arixcompany.ui.draggable.draggables.ArmorHudDraggable;
-import ru.arixcompany.ui.draggable.draggables.CrosshairDraggable;
 import ru.arixcompany.ui.draggable.draggables.ScoreboardDraggable;
 import ru.arixcompany.features.event.EventRepo;
 import ru.arixcompany.features.event.render.EventRender2D;
@@ -497,10 +496,6 @@ public class Gui {
     }
 
     private void renderCrosshair(GuiGraphics p_282828_, DeltaTracker p_343490_) {
-        if (CrosshairDraggable.isCustomCrosshairActive()) {
-            return;
-        }
-
         Options options = this.minecraft.options;
         if (options.getCameraType().isFirstPerson()
                 && (this.minecraft.gameMode.getPlayerMode() != GameType.SPECTATOR || this.canRenderCrosshairForSpectator(this.minecraft.hitResult))

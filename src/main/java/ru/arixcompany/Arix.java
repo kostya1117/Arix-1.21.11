@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.NonFinal;
 import net.minecraft.client.Minecraft;
+import ru.arixcompany.features.command.CommandRepo;
 import ru.arixcompany.features.module.modules.misc.ClickGui;
 import ru.arixcompany.features.repos.OtherRepo;
 import ru.arixcompany.ui.draggable.DraggableRepo;
@@ -12,7 +13,6 @@ import ru.arixcompany.features.module.modules.combat.aura.rotation.ComponentRepo
 import ru.arixcompany.features.repos.AltRepo;
 import ru.arixcompany.ui.title.alt.SessionUtil;
 import ru.arixcompany.ui.clickgui.Gui;
-import ru.arixcompany.features.command.CommandRepo;
 import ru.arixcompany.features.event.EventHandler;
 import ru.arixcompany.features.event.EventRepo;
 import ru.arixcompany.features.event.player.EventKey;
@@ -85,7 +85,6 @@ public class Arix implements IMinecraft {
 
         draggableRepo = new DraggableRepo();
         draggableRepo.init();
-
 
         initFileManager();
         tryAutoLogin();

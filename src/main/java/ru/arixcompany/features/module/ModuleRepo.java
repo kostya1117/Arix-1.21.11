@@ -65,15 +65,20 @@ public class ModuleRepo implements IMinecraft {
       if (Arix.getInstance().getModuleRepo() == null) return;
       if (mc.screen != null) return;
 
-      Module[] modules = Arix.getInstance().getModuleRepo().getBind(event.getKey());
+      int key = event.getKey();
+      
+      // Преобразуем кнопки мыши (0-7) в формат биндса (-100 - button)
+      if (key >= 0 && key <= 7) {
+         key = -100 - key;
+      }
+
+      Module[] modules = Arix.getInstance().getModuleRepo().getBind(key);
       if (modules == null) return;
 
       for (Module module : modules) {
          if (event.getAction() == 1) {
-            // Нажатие — press
             module.onBindPress();
          } else if (event.getAction() == 0) {
-            // Отпускание — release (только для HOLD)
             module.onBindRelease();
          }
       }

@@ -25,6 +25,7 @@ import ru.arixcompany.features.module.modules.combat.aura.rotation.rotations.Fun
 import ru.arixcompany.features.module.modules.combat.aura.rotation.rotations.SnapRotation;
 import ru.arixcompany.features.module.modules.combat.aura.rotation.rotations.SpookyTimeRot;
 import ru.arixcompany.features.module.modules.combat.aura.utils.AuraUtil;
+import ru.arixcompany.features.module.modules.combat.aura.utils.RayTraceUtil;
 import ru.arixcompany.features.module.modules.movement.AutoSprint;
 import ru.arixcompany.features.module.setting.implement.BooleanSetting;
 import ru.arixcompany.features.module.setting.implement.ListSetting;
@@ -51,7 +52,7 @@ public class HitAura extends Module {
 
     public static final SelectSetting rotationType =
             new SelectSetting("Режим ротации")
-                    .value("Funtime","FuntimeRot", "Snap","SpookyTime");
+                    .value("Funtime","FuntimeRot", "Snap","SpookyTime","Trigger");
 
     public static final SelectSetting snapSetting =
             new SelectSetting("Режим снапа")
@@ -86,15 +87,6 @@ public class HitAura extends Module {
             new SelectSetting("Режим движения")
                     .value("Без", "Свободная", "Сфокусированная");
 
-    public static final BooleanSetting fovMode = new BooleanSetting("FOV режим")
-            .setValue(false);
-
-    public static final ValueSetting fovAngle = new ValueSetting("FOV угол")
-            .range(30.0f, 180.0f)
-            .setValue(90.0f)
-            .setStep(1.0f)
-            .visible(fovMode::isValue);
-
     @Getter
     public static LivingEntity target;
     private final TargetHandler targetHandler = new TargetHandler();
@@ -112,9 +104,7 @@ public class HitAura extends Module {
                 misc,
                 extraSettings,
                 motion,
-                sprintReset,
-                fovMode,
-                fovAngle
+                sprintReset
         );
     }
 
@@ -138,6 +128,7 @@ public class HitAura extends Module {
             }
         }
     }
+
     @EventHandler
     public void onPreAttack(EventSprint e) {
         if (target == null || mc.player == null || mc.level == null)
@@ -169,14 +160,30 @@ public class HitAura extends Module {
         targetHandler.updateTarget();
         target = targetHandler.getTarget();
         if (target != null && mc.player != null && mc.level != null) {
-            if (fovMode.isValue() && !isTargetInFov(target)) return;
 
-            if (!this.checkToAttack()) {
-                AttackHandler.performAttack(
-                        target,
-                        misc.isSelected("Райкаст"),
-                        attackRange.getValue()
+            if (rotationType.isSelected("Trigger")) {
+                LivingEntity rtxTarget = (LivingEntity) RayTraceUtil.getRtxTarget(
+                        mc.player.getYRot(),
+                        mc.player.getXRot(),
+                        attackRange.getValue() + preRange.getValue(),
+                        misc.isSelected("Бить через блоки")
                 );
+
+                if (rtxTarget == target && !this.checkToAttack()) {
+                    AttackHandler.performAttack(
+                            target,
+                            true,
+                            attackRange.getValue()
+                    );
+                }
+            } else {
+                if (!this.checkToAttack()) {
+                    AttackHandler.performAttack(
+                            target,
+                            misc.isSelected("Райкаст"),
+                            attackRange.getValue()
+                    );
+                }
             }
         } else {
             this.reset();
@@ -190,7 +197,10 @@ public class HitAura extends Module {
 
     private void updateRotation() {
         if (target == null) return;
-        if (fovMode.isValue()) return;
+
+        if (rotationType.isSelected("Trigger")) {
+            return;
+        }
 
         boolean shouldAttack =
                 AttackHandler.shouldAttack(
@@ -235,43 +245,6 @@ public class HitAura extends Module {
         }
     }
 
-    public static boolean isTargetInFov(LivingEntity entity) {
-        if (mc.player == null || entity == null) return false;
-
-        Vec3 eyePos = mc.player.getEyePosition();
-        Vec3 closest = AuraUtil.getClosestVec(eyePos, entity);
-        Vec3 dir = closest.subtract(eyePos).normalize();
-
-        float yaw   = (float) Math.toRadians(mc.player.getYRot());
-        float pitch = (float) Math.toRadians(mc.player.getXRot());
-        Vec3 look = new Vec3(
-                -Math.sin(yaw) * Math.cos(pitch),
-                -Math.sin(pitch),
-                 Math.cos(yaw) * Math.cos(pitch)
-        );
-
-        double dot = look.dot(dir);
-        double angle = Math.toDegrees(Math.acos(Mth.clamp(dot, -1.0, 1.0)));
-        return angle <= fovAngle.getValue() / 2.0;
-    }
-
-    @EventHandler
-    public void onRender2D(EventRender2D e) {
-        if (!fovMode.isValue() || mc.player == null) return;
-
-        int sw = mc.getWindow().getGuiScaledWidth();
-        int sh = mc.getWindow().getGuiScaledHeight();
-        float cx = sw / 2.0f;
-        float cy = sh / 2.0f;
-
-        float radius = (sh / 2.0f) * ((float) fovAngle.getValue() / 180.0f);
-
-        boolean inFov = target != null && isTargetInFov(target);
-        int color = inFov ? 0xFFFFFFFF : 0x80FFFFFF;
-
-        RenderUtils.drawCircle(cx, cy, 0, 360, radius, 1.0f, color);
-    }
-
    @Override
    public void toggle() {
       super.toggle();
@@ -291,14 +264,5 @@ public class HitAura extends Module {
          || !mc.player.getMainHandItem().is(ItemTags.SWORDS)
             && !mc.player.getMainHandItem().is(ItemTags.AXES)
             && misc.isSelected("Бить только оружием");
-   }
-    @Override
-    public void activate() {
-        super.activate();
-    }
-
-   @Override
-   public void deactivate() {
-      super.deactivate();
    }
 }

@@ -39,7 +39,6 @@ public final class FractalFlameShader implements IShader {
     public void init() {
         if (initialized) return;
         initialized = true;
-        Object a = FRACTAL_FLAME_PIPELINE;
     }
 
     public static void draw(float x, float y, float w, float h) {

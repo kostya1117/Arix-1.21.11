@@ -162,14 +162,14 @@ public final class Gui extends Screen implements IMinecraft {
         int my = (int) event.y();
         int button = event.button();
 
-        if (activeBindSetting != null && button >= 0 && button <= 2) {
+        if (activeBindSetting != null && button >= 0) {
             activeBindSetting.setKey(-100 - button);
             activeBindSetting.active = false;
             activeBindSetting = null;
             return true;
         }
 
-        if (activeModuleBind != null && !moduleBindAwaitingMode && (button == 3 || button == 4)) {
+        if (activeModuleBind != null && !moduleBindAwaitingMode && button >= 0) {
             activeModuleBind.bind = -100 - button;
             moduleBindAwaitingMode = true;
             return true;

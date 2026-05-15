@@ -64,8 +64,8 @@ public final class ModuleComponent implements IComponent {
                 return handleModuleClick(category, module, button);
             }
             
-            // Обрабатываем Mouse4/5 даже если модуль не в фокусе (для быстрого бинда)
-            if ((button == 3 || button == 4) && Gui.activeModuleBind == module) {
+            // Обрабатываем любые кнопки мыши (3+) даже если модуль не в фокусе (для быстрого бинда)
+            if (button >= 3 && Gui.activeModuleBind == module) {
                 return handleModuleClick(category, module, button);
             }
 
@@ -105,8 +105,7 @@ public final class ModuleComponent implements IComponent {
             return true;
         }
 
-        // Mouse4/5 можно биндить в любое время, даже если уже выбран другой модуль
-        if ((button == 3 || button == 4) && Gui.activeModuleBind == module) {
+        if (button >= 3 && Gui.activeModuleBind == module) {
             module.bind = -100 - button;
             Gui.moduleBindAwaitingMode = true;
             return true;

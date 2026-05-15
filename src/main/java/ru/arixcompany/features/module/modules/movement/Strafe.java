@@ -1,76 +1,112 @@
 package ru.arixcompany.features.module.modules.movement;
 
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.experimental.FieldDefaults;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.phys.Vec3;
 import ru.arixcompany.features.event.EventHandler;
 import ru.arixcompany.features.event.world.EventUpdate;
 import ru.arixcompany.features.module.Category;
 import ru.arixcompany.features.module.Module;
 import ru.arixcompany.features.module.setting.implement.BooleanSetting;
+import ru.arixcompany.features.module.setting.implement.SelectSetting;
 import ru.arixcompany.features.module.setting.implement.ValueSetting;
+import ru.arixcompany.utils.math.Timer;
 import ru.arixcompany.utils.player.MoveUtils;
 
+@Getter
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class Strafe extends Module {
-    private final ValueSetting speed = new ValueSetting("Сила")
-            .range(1f, 1.1f)
-            .setValue(1f)
-            .setStep(0.01f);
 
-    private final BooleanSetting damageBoost = new BooleanSetting("Буст при уроне")
+    final SelectSetting mode = new SelectSetting("Режим")
+            .value("Default", "Matrix", "MetaHVH");
+
+    final BooleanSetting damageBoost = new BooleanSetting("Буст при уроне")
             .setValue(false);
 
-    private final ValueSetting boostStrength = new ValueSetting("Сила буста")
-            .range(1f, 1.1f)
-            .setValue(1.15f)
-            .setStep(0.01f)
+    final ValueSetting boostSpeed = new ValueSetting("Скорость буста")
+            .setValue(0.7f)
+            .range(0.1f, 5.0f)
+            .step(0.1f)
             .visible(damageBoost::isValue);
 
-    private int lastHurtTime = 0;
-    private boolean boosting = false;
-    private int boostTicks = 0;
-    private static final int BOOST_DURATION = 6;
+    final Timer timer = new Timer();
+    double prevSpeed = 0.0;
 
     public Strafe() {
         super("Strafe", Category.Movement);
-        setup(speed, damageBoost, boostStrength);
-    }
-
-    @Override
-    public void deactivate() {
-        super.deactivate();
-        lastHurtTime = 0;
-        boosting = false;
-        boostTicks = 0;
+        setup(mode, damageBoost, boostSpeed);
     }
 
     @EventHandler
     public void onUpdate(EventUpdate e) {
         if (mc.player == null) return;
 
-        int currentHurtTime = mc.player.hurtTime;
-        if (damageBoost.isValue() && currentHurtTime > lastHurtTime && currentHurtTime == 10) {
-            boosting = true;
-            boostTicks = BOOST_DURATION;
-        }
-        lastHurtTime = currentHurtTime;
+        String m = mode.getSelected();
 
-        if (boosting) {
-            boostTicks--;
-            if (boostTicks <= 0) boosting = false;
+        if (!MoveUtils.isMoving()) {
+            prevSpeed = 0;
+            return;
         }
 
-        if (!MoveUtils.isMoving()) return;
+        double spd = getSpeed();
+
+        if (damageBoost.isValue() && timer.finished(700L)) {
+            spd += boostSpeed.getValue();
+            timer.reset();
+        }
+
+        if (m.equals("Matrix")) {
+            matrix(spd);
+            return;
+        }
+
+        if (m.equals("MetaHVH")) {
+            spd *= 1.2;
+        }
+
+        move(spd);
+        prevSpeed = spd;
+    }
+
+    private void matrix(double spd) {
+        double randomSpd = 0.25 - Math.random() * 0.001;
+        move(randomSpd);
+        prevSpeed = randomSpd;
+    }
+
+    private double getSpeed() {
+        double spd = 0.2873;
+        MobEffectInstance speedEffect = mc.player.getEffect(MobEffects.SPEED);
+        if (speedEffect != null) {
+            spd *= 1.0 + 0.2 * (speedEffect.getAmplifier() + 1);
+        }
+        return spd;
+    }
+
+    private void move(double spd) {
+        float yaw = mc.player.getYRot();
+        float fwd = getFwd();
+        float str = getStr();
+
+        if (fwd == 0 && str == 0) return;
+
+        double radians = Math.toRadians(yaw);
+        double x = (str * Math.cos(radians) - fwd * Math.sin(radians)) * spd;
+        double z = (str * Math.sin(radians) + fwd * Math.cos(radians)) * spd;
 
         Vec3 motion = mc.player.getDeltaMovement();
-        double currentPlayerSpeed = Math.sqrt(motion.x * motion.x + motion.z * motion.z);
-        double yaw = Math.toRadians(MoveUtils.getPlayerDirection());
+        mc.player.setDeltaMovement(x, motion.y, z);
+    }
 
-        double multiplier = boosting ? boostStrength.getValue() : speed.getValue();
-        double newSpeed = currentPlayerSpeed * multiplier;
+    private float getFwd() {
+        return (mc.options.keyUp.isDown() ? 1 : 0) - (mc.options.keyDown.isDown() ? 1 : 0);
+    }
 
-        mc.player.setDeltaMovement(
-                -Math.sin(yaw) * newSpeed,
-                motion.y,
-                Math.cos(yaw) * newSpeed
-        );
+    private float getStr() {
+        return (mc.options.keyLeft.isDown() ? 1 : 0) - (mc.options.keyRight.isDown() ? 1 : 0);
     }
 }

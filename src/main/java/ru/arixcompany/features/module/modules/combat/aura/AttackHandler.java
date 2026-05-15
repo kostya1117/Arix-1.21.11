@@ -46,10 +46,6 @@ public final class AttackHandler implements IMinecraft {
         useEntity(target, InteractionHand.MAIN_HAND);
     }
 
-    /**
-     * Проверяет есть ли ограничения на движение игрока.
-     * Полезна для определения особых состояний где крит срабатывает по другим правилам.
-     */
     public boolean hasMovementRestrictions() {
         return mc.player.hasEffect(MobEffects.BLINDNESS)
                 || mc.player.hasEffect(MobEffects.LEVITATION)
@@ -104,9 +100,9 @@ public final class AttackHandler implements IMinecraft {
         if (mc.player == null) return false;
 
         float adaptiveFallValue = 0.F;
-        //float maxFallOff = .2F;
+
         double yCapacity = getYCapacityOnPlayerPos(2);
-        //float maxFallOff = (float) Math.min(0.9, 0.2 + yCapacity * 0.35);
+
         float maxFallOff = MathUtils.randomValue(0.1f,0.8f);
         if (yCapacity > .2) {
             adaptiveFallValue = maxFallOff;
@@ -196,9 +192,5 @@ public final class AttackHandler implements IMinecraft {
         }
 
         return valid;
-    }
-
-    public float randomfall(){
-        return MathUtils.randomValue(0.2f, 0.8f);
     }
 }

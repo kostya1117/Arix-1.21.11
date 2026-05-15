@@ -21,8 +21,6 @@ public class DraggableRepo {
     @Getter
     private ScoreboardDraggable scoreboard;
     @Getter
-    private CrosshairDraggable crosshair;
-    @Getter
     private TargetHudDraggable targetHud;
 
     private IDraggable draggingComponent;
@@ -34,7 +32,6 @@ public class DraggableRepo {
         armorHud = register(new ArmorHudDraggable());
         bossbar = register(new BossBarDraggable());
         scoreboard = register(new ScoreboardDraggable());
-        crosshair = register(new CrosshairDraggable());
         targetHud = register(new TargetHudDraggable());
     }
 

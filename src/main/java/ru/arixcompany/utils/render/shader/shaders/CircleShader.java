@@ -12,11 +12,13 @@ import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.MeshData;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
 import net.optifine.render.BufferUploader;
 import ru.arixcompany.utils.render.shader.IShader;
+import ru.arixcompany.utils.render.shader.shaders.states.CircleRenderState;
 
 public final class CircleShader implements IShader {
 
@@ -50,8 +52,21 @@ public final class CircleShader implements IShader {
         submitCircleQuad(cx, cy, radius, thickness, startDeg, endDeg, color);
     }
 
+    public static void drawCircle(GuiGraphics ctx, float cx, float cy, float startDeg, float endDeg, float radius, float thickness, int color) {
+        if (radius <= 0.0f || thickness <= 0.0f) return;
+
+        thickness = Mth.clamp(thickness, 0.0f, radius);
+
+        submitCircleQuad(cx, cy, radius, thickness, startDeg, endDeg, color);
+    }
+
     private static void submitCircleQuad(float cx, float cy, float radius, float thickness, float startDeg, float endDeg, int color) {
-        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
+        RenderSystem.setShaderColor(
+                ARGB.red(color)   / 255.0f,
+                ARGB.green(color) / 255.0f,
+                ARGB.blue(color)  / 255.0f,
+                ARGB.alpha(color) / 255.0f
+        );
 
         ByteBufferBuilder byteBuffer = new ByteBufferBuilder(
                 DefaultVertexFormat.POSITION_TEX_COLOR.getVertexSize() * 4
@@ -70,21 +85,13 @@ public final class CircleShader implements IShader {
 
         float thicknessNorm = thickness / radius;
 
-        builder.addVertex(x1, y2, thicknessNorm)
-                .setUv(0.0f, 1.0f)
-                .setColor(ARGB.red(color), ARGB.green(color), ARGB.blue(color), ARGB.alpha(color));
+        int startPacked = Mth.clamp((int) (Mth.clamp(startDeg, 0, 360) / 360.0f * 255.0f), 0, 255);
+        int endPacked   = Mth.clamp((int) (Mth.clamp(endDeg,   0, 360) / 360.0f * 255.0f), 0, 255);
 
-        builder.addVertex(x2, y2, thicknessNorm)
-                .setUv(1.0f, 1.0f)
-                .setColor(ARGB.red(color), ARGB.green(color), ARGB.blue(color), ARGB.alpha(color));
-
-        builder.addVertex(x2, y1, thicknessNorm)
-                .setUv(1.0f, 0.0f)
-                .setColor(ARGB.red(color), ARGB.green(color), ARGB.blue(color), ARGB.alpha(color));
-
-        builder.addVertex(x1, y1, thicknessNorm)
-                .setUv(0.0f, 0.0f)
-                .setColor(ARGB.red(color), ARGB.green(color), ARGB.blue(color), ARGB.alpha(color));
+        builder.addVertex(x1, y2, thicknessNorm).setUv(0.0f, 1.0f).setColor(startPacked, endPacked, 0, 255);
+        builder.addVertex(x2, y2, thicknessNorm).setUv(1.0f, 1.0f).setColor(startPacked, endPacked, 0, 255);
+        builder.addVertex(x2, y1, thicknessNorm).setUv(1.0f, 0.0f).setColor(startPacked, endPacked, 0, 255);
+        builder.addVertex(x1, y1, thicknessNorm).setUv(0.0f, 0.0f).setColor(startPacked, endPacked, 0, 255);
 
         MeshData mesh = builder.buildOrThrow();
         BufferUploader.draw(CIRCLE_PIPELINE, mesh, () -> "circle");

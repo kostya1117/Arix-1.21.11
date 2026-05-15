@@ -81,13 +81,13 @@ public final class BindSettingComponent implements IComponent {
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         if (Gui.activeBindSetting != setting) return false;
 
-        if (keyCode == 256) { // ESC — отмена
+        if (keyCode == 256) {
             setting.active = false;
             Gui.activeBindSetting = null;
             return true;
         }
 
-        if (keyCode == 261) { // Delete — сброс
+        if (keyCode == 261) {
             setting.setKey(-1);
             setting.active = false;
             Gui.activeBindSetting = null;

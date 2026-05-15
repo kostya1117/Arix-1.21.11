@@ -68,10 +68,6 @@ public final class RoundRectShader implements IShader {
     public void init() {
         if (initialized) return;
         initialized = true;
-
-        Object a = ROUND_RECT_PIPELINE;
-        Object b = ROUND_RECT_OUTLINE_PIPELINE;
-        Object c = ROUND_RECT_CORNERS_PIPELINE;
     }
 
     public static void drawRoundRect(float x, float y, float w, float h, float radius, int color) {
