@@ -167,7 +167,7 @@ public class ClientLevel extends Level implements CacheSlot.Cleaner<ClientLevel>
     private final ClientChunkCache chunkSource;
     private final Deque<Runnable> lightUpdateQueue = Queues.newArrayDeque();
     private int serverSimulationDistance;
-    private final BlockStatePredictionHandler blockStatePredictionHandler = new BlockStatePredictionHandler();
+    public final BlockStatePredictionHandler blockStatePredictionHandler = new BlockStatePredictionHandler();
     private final Set<BlockEntity> globallyRenderedBlockEntities = new ReferenceOpenHashSet<>();
     private final ClientExplosionTracker explosionTracker = new ClientExplosionTracker();
     private final WorldBorder worldBorder = new WorldBorder();

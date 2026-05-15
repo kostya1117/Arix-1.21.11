@@ -31,7 +31,6 @@ public class MathUtils implements IMinecraft {
             throw new IllegalArgumentException("max не может быть меньше min.");
         }
     }
-
     public static float getRandom(float min, float max) {
         return (float) (Math.random() * (max - min) + min);
     }

@@ -16,6 +16,7 @@ import ru.arixcompany.features.module.modules.misc.funtime.AutoBuy;
 import ru.arixcompany.features.module.modules.movement.AutoSprint;
 import ru.arixcompany.features.module.modules.movement.Strafe;
 import ru.arixcompany.features.module.modules.player.AutoRespawn;
+import ru.arixcompany.features.module.modules.player.ClickActions;
 import ru.arixcompany.features.module.modules.player.NoPush;
 import ru.arixcompany.features.module.modules.player.TestModule;
 import ru.arixcompany.features.module.modules.render.*;
@@ -54,6 +55,7 @@ public class ModuleRepo implements IMinecraft {
        modules.add(new AutoRespawn());
        modules.add(new ClickGui());
        modules.add(new Strafe());
+       modules.add(new ClickActions());
    }
 
    public void init() {

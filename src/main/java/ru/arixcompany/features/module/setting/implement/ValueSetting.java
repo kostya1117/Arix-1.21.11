@@ -31,10 +31,6 @@ public class ValueSetting extends Setting {
         return this;
     }
 
-    public int getInt() {
-        return (int) value;
-    }
-
     public ValueSetting visible(Supplier<Boolean> visible) {
         setVisible(visible);
         return this;
@@ -43,5 +39,9 @@ public class ValueSetting extends Setting {
     public ValueSetting step(float step) {
         this.step = step;
         return this;
+    }
+
+    public int getInt() {
+        return (int) value;
     }
 }
