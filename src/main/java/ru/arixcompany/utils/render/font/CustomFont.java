@@ -298,7 +298,7 @@ public class CustomFont implements AutoCloseable {
             Integer idx = idxMap.get(cp);
             if (idx == null) {
                 float adv = fontSize * 0.5f;
-                if (bold) adv += 1;
+                if (bold) adv += 0.1f;
                 cx += adv;
                 prev = cp;
                 continue;
@@ -311,11 +311,11 @@ public class CustomFont implements AutoCloseable {
 
             if (sw > 0 && sh > 0) {
                 drawGlyph(g, gx, gy, cd, ital, col);
-                if (bold) drawGlyph(g, gx + 1, gy, cd, ital, col);
+                if (bold) drawGlyph(g, gx + 0.1f, gy, cd, ital, col);
             }
 
             float adv = cd.xadvance() * INV_OS;
-            if (bold) adv += 1;
+            if (bold) adv += 0.1f;
             cx += adv;
             prev = cp;
         }
@@ -374,7 +374,7 @@ public class CustomFont implements AutoCloseable {
             if (prev != -1) w += STBTruetype.stbtt_GetCodepointKernAdvance(fontInfo, prev, cp) * scale;
             
             float cw = getCharW(ch);
-            if (bold) cw += 1;
+            if (bold) cw += 0.1f;
             w += cw;
             prev = cp;
         }
@@ -459,7 +459,7 @@ public class CustomFont implements AutoCloseable {
 
             Integer slot = idxMap.get(cp);
             if (slot == null) {
-                cx += fontSize * .5f + (s.bold ? 1 : 0);
+                cx += fontSize * .5f + (s.bold ? 0.1F : 0);
                 continue;
             }
 
@@ -468,9 +468,9 @@ public class CustomFont implements AutoCloseable {
             float gx = cx + bc.xoff() * INV_OS, gy = by + bc.yoff() * INV_OS;
             if (sw > 0 && sh > 0) {
                 drawGlyph(g, gx, gy, bc, s.ital, s.col);
-                if (s.bold) drawGlyph(g, gx + 1, gy, bc, s.ital, s.col);
+                if (s.bold) drawGlyph(g, gx + 0.1F, gy, bc, s.ital, s.col);
             }
-            cx += bc.xadvance() * INV_OS + (s.bold ? 1 : 0);
+            cx += bc.xadvance() * INV_OS + (s.bold ? 0.1f : 0);
         }
         drawDeco(g, bx, cx, by, s);
     }

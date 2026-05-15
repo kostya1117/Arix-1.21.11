@@ -76,7 +76,7 @@ public class HitAura extends Module {
 
     public static final ListSetting extraSettings =
             new ListSetting("Доп.настройка")
-                    .value("Умные криты","Сброс спринта");
+                    .value("Умные криты","Сброс спринта","Фикс удара при HurtTime");
 
     public final SelectSetting sprintReset =
             new SelectSetting("Режим сброса спринта")
@@ -108,7 +108,7 @@ public class HitAura extends Module {
         );
     }
 
-   @EventHandler
+    @EventHandler
     public void onEvent(EventGameTick e) {
         if (target != null && mc.player != null && mc.level != null) {
             this.updateRotation();
@@ -121,7 +121,7 @@ public class HitAura extends Module {
             return;
 
         boolean needSprintReset = shouldResetSprintForCrit();
-        
+
         if (needSprintReset && hasStopSprint() && AuraUtil.validDistance(target, attackRange.getValue())) {
             if (sprintReset.isSelected("Легит") && extraSettings.isSelected("Сброс спринта")) {
                 mc.player.setSprinting(false);
@@ -245,24 +245,24 @@ public class HitAura extends Module {
         }
     }
 
-   @Override
-   public void toggle() {
-      super.toggle();
-      this.reset();
-   }
+    @Override
+    public void toggle() {
+        super.toggle();
+        this.reset();
+    }
 
-   private void reset() {
-      target = null;
-      if (mc.player != null) {
-         count = 0;
-      }
-   }
+    private void reset() {
+        target = null;
+        if (mc.player != null) {
+            count = 0;
+        }
+    }
 
-   private boolean checkToAttack() {
-      return mc.player.isUsingItem() && misc.isSelected("Не бить если кушаеш") && !(mc.player.getActiveItem().getItem() instanceof ShieldItem)
-         || mc.screen != null && misc.isSelected("Не атакавать в контейнере")
-         || !mc.player.getMainHandItem().is(ItemTags.SWORDS)
-            && !mc.player.getMainHandItem().is(ItemTags.AXES)
-            && misc.isSelected("Бить только оружием");
-   }
+    private boolean checkToAttack() {
+        return mc.player.isUsingItem() && misc.isSelected("Не бить если кушаеш") && !(mc.player.getActiveItem().getItem() instanceof ShieldItem)
+                || mc.screen != null && misc.isSelected("Не атакавать в контейнере")
+                || !mc.player.getMainHandItem().is(ItemTags.SWORDS)
+                && !mc.player.getMainHandItem().is(ItemTags.AXES)
+                && misc.isSelected("Бить только оружием");
+    }
 }

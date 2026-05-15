@@ -5,6 +5,7 @@ import ru.arixcompany.features.event.EventHandler;
 import ru.arixcompany.features.event.world.EventPacket;
 import ru.arixcompany.features.module.modules.combat.aura.rotation.Component;
 
+
 public class SprintServerRepo extends Component {
     public static boolean lockSprint, serverSprint;
     @EventHandler

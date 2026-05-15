@@ -113,14 +113,12 @@ public class ChinaHat extends Module {
 
         Color main = Arix.getInstance().getCurrentTheme().getMain();
 
-        List<Player> players = new ArrayList<>(mc.level.players());
-
         ByteBufferBuilder allocator = new ByteBufferBuilder(8192);
         try (allocator) {
             MultiBufferSource.BufferSource buffer = MultiBufferSource.immediate(allocator);
             PoseStack matrices = e.getMatrixStack();
 
-            for (Player player : players) {
+            for (Player player : mc.level.players()) {
                 boolean isSelf   = player == mc.player;
                 boolean isFriend = FriendRepo.isFriend(player);
 

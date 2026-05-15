@@ -40,11 +40,16 @@ public final class AttackHandler implements IMinecraft {
         if (!canAttack)
             return;
 
+        if (target.hurtTime > 7 && hitAura.extraSettings.isSelected("Фикс удара при HurtTime")) {
+            return;
+        }
         if (hitAura.sprintReset.isSelected("Пакет") && hitAura.extraSettings.isSelected("Сброс спринта") && SprintServerRepo.serverSprint) {
             disableSprint();
         }
+
         useEntity(target, InteractionHand.MAIN_HAND);
     }
+
 
     public boolean hasMovementRestrictions() {
         return mc.player.hasEffect(MobEffects.BLINDNESS)
@@ -79,30 +84,81 @@ public final class AttackHandler implements IMinecraft {
         return minDst - mc.player.getBbHeight();
     }
 
-    public static double convenientFallOffset() {
-        if (mc.player == null) return 0.0;
+//    public static double convenientFallOffset() {
+//        if (mc.player == null) return 0.0;
+//
+//        double velocityY = mc.player.getDeltaMovement().y;
+//        double fallDist = mc.player.fallDistance;
+//        boolean fallingNow = velocityY < -0.08;
+//
+//        // Проверка на активное падение
+//        if (fallingNow && fallDist < 0.01) {
+//            fallDist = Math.abs(velocityY);
+//        }
+//        boolean inFluid = mc.player.isInWater() || mc.player.isInLava();
+//        if (inFluid) return 0.0;
+//
+//        return fallDist;
+//    }
+//
+//    public boolean isBestMomentToHit() {
+//        if (mc.player == null) return false;
+//
+//        Pose pose = mc.player.getPose();
+//        double fallOffset = convenientFallOffset();
+//        double yCapacity = getYCapacityOnPlayerPos(2);
+//
+//        boolean tightSpace = yCapacity < 0.2;
+//        boolean smallPose = pose == Pose.SWIMMING || pose == Pose.CROUCHING;
+//        boolean adaptiveFall = fallOffset > 0.01 || smallPose || tightSpace;
+//
+//        if (adaptiveFall) return true;
+//
+//        boolean badBlock = mc.level.getBlockState(mc.player.blockPosition()).is(Blocks.COBWEB);
+//        boolean fluid =
+//                mc.player.isInWater()
+//                        || mc.player.isInLava()
+//                        || mc.player.isEyeInFluid(FluidTags.WATER)
+//                        || mc.player.isEyeInFluid(FluidTags.LAVA);
+//
+//        boolean conditions =
+//                mc.player.hasEffect(MobEffects.BLINDNESS)
+//                        || mc.player.hasEffect(MobEffects.LEVITATION)
+//                        || mc.player.hasEffect(MobEffects.SLOW_FALLING)
+//                        || mc.player.getAbilities().flying
+//                        || mc.player.onClimbable()
+//                        || mc.player.isPassenger();
+//
+//        boolean smartCrit = HitAura.extraSettings.isSelected("Умные криты")
+//                && mc.player.ticksOnGround > 4
+//                && !mc.player.isJumping();
+//
+//        return badBlock || fluid || conditions || smartCrit;
+//    }
+public static double convenientFallOffset() {
+    if (mc.player == null) return 0.0;
 
-        double fallOffset = mc.player.fallDistance;
-        if (mc.level != null
-                && !mc.player.onGround()
-                && mc.player.getDeltaMovement().y < -0.0784000015258789) {
-            boolean posLiquid   = !mc.level.getFluidState(mc.player.blockPosition()).isEmpty();
-            boolean posUpLiquid = !mc.level.getFluidState(mc.player.blockPosition().above()).isEmpty();
-            if (!posLiquid && !posUpLiquid
-                    && mc.player.fallDistance < -mc.player.getDeltaMovement().y
-                    && mc.player.ticksOnGround > 6) {
-                fallOffset = -mc.player.getDeltaMovement().y;
-            }
+    double fallOffset = mc.player.fallDistance;
+    if (mc.level != null
+            && !mc.player.onGround()
+            && mc.player.getDeltaMovement().y < -0.0784000015258789) {
+        boolean posLiquid   = !mc.level.getFluidState(mc.player.blockPosition()).isEmpty();
+        boolean posUpLiquid = !mc.level.getFluidState(mc.player.blockPosition().above()).isEmpty();
+        if (!posLiquid && !posUpLiquid
+                && mc.player.fallDistance < -mc.player.getDeltaMovement().y
+                && mc.player.ticksOnGround > 6) {
+            fallOffset = -mc.player.getDeltaMovement().y;
         }
-        return fallOffset;
     }
+    return fallOffset;
+}
     public boolean isBestMomentToHit() {
         if (mc.player == null) return false;
 
         float adaptiveFallValue = 0.F;
-
+        //float maxFallOff = .2F;
         double yCapacity = getYCapacityOnPlayerPos(2);
-
+        //float maxFallOff = (float) Math.min(0.9, 0.2 + yCapacity * 0.35);
         float maxFallOff = MathUtils.randomValue(0.1f,0.8f);
         if (yCapacity > .2) {
             adaptiveFallValue = maxFallOff;
@@ -128,6 +184,7 @@ public final class AttackHandler implements IMinecraft {
                 || mc.player.hasEffect(MobEffects.SLOW_FALLING)
                 || mc.player.getAbilities().flying;
     }
+
 
     public boolean useEntity(LivingEntity target, InteractionHand hand) {
         if (target == null || mc.gameMode == null || mc.player == null) return false;

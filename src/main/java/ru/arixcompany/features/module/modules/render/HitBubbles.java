@@ -90,9 +90,8 @@ public class HitBubbles extends Module {
 
             for (HitBubble b : bubbles) {
                 long passed = System.currentTimeMillis() - b.spawnTime;
-                float progress = (float) passed / maxLife;
+                float progress = Math.min((float) passed / maxLife, 1.0f);
                 float alpha    = 1.0f - progress;
-                if (alpha <= 0) continue;
 
                 float scale = Math.min(progress * 4f, 1.0f) * 0.35f;
 
@@ -105,7 +104,8 @@ public class HitBubbles extends Module {
                         b.z - cam.z
                 );
 
-                matrices.mulPose(mc.gameRenderer.getMainCamera().rotation());
+                matrices.mulPose(Axis.YP.rotationDegrees(b.yaw));
+                matrices.mulPose(Axis.XP.rotationDegrees(b.pitch));
 
                 matrices.mulPose(Axis.ZP.rotationDegrees(rotation));
 
@@ -119,7 +119,7 @@ public class HitBubbles extends Module {
                 int blue = color.getBlue();
                 int green = color.getGreen();
 
-                int a = (int) (alpha * 255f);
+                int a = Math.clamp((int) (alpha * 255f), 0, 255);
                 vertex.addVertex(matrix, -1f, -1f, 0).setUv(0, 1).setColor(red, green, blue, a);
                 vertex.addVertex(matrix,  1f, -1f, 0).setUv(1, 1).setColor(red, green, blue, a);
                 vertex.addVertex(matrix,  1f,  1f, 0).setUv(1, 0).setColor(red, green, blue, a);
