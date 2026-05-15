@@ -623,6 +623,7 @@ public class LevelRenderer implements ResourceManagerReloadListener, AutoCloseab
         this.compileSections(p_109604_);
         profilerfiller.popPush("extract");
         profilerfiller.push("entities");
+
         this.extractVisibleEntities(p_109604_, frustum, p_342180_, this.levelRenderState);
         profilerfiller.popPush("blockEntities");
         this.extractVisibleBlockEntities(p_109604_, f, this.levelRenderState, frustum);

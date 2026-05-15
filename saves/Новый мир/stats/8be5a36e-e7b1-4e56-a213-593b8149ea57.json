@@ -1,0 +1,20 @@
+{
+  "stats": {
+    "minecraft:used": {
+      "minecraft:ender_pearl": 2,
+      "minecraft:bow": 1
+    },
+    "minecraft:custom": {
+      "minecraft:sprint_one_cm": 2985,
+      "minecraft:time_since_rest": 1581,
+      "minecraft:walk_one_cm": 690,
+      "minecraft:total_world_time": 1744,
+      "minecraft:leave_game": 1,
+      "minecraft:fly_one_cm": 16493,
+      "minecraft:play_time": 1581,
+      "minecraft:jump": 91,
+      "minecraft:time_since_death": 1581
+    }
+  },
+  "DataVersion": 4671
+}

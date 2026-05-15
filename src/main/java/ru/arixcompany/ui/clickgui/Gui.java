@@ -34,14 +34,16 @@ import java.util.*;
 public final class Gui extends Screen implements IMinecraft {
 
     public static final Animation alphaPC = new EaseInOutQuad(300, 1.0);
-    public static final Animation animation14 = new EaseInOutQuad(500, 1.0); // Анимация смены тем
-    public static final Animation animation15 = new EaseInOutQuad(300, 1.0); // Анимация ColorPicker'а
+    public static final Animation animation14 = new EaseInOutQuad(500, 1.0);
+    public static final Animation animation15 = new EaseInOutQuad(300, 1.0);
 
     public static ColorSetting activeColorPicker = null;
     public static BindSetting activeBindSetting = null;
     public static TextSetting activeStringSetting = null;
     public static ValueSetting activeValueSetting = null;
     public static Module activeModuleBind = null;
+
+    public static boolean moduleBindAwaitingMode = false;
 
     public static float colorPickerX = 0, colorPickerY = 0;
     public static boolean pickingSaturationBrightness = false, pickingHue = false;
@@ -129,17 +131,27 @@ public final class Gui extends Screen implements IMinecraft {
         if (mc.getWindow() == null) return;
         float mainAlpha = (float) alphaPC.getOutput();
 
-        RenderUtils.fillRoundRect(ctx, 0, 0, mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight(), 0,
-                ColorUtil.rgba(0, 0, 0, (int) (120.0F * mainAlpha)));
+        RenderUtils.fillRoundRect(ctx, 0, 0,
+                mc.getWindow().getGuiScaledWidth(),
+                mc.getWindow().getGuiScaledHeight(),
+                0, ColorUtil.rgba(0, 0, 0, (int)(120.0F * mainAlpha)));
 
         if (draggingCategory != null) {
             categoryPanelX.put(draggingCategory, mouseX - dragXOffset);
             categoryPanelY.put(draggingCategory, mouseY - dragYOffset);
         }
 
+        if (!Gui.searchText.isEmpty()) {
+            for (Category c : categories) {
+                Animation anim = getCategoryDropdownAnimation(c);
+                if (anim.getDirection() != Direction.FORWARDS) {
+                    anim.setDirection(Direction.FORWARDS);
+                }
+            }
+        }
+
         searchComponent.render(ctx, mouseX, mouseY, mainAlpha);
         themeComponent.render(ctx, mouseX, mouseY, mainAlpha);
-
         panelComponent.render(ctx, mouseX, mouseY, mainAlpha);
         moduleComponent.renderOverlay(mainAlpha);
     }
@@ -154,6 +166,12 @@ public final class Gui extends Screen implements IMinecraft {
             activeBindSetting.setKey(-100 - button);
             activeBindSetting.active = false;
             activeBindSetting = null;
+            return true;
+        }
+
+        if (activeModuleBind != null && !moduleBindAwaitingMode && (button == 3 || button == 4)) {
+            activeModuleBind.bind = -100 - button;
+            moduleBindAwaitingMode = true;
             return true;
         }
 

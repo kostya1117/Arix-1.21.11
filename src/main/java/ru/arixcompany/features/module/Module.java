@@ -20,6 +20,11 @@ public class Module extends SettingAdder implements IMinecraft {
     public Category category;
     public boolean binding;
 
+    public enum BindMode { TOGGLE, HOLD }
+    @Getter
+    @Setter
+    public BindMode bindMode = BindMode.TOGGLE;
+
     public final Animation animation = new EaseInOutQuad(200, 1.0);
     public final Animation mAnim     = new EaseInOutQuad(240, 1.0);
 
@@ -27,6 +32,20 @@ public class Module extends SettingAdder implements IMinecraft {
         this.name = name;
         this.category = category;
         this.state = false;
+    }
+
+    public void onBindPress() {
+        if (bindMode == BindMode.HOLD) {
+            if (!state) setState(true);
+        } else {
+            toggle();
+        }
+    }
+
+    public void onBindRelease() {
+        if (bindMode == BindMode.HOLD && state) {
+            setState(false);
+        }
     }
 
     public void activate() {

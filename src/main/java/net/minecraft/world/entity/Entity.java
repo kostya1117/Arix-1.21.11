@@ -228,6 +228,7 @@ public abstract class Entity implements SyncedDataHolder, DebugValueSource, Name
     public static final float DEFAULT_BB_HEIGHT = 1.8F;
     public float moveDist;
     public float flyDist;
+
     public double fallDistance;
     private float nextStep = 1.0F;
     public double xOld;

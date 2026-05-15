@@ -315,7 +315,7 @@ public class MultiPlayerGameMode {
         return p_105282_.equals(this.destroyBlockPos) && ItemStack.isSameItemSameComponents(itemstack, this.destroyingItem);
     }
 
-    private void ensureHasSentCarriedItem() {
+    public void ensureHasSentCarriedItem() {
         int i = this.minecraft.player.getInventory().getSelectedSlot();
         if (i != this.carriedIndex) {
             this.carriedIndex = i;

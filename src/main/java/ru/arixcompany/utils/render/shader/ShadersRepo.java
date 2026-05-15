@@ -1,6 +1,7 @@
 package ru.arixcompany.utils.render.shader;
 
 import lombok.Getter;
+import ru.arixcompany.utils.render.shader.shaders.CircleShader;
 import ru.arixcompany.utils.render.shader.shaders.FractalFlameShader;
 import ru.arixcompany.utils.render.shader.shaders.RoundRectShader;
 
@@ -14,6 +15,7 @@ public class ShadersRepo {
     public void register() {
         shaders.add(new RoundRectShader());
         shaders.add(new FractalFlameShader());
+        shaders.add(new CircleShader());
     }
 
     public void init() {

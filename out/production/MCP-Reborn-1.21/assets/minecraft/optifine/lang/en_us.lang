@@ -984,3 +984,17 @@ options.renderCloudsDistance.tooltip.1=Cloud Render Distance
 options.renderCloudsDistance.tooltip.2=  32 chunks - fast
 options.renderCloudsDistance.tooltip.3=  64 chunks - slower
 options.renderCloudsDistance.tooltip.4=  128 chunks - slowest
+
+# Entity Culling
+of.options.ENTITY_CULLING=Entity Culling
+of.options.ENTITY_CULLING.tooltip.1=Entity Culling
+of.options.ENTITY_CULLING.tooltip.2=  ON - entities behind walls are not rendered (faster)
+of.options.ENTITY_CULLING.tooltip.3=  OFF - all entities are always rendered
+of.options.ENTITY_CULLING_SKIP_ENTITIES=Skip Entity Culling
+of.options.ENTITY_CULLING_SKIP_ENTITIES.tooltip.1=Skip Entity Culling
+of.options.ENTITY_CULLING_SKIP_ENTITIES.tooltip.2=  ON - disable occlusion culling for entities
+of.options.ENTITY_CULLING_SKIP_ENTITIES.tooltip.3=  OFF - entities behind walls are culled
+of.options.ENTITY_CULLING_SKIP_BLOCK_ENTITIES=Skip Block Entity Culling
+of.options.ENTITY_CULLING_SKIP_BLOCK_ENTITIES.tooltip.1=Skip Block Entity Culling
+of.options.ENTITY_CULLING_SKIP_BLOCK_ENTITIES.tooltip.2=  ON - disable occlusion culling for block entities
+of.options.ENTITY_CULLING_SKIP_BLOCK_ENTITIES.tooltip.3=  OFF - block entities behind walls are culled

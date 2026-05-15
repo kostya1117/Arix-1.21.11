@@ -5,7 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.NonFinal;
 import net.minecraft.client.Minecraft;
-import org.lwjgl.glfw.GLFW;
+import ru.arixcompany.features.module.modules.misc.ClickGui;
+import ru.arixcompany.features.repos.OtherRepo;
 import ru.arixcompany.ui.draggable.DraggableRepo;
 import ru.arixcompany.features.module.modules.combat.aura.rotation.ComponentRepo;
 import ru.arixcompany.features.repos.AltRepo;
@@ -59,6 +60,8 @@ public class Arix implements IMinecraft {
     DraggableRepo draggableRepo;
     @NonFinal
     ShadersRepo shadersRepo;
+    @NonFinal
+    OtherRepo otherRepo;
 
     public Arix(){
         instance = this;
@@ -68,6 +71,8 @@ public class Arix implements IMinecraft {
 
         shadersRepo = new ShadersRepo();
         shadersRepo.init();
+
+        otherRepo = new OtherRepo();
 
         moduleRepo = new ModuleRepo();
         moduleRepo.init();
@@ -81,20 +86,19 @@ public class Arix implements IMinecraft {
         draggableRepo = new DraggableRepo();
         draggableRepo.init();
 
+
         initFileManager();
         tryAutoLogin();
 
         EventRepo.register(this);
         initialized = true;
 
-        // AppleSkin
         appleskin.client.HUDOverlayHandler.init();
         appleskin.client.TooltipOverlayHandler.init();
         Runtime.getRuntime().addShutdownHook(new Thread(this::onExit));
     }
 
     void onExit() {
-
         if (isInitialized()) {
             try {
                 fileController.saveFiles();
@@ -135,7 +139,12 @@ public class Arix implements IMinecraft {
 
     @EventHandler
     public void onKey(EventKey e) {
-        if (e.getAction() == 1 && e.getKey() == GLFW.GLFW_KEY_RIGHT_SHIFT && mc.screen == null) {
+        if (e.getAction() != 1 || mc.screen != null) return;
+
+        ClickGui m = moduleRepo.getModule(ClickGui.class);
+        if (m == null) return;
+
+        if (e.getKey() == m.bind.getKey()) {
             mc.setScreen(new Gui());
         }
     }

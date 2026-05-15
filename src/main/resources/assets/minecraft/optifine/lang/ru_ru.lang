@@ -853,3 +853,17 @@ options.biomeBlendRadius.9=9×9
 options.biomeBlendRadius.11=11×11
 options.biomeBlendRadius.13=13×13
 options.biomeBlendRadius.15=15×15
+
+# Entity Culling
+of.options.ENTITY_CULLING=Отсечение сущностей
+of.options.ENTITY_CULLING.tooltip.1=Отсечение сущностей
+of.options.ENTITY_CULLING.tooltip.2=  ВКЛ - сущности за стенами не рендерятся (быстрее)
+of.options.ENTITY_CULLING.tooltip.3=  ВЫКЛ - все сущности рендерятся всегда
+of.options.ENTITY_CULLING_SKIP_ENTITIES=Пропустить отсечение сущностей
+of.options.ENTITY_CULLING_SKIP_ENTITIES.tooltip.1=Пропустить отсечение сущностей
+of.options.ENTITY_CULLING_SKIP_ENTITIES.tooltip.2=  ВКЛ - отключить отсечение для сущностей
+of.options.ENTITY_CULLING_SKIP_ENTITIES.tooltip.3=  ВЫКЛ - сущности за стенами отсекаются
+of.options.ENTITY_CULLING_SKIP_BLOCK_ENTITIES=Пропустить отсечение блок-сущностей
+of.options.ENTITY_CULLING_SKIP_BLOCK_ENTITIES.tooltip.1=Пропустить отсечение блок-сущностей
+of.options.ENTITY_CULLING_SKIP_BLOCK_ENTITIES.tooltip.2=  ВКЛ - отключить отсечение для блок-сущностей
+of.options.ENTITY_CULLING_SKIP_BLOCK_ENTITIES.tooltip.3=  ВЫКЛ - блок-сущности за стенами отсекаются

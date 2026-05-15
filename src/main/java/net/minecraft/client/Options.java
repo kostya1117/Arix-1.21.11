@@ -988,6 +988,7 @@ public class Options {
     public int ofQuickInfoTargetEntity = Option.OFF.getValue();
     public int ofQuickInfoLabels = Option.COMPACT.getValue();
     public boolean ofQuickInfoBackground = false;
+
     public static final int DEFAULT = 0;
     public static final int FAST = 1;
     public static final int FANCY = 2;

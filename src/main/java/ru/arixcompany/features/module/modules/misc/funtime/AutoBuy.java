@@ -120,9 +120,7 @@ public class AutoBuy extends Module {
 
                 String title = screen.getTitle().getString().toLowerCase();
 
-                if (title.contains("аукцион") || title.contains("auction")) {
-
-                    if (screen != lastScreen) {
+                //if (title.contains("аукцион") || title.contains("auction")) {
                         lastScreen = screen;
                         auctionRenderer.addButtons(
                                 screen,
@@ -146,10 +144,9 @@ public class AutoBuy extends Module {
                                     }
                                 }
                         );
-                    }
 
                     autoBuyEngine.setCurrentAuctionScreen(screen);
-                }
+               // }
 
             } else {
                 lastScreen = null;
