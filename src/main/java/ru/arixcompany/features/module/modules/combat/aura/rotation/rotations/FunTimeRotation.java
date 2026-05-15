@@ -1,6 +1,7 @@
 package ru.arixcompany.features.module.modules.combat.aura.rotation.rotations;
 
 import net.minecraft.util.Mth;
+import net.minecraft.util.Util;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 import ru.arixcompany.Arix;
@@ -29,8 +30,6 @@ public class FunTimeRotation implements AbstractRotation, IMinecraft {
     public void rotate(LivingEntity target, boolean isAttack, float attackDistance, boolean check) {
         if (target == null || mc.player == null) return;
 
-        long now = System.currentTimeMillis();
-
         Vec3 targetPos = getTargetPoint(target);
         double maxHeight = (AuraUtil.getStrictDistance(target) / attackDistance);
         Vec3 directionVec = targetPos
@@ -41,22 +40,23 @@ public class FunTimeRotation implements AbstractRotation, IMinecraft {
         float baseYaw = FreeLookRepo.freeYaw;
 
         if (isAttack && AuraUtil.getStrictDistance(target) < attackDistance && !check /*&& (FallingPlayer.fromPlayer(mc.player).findFall(AttackHandler.getfalldistance()))*/) {
-            tick = MathUtils.randomValue(22.0F, 28.0F);
+           // tick = MathUtils.randomValue(22.0F, 28.0F);
+            tick = 20;
         }
 
-        float yawChangeSpeed   = randomLerp(25.0F, 35.0F);
+        float waveA = (float) Math.sin((Util.getNanos() / 1.0E9 * Math.TAU * 2.0));
+        float waveB = (float) Math.cos((Util.getNanos() / 1.0E9 * Math.TAU * 2.0));
 
-        float waveA = (float) Math.cos(now / 40.0);
-        float waveB = (float) Math.sin(now / 70.0);
+        float yawChangeSpeed   = randomLerp(10.0F, 20.0F);
+        float pitchSpeed = randomLerp(4.0F, 8.0F);
         float yawJitter   = waveA * randomLerp(5.0F, 8.0F);
         float pitchJitter = waveB * randomLerp(8.0F,  10.0F);
         if (tick > 0.0F) {
             baseYaw = (float) Math.toDegrees(Math.atan2(-directionVec.x, directionVec.z));
-            yawChangeSpeed = randomLerp(55.0F, 70.0F);
-            waveA = (float) Math.cos(now / 25.0);
-            waveB = (float) Math.sin(now / 45.0);
+            yawChangeSpeed = randomLerp(45.0F, 55.0F);
+            pitchSpeed = 0;
             yawJitter = waveA * randomLerp(3.0F, 5.0F);
-            pitchJitter = waveB * randomLerp(4.0F,  8.0F);
+            pitchJitter = waveB * randomLerp(6.0F,  8.0F);
             tick--;
         }
 
@@ -66,14 +66,12 @@ public class FunTimeRotation implements AbstractRotation, IMinecraft {
         );
 
 
-        float pitchSpeed = randomLerp(4.0F, 8.0F);
-
         RotationRepo.update(
                 new Rotation(baseYaw + yawJitter, basePitch + pitchJitter).normalize(),
                 yawChangeSpeed,
                 pitchSpeed,
-                12.0F,
-                12.0F,
+                8.0F,
+                6.0F,
                 0,
                 1,
                 false

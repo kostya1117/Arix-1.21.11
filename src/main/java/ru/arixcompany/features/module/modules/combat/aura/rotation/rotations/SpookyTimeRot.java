@@ -1,6 +1,7 @@
 package ru.arixcompany.features.module.modules.combat.aura.rotation.rotations;
 
 import net.minecraft.util.Mth;
+import net.minecraft.util.Util;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 import ru.arixcompany.Arix;
@@ -21,37 +22,37 @@ public class SpookyTimeRot implements AbstractRotation, IMinecraft {
     public void rotate(LivingEntity target, boolean isAttack, float attackDistance, boolean check) {
         if (target == null || mc.player == null) return;
 
-        long now = System.currentTimeMillis();
-        float partialTicks = mc.getDeltaTracker().getGameTimeDeltaPartialTick(true);
-        float f1 = mc.level.tickRateManager().isEntityFrozen(mc.player) ? 1.0F : partialTicks;
         Vec3 targetPos = getTargetPoint(target);
         double maxHeight = (AuraUtil.getStrictDistance(target) / attackDistance);
+        float f = mc.getDeltaTracker().getGameTimeDeltaPartialTick(true);
+        float f1 = mc.level.tickRateManager().isEntityFrozen(mc.player) ? 1.0F : f;
         pitchAcceleration = AttackHandler.anyEntityOnRay(target, Arix.getInstance().getModuleRepo().getModule(HitAura.class).attackRange.getValue() + Arix.getInstance().getModuleRepo().getModule(HitAura.class).preRange.getValue())
-                ? 1 : pitchAcceleration < 1 ? pitchAcceleration * 1.65f : 1;
+                ? 0.4f : pitchAcceleration < 1 ? pitchAcceleration * 1.65f : 1;
 
         Vec3 vec = targetPos
                 .add(0, Mth.clamp(mc.player.getEyePosition(f1).y - target.getY(), 0, maxHeight), 0)
                 .subtract(mc.player.getEyePosition(f1))
                 .normalize();
 
+        float sin = (float) Math.sin((Util.getNanos() / 1.0E9 * Math.TAU * 2));
+        float cos = (float) Math.cos((Util.getNanos() / 1.0E9 * Math.TAU * 2));
+
+        float yawOffset = (MathUtils.randomValue(4, 8) * sin);
+        float pitchOffest = (MathUtils.randomValue(6, 8f) * cos);
+
         float rawYaw = (float) Math.toDegrees(Math.atan2(-vec.x, vec.z));
         float rawPitch = (float) Mth.clamp(-Math.toDegrees(Math.atan2(vec.y, Math.hypot(vec.x, vec.z))), -90F, 90F);
 
-        float cos = (float) Math.cos(now / 80D);
-
-        float yawOffset = (MathUtils.randomValue(2.5f, 5.5f) * cos);
-
         float targetYaw = rawYaw + yawOffset;
-        float targetPitch = rawPitch;
-
+        float targetPitch = rawPitch + pitchOffest;
         Rotation rotation = new Rotation(targetYaw, targetPitch).normalize();
 
         RotationRepo.update(
                 rotation,
-                12,  // yawSpeed - более плавный
-                pitchAcceleration,   // pitchSpeed - медленнее когда на таргете
-                9,  // yawReturnSpeed
-                pitchAcceleration,   // pitchReturnSpeed
+                MathUtils.randomValue(9,12),
+                pitchAcceleration,
+                7,
+                2,
                 0,
                 5,
                 false
