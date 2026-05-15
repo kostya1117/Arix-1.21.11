@@ -66,8 +66,7 @@ public class ModuleRepo implements IMinecraft {
       if (mc.screen != null) return;
 
       int key = event.getKey();
-      
-      // Преобразуем кнопки мыши (0-7) в формат биндса (-100 - button)
+
       if (key >= 0 && key <= 7) {
          key = -100 - key;
       }

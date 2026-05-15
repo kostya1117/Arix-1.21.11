@@ -38,7 +38,7 @@ public class SpookyTimeRot implements AbstractRotation, IMinecraft {
         float cos = (float) Math.cos(Util.getNanos() / 1.0E9 * Math.TAU * 2);
 
         float yawOffset = MathUtils.randomValue(10,15) * sin;
-        float pitchOffest = MathUtils.randomValue(5,10) * cos;
+        float pitchOffest = 5 * cos;
 
         float rawYaw = (float) Math.toDegrees(Math.atan2(-vec.x, vec.z));
         float rawPitch = (float) Mth.clamp(-Math.toDegrees(Math.atan2(vec.y, Math.hypot(vec.x, vec.z))), -90F, 90F);
