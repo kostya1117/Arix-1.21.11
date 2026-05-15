@@ -25,10 +25,6 @@ public class Rotation implements IMinecraft {
       this(entity.getYRot(), entity.getXRot(), false);
    }
 
-   /**
-    * Нормализует ротацию в соответствии с GCD сервера
-    * Точно как в LiquidBounce
-    */
    public Rotation normalize() {
       if (isNormalized) {
          return this;
@@ -48,43 +44,26 @@ public class Rotation implements IMinecraft {
       return new Rotation(yaw, pitch, true);
    }
 
-   /**
-    * Вычисляет дельту ротации до целевой ротации
-    */
    public RotationDelta rotationDeltaTo(Rotation other) {
       float deltaYaw = angleDifference(other.yaw, this.yaw);
       float deltaPitch = angleDifference(other.pitch, this.pitch);
       return new RotationDelta(deltaYaw, deltaPitch);
    }
 
-   /**
-    * Вычисляет угол между двумя ротациями
-    */
    public float angleTo(Rotation other) {
       RotationDelta delta = rotationDeltaTo(other);
       return delta.length();
    }
 
-   /**
-    * Вычисляет разницу между двумя углами с учетом оборачивания
-    */
    private static float angleDifference(float a, float b) {
       return Mth.wrapDegrees(a - b);
    }
 
-   /**
-    * Интерполирует между двумя ротациями (как в LiquidBounce)
-    */
    public Rotation interpolateTo(Rotation other, float factor) {
-      float lerpYaw = fma(factor, other.yaw - yaw, yaw);
-      float lerpPitch = fma(factor, other.pitch - pitch, pitch);
+      float lerpYaw = Math.fma(factor, other.yaw - yaw, yaw);
+      float lerpPitch = Math.fma(factor, other.pitch - pitch, pitch);
       return new Rotation(lerpYaw, lerpPitch);
    }
-
-   /**
-    * Линейное движение к целевой ротации с ограничением скорости
-    * Как в LiquidBounce
-    */
    public Rotation towardsLinear(Rotation other, float horizontalFactor, float verticalFactor) {
       RotationDelta diff = rotationDeltaTo(other);
       float rotationDifference = diff.length();
@@ -98,18 +77,8 @@ public class Rotation implements IMinecraft {
       );
    }
 
-   /**
-    * Проверяет, приблизительно ли равны две ротации
-    */
    public boolean approximatelyEquals(Rotation other, float tolerance) {
       return angleTo(other) <= tolerance;
-   }
-
-   /**
-    * FMA (Fused Multiply-Add) для более точных вычислений
-    */
-   private static float fma(float a, float b, float c) {
-      return a * b + c;
    }
 
    @Override
@@ -131,9 +100,6 @@ public class Rotation implements IMinecraft {
       return 31 * Float.hashCode(yaw) + Float.hashCode(pitch);
    }
 
-   /**
-    * Вспомогательный класс для хранения дельты ротации
-    */
    public static class RotationDelta {
       public float deltaYaw;
       public float deltaPitch;

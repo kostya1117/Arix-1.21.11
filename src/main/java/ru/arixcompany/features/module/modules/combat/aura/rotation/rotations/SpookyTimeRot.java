@@ -26,9 +26,8 @@ public class SpookyTimeRot implements AbstractRotation, IMinecraft {
         double maxHeight = (AuraUtil.getStrictDistance(target) / attackDistance);
         float f = mc.getDeltaTracker().getGameTimeDeltaPartialTick(true);
         float f1 = mc.level.tickRateManager().isEntityFrozen(mc.player) ? 1.0F : f;
-        float pitchRandom = MathUtils.randomValue(0.5f,2.5f);
         pitchAcceleration = AttackHandler.anyEntityOnRay(target, Arix.getInstance().getModuleRepo().getModule(HitAura.class).attackRange.getValue() + Arix.getInstance().getModuleRepo().getModule(HitAura.class).preRange.getValue())
-                ? 0.5f : pitchAcceleration < pitchRandom ? pitchAcceleration * 1.5f : pitchRandom;
+                ? 0.5f : pitchAcceleration < MathUtils.randomValue(0.5f,2.5f) ? pitchAcceleration * 1.5f : MathUtils.randomValue(0.5f,2.5f);
 
         Vec3 vec = targetPos
                 .add(0, Mth.clamp(mc.player.getEyePosition(1.0f).y - target.getY(), 0, maxHeight), 0)
@@ -38,8 +37,8 @@ public class SpookyTimeRot implements AbstractRotation, IMinecraft {
         float sin = (float) Math.sin(Util.getNanos() / 1.0E9 * Math.TAU * 2);
         float cos = (float) Math.cos(Util.getNanos() / 1.0E9 * Math.TAU * 2);
 
-        float yawOffset = 10 * sin;
-        float pitchOffest = 5 * cos;
+        float yawOffset = MathUtils.randomValue(10,15) * sin;
+        float pitchOffest = MathUtils.randomValue(5,10) * cos;
 
         float rawYaw = (float) Math.toDegrees(Math.atan2(-vec.x, vec.z));
         float rawPitch = (float) Mth.clamp(-Math.toDegrees(Math.atan2(vec.y, Math.hypot(vec.x, vec.z))), -90F, 90F);
