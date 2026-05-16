@@ -1,5 +1,6 @@
 package ru.arixcompany.ui.clickgui.components.module.settings;
 
+import com.mojang.blaze3d.platform.cursor.CursorTypes;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.minecraft.client.gui.GuiGraphics;
@@ -37,6 +38,11 @@ public final class BindSettingComponent implements IComponent {
         float bgW = calcBgW(x, width, btnW);
 
         float textY = y + (getHeight() / 2.0F) - (FontManager.get(10).getHeight() / 2.0F);
+
+        if (hovered(mouseX, mouseY, bgX, textY, bgW, BIND_HEIGHT)) {
+            guiGraphics.requestCursor(CursorTypes.POINTING_HAND);
+        }
+
         FontManager.get(10).drawString(guiGraphics, displayName, x, textY, textInactive);
 
         RenderUtils.drawRoundRectOutline(bgX, textY, bgW, BIND_HEIGHT, 3.0F,0.1F, outlineColor);

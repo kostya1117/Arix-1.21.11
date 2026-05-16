@@ -5,6 +5,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import ru.arixcompany.features.module.setting.Setting;
 import ru.arixcompany.utils.animation.Animation;
+import ru.arixcompany.utils.animation.Direction;
 import ru.arixcompany.utils.animation.impl.EaseInOutQuad;
 
 import java.awt.Color;
@@ -20,11 +21,17 @@ public class ColorSetting extends Setting {
     private float increment = 1.0F;
     private float saturation = 1.0F;
     private float brightness = 1.0F;
+    private float alpha = 1.0F;
     private Animation animation = new EaseInOutQuad(300, 1.0);
+    private boolean open = false;
+    private final Animation openAnim;
 
     public ColorSetting(String name, float current) {
         super(name);
         this.current = current;
+        this.openAnim = new EaseInOutQuad(200, 1.0);
+        this.openAnim.setDirection(Direction.BACKWARDS);
+        this.openAnim.timerUtil.setTime(System.currentTimeMillis() - 9999);
     }
 
     public ColorSetting(String name, float current, float saturation, float brightness) {
@@ -32,6 +39,18 @@ public class ColorSetting extends Setting {
         this.current = current;
         this.saturation = saturation;
         this.brightness = brightness;
+        this.openAnim = new EaseInOutQuad(200, 1.0);
+        this.openAnim.setDirection(Direction.BACKWARDS);
+        this.openAnim.timerUtil.setTime(System.currentTimeMillis() - 9999);
+    }
+
+    public void toggle() {
+        open = !open;
+        openAnim.setDirection(open ? Direction.FORWARDS : Direction.BACKWARDS);
+    }
+
+    public boolean isOpen() {
+        return open;
     }
 
     public ColorSetting visible(Supplier<Boolean> visible) {

@@ -505,7 +505,12 @@ public final class InventoryUtility implements IMinecraft {
         return counter;
     }
 
-    public void clickSlot(Slot slot, int button, ClickType clickType, boolean silent) {
+    public static void clickSlot(int id) {
+        if (id == -1 || mc.gameMode == null || mc.player == null) return;
+        mc.gameMode.handleInventoryMouseClick(mc.player.containerMenu.containerId, id, 0, ClickType.PICKUP, mc.player);
+    }
+
+    public static void clickSlot(Slot slot, int button, ClickType clickType, boolean silent) {
         if (slot != null) clickSlot(slot.index, button, clickType, silent);
     }
 

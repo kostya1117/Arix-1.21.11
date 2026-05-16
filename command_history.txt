@@ -1,50 +1,50 @@
-/clan home m
-/clan home b
-/clan storage
-/clan home v
-/clan home b
-/ah
-/clan sethome
-/clan storage
-/clan home v
-/event delay
-/clan home b
-/clan storage
-/clan home m
-/anydesk 140173937
-/hub
-/reg aeroyy999
-/tpa prodlasi12sda
-/clan withdraw 2500000
-/ah search Дезориентация
-/clan invest 2300000
-/ah
-/clan menu
-/clan kick prodlasi12sda
-/clan invite is3Q3d3u0p
-/clan menu
-/clan withdraw 2000000
-/clan money
-/ah search Сила
-/ah search Сатира
+/pay aeroyy999 1499999
+/ah search Эндер жемчуг
+/ah search исцел
+/ah search золотое
 /ah search Чарка
-/ah search золотое яблоко
-/ah search Дезориентация
+/ah search сила
 /ah search Явная пыль
-/clan invest 400000
+/ah search золотая морковь
+/ah search Шалкер
+/ah search Хлопушка
+/ah search Молоко
 /clan home m
-/kit pvp
-/warp pvp
-/kit pvp
-/register aeroyy999 aeroyy999
-/ac
-/kit pvp
+/clan home b
+/msg Icutede ку
+/msg Icutede дай сет я пионер и я тебе тал круга дам
+/msg Icutede ты не прошел проверку
+/clan kick aeroyy999
 /kit
-/login aeroyy999
-/spawn
-/reg aeroyy999
+/god
+/an306
+/ah search Эндер жемчуг
+/clan withdraw 129999
+/ah search Эндер жемчуг
+/rtp
+/ah
+/god
+/an306
+/hub
+/an306
 /ac
-/kill
-/login aeroyy999
-/kit gercog
-/login DrPrMHHxKi2nsGk
+/reg 123qwe111a 123qwe111a
+/hub
+/kit free
+/fly
+/rtp
+/near
+/hub
+/рги
+/hub
+/rtp
+/near
+/warp pvp
+/codes
+/code
+/free
+/reg 123qwe111a
+/reg 123qwe111a 123qwe111a
+/hub
+/kit
+/kit free

@@ -17,9 +17,9 @@ import ru.arixcompany.features.module.Category;
 import ru.arixcompany.features.module.Module;
 import ru.arixcompany.features.module.Theme;
 import ru.arixcompany.features.module.setting.implement.BindSetting;
-import ru.arixcompany.features.module.setting.implement.ColorSetting;
 import ru.arixcompany.features.module.setting.implement.ValueSetting;
 import ru.arixcompany.features.module.setting.implement.TextSetting;
+import ru.arixcompany.features.module.setting.implement.ColorSetting;
 import ru.arixcompany.utils.IMinecraft;
 import ru.arixcompany.utils.animation.Animation;
 import ru.arixcompany.utils.animation.Direction;
@@ -27,7 +27,6 @@ import ru.arixcompany.utils.animation.impl.EaseInOutQuad;
 import ru.arixcompany.utils.math.ScrollUtil;
 import ru.arixcompany.utils.render.ColorUtil;
 import ru.arixcompany.utils.render.RenderUtils;
-import ru.arixcompany.utils.render.ScissorUtil;
 
 import java.util.*;
 
@@ -37,17 +36,17 @@ public final class Gui extends Screen implements IMinecraft {
     public static final Animation animation14 = new EaseInOutQuad(500, 1.0);
     public static final Animation animation15 = new EaseInOutQuad(300, 1.0);
 
-    public static ColorSetting activeColorPicker = null;
     public static BindSetting activeBindSetting = null;
     public static TextSetting activeStringSetting = null;
     public static ValueSetting activeValueSetting = null;
+    public static ColorSetting activeColorSetting = null;
     public static Module activeModuleBind = null;
 
     public static boolean moduleBindAwaitingMode = false;
 
-    public static float colorPickerX = 0, colorPickerY = 0;
-    public static boolean pickingSaturationBrightness = false, pickingHue = false;
     public static float sliderX = 0, sliderY = 0, sliderWidth = 0;
+
+    public static float colorPickerX = 0, colorPickerY = 0, colorPickerWidth = 0;
 
     public static boolean exit = false;
     public static Category[] categories;
@@ -84,7 +83,7 @@ public final class Gui extends Screen implements IMinecraft {
         this.searchComponent = new SearchComponent();
         this.themeComponent = new ThemeComponent();
         this.moduleComponent = new ModuleComponent(
-                new SettingComponentFactory(cs -> this.moduleComponent.findColorPickerPosition(cs))
+                new SettingComponentFactory()
         );
         this.panelComponent = new PanelComponent(moduleComponent);
     }
@@ -153,7 +152,6 @@ public final class Gui extends Screen implements IMinecraft {
         searchComponent.render(ctx, mouseX, mouseY, mainAlpha);
         themeComponent.render(ctx, mouseX, mouseY, mainAlpha);
         panelComponent.render(ctx, mouseX, mouseY, mainAlpha);
-        moduleComponent.renderOverlay(mainAlpha);
     }
 
     @Override
@@ -173,10 +171,6 @@ public final class Gui extends Screen implements IMinecraft {
             activeModuleBind.bind = -100 - button;
             moduleBindAwaitingMode = true;
             return true;
-        }
-
-        if (activeColorPicker != null) {
-            if (moduleComponent.getOrCreate(activeColorPicker).mouseClicked(mx, my, button)) return true;
         }
 
         if (searchComponent.mouseClicked(mx, my, button)) return true;
@@ -257,7 +251,7 @@ public final class Gui extends Screen implements IMinecraft {
     @Override
     public void onClose() {
         searchComponent.close();
-        ScissorUtil.clear();
+
         super.onClose();
     }
 

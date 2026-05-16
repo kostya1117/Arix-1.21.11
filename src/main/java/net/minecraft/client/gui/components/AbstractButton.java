@@ -1,5 +1,6 @@
 package net.minecraft.client.gui.components;
 
+import java.awt.Color;
 import java.util.function.Supplier;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ActiveTextCollector;
@@ -8,70 +9,111 @@ import net.minecraft.client.input.InputWithModifiers;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.sounds.SoundManager; // Не забудь импорт
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.ARGB;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jspecify.annotations.Nullable;
-
+import ru.arixcompany.Arix;
+import ru.arixcompany.features.module.modules.misc.Core;
+import ru.arixcompany.features.repos.SoundRepo;
+import ru.arixcompany.utils.render.RenderUtils;
+import ru.arixcompany.utils.render.font.FontManager;
 
 public abstract class AbstractButton extends AbstractWidget.WithInactiveMessage {
-    protected static final int TEXT_MARGIN = 2;
     private static final WidgetSprites SPRITES = new WidgetSprites(
-        Identifier.withDefaultNamespace("widget/button"), Identifier.withDefaultNamespace("widget/button_disabled"), Identifier.withDefaultNamespace("widget/button_highlighted")
+            Identifier.withDefaultNamespace("widget/button"),
+            Identifier.withDefaultNamespace("widget/button_disabled"),
+            Identifier.withDefaultNamespace("widget/button_highlighted")
     );
     private @Nullable Supplier<Boolean> overrideRenderHighlightedSprite;
 
-    public AbstractButton(int p_93365_, int p_93366_, int p_93367_, int p_93368_, Component p_93369_) {
-        super(p_93365_, p_93366_, p_93367_, p_93368_, p_93369_);
+    public AbstractButton(int x, int y, int width, int height, Component message) {
+        super(x, y, width, height, message);
     }
 
     public abstract void onPress(InputWithModifiers p_428560_);
 
     @Override
-    protected final void renderWidget(GuiGraphics p_281670_, int p_282682_, int p_281714_, float p_282542_) {
-        this.renderContents(p_281670_, p_282682_, p_281714_, p_282542_);
-        this.handleCursor(p_281670_);
+    public void playDownSound(SoundManager manager) {
+        Core module = Arix.getInstance().getModuleRepo().getModule(Core.class);
+        if (module.isState() && module.customButtons.isValue() && module.buttonSounds.isValue()) {
+            SoundRepo.playButton();
+        } else {
+            super.playDownSound(manager);
+        }
     }
 
-    protected abstract void renderContents(GuiGraphics p_452325_, int p_450325_, int p_454172_, float p_455494_);
+    @Override
+    protected final void renderWidget(GuiGraphics g, int mouseX, int mouseY, float partialTicks) {
+        Core module = Arix.getInstance().getModuleRepo().getModule(Core.class);
 
-    protected void renderDefaultLabel(ActiveTextCollector p_453248_) {
-        this.renderScrollingStringOverContents(p_453248_, this.getMessage(), 2);
+        if (module.isState() && module.customButtons.isValue()) {
+            renderCustomContents(g, mouseX, mouseY, partialTicks);
+        } else {
+            this.renderContents(g, mouseX, mouseY, partialTicks);
+        }
+        this.handleCursor(g);
     }
 
-    protected final void renderDefaultSprite(GuiGraphics p_455641_) {
-        p_455641_.blitSprite(
-            RenderPipelines.GUI_TEXTURED,
-            SPRITES.get(this.active, this.overrideRenderHighlightedSprite != null ? this.overrideRenderHighlightedSprite.get() : this.isHoveredOrFocused()),
-            this.getX(),
-            this.getY(),
-            this.getWidth(),
-            this.getHeight(),
-            ARGB.white(this.alpha)
+    protected abstract void renderContents(GuiGraphics g, int mouseX, int mouseY, float partialTicks);
+
+    protected void renderCustomContents(GuiGraphics g, int mouseX, int mouseY, float partialTicks) {
+        Color theme = Arix.getInstance().getCurrentTheme().getMain();
+        int bgColor, outlineColor, textColor;
+
+        if (!this.active) {
+            bgColor = new Color(10, 10, 10, 80).getRGB();
+            outlineColor = new Color(60, 60, 60, 40).getRGB();
+            textColor = 0xFFAAAAAA;
+        } else if (this.isHoveredOrFocused()) {
+            bgColor = new Color(theme.getRed(), theme.getGreen(), theme.getBlue(), 45).getRGB();
+            outlineColor = theme.getRGB();
+            textColor = 0xFFFFFFFF;
+        } else {
+            bgColor = new Color(15, 15, 15, 160).getRGB();
+            outlineColor = new Color(theme.getRed(), theme.getGreen(), theme.getBlue(), 130).getRGB();
+            textColor = 0xFFD0D0D0;
+        }
+
+        RenderUtils.fillRoundRect(getX(), getY(), getWidth(), getHeight(), 4f, bgColor);
+        RenderUtils.drawRoundRectOutline(getX(), getY(), getWidth(), getHeight(), 4f, 1.0f, outlineColor);
+
+        float fontSize = 10f;
+        Component label = this.getMessage();
+        float tw = FontManager.get(fontSize).getComponentWidth(label);
+        float th = FontManager.get(fontSize).getHeight();
+
+        FontManager.get(fontSize).drawComponent(g, label,
+                getX() + (getWidth() - tw) / 2f,
+                getY() + (getHeight() - th) / 2f,
+                textColor);
+    }
+
+    protected void renderDefaultLabel(ActiveTextCollector collector) {
+        this.renderScrollingStringOverContents(collector, this.getMessage(), 2);
+    }
+
+    protected final void renderDefaultSprite(GuiGraphics g) {
+        g.blitSprite(RenderPipelines.GUI_TEXTURED,
+                SPRITES.get(this.active, this.overrideRenderHighlightedSprite != null ? this.overrideRenderHighlightedSprite.get() : this.isHoveredOrFocused()),
+                this.getX(), this.getY(), this.getWidth(), this.getHeight(), ARGB.white(this.alpha)
         );
     }
 
     @Override
-    public void onClick(MouseButtonEvent p_426095_, boolean p_428686_) {
-        this.onPress(p_426095_);
+    public void onClick(MouseButtonEvent event, boolean p_428686_) {
+        this.onPress(event);
     }
 
     @Override
-    public boolean keyPressed(KeyEvent p_427564_) {
-        if (!this.isActive()) {
-            return false;
-        } else if (p_427564_.isSelection()) {
+    public boolean keyPressed(KeyEvent event) {
+        if (!this.isActive()) return false;
+        if (event.isSelection()) {
             this.playDownSound(Minecraft.getInstance().getSoundManager());
-            this.onPress(p_427564_);
+            this.onPress(event);
             return true;
-        } else {
-            return false;
         }
-    }
-
-    public void setOverrideRenderHighlightedSprite(Supplier<Boolean> p_453637_) {
-        this.overrideRenderHighlightedSprite = p_453637_;
+        return false;
     }
 }

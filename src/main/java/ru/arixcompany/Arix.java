@@ -6,7 +6,7 @@ import lombok.Setter;
 import lombok.experimental.NonFinal;
 import net.minecraft.client.Minecraft;
 import ru.arixcompany.features.command.CommandRepo;
-import ru.arixcompany.features.module.modules.misc.ClickGui;
+import ru.arixcompany.features.module.modules.misc.Core;
 import ru.arixcompany.features.repos.OtherRepo;
 import ru.arixcompany.ui.draggable.DraggableRepo;
 import ru.arixcompany.features.module.modules.combat.aura.rotation.ComponentRepo;
@@ -140,7 +140,7 @@ public class Arix implements IMinecraft {
     public void onKey(EventKey e) {
         if (e.getAction() != 1 || mc.screen != null) return;
 
-        ClickGui m = moduleRepo.getModule(ClickGui.class);
+        Core m = moduleRepo.getModule(Core.class);
         if (m == null) return;
 
         if (e.getKey() == m.bind.getKey()) {

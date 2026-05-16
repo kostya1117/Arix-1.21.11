@@ -6,7 +6,7 @@ import ru.arixcompany.features.module.Category;
 import ru.arixcompany.features.module.Module;
 import ru.arixcompany.features.module.setting.implement.SelectSetting;
 import ru.arixcompany.features.module.setting.implement.ValueSetting;
-import ru.arixcompany.features.repos.sound.SoundRepo;
+import ru.arixcompany.features.repos.SoundRepo;
 
 import java.util.concurrent.ThreadLocalRandom;
 

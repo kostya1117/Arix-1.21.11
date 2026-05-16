@@ -44,7 +44,7 @@ public class ArrayListDraggable extends DraggableComponent {
             return;
         }
         Interface iface = Arix.getInstance().getModuleRepo().getModule(Interface.class);
-        this.visible = iface != null && iface.isState() && iface.elements.isSelected("ArrayList");
+        this.visible = iface != null && iface.isState() && iface.elements.isSelected("Аррай лист");
     }
 
     @Override
@@ -75,7 +75,7 @@ public class ArrayListDraggable extends DraggableComponent {
         boolean right = (rx + this.width / 2f) > (mc.getWindow().getGuiScaledWidth() / 2f);
 
         float accentX = right ? rx + this.width - ACCENT_WIDTH : rx;
-        RenderUtils.fillRoundRect(accentX, ry, ACCENT_WIDTH, totalH, 1, Colors.accent(alpha));
+        Interface.drawClientRect(accentX, ry, ACCENT_WIDTH, totalH, 1, Colors.accent(alpha));
 
         float yOff = ry;
         for (Module module : activeModules) {
@@ -93,7 +93,7 @@ public class ArrayListDraggable extends DraggableComponent {
 
             float lineX = right ? rx + this.width - ACCENT_WIDTH - lineW : rx + ACCENT_WIDTH;
 
-            RenderUtils.fillRoundRect(lineX, yOff, lineW, LINE_HEIGHT, 3, Colors.bgPrimary(finalAlpha * 0.9f));
+            Interface.drawClientRect(lineX, yOff, lineW, LINE_HEIGHT, 3, Colors.bgPrimary(finalAlpha * 0.9f));
 
             float textY = yOff + (LINE_HEIGHT - font.getHeight()) / 2f + PAD_Y;
 

@@ -1,0 +1,119 @@
+---- Minecraft Crash Report ----
+// I bet Cylons wouldn't have this problem.
+
+Time: 2026-05-16 10:47:03
+Description: Ticking screen
+
+java.lang.NullPointerException: Cannot invoke "net.minecraft.client.server.LanServerDetection$LanServerList.takeDirtyServers()" because "this.lanServerList" is null
+	at net.minecraft.client.gui.screens.multiplayer.JoinMultiplayerScreen.tick(JoinMultiplayerScreen.java:145)
+	at net.minecraft.client.Minecraft.tick(Minecraft.java:1766)
+	at net.minecraft.client.Minecraft.runTick(Minecraft.java:1246)
+	at net.minecraft.client.Minecraft.run(Minecraft.java:878)
+	at net.minecraft.client.main.Main.main(Main.java:223)
+	at mcp.client.Start.main(Start.java:20)
+
+
+A detailed walkthrough of the error, its code path and all known details is as follows:
+---------------------------------------------------------------------------------------
+
+-- Head --
+Thread: Render thread
+Stacktrace:
+	at net.minecraft.client.gui.screens.multiplayer.JoinMultiplayerScreen.tick(JoinMultiplayerScreen.java:145)
+
+-- Affected screen --
+Details:
+	Screen name: net.minecraft.client.gui.screens.multiplayer.JoinMultiplayerScreen
+Stacktrace:
+	at net.minecraft.client.Minecraft.tick(Minecraft.java:1766)
+	at net.minecraft.client.Minecraft.runTick(Minecraft.java:1246)
+	at net.minecraft.client.Minecraft.run(Minecraft.java:878)
+	at net.minecraft.client.main.Main.main(Main.java:223)
+	at mcp.client.Start.main(Start.java:20)
+
+-- Uptime --
+Details:
+	JVM uptime: 55.723s
+	Wall uptime: 41.626s
+	High-res time: 40.761s
+	Client ticks: 92 ticks / 4.600s
+Stacktrace:
+	at net.minecraft.client.Minecraft.fillReport(Minecraft.java:2305)
+	at net.minecraft.client.Minecraft.emergencySaveAndCrash(Minecraft.java:942)
+	at net.minecraft.client.Minecraft.run(Minecraft.java:898)
+	at net.minecraft.client.main.Main.main(Main.java:223)
+	at mcp.client.Start.main(Start.java:20)
+
+-- Last reload --
+Details:
+	Reload number: 1
+	Reload reason: initial
+	Finished: Yes
+	Packs: vanilla
+
+-- System Details --
+Details:
+	Minecraft Version: 1.21.11
+	Minecraft Version ID: 1.21.11
+	Operating System: Windows 10 (amd64) version 10.0
+	Java Version: 21.0.10, Microsoft
+	Java VM Version: OpenJDK 64-Bit Server VM (mixed mode, sharing), Microsoft
+	Memory: 98589352 bytes (94 MiB) / 435159040 bytes (415 MiB) up to 1591738368 bytes (1518 MiB)
+	CPUs: 4
+	Processor Vendor: AuthenticAMD
+	Processor Name: AMD Ryzen 3 3250U with Radeon Graphics         
+	Identifier: AuthenticAMD Family 23 Model 24 Stepping 1
+	Microarchitecture: Zen / Zen+
+	Frequency (GHz): 2.60
+	Number of physical packages: 1
+	Number of physical CPUs: 2
+	Number of logical CPUs: 4
+	Graphics card #0 name: AMD Radeon(TM) Vega 3 Graphics 
+	Graphics card #0 vendor: Advanced Micro Devices, Inc.
+	Graphics card #0 VRAM (MiB): 2048.00
+	Graphics card #0 deviceId: VideoController1
+	Graphics card #0 versionInfo: 31.0.21031.1005
+	Memory slot #0 capacity (MiB): 8192.00
+	Memory slot #0 clockSpeed (GHz): 3.20
+	Memory slot #0 type: DDR4
+	Virtual memory max (MiB): 16064.38
+	Virtual memory used (MiB): 12603.26
+	Swap memory total (MiB): 10000.00
+	Swap memory used (MiB): 4008.98
+	Space in storage for jna.tmpdir (MiB): <path not set>
+	Space in storage for org.lwjgl.system.SharedLibraryExtractPath (MiB): <path not set>
+	Space in storage for io.netty.native.workdir (MiB): <path not set>
+	Space in storage for java.io.tmpdir (MiB): available: 5940.19, total: 59103.00
+	Space in storage for workdir (MiB): available: 5940.19, total: 59103.00
+	JVM Flags: 0 total; 
+	Debug Flags: 0 total; 
+	Launched Version: mcp
+	Backend library: LWJGL version 3.3.3+5
+	Backend API: AMD Radeon(TM) Vega 3 Graphics  GL version 3.3.0 Core Profile Context 23.9.1.230821, ATI Technologies Inc.
+	Window size: 1600x900
+	GFLW Platform: win32
+	Render Extensions: GL_ARB_buffer_storage, GL_KHR_debug, GL_ARB_vertex_attrib_binding, GL_ARB_direct_state_access, GL_EXT_texture_filter_anisotropic
+	GL debug messages: 
+	Is Modded: Definitely; Client brand changed to 'optifine'
+	Universe: 400921fb54442d18
+	Type: Client (map_client.txt)
+	Transparency: regular
+	Render Distance: 2/2 chunks
+	Resource Packs: vanilla
+	Current Language: ru_ru
+	Locale: ru_RU
+	System encoding: Cp1251
+	File encoding: UTF-8
+	CPU: 4x AMD Ryzen 3 3250U with Radeon Graphics 
+	OptiFine Version: OptiFine_1.21.11_HD_U_J9
+	OptiFine Build: null
+	Render Distance Chunks: 2
+	Mipmaps: 0
+	Anisotropic Filtering: 1
+	Antialiasing: 0
+	Multitexture: false
+	Shaders: null
+	OpenGlVersion: 3.3.0 Core Profile Context 23.9.1.230821
+	OpenGlRenderer: AMD Radeon(TM) Vega 3 Graphics 
+	OpenGlVendor: ATI Technologies Inc.
+	CpuCount: 4

@@ -21,8 +21,6 @@ public class Checkbox extends AbstractButton {
     private static final Identifier CHECKBOX_SELECTED_SPRITE = Identifier.withDefaultNamespace("widget/checkbox_selected");
     private static final Identifier CHECKBOX_HIGHLIGHTED_SPRITE = Identifier.withDefaultNamespace("widget/checkbox_highlighted");
     private static final Identifier CHECKBOX_SPRITE = Identifier.withDefaultNamespace("widget/checkbox");
-    private static final int SPACING = 4;
-    private static final int BOX_PADDING = 8;
     private boolean selected;
     private final Checkbox.OnValueChange onValueChange;
     private final MultiLineTextWidget textWidget;
@@ -109,7 +107,6 @@ public class Checkbox extends AbstractButton {
         this.textWidget.setPosition(j, k);
         this.textWidget.visitLines(p_283124_.textRendererForWidget(this, GuiGraphics.HoveredTextEffects.notClickable(this.isHovered())));
     }
-
     
     public static class Builder {
         private final Component message;

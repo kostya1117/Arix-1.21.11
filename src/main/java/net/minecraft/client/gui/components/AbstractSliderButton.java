@@ -1,6 +1,7 @@
 package net.minecraft.client.gui.components;
 
 import com.mojang.blaze3d.platform.cursor.CursorTypes;
+import java.awt.Color;
 import net.minecraft.client.InputType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -8,81 +9,107 @@ import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
-import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.Identifier;
-import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-
+import ru.arixcompany.Arix;
+import ru.arixcompany.features.module.modules.misc.Core;
+import ru.arixcompany.features.repos.SoundRepo;
+import ru.arixcompany.utils.render.RenderUtils;
+import ru.arixcompany.utils.render.font.FontManager;
 
 public abstract class AbstractSliderButton extends AbstractWidget.WithInactiveMessage {
-    private static final Identifier SLIDER_SPRITE = Identifier.withDefaultNamespace("widget/slider");
-    private static final Identifier HIGHLIGHTED_SPRITE = Identifier.withDefaultNamespace("widget/slider_highlighted");
-    private static final Identifier SLIDER_HANDLE_SPRITE = Identifier.withDefaultNamespace("widget/slider_handle");
-    private static final Identifier SLIDER_HANDLE_HIGHLIGHTED_SPRITE = Identifier.withDefaultNamespace("widget/slider_handle_highlighted");
-    protected static final int TEXT_MARGIN = 2;
-    public static final int DEFAULT_HEIGHT = 20;
-    protected static final int HANDLE_WIDTH = 8;
-    private static final int HANDLE_HALF_WIDTH = 4;
     protected double value;
     protected boolean canChangeValue;
     private boolean dragging;
 
-    public AbstractSliderButton(int p_93579_, int p_93580_, int p_93581_, int p_93582_, Component p_93583_, double p_93584_) {
-        super(p_93579_, p_93580_, p_93581_, p_93582_, p_93583_);
-        this.value = p_93584_;
-    }
-
-    private Identifier getSprite() {
-        return this.isActive() && this.isFocused() && !this.canChangeValue ? HIGHLIGHTED_SPRITE : SLIDER_SPRITE;
-    }
-
-    private Identifier getHandleSprite() {
-        return !this.isActive() || !this.isHovered && !this.canChangeValue ? SLIDER_HANDLE_SPRITE : SLIDER_HANDLE_HIGHLIGHTED_SPRITE;
+    public AbstractSliderButton(int x, int y, int width, int height, Component message, double value) {
+        super(x, y, width, height, message);
+        this.value = value;
     }
 
     @Override
-    protected MutableComponent createNarrationMessage() {
-        return Component.translatable("gui.narrate.slider", this.getMessage());
-    }
+    protected void renderWidget(GuiGraphics g, int mouseX, int mouseY, float partialTicks) {
+        Core module = Arix.getInstance().getModuleRepo().getModule(Core.class);
 
-    @Override
-    public void updateWidgetNarration(NarrationElementOutput p_168798_) {
-        p_168798_.add(NarratedElementType.TITLE, this.createNarrationMessage());
-        if (this.active) {
-            if (this.isFocused()) {
-                if (this.canChangeValue) {
-                    p_168798_.add(NarratedElementType.USAGE, Component.translatable("narration.slider.usage.focused"));
-                } else {
-                    p_168798_.add(NarratedElementType.USAGE, Component.translatable("narration.slider.usage.focused.keyboard_cannot_change_value"));
-                }
-            } else {
-                p_168798_.add(NarratedElementType.USAGE, Component.translatable("narration.slider.usage.hovered"));
-            }
+        if (module != null && module.isState() && module.customButtons.isValue()) {
+            renderCustomSlider(g);
+        } else {
+            renderVanillaSlider(g);
+        }
+
+        if (this.isHovered()) {
+            g.requestCursor(this.dragging ? CursorTypes.RESIZE_EW : CursorTypes.POINTING_HAND);
         }
     }
 
+    private void renderCustomSlider(GuiGraphics g) {
+        Color theme = Arix.getInstance().getCurrentTheme().getMain();
+        float x = getX();
+        float y = getY();
+        float w = getWidth();
+        float h = getHeight();
+        float radius = 4f;
+
+        int bgColor, outlineColor;
+        if (!this.active) {
+            bgColor = new Color(10, 10, 10, 80).getRGB();
+            outlineColor = new Color(60, 60, 60, 40).getRGB();
+        } else if (this.isHoveredOrFocused()) {
+            bgColor = new Color(theme.getRed(), theme.getGreen(), theme.getBlue(), 35).getRGB();
+            outlineColor = theme.getRGB();
+        } else {
+            bgColor = new Color(15, 15, 15, 160).getRGB();
+            outlineColor = new Color(theme.getRed(), theme.getGreen(), theme.getBlue(), 120).getRGB();
+        }
+
+        RenderUtils.fillRoundRect(x, y, w, h, radius, bgColor);
+        RenderUtils.drawRoundRectOutline(x, y, w, h, radius, 1.0f, outlineColor);
+
+        float progressWidth = (float) (this.value * w);
+        if (progressWidth > 4) {
+            int progressColor = new Color(theme.getRed(), theme.getGreen(), theme.getBlue(), 90).getRGB();
+            RenderUtils.fillRoundRect(x, y, progressWidth, h, radius, progressColor);
+
+            RenderUtils.fillRect(x + progressWidth - 1.5f, y + 2, 1.5f, h - 4, theme.getRGB());
+        }
+
+        float fontSize = 10f;
+        Component label = this.getMessage();
+        float tw = FontManager.get(fontSize).getComponentWidth(label);
+        float th = FontManager.get(fontSize).getHeight();
+
+        FontManager.get(fontSize).drawComponent(g, label,
+                x + (w - tw) / 2f,
+                y + (h - th) / 2f,
+                this.active ? 0xFFFFFFFF : 0xFFAAAAAA);
+    }
+
+    private void renderVanillaSlider(GuiGraphics g) {
+        Identifier sliderSprite = this.isActive() && this.isFocused() && !this.canChangeValue ?
+                Identifier.withDefaultNamespace("widget/slider_highlighted") : Identifier.withDefaultNamespace("widget/slider");
+        Identifier handleSprite = !this.isActive() || !this.isHovered && !this.canChangeValue ?
+                Identifier.withDefaultNamespace("widget/slider_handle") : Identifier.withDefaultNamespace("widget/slider_handle_highlighted");
+
+        g.blitSprite(net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED, sliderSprite, getX(), getY(), getWidth(), getHeight(), net.minecraft.util.ARGB.white(this.alpha));
+        g.blitSprite(net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED, handleSprite, getX() + (int)(this.value * (this.width - 8)), getY(), 8, getHeight(), net.minecraft.util.ARGB.white(this.alpha));
+        this.renderScrollingStringOverContents(g.textRendererForWidget(this, GuiGraphics.HoveredTextEffects.NONE), this.getMessage(), 2);
+    }
+
     @Override
-    public void renderWidget(GuiGraphics p_283427_, int p_281447_, int p_282852_, float p_282409_) {
-        p_283427_.blitSprite(
-            RenderPipelines.GUI_TEXTURED, this.getSprite(), this.getX(), this.getY(), this.getWidth(), this.getHeight(), ARGB.white(this.alpha)
-        );
-        p_283427_.blitSprite(
-            RenderPipelines.GUI_TEXTURED,
-            this.getHandleSprite(),
-            this.getX() + (int)(this.value * (this.width - 8)),
-            this.getY(),
-            8,
-            this.getHeight(),
-            ARGB.white(this.alpha)
-        );
-        this.renderScrollingStringOverContents(p_283427_.textRendererForWidget(this, GuiGraphics.HoveredTextEffects.NONE), this.getMessage(), 2);
-        if (this.isHovered()) {
-            p_283427_.requestCursor(this.dragging ? CursorTypes.RESIZE_EW : CursorTypes.POINTING_HAND);
+    public void playDownSound(SoundManager manager) {
+    }
+
+    @Override
+    public void onRelease(MouseButtonEvent event) {
+        this.dragging = false;
+        Core module = Arix.getInstance().getModuleRepo().getModule(Core.class);
+        if (module != null && module.isState() && module.customButtons.isValue() && module.buttonSounds.isValue()) {
+            SoundRepo.playButton();
+        } else {
+            super.playDownSound(Minecraft.getInstance().getSoundManager());
         }
     }
 
@@ -90,6 +117,25 @@ public abstract class AbstractSliderButton extends AbstractWidget.WithInactiveMe
     public void onClick(MouseButtonEvent p_424503_, boolean p_424772_) {
         this.dragging = this.active;
         this.setValueFromMouse(p_424503_);
+    }
+
+    private void setValueFromMouse(MouseButtonEvent event) {
+        this.setValue((event.x() - (this.getX() + 4)) / (this.width - 8));
+    }
+
+    protected void setValue(double p_93612_) {
+        double d0 = this.value;
+        this.value = Mth.clamp(p_93612_, 0.0, 1.0);
+        if (d0 != this.value) {
+            this.applyValue();
+        }
+        this.updateMessage();
+    }
+
+    @Override
+    protected void onDrag(MouseButtonEvent event, double p_93591_, double p_93592_) {
+        this.setValueFromMouse(event);
+        super.onDrag(event, p_93591_, p_93592_);
     }
 
     @Override
@@ -111,7 +157,6 @@ public abstract class AbstractSliderButton extends AbstractWidget.WithInactiveMe
             this.canChangeValue = !this.canChangeValue;
             return true;
         }
-
         if (this.canChangeValue) {
             boolean flag = p_427303_.isLeft();
             boolean flag1 = p_427303_.isRight();
@@ -121,41 +166,26 @@ public abstract class AbstractSliderButton extends AbstractWidget.WithInactiveMe
                 return true;
             }
         }
-
         return false;
     }
 
-    private void setValueFromMouse(MouseButtonEvent p_423057_) {
-        this.setValue((p_423057_.x() - (this.getX() + 4)) / (this.width - 8));
+    @Override
+    protected MutableComponent createNarrationMessage() {
+        return Component.translatable("gui.narrate.slider", this.getMessage());
     }
 
-    protected void setValue(double p_93612_) {
-        double d0 = this.value;
-        this.value = Mth.clamp(p_93612_, 0.0, 1.0);
-        if (d0 != this.value) {
-            this.applyValue();
+    @Override
+    public void updateWidgetNarration(NarrationElementOutput p_168798_) {
+        p_168798_.add(NarratedElementType.TITLE, this.createNarrationMessage());
+        if (this.active) {
+            if (this.isFocused()) {
+                p_168798_.add(NarratedElementType.USAGE, Component.translatable(this.canChangeValue ? "narration.slider.usage.focused" : "narration.slider.usage.focused.keyboard_cannot_change_value"));
+            } else {
+                p_168798_.add(NarratedElementType.USAGE, Component.translatable("narration.slider.usage.hovered"));
+            }
         }
-
-        this.updateMessage();
-    }
-
-    @Override
-    protected void onDrag(MouseButtonEvent p_430133_, double p_93591_, double p_93592_) {
-        this.setValueFromMouse(p_430133_);
-        super.onDrag(p_430133_, p_93591_, p_93592_);
-    }
-
-    @Override
-    public void playDownSound(SoundManager p_93605_) {
-    }
-
-    @Override
-    public void onRelease(MouseButtonEvent p_430023_) {
-        this.dragging = false;
-        super.playDownSound(Minecraft.getInstance().getSoundManager());
     }
 
     protected abstract void updateMessage();
-
     protected abstract void applyValue();
 }

@@ -87,11 +87,14 @@ import org.apache.commons.lang3.tuple.Pair;
 import ru.arixcompany.Arix;
 import ru.arixcompany.ui.draggable.DraggableRepo;
 import ru.arixcompany.ui.draggable.draggables.ArmorHudDraggable;
+import ru.arixcompany.ui.draggable.draggables.PotionsDraggable;
 import ru.arixcompany.ui.draggable.draggables.ScoreboardDraggable;
 import ru.arixcompany.features.event.EventRepo;
 import ru.arixcompany.features.event.render.EventRender2D;
 import ru.arixcompany.features.module.modules.render.Animations;
 import ru.arixcompany.features.module.modules.render.NoRender;
+import ru.arixcompany.utils.animation.Animation;
+import ru.arixcompany.utils.animation.impl.EaseInOutQuad;
 
 public class Gui {
     private static final Identifier CROSSHAIR_SPRITE = Identifier.withDefaultNamespace("hud/crosshair");
@@ -168,9 +171,8 @@ public class Gui {
     public float hotbarChatOffset = 0.0F;
     private float chatSlideOffset = 0.0F;
 
-    // Анимация подъёма хотбара — используется и хотбаром и ArmorHUD
-    public static final ru.arixcompany.utils.animation.Animation hotbarRiseAnim =
-            new ru.arixcompany.utils.animation.impl.EaseInOutQuad(200, 1.0);
+    public static final Animation hotbarRiseAnim =
+            new EaseInOutQuad(200, 1.0);
 
     static {
         hotbarRiseAnim.setDirection(ru.arixcompany.utils.animation.Direction.BACKWARDS);
@@ -541,6 +543,10 @@ public class Gui {
     }
 
     private void renderEffects(GuiGraphics p_282812_, DeltaTracker p_343719_) {
+        if (PotionsDraggable.isCustomPotionsActive()) {
+            return;
+        }
+
         Collection<MobEffectInstance> collection = this.minecraft.player.getActiveEffects();
         if (!collection.isEmpty() && (this.minecraft.screen == null || !this.minecraft.screen.showsActiveEffects())) {
             int i = 0;

@@ -48,7 +48,7 @@ public class ArmorHudDraggable extends DraggableComponent {
             return;
         }
         Interface iface = Arix.getInstance().getModuleRepo().getModule(Interface.class);
-        this.visible = iface != null && iface.isState() && iface.elements.isSelected("ArmorHUD");
+        this.visible = iface != null && iface.isState() && iface.elements.isSelected("Броня");
     }
 
 

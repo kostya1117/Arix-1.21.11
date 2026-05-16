@@ -204,11 +204,13 @@ public class RenderUtils implements IMinecraft {
     }
 
     public static void drawImage(GuiGraphics ctx, Identifier texture,
-                                  float x, float y, float width, float height, int color) {
-        ctx.blit(texture,
+                                 float x, float y, float width, float height, int color) {
+        ctx.blit(RenderPipelines.GUI_TEXTURED, texture,
                 (int) x, (int) y,
-                (int)(x + width), (int)(y + height),
-                0f, 1f, 0f, 1f,
+                0f, 0f,
+                (int) width, (int) height,
+                (int) width, (int) height,
+                (int) width, (int) height,
                 color);
     }
 

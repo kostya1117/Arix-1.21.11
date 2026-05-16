@@ -1787,13 +1787,6 @@ public class Config {
             return false;
         }
 
-        if (minecraft.getOverlay() instanceof LoadingOverlay) {
-            LoadingOverlay loadingoverlay = (LoadingOverlay)minecraft.getOverlay();
-            if (loadingoverlay.isFadeOut()) {
-                return false;
-            }
-        }
-
         return true;
     }
 

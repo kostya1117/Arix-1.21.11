@@ -1,6 +1,8 @@
 package ru.arixcompany.utils.player;
 
 
+import net.minecraft.client.multiplayer.prediction.BlockStatePredictionHandler;
+import net.minecraft.client.multiplayer.prediction.PredictiveAction;
 import net.minecraft.util.Mth;
 import ru.arixcompany.utils.IMinecraft;
 
@@ -27,5 +29,13 @@ public class PlayerUtil implements IMinecraft {
         }
 
         return renderYawOffset;
+    }
+
+    public static void sendSequencedPacket(PredictiveAction packetCreator) {
+        if (mc.getConnection() == null || mc.level == null) return;
+        try (BlockStatePredictionHandler pendingUpdateManager = mc.level.blockStatePredictionHandler.startPredicting();) {
+            int i = pendingUpdateManager.currentSequence();
+            mc.getConnection().send(packetCreator.predict(i));
+        }
     }
 }

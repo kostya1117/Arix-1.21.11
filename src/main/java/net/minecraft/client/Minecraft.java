@@ -632,7 +632,7 @@ public class Minecraft extends ReentrantBlockableEventLoop<Runnable> implements 
         this.chatListener.setMessageDelay(this.options.chatDelay().get());
         this.reportingContext = ReportingContext.create(ReportEnvironment.local(), this.userApiService);
         TitleScreen.registerTextures(this.textureManager);
-        LoadingOverlay.registerTextures(this.textureManager);
+        //LoadingOverlay.registerTextures(this.textureManager);
         this.gameRenderer.getPanorama().registerTextures(this.textureManager);
         this.setScreen(new GenericMessageScreen(Component.translatable("gui.loadingMinecraft")));
         List<PackResources> list1 = this.resourcePackRepository.openAllSelected();
@@ -1730,7 +1730,6 @@ public class Minecraft extends ReentrantBlockableEventLoop<Runnable> implements 
 
         EventRepo.call(new EventTick());
 
-        // AppleSkin: client tick for flash animation
         if (appleskin.client.HUDOverlayHandler.INSTANCE != null)
             appleskin.client.HUDOverlayHandler.INSTANCE.onClientTick();
 

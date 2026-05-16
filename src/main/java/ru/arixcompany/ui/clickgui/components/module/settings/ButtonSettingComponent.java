@@ -1,5 +1,7 @@
 package ru.arixcompany.ui.clickgui.components.module.settings;
 
+import com.mojang.blaze3d.platform.cursor.CursorType;
+import com.mojang.blaze3d.platform.cursor.CursorTypes;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.minecraft.client.gui.GuiGraphics;
@@ -40,6 +42,10 @@ public final class ButtonSettingComponent implements IComponent {
         float buttonW = width - PAD * 2.0F;
 
         boolean hovered = hovered(mouseX, mouseY, buttonX, buttonY, buttonW, BUTTON_H);
+
+        if (hovered) {
+            guiGraphics.requestCursor(CursorTypes.POINTING_HAND);
+        }
 
         int buttonColor = hovered
                 ? ColorUtil.overCol(bgColor, accentColor, 0.25F)

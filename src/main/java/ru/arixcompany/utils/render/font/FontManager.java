@@ -1,6 +1,8 @@
 package ru.arixcompany.utils.render.font;
 
 import lombok.Getter;
+import net.minecraft.server.jsonrpc.methods.Message;
+import ru.arixcompany.utils.MessageSender;
 
 import java.io.IOException;
 import java.util.Map;
@@ -14,14 +16,14 @@ public class FontManager {
         SF_MEDIUM("/assets/arix/fonts/sf_medium.ttf"),
         SF_SEMIBOLD("/assets/arix/fonts/sf_semibold.ttf"),
         SF_REGULAR("/assets/arix/fonts/sf_regular.ttf"),
-        SF_BOLD("/assets/arix/fonts/sf_bold.ttf");
+        SF_BOLD("/assets/arix/fonts/sf_bold.ttf"),
+        ICONS("/assets/arix/fonts/icons.ttf");
 
         private final String path;
 
         Fonts(String path) {
             this.path = path;
         }
-
     }
 
     private static final float DEFAULT_SIZE = 16.0f;
@@ -38,8 +40,8 @@ public class FontManager {
             try {
                 return new CustomFont(font.getPath(), roundedSize);
             } catch (IOException e) {
-                System.err.println("[FontManager] Failed to load font '"
-                        + font.name() + "' size " + roundedSize + ": " + e.getMessage());
+                MessageSender.error("Ошибка при загрузке шрифта '"
+                        + font.name() + "' размер " + roundedSize + ": " + e.getMessage());
                 e.printStackTrace();
                 return null;
             }
@@ -54,8 +56,8 @@ public class FontManager {
             try {
                 return new CustomFont(Fonts.SF_MEDIUM.getPath(), roundedSize);
             } catch (IOException e) {
-                System.err.println("[FontManager] Failed to load font '"
-                        + Fonts.SF_MEDIUM.name() + "' size " + roundedSize + ": " + e.getMessage());
+                MessageSender.error("Ошибка при загрузке шрифта '"
+                        + Fonts.SF_MEDIUM.name() + "' размер " + roundedSize + ": " + e.getMessage());
                 e.printStackTrace();
                 return null;
             }

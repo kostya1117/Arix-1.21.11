@@ -2,15 +2,12 @@ package net.minecraft.client.gui.screens.multiplayer;
 
 import com.mojang.logging.LogUtils;
 
-import java.time.Duration;
 import java.util.List;
 
 import de.florianmichael.viamcp.ViaMCP;
 import net.minecraft.client.gui.components.*;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.layouts.HeaderAndFooterLayout;
-import net.minecraft.client.gui.layouts.LayoutElement;
 import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.client.gui.screens.ConfirmScreen;
 import net.minecraft.client.gui.screens.ConnectScreen;
@@ -27,8 +24,6 @@ import net.minecraft.client.server.LanServer;
 import net.minecraft.client.server.LanServerDetection;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 
@@ -49,12 +44,6 @@ public class JoinMultiplayerScreen extends Screen {
     private LanServerDetection.LanServerList lanServerList;
     private LanServerDetection.@Nullable LanServerDetector lanServerDetector;
 
-    /**
-     * Previously added button, {@code null} if none.
-     */
-    @Nullable
-    private Button ias_button;
-
     public JoinMultiplayerScreen(Screen p_99688_) {
         super(Component.translatable("multiplayer.title"));
         this.lastScreen = p_99688_;
@@ -62,6 +51,7 @@ public class JoinMultiplayerScreen extends Screen {
 
     @Override
     protected void init() {
+
         this.layout.addTitleHeader(this.title, this.font);
         this.servers = new ServerList(this.minecraft);
         this.servers.load();

@@ -2,9 +2,11 @@ package ru.arixcompany.features.module;
 
 import lombok.Getter;
 import lombok.Setter;
+import net.minecraft.ChatFormatting;
 import ru.arixcompany.features.event.EventRepo;
 import ru.arixcompany.features.module.setting.SettingAdder;
-import ru.arixcompany.features.repos.sound.SoundRepo;
+import ru.arixcompany.features.repos.SoundRepo;
+import ru.arixcompany.features.repos.alerts.AlertRepo;
 import ru.arixcompany.utils.IMinecraft;
 import ru.arixcompany.utils.animation.Animation;
 import ru.arixcompany.utils.animation.impl.EaseInOutQuad;
@@ -58,21 +60,14 @@ public class Module extends SettingAdder implements IMinecraft {
         }
 
         SoundRepo.playOn();
-
-//        if (mc.player != null) {
-//            Main.getInstance().getNotificationRepo().success(this.name + " включен");
-//            SoundUtil.playSound_wav("on", 0.35F);
-//        }
+        AlertRepo.activate(name + ChatFormatting.GREEN + " включен");
     }
 
     public void deactivate() {
         EventRepo.unregister(this);
 
         SoundRepo.playOff();
-
-//        if (mc.player != null) {
-//            Main.getInstance().getNotificationRepo().error(this.name + " выключен");
-//        }
+        AlertRepo.deactivate(name + ChatFormatting.RED + " выключен");
     }
 
     public void toggle() {
@@ -91,6 +86,10 @@ public class Module extends SettingAdder implements IMinecraft {
         } else {
             this.deactivate();
         }
+    }
+
+    public boolean isForced() {
+        return false;
     }
 
     public static boolean fullNullCheck() {

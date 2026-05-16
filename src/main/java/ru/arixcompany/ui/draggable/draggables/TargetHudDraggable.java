@@ -84,7 +84,7 @@ public class TargetHudDraggable extends DraggableComponent {
             return;
         }
         Interface iface = Arix.getInstance().getModuleRepo().getModule(Interface.class);
-        this.visible = iface != null && iface.isState() && iface.elements.isSelected("TargetHUD");
+        this.visible = iface != null && iface.isState() && iface.elements.isSelected("ТаргетХуд");
     }
 
     @EventHandler
@@ -192,7 +192,7 @@ public class TargetHudDraggable extends DraggableComponent {
 
         float anim = openAnim * alpha;
 
-        RenderUtils.fillRoundRect(drawX, drawY, totalW, totalH, PANEL_RADIUS,
+        Interface.drawClientRect(drawX, drawY, totalW, totalH, PANEL_RADIUS,
                 Colors.bgPrimary(anim * 0.92f));
 
         float headX = drawX + PAD;

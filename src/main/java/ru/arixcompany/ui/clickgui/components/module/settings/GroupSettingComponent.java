@@ -1,5 +1,6 @@
 package ru.arixcompany.ui.clickgui.components.module.settings;
 
+import com.mojang.blaze3d.platform.cursor.CursorTypes;
 import lombok.Getter;
 import net.minecraft.client.gui.GuiGraphics;
 import ru.arixcompany.features.module.setting.Setting;
@@ -57,6 +58,11 @@ public final class GroupSettingComponent implements IComponent {
         float anim = (float) setting.getOpenAnim().getOutput();
 
         boolean hovered = hovered(mouseX, mouseY, x, y, width, HEADER_H);
+
+        if (hovered) {
+            guiGraphics.requestCursor(CursorTypes.POINTING_HAND);
+        }
+
         int headerBg = hovered ? ColorUtil.overCol(bgColor, accentColor, 0.12F) : bgColor;
 
         RenderUtils.fillRoundRect(guiGraphics, x, y, width, HEADER_H, 3.0F, headerBg);

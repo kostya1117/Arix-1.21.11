@@ -45,13 +45,13 @@ public class ScoreboardDraggable extends DraggableComponent {
         }
 
         Interface iface = Arix.getInstance().getModuleRepo().getModule(Interface.class);
-        this.visible = iface != null && iface.isState() && iface.elements.isSelected("Scoreboard");
+        this.visible = iface != null && iface.isState() && iface.elements.isSelected("Скорбоард");
     }
 
     public static boolean isCustomScoreboardActive() {
         if (Arix.getInstance() == null || Arix.getInstance().getModuleRepo() == null) return false;
         Interface iface = Arix.getInstance().getModuleRepo().getModule(Interface.class);
-        return iface != null && iface.isState() && iface.elements.isSelected("Scoreboard");
+        return iface != null && iface.isState() && iface.elements.isSelected("Скорбоард");
     }
 
     @Override

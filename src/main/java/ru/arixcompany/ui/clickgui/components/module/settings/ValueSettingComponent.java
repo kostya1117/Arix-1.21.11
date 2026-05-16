@@ -1,5 +1,6 @@
 package ru.arixcompany.ui.clickgui.components.module.settings;
 
+import com.mojang.blaze3d.platform.cursor.CursorTypes;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.minecraft.client.gui.GuiGraphics;
@@ -25,25 +26,25 @@ public final class ValueSettingComponent implements IComponent {
                        int outlineColor, int accentColor, int bgColor,
                        int textInactive, int textActive, float alpha) {
         float sliderY = y + 10.0F;
-        // Ограничиваем ширину слайдера чтобы он не выходил за пределы компонента
         float sliderW = Math.max(0, width - 2.5F);
+
+        if (hovered(mouseX, mouseY, x, sliderY, sliderW, 8.0F) || Gui.activeValueSetting == setting) {
+            guiGraphics.requestCursor(CursorTypes.RESIZE_EW);
+        }
+
         float progress = clamp01((setting.getValue() - setting.getMin()) / (setting.getMax() - setting.getMin()));
         float progressW = sliderW * progress;
 
-        // Фон слайдера
         RenderUtils.drawRoundRectOutline(x, sliderY + 2.0F, sliderW, 4.0F, 2.0F, 0.3F, outlineColor);
         RenderUtils.fillRoundRect(guiGraphics, x, sliderY + 2.0F, sliderW, 4.0F, 2.0F, bgColor);
 
-        // Заполненная часть слайдера
         if (progressW > 2.0F) {
             RenderUtils.fillRoundRect(guiGraphics, x + 1.0F, sliderY + 2.5F, progressW - 2.0F, 3.0F, 2.0F, accentColor);
         }
 
-        // Thumb (кружочек)
         float thumbX = x + 1.0F + progressW - 5.0F + (progressW < 1.0F ? 5 : 2);
         RenderUtils.fillRoundRect(guiGraphics, thumbX, sliderY + 2.2F, 5.0F, 3.88F, 2.0F, textActive);
 
-        // Текст значения
         String valueText = formatValue();
         float valueW = FontManager.get(10).getWidth(valueText);
 

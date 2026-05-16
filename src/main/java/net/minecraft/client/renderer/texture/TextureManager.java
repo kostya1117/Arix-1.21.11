@@ -74,10 +74,10 @@ public class TextureManager implements PreparableReloadListener, AutoCloseable {
     }
 
     public void register(Identifier p_461040_, AbstractTexture p_118497_) {
-        if (Reflector.MinecraftForge.exists() && this.mojangLogoTexture == null && p_461040_.equals(LoadingOverlay.MOJANG_STUDIOS_LOGO_LOCATION)) {
-            LOGGER.info("Keep logo texture for ForgeLoadingOverlay: " + p_118497_);
-            this.mojangLogoTexture = p_118497_;
-        }
+        //if (Reflector.MinecraftForge.exists() && this.mojangLogoTexture == null && p_461040_.equals(LoadingOverlay.MOJANG_STUDIOS_LOGO_LOCATION)) {
+          //  LOGGER.info("Keep logo texture for ForgeLoadingOverlay: " + p_118497_);
+           // this.mojangLogoTexture = p_118497_;
+      //  }
 
         AbstractTexture abstracttexture = this.byPath.put(p_461040_, p_118497_);
         if (abstracttexture != p_118497_) {

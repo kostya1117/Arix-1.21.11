@@ -1,5 +1,6 @@
 package ru.arixcompany.features.module.modules.render;
 
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
@@ -17,8 +18,6 @@ import ru.arixcompany.features.event.render.EventRender3D;
 import ru.arixcompany.features.event.render.EventRender2D;
 import ru.arixcompany.features.module.Category;
 import ru.arixcompany.features.module.Module;
-import ru.arixcompany.features.module.modules.combat.HitAura;
-import ru.arixcompany.features.repos.FriendRepo;
 import ru.arixcompany.utils.math.ProjectUtils;
 import ru.arixcompany.utils.render.Render3dUtils;
 import ru.arixcompany.utils.render.RenderUtils;
@@ -28,10 +27,11 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class PearlPrediction extends Module {
 
-    private final List<PearlPoint> pearlPoints = new ArrayList<>();
+    private final List<PearlPoint> pearlPoints = new CopyOnWriteArrayList<>();
     private static final ItemStack PEARL_STACK = new ItemStack(Items.ENDER_PEARL);
 
     public PearlPrediction() {
@@ -42,16 +42,19 @@ public class PearlPrediction extends Module {
     public void onRender3D(EventRender3D e) {
         if (mc.level == null || mc.player == null) return;
 
-        pearlPoints.clear();
+        List<PearlPoint> currentPoints = new ArrayList<>();
 
         for (Entity entity : mc.level.entitiesForRendering()) {
             if (!(entity instanceof ThrownEnderpearl pearl)) continue;
 
-            Vec3 motion = pearl.getDeltaMovement();
-            Vec3 pos = pearl.position();
-            int ticks = 0;
+            Vec3 pos = new Vec3(
+                    Mth.lerp(e.getTickDelta(), pearl.xo, pearl.getX()),
+                    Mth.lerp(e.getTickDelta(), pearl.yo, pearl.getY()),
+                    Mth.lerp(e.getTickDelta(), pearl.zo, pearl.getZ())
+            );
 
-            String owner = pearl.getOwner().getName().getString();
+            Vec3 motion = pearl.getDeltaMovement();
+            int ticks = 0;
 
             List<Vec3> trajectory = new ArrayList<>();
             trajectory.add(pos);
@@ -72,146 +75,91 @@ public class PearlPrediction extends Module {
 
                 if (hitResult.getType() == HitResult.Type.BLOCK) {
                     pos = hitResult.getLocation();
+                    trajectory.add(pos);
+                    currentPoints.add(new PearlPoint(pos, ticks));
+                    break;
                 }
 
                 trajectory.add(pos);
-
-                if (hitResult.getType() == HitResult.Type.BLOCK || pos.y < -128.0) {
-                    pearlPoints.add(new PearlPoint(pos, ticks, owner));
-                    break;
-                }
+                if (pos.y < -64.0) break;
                 ticks++;
             }
 
             Color mainColor = Arix.getInstance().getCurrentTheme().getMain();
             for (int i = 1; i < trajectory.size(); i++) {
-                float fade = Mth.clamp(i / 25.0f, 0.0f, 1.0f);
-                int alpha = (int) (255.0f * fade);
+                float alphaMultiplier = 1.0f - ((float) i / trajectory.size());
                 Color lineColor = new Color(
                         mainColor.getRed(),
                         mainColor.getGreen(),
                         mainColor.getBlue(),
-                        alpha
+                        (int) (255 * alphaMultiplier)
                 );
 
-                Render3dUtils.renderLine(
-                        e.getMatrixStack(),
-                        trajectory.get(i - 1),
-                        trajectory.get(i),
-                        lineColor,
-                        3.0f
-                );
+                Render3dUtils.renderLine(e.getMatrixStack(), trajectory.get(i - 1), trajectory.get(i), lineColor, 2.0f);
             }
         }
+
+        pearlPoints.clear();
+        pearlPoints.addAll(currentPoints);
     }
 
     @EventHandler
     public void onRender2D(EventRender2D e) {
         if (mc.level == null || mc.player == null) return;
 
-        float fontSize = 13;
-        float nameFontSize = 14;
+        float fontSize = 11;
 
         for (PearlPoint point : pearlPoints) {
-            Vec3 screen = ProjectUtils.worldSpaceToScreenSpace(
-                    new Vec3(point.position.x, point.position.y - 0.3, point.position.z)
-            );
+            Vec3 screen = ProjectUtils.worldSpaceToScreenSpace(point.position);
             if (screen == null || screen.z < 0 || screen.z > 1) continue;
 
             float sx = (float) screen.x;
             float sy = (float) screen.y;
 
-            double time = point.ticks * 50.0 / 1000.0;
+            double time = point.ticks * 0.05;
             String timeText = String.format(Locale.US, "%.1fсек", time);
-            String nameText = point.ownerName;
 
-            int nameColor;
-            boolean isTarget = HitAura.getTarget() != null &&
-                    HitAura.getTarget().getName().getString().equals(point.ownerName);
-            boolean isFriend = FriendRepo.isFriend(point.ownerName);
-            boolean isPlayer = mc.player.getName().getString().equals(point.ownerName);
-
-            if (isTarget) {
-                nameColor = 0xFFFF5555;
-            } else if (isFriend || isPlayer) {
-                nameColor = 0xFF55FF55;
-            } else {
-                nameColor = 0xFFFFFFFF;
-            }
-
-            float nameWidth = FontManager.get(nameFontSize).getWidth(nameText);
             float timeWidth = FontManager.get(fontSize).getWidth(timeText);
-
-            float iconSize = 11;
-            float iconPadding = 3;
+            float iconSize = 10;
             float padding = 5;
-            float verticalSpacing = 2;
 
-            float nameRectW = padding + iconSize + iconPadding + nameWidth + padding;
-            float nameRectH = 16;
+            float rectW = iconSize + timeWidth + (padding * 2.5f);
+            float rectH = 14;
 
-            float timeRectW = padding + timeWidth + padding;
-            float timeRectH = 14;
+            float rx = sx - rectW / 2f;
+            float ry = sy - rectH - 10;
 
-            float nameRectX = sx - nameRectW / 2f;
-            float nameRectY = sy - nameRectH - verticalSpacing / 2f;
-
-            float timeRectX = sx - timeRectW / 2f;
-            float timeRectY = sy + verticalSpacing / 2f;
-
-            RenderUtils.fillRoundRect(
-                    e.getGuiGraphics(),
-                    nameRectX, nameRectY,
-                    nameRectW, nameRectH,
-                    4f, 0xB2060712
-            );
-
-            float pearlX = nameRectX + padding;
-            float pearlY = nameRectY + nameRectH / 2f - iconSize / 2f;
-
-            e.getGuiGraphics().pose().pushMatrix();
-            e.getGuiGraphics().pose().translate(pearlX, pearlY);
-            float scale = iconSize / 16f;
-            e.getGuiGraphics().pose().scale(scale, scale);
-            e.getGuiGraphics().renderItem(PEARL_STACK, 0, 0);
-            e.getGuiGraphics().pose().popMatrix();
-
-            FontManager.get(nameFontSize).drawString(
-                    e.getGuiGraphics(), nameText,
-                    nameRectX + padding + iconSize + iconPadding,
-                    nameRectY + nameRectH / 2f - FontManager.get(nameFontSize).getHeight() / 2f,
-                    nameColor
-            );
-
-            RenderUtils.fillRoundRect(
-                    e.getGuiGraphics(),
-                    timeRectX, timeRectY,
-                    timeRectW, timeRectH,
-                    4f, 0xB2060712
-            );
+            RenderUtils.fillRoundRect(e.getGuiGraphics(), rx, ry, rectW, rectH, 3f, new Color(0, 0, 0, 160).getRGB());
+            renderItemIcon(e.getGuiGraphics(), rx + padding, ry + rectH / 2f - iconSize / 2f, iconSize);
 
             FontManager.get(fontSize).drawString(
-                    e.getGuiGraphics(), timeText,
-                    timeRectX + padding,
-                    timeRectY + timeRectH / 2f - FontManager.get(fontSize).getHeight() / 2f,
+                    e.getGuiGraphics(),
+                    timeText,
+                    rx + padding + iconSize + 2,
+                    ry + rectH / 2f - FontManager.get(fontSize).getHeight() / 2f,
                     -1
             );
         }
     }
 
-    private Vec3 getNextMotion(ThrowableProjectile throwable, Vec3 prevPos, Vec3 motion) {        boolean inWater = mc.level.getBlockState(BlockPos.containing(prevPos))
-                .getFluidState()
-                .is(FluidTags.WATER);
+    private void renderItemIcon(GuiGraphics guiGraphics, float x, float y, float size) {
+        guiGraphics.pose().pushMatrix();
+        guiGraphics.pose().translate(x, y);
+        float scale = size / 16f;
+        guiGraphics.pose().scale(scale, scale);
+        guiGraphics.renderItem(PEARL_STACK, 0, 0);
+        guiGraphics.pose().popMatrix();
+    }
 
-        motion = inWater ? motion.scale(0.8) : motion.scale(0.99);
-
+    private Vec3 getNextMotion(ThrowableProjectile throwable, Vec3 prevPos, Vec3 motion) {
+        boolean inWater = mc.level.getFluidState(BlockPos.containing(prevPos)).is(FluidTags.WATER);
+        float drag = inWater ? 0.8f : 0.99f;
+        motion = motion.scale(drag);
         if (!throwable.isNoGravity()) {
             motion = motion.add(0.0, -0.03, 0.0);
         }
-
         return motion;
     }
 
-    private record PearlPoint(Vec3 position, int ticks, String ownerName) {
-    }
+    private record PearlPoint(Vec3 position, int ticks) {}
 }

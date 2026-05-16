@@ -1,5 +1,6 @@
 package ru.arixcompany.ui.clickgui.components;
 
+import com.mojang.blaze3d.platform.cursor.CursorTypes;
 import lombok.RequiredArgsConstructor;
 import net.minecraft.client.gui.GuiGraphics;
 import ru.arixcompany.Arix;
@@ -18,7 +19,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public final class PanelComponent implements IComponent {
 
-    public static final float PANEL_WIDTH = 135.0F; // Чуть шире для современного вида
+    public static final float PANEL_WIDTH = 135.0F;
     public static final float PANEL_HEADER_HEIGHT = 24.0F;
     public static final float PANEL_MAX_BODY_HEIGHT = 280.0F;
     public static final float PANEL_PADDING = 5.0F;
@@ -48,12 +49,9 @@ public final class PanelComponent implements IComponent {
         float bodyH = targetBodyH * openAnim;
         float totalH = PANEL_HEADER_HEIGHT + bodyH;
 
-        // Главный фон панели (Body)
         RenderUtils.fillRoundRect(guiGraphics, panelX, panelY, PANEL_WIDTH, totalH, 6.0F, Colors.bgPrimary(mainAlpha));
-        // Красивая обводка всей панели
         RenderUtils.drawRoundRectOutline(panelX, panelY, PANEL_WIDTH, totalH, 6.0F, 1.0F, Colors.outline(mainAlpha));
 
-        // Фон шапки (Header)
         RenderUtils.pushClipRect(panelX, panelY, PANEL_WIDTH, PANEL_HEADER_HEIGHT);
         RenderUtils.fillRoundRect(guiGraphics, panelX, panelY, PANEL_WIDTH, PANEL_HEADER_HEIGHT, 0, Colors.bgSecondary(mainAlpha));
         if (hoverAnim > 0.001F) {
@@ -61,33 +59,25 @@ public final class PanelComponent implements IComponent {
         }
         RenderUtils.popClipRect();
 
-        // Разделительная линия между шапкой и телом, если панель открыта
         if (openAnim > 0.01F) {
             RenderUtils.fillRoundRect(guiGraphics, panelX, panelY + PANEL_HEADER_HEIGHT - 1, PANEL_WIDTH, 1, 0, Colors.outline(mainAlpha * openAnim));
         }
 
-        // Текст категории (по центру для стиля Dropdown)
         String catName = category.getName();
         float textW = FontManager.get(13).getWidth(catName);
         FontManager.get(13).drawString(guiGraphics, catName, panelX + (PANEL_WIDTH / 2) - (textW / 2), panelY + 8.0F, Colors.textActive(mainAlpha));
 
         if (bodyH <= 0.001F) return;
 
-        // Скроллинг
         ScrollUtil scroll = Gui.getCategoryScrollUtil(category);
         scroll.setSpeed(8);
         scroll.setEnabled(isHovered(mouseX, mouseY, panelX, panelY + PANEL_HEADER_HEIGHT, PANEL_WIDTH, bodyH));
         scroll.update();
-        // max = contentHeight - visibleHeight (положительное значение)
         scroll.setMax(contentH - targetBodyH);
 
-        // Используем -scroll для смещения контента вверх
         float scrollValue = -scroll.getScroll();
         float drawY = panelY + PANEL_HEADER_HEIGHT + PANEL_PADDING + scrollValue;
 
-        // Применяем ОБА clip'а:
-        // - RenderUtils.pushClipRect для RoundRectShader (GL11 напрямую)
-        // - guiGraphics.enableScissor для текста (Minecraft pipeline)
         float clipX = panelX;
         float clipY = panelY + PANEL_HEADER_HEIGHT;
         float clipW = PANEL_WIDTH;
@@ -97,6 +87,11 @@ public final class PanelComponent implements IComponent {
         guiGraphics.enableScissor((int) clipX, (int) clipY, (int) (clipX + clipW), (int) (clipY + clipH));
 
         for (Module module : getDisplayModules(category)) {
+            if (isHovered(mouseX, mouseY, panelX, drawY, PANEL_WIDTH, ModuleComponent.MODULE_HEIGHT)) {
+
+                guiGraphics.requestCursor(CursorTypes.POINTING_HAND);
+            }
+
             drawY = moduleComponent.renderModule(
                     guiGraphics, mouseX, mouseY, mainAlpha * openAnim,
                     panelX, drawY, module, category, moduleComponent.getSettingComponentCache()
@@ -106,7 +101,6 @@ public final class PanelComponent implements IComponent {
         guiGraphics.disableScissor();
         RenderUtils.popClipRect();
 
-        // Полоса прокрутки (Scrollbar)
         if (contentH > targetBodyH) {
             float scrollProgress = scroll.getScroll() / scroll.getMax();
             float scrollBarH = Math.max(15.0F, (targetBodyH / contentH) * targetBodyH);
@@ -126,7 +120,6 @@ public final class PanelComponent implements IComponent {
 
         if (!isHovered(mouseX, mouseY, panelX, panelY + PANEL_HEADER_HEIGHT, PANEL_WIDTH, bodyH)) return false;
 
-        // Делегируем клики в модули
         return moduleComponent.processCategoryClicks(category, panelX, panelY, mouseX, mouseY, button);
     }
 
@@ -143,9 +136,7 @@ public final class PanelComponent implements IComponent {
             float targetBodyH = Math.min(contentH, PANEL_MAX_BODY_HEIGHT);
             float bodyH = targetBodyH * openAnim;
 
-            // Проверяем что мышь над панелью
             if (isHovered(mouseX, mouseY, panelX, panelY + PANEL_HEADER_HEIGHT, PANEL_WIDTH, bodyH)) {
-                // Проверяем что контент больше чем видимая область
                 if (contentH > targetBodyH) {
                     ScrollUtil scroll = Gui.getCategoryScrollUtil(category);
                     scroll.handleScroll(scrollY);
@@ -164,9 +155,8 @@ public final class PanelComponent implements IComponent {
             if (sAnim > 0.001F) {
                 total += moduleComponent.calcSettingsHeight(module, moduleComponent.getSettingComponentCache()) * sAnim + ModuleComponent.MODULE_GAP;
             }
-            // Добавляем высоту попапа биндов если модуль в режиме бинда
             if (module.binding || (Gui.activeModuleBind == module && Gui.moduleBindAwaitingMode)) {
-                total += 42.0F + ModuleComponent.MODULE_GAP; // POPUP_H = 42.0F
+                total += 42.0F + ModuleComponent.MODULE_GAP;
             }
         }
         return total + PANEL_PADDING;
