@@ -1,4 +1,4 @@
-package ru.arixcompany.utils.player;
+package ru.arixcompany.utils.player.inv;
 
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.protocol.game.ServerboundSetCarriedItemPacket;
@@ -8,7 +8,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.item.Item;
 import ru.arixcompany.utils.IMinecraft;
-import ru.arixcompany.utils.player.inv.InventoryUtility;
+import ru.arixcompany.utils.player.PlayerUtil;
 
 public class UseHandler implements IMinecraft {
 

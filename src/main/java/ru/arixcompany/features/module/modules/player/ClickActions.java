@@ -8,8 +8,7 @@ import ru.arixcompany.features.module.Module;
 import ru.arixcompany.features.module.setting.implement.BindSetting;
 import ru.arixcompany.features.module.setting.implement.SelectSetting;
 import ru.arixcompany.features.module.setting.implement.ValueSetting;
-import ru.arixcompany.utils.math.Timer;
-import ru.arixcompany.utils.player.UseHandler;
+import ru.arixcompany.utils.player.inv.UseHandler;
 
 public class ClickActions extends Module {
     private final UseHandler useHandler = new UseHandler();

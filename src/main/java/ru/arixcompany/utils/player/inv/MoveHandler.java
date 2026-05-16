@@ -1,4 +1,4 @@
-package ru.arixcompany.utils.player;
+package ru.arixcompany.utils.player.inv;
 
 import lombok.experimental.UtilityClass;
 import net.minecraft.client.KeyMapping;
