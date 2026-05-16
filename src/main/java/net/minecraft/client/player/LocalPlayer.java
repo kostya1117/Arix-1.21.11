@@ -109,6 +109,7 @@ import ru.arixcompany.features.event.EventRepo;
 import ru.arixcompany.features.event.player.EventMotion;
 import ru.arixcompany.features.event.player.EventSprint;
 import ru.arixcompany.features.event.world.EventUpdate;
+import ru.arixcompany.features.module.modules.combat.aura.aiming.RotationManager;
 import ru.arixcompany.features.module.modules.combat.aura.rotation.impl.FreeLookRepo;
 import ru.arixcompany.features.module.modules.movement.AutoSprint;
 import ru.arixcompany.features.module.modules.player.NoPush;
@@ -698,7 +699,7 @@ public class LocalPlayer extends AbstractClientPlayer {
             this.xBobO = this.xBob;
 //            this.xBob = this.xBob + (this.getXRot() - this.xBob) * 0.5F;
 //            this.yBob = this.yBob + (this.getYRot() - this.yBob) * 0.5F;
-            if (FreeLookRepo.active) {
+            if (RotationManager.isRotating()) {
                 this.xBob = (float) ((double) this.xBob + (double) (minecraft.gameRenderer.getMainCamera().xRot() - this.xBob) * 0.5D);
                 this.yBob = (float) ((double) this.yBob + (double) (minecraft.gameRenderer.getMainCamera().yRot() - this.yBob) * 0.5D);
             } else {

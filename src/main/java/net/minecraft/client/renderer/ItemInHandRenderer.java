@@ -44,6 +44,7 @@ import ru.arixcompany.Arix;
 import ru.arixcompany.features.event.EventRepo;
 import ru.arixcompany.features.event.render.EventArmRender;
 import ru.arixcompany.features.event.render.EventHeldItemRenderer;
+import ru.arixcompany.features.module.modules.combat.aura.aiming.RotationManager;
 import ru.arixcompany.features.module.modules.combat.aura.rotation.impl.FreeLookRepo;
 import ru.arixcompany.features.module.modules.render.HandView;
 
@@ -383,7 +384,7 @@ public class ItemInHandRenderer {
         ItemInHandRenderer.HandRenderSelection iteminhandrenderer$handrenderselection = evaluateWhichHandsToRender(p_109318_);
         float f2 = Mth.lerp(p_109315_, p_109318_.xBobO, p_109318_.xBob);
         float f3 = Mth.lerp(p_109315_, p_109318_.yBobO, p_109318_.yBob);
-        if (FreeLookRepo.active) {
+        if (RotationManager.isRotating()) {
             p_109316_.mulPose(Axis.XP.rotationDegrees((minecraft.gameRenderer.getMainCamera().xRot() - f2) * 0.1F));
             p_109316_.mulPose(Axis.YP.rotationDegrees((minecraft.gameRenderer.getMainCamera().yRot() - f3) * 0.1F));
         } else {

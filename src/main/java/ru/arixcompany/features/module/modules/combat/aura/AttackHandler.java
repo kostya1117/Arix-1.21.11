@@ -1,3 +1,21 @@
+/*
+ * This file is part of LiquidBounce (https://github.com/CCBlueX/LiquidBounce)
+ *
+ * Copyright (c) 2015 - 2026 CCBlueX
+ *
+ * LiquidBounce is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * LiquidBounce is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with LiquidBounce. If not, see <https://www.gnu.org/licenses/>.
+ */
 package ru.arixcompany.features.module.modules.combat.aura;
 
 import lombok.experimental.UtilityClass;
@@ -14,13 +32,11 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import ru.arixcompany.Arix;
 import ru.arixcompany.features.module.modules.combat.HitAura;
-import ru.arixcompany.features.module.modules.combat.aura.rotation.impl.RotationRepo;
+import ru.arixcompany.features.module.modules.combat.aura.aiming.RotationManager;
 import ru.arixcompany.features.module.modules.combat.aura.rotation.impl.SprintServerRepo;
 import ru.arixcompany.features.module.modules.combat.aura.utils.AuraUtil;
 import ru.arixcompany.features.module.modules.combat.aura.utils.RayTraceUtil;
-import ru.arixcompany.features.module.modules.combat.aura.utils.SensitivityUtil;
 import ru.arixcompany.utils.IMinecraft;
-import ru.arixcompany.utils.MessageSender;
 import ru.arixcompany.utils.math.MathUtils;
 import ru.arixcompany.utils.math.Timer;
 import ru.arixcompany.utils.player.PlayerIntersectionUtil;
@@ -29,16 +45,17 @@ import java.util.Arrays;
 
 @UtilityClass
 public final class AttackHandler implements IMinecraft {
+
     public final Timer cooldownTimer = new Timer();
-    HitAura hitAura = Arix.getInstance().getModuleRepo().getModule(HitAura.class);
 
     public void performAttack(LivingEntity target, boolean rayCast, float ranges) {
         if (target == null || mc.player == null) return;
         if (AuraUtil.getStrictDistance(target) >= ranges) return;
 
         boolean canAttack = shouldAttack(target, rayCast, true, ranges);
-        if (!canAttack)
-            return;
+        if (!canAttack) return;
+
+        HitAura hitAura = Arix.getInstance().getModuleRepo().getModule(HitAura.class);
 
         if (target.hurtTime > 7 && hitAura.extraSettings.isSelected("Фикс удара при HurtTime")) {
             return;
@@ -50,141 +67,87 @@ public final class AttackHandler implements IMinecraft {
         useEntity(target, InteractionHand.MAIN_HAND);
     }
 
-
     public boolean hasMovementRestrictions() {
         return mc.player.hasEffect(MobEffects.BLINDNESS)
-                || mc.player.hasEffect(MobEffects.LEVITATION)
-                || PlayerIntersectionUtil.isPlayerInBlock(Blocks.COBWEB)
-                || mc.player.isUnderWater()
-                || mc.player.isInLava()
-                || mc.player.onClimbable()
-                || !PlayerIntersectionUtil.canChangeIntoPose(Pose.STANDING) && mc.player.isCrouching()
-                || mc.player.getAbilities().flying;
+            || mc.player.hasEffect(MobEffects.LEVITATION)
+            || PlayerIntersectionUtil.isPlayerInBlock(Blocks.COBWEB)
+            || mc.player.isUnderWater()
+            || mc.player.isInLava()
+            || mc.player.onClimbable()
+            || !PlayerIntersectionUtil.canChangeIntoPose(Pose.STANDING) && mc.player.isCrouching()
+            || mc.player.getAbilities().flying;
     }
 
     public double getYCapacityOnPlayerPos(int rangeY) {
-        if (mc.level == null) return 1.D;
+        if (mc.level == null) return 1.0;
         Vec3 eyePos = mc.player.getEyePosition();
-        double minDst = rangeY * 2.D, dst;
+        double minDst = rangeY * 2.0, dst;
         double maxY = 320, minY = -64;
-        final float selfWD2 = mc.player.getBbWidth() / 2.F - 1E-2F;
+        final float selfWD2 = mc.player.getBbWidth() / 2.0f - 1E-2f;
         HitResult first, second;
         for (final Vec3 vec : Arrays.asList(
-                eyePos.add(-selfWD2, .0D, -selfWD2),
-                eyePos.add(selfWD2, .0D, selfWD2),
-                eyePos.add(selfWD2, .0D, -selfWD2),
-                eyePos.add(-selfWD2, .0D, selfWD2))) {
-            first = mc.level.clip(new ClipContext(vec, vec.add(0.D, -rangeY, 0.D), ClipContext.Block.VISUAL, ClipContext.Fluid.ANY, mc.player));
-            second = mc.level.clip(new ClipContext(vec, vec.add(0.D, rangeY, 0.D), ClipContext.Block.VISUAL, ClipContext.Fluid.ANY, mc.player));
+            eyePos.add(-selfWD2, 0, -selfWD2),
+            eyePos.add(selfWD2,  0,  selfWD2),
+            eyePos.add(selfWD2,  0, -selfWD2),
+            eyePos.add(-selfWD2, 0,  selfWD2)
+        )) {
+            first  = mc.level.clip(new ClipContext(vec, vec.add(0, -rangeY, 0), ClipContext.Block.VISUAL, ClipContext.Fluid.ANY, mc.player));
+            second = mc.level.clip(new ClipContext(vec, vec.add(0,  rangeY, 0), ClipContext.Block.VISUAL, ClipContext.Fluid.ANY, mc.player));
             if (maxY > second.getLocation().y) maxY = second.getLocation().y;
-            if (minY < first.getLocation().y) minY = first.getLocation().y;
+            if (minY < first.getLocation().y)  minY = first.getLocation().y;
             dst = maxY - minY;
             if (minDst > dst) minDst = dst;
         }
         return minDst - mc.player.getBbHeight();
     }
 
-//    public static double convenientFallOffset() {
-//        if (mc.player == null) return 0.0;
-//
-//        double velocityY = mc.player.getDeltaMovement().y;
-//        double fallDist = mc.player.fallDistance;
-//        boolean fallingNow = velocityY < -0.08;
-//
-//        // Проверка на активное падение
-//        if (fallingNow && fallDist < 0.01) {
-//            fallDist = Math.abs(velocityY);
-//        }
-//        boolean inFluid = mc.player.isInWater() || mc.player.isInLava();
-//        if (inFluid) return 0.0;
-//
-//        return fallDist;
-//    }
-//
-//    public boolean isBestMomentToHit() {
-//        if (mc.player == null) return false;
-//
-//        Pose pose = mc.player.getPose();
-//        double fallOffset = convenientFallOffset();
-//        double yCapacity = getYCapacityOnPlayerPos(2);
-//
-//        boolean tightSpace = yCapacity < 0.2;
-//        boolean smallPose = pose == Pose.SWIMMING || pose == Pose.CROUCHING;
-//        boolean adaptiveFall = fallOffset > 0.01 || smallPose || tightSpace;
-//
-//        if (adaptiveFall) return true;
-//
-//        boolean badBlock = mc.level.getBlockState(mc.player.blockPosition()).is(Blocks.COBWEB);
-//        boolean fluid =
-//                mc.player.isInWater()
-//                        || mc.player.isInLava()
-//                        || mc.player.isEyeInFluid(FluidTags.WATER)
-//                        || mc.player.isEyeInFluid(FluidTags.LAVA);
-//
-//        boolean conditions =
-//                mc.player.hasEffect(MobEffects.BLINDNESS)
-//                        || mc.player.hasEffect(MobEffects.LEVITATION)
-//                        || mc.player.hasEffect(MobEffects.SLOW_FALLING)
-//                        || mc.player.getAbilities().flying
-//                        || mc.player.onClimbable()
-//                        || mc.player.isPassenger();
-//
-//        boolean smartCrit = HitAura.extraSettings.isSelected("Умные криты")
-//                && mc.player.ticksOnGround > 4
-//                && !mc.player.isJumping();
-//
-//        return badBlock || fluid || conditions || smartCrit;
-//    }
-public static double convenientFallOffset() {
-    if (mc.player == null) return 0.0;
-
-    double fallOffset = mc.player.fallDistance;
-    if (mc.level != null
+    public static double convenientFallOffset() {
+        if (mc.player == null) return 0.0;
+        double fallOffset = mc.player.fallDistance;
+        if (mc.level != null
             && !mc.player.onGround()
             && mc.player.getDeltaMovement().y < -0.0784000015258789) {
-        boolean posLiquid   = !mc.level.getFluidState(mc.player.blockPosition()).isEmpty();
-        boolean posUpLiquid = !mc.level.getFluidState(mc.player.blockPosition().above()).isEmpty();
-        if (!posLiquid && !posUpLiquid
+            boolean posLiquid   = !mc.level.getFluidState(mc.player.blockPosition()).isEmpty();
+            boolean posUpLiquid = !mc.level.getFluidState(mc.player.blockPosition().above()).isEmpty();
+            if (!posLiquid && !posUpLiquid
                 && mc.player.fallDistance < -mc.player.getDeltaMovement().y
                 && mc.player.ticksOnGround > 6) {
-            fallOffset = -mc.player.getDeltaMovement().y;
+                fallOffset = -mc.player.getDeltaMovement().y;
+            }
         }
+        return fallOffset;
     }
-    return fallOffset;
-}
+
     public boolean isBestMomentToHit() {
         if (mc.player == null) return false;
 
-        float adaptiveFallValue = 0.F;
-        //float maxFallOff = .2F;
+        float adaptiveFallValue = 0.0f;
         double yCapacity = getYCapacityOnPlayerPos(2);
-        //float maxFallOff = (float) Math.min(0.9, 0.2 + yCapacity * 0.35);
-        float maxFallOff = MathUtils.randomValue(0.1f,0.8f);
-        if (yCapacity > .2) {
+        float maxFallOff = MathUtils.randomValue(0.1f, 0.8f);
+        if (yCapacity > 0.2) {
             adaptiveFallValue = maxFallOff;
         }
-        final boolean hasFall = convenientFallOffset() > adaptiveFallValue || getYCapacityOnPlayerPos(2) < .1F;
-        if (hasFall)
-            return true;
 
-        boolean isInWeb = mc.level.getBlockState(mc.player.blockPosition()).is(Blocks.COBWEB);
+        final boolean hasFall = convenientFallOffset() > adaptiveFallValue || getYCapacityOnPlayerPos(2) < 0.1;
+        if (hasFall) return true;
+
+        boolean isInWeb   = mc.level.getBlockState(mc.player.blockPosition()).is(Blocks.COBWEB);
         boolean badLiquid = !mc.player.isJumping()
-                && (mc.player.isInWater() || mc.player.isInLava())
-                || mc.player.isEyeInFluid(FluidTags.WATER)
-                || mc.player.isEyeInFluid(FluidTags.LAVA)
-                || isInWeb;
+            && (mc.player.isInWater() || mc.player.isInLava())
+            || mc.player.isEyeInFluid(FluidTags.WATER)
+            || mc.player.isEyeInFluid(FluidTags.LAVA)
+            || isInWeb;
 
         return badLiquid
-                || (!mc.player.isJumping() && mc.player.ticksOnGround > 6
+            || (!mc.player.isJumping() && mc.player.ticksOnGround > 6
                 && HitAura.extraSettings.isSelected("Умные криты"))
-                || mc.player.onClimbable()
-                || mc.player.isPassenger()
-                || mc.player.hasEffect(MobEffects.BLINDNESS)
-                || mc.player.hasEffect(MobEffects.LEVITATION)
-                || mc.player.hasEffect(MobEffects.SLOW_FALLING)
-                || mc.player.getAbilities().flying;
+            || mc.player.onClimbable()
+            || mc.player.isPassenger()
+            || mc.player.hasEffect(MobEffects.BLINDNESS)
+            || mc.player.hasEffect(MobEffects.LEVITATION)
+            || mc.player.hasEffect(MobEffects.SLOW_FALLING)
+            || mc.player.getAbilities().flying;
     }
-
 
     public boolean useEntity(LivingEntity target, InteractionHand hand) {
         if (target == null || mc.gameMode == null || mc.player == null) return false;
@@ -192,7 +155,6 @@ public static double convenientFallOffset() {
         HitAura hitAura = Arix.getInstance().getModuleRepo().getModule(HitAura.class);
         mc.gameMode.attack(mc.player, target);
         mc.player.swing(hand);
-        MessageSender.print(mc.player.fallDistance + "");
         hitAura.count = (hitAura.count + 1) % 2;
         cooldownTimer.reset();
 
@@ -207,11 +169,8 @@ public static double convenientFallOffset() {
 
     public long getMsCooldown() {
         if (mc.player == null) return 500L;
-
         double attackSpeed = mc.player.getAttributeValue(Attributes.ATTACK_SPEED);
-        long base = (long) (1.0 / attackSpeed * 1000.0 * 0.8);
-
-        return base;
+        return (long) (1.0 / attackSpeed * 1000.0 * 0.8);
     }
 
     public boolean msCooldownReached() {
@@ -220,26 +179,18 @@ public static double convenientFallOffset() {
 
     public boolean anyEntityOnRay(LivingEntity target, float range) {
         if (target == null || mc.player == null) return false;
-
         return RayTraceUtil.getServerHitResult(
-                mc.player,
-                RotationRepo.serverAngle.yaw,
-                RotationRepo.serverAngle.pitch,
-                e -> e == target,
-                range
+            mc.player,
+            RotationManager.currentRotation.yaw(),
+            RotationManager.currentRotation.pitch(),
+            e -> e == target,
+            range
         ).getType() == HitResult.Type.ENTITY;
     }
 
-    public boolean shouldAttack(
-            LivingEntity target,
-            boolean rayCast,
-            boolean distanceCheck,
-            float ranges
-    ) {
-        if (distanceCheck && target != null && !AuraUtil.validDistance(target, ranges))
-            return false;
-        if (!msCooldownReached())
-            return false;
+    public boolean shouldAttack(LivingEntity target, boolean rayCast, boolean distanceCheck, float ranges) {
+        if (distanceCheck && target != null && !AuraUtil.validDistance(target, ranges)) return false;
+        if (!msCooldownReached()) return false;
 
         boolean valid = isBestMomentToHit();
         if (valid && rayCast) {
@@ -247,7 +198,6 @@ public static double convenientFallOffset() {
                 valid = false;
             }
         }
-
         return valid;
     }
 }

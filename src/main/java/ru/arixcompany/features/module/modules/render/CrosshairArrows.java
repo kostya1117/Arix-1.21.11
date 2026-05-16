@@ -11,7 +11,7 @@ import ru.arixcompany.features.event.render.EventRender2D;
 import ru.arixcompany.features.module.Category;
 import ru.arixcompany.features.module.Module;
 import ru.arixcompany.features.module.modules.combat.HitAura;
-import ru.arixcompany.features.module.modules.combat.aura.rotation.impl.FreeLookRepo;
+import ru.arixcompany.features.module.modules.combat.aura.aiming.RotationManager;
 import ru.arixcompany.features.module.setting.implement.BooleanSetting;
 import ru.arixcompany.features.module.setting.implement.ValueSetting;
 import ru.arixcompany.features.repos.FriendRepo;
@@ -108,8 +108,8 @@ public class CrosshairArrows extends Module {
         void render(EventRender2D e, float cx, float cy, float sz) {
             float anim = animation.getOutput();
 
-            float realYaw = FreeLookRepo.active
-                    ? FreeLookRepo.freeYaw
+            float realYaw = RotationManager.isRotating() && RotationManager.playerRotation != null
+                    ? RotationManager.playerRotation.yaw()
                     : mc.gameRenderer.getMainCamera().yRot();
             smoothYaw = fast(smoothYaw, realYaw, 10f);
 
