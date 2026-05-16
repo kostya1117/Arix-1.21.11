@@ -5,20 +5,16 @@ import ru.arixcompany.Arix;
 import ru.arixcompany.features.event.EventHandler;
 import ru.arixcompany.features.event.EventRepo;
 import ru.arixcompany.features.event.player.EventKey;
-import ru.arixcompany.features.module.modules.combat.HitAura;
-import ru.arixcompany.features.module.modules.combat.NoFriendDMG;
+import ru.arixcompany.features.module.modules.combat.*;
 import ru.arixcompany.features.module.modules.misc.AutoAccept;
 import ru.arixcompany.features.module.modules.misc.CameraTweaks;
-import ru.arixcompany.features.module.modules.misc.ClickGui;
+import ru.arixcompany.features.module.modules.misc.Core;
 import ru.arixcompany.features.module.modules.misc.ClientSounds;
 import ru.arixcompany.features.module.modules.misc.funtime.AuctionUtils;
 import ru.arixcompany.features.module.modules.misc.funtime.AutoBuy;
 import ru.arixcompany.features.module.modules.movement.AutoSprint;
 import ru.arixcompany.features.module.modules.movement.Strafe;
-import ru.arixcompany.features.module.modules.player.AutoRespawn;
-import ru.arixcompany.features.module.modules.player.ClickActions;
-import ru.arixcompany.features.module.modules.player.NoPush;
-import ru.arixcompany.features.module.modules.player.TestModule;
+import ru.arixcompany.features.module.modules.player.*;
 import ru.arixcompany.features.module.modules.render.*;
 import ru.arixcompany.utils.IMinecraft;
 
@@ -28,6 +24,10 @@ import java.util.ArrayList;
 public class ModuleRepo implements IMinecraft {
    public ArrayList<Module> modules = new ArrayList<>();
    public ModuleRepo() {
+       Core core = new Core();
+       core.state = true;
+       modules.add(core);
+       
        modules.add(new TestModule());
        modules.add(new CameraTweaks());
        modules.add(new Esp());
@@ -36,8 +36,11 @@ public class ModuleRepo implements IMinecraft {
        modules.add(new AutoAccept());
        modules.add(new TargetESP());
        modules.add(new AutoSprint());
+       modules.add(new Strafe());
        modules.add(new ClientSounds());
        modules.add(new HitAura());
+       modules.add(new AutoTotem());
+       modules.add(new TargetStrafe());
        modules.add(new AutoBuy());
        modules.add(new AuctionUtils());
        modules.add(new FullBright());
@@ -53,9 +56,8 @@ public class ModuleRepo implements IMinecraft {
        modules.add(new NoPush());
        modules.add(new PearlPrediction());
        modules.add(new AutoRespawn());
-       modules.add(new ClickGui());
-       modules.add(new Strafe());
        modules.add(new ClickActions());
+       modules.add(new ChestStealer());
    }
 
    public void init() {
@@ -68,10 +70,6 @@ public class ModuleRepo implements IMinecraft {
       if (mc.screen != null) return;
 
       int key = event.getKey();
-
-      if (key >= 0 && key <= 7) {
-         key = -100 - key;
-      }
 
       Module[] modules = Arix.getInstance().getModuleRepo().getBind(key);
       if (modules == null) return;

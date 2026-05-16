@@ -2,6 +2,7 @@ package ru.arixcompany.ui.draggable;
 
 import lombok.Getter;
 import net.minecraft.client.gui.GuiGraphics;
+import ru.arixcompany.features.repos.alerts.AlertDraggable;
 import ru.arixcompany.ui.draggable.draggables.*;
 
 import java.util.ArrayList;
@@ -22,6 +23,12 @@ public class DraggableRepo {
     private ScoreboardDraggable scoreboard;
     @Getter
     private TargetHudDraggable targetHud;
+    @Getter
+    private AlertDraggable alert;
+    @Getter
+    private HotkeysDraggable hotkeys;
+    @Getter
+    private PotionsDraggable potions;
 
     private IDraggable draggingComponent;
 
@@ -33,6 +40,9 @@ public class DraggableRepo {
         bossbar = register(new BossBarDraggable());
         scoreboard = register(new ScoreboardDraggable());
         targetHud = register(new TargetHudDraggable());
+        alert = register(new AlertDraggable());
+        hotkeys = register(new HotkeysDraggable());
+        potions = register(new PotionsDraggable());
     }
 
     public <T extends IDraggable> T register(T c) {

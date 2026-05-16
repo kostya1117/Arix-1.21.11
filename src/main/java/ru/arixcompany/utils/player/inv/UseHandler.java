@@ -7,6 +7,7 @@ import net.minecraft.network.protocol.game.ServerboundUseItemPacket;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.item.Item;
+import ru.arixcompany.features.module.modules.combat.aura.rotation.impl.FreeLookRepo;
 import ru.arixcompany.utils.IMinecraft;
 import ru.arixcompany.utils.player.PlayerUtil;
 
@@ -75,8 +76,8 @@ public class UseHandler implements IMinecraft {
         PlayerUtil.sendSequencedPacket(id -> new ServerboundUseItemPacket(
                 InteractionHand.MAIN_HAND,
                 id,
-                mc.player.getYRot(),
-                mc.player.getXRot()
+                FreeLookRepo.freeYaw,
+                FreeLookRepo.freePitch
         ));
         mc.player.connection.send(new ServerboundSwingPacket(InteractionHand.MAIN_HAND));
         mc.player.getInventory().setSelectedSlot(originalSlot);
@@ -98,8 +99,8 @@ public class UseHandler implements IMinecraft {
         PlayerUtil.sendSequencedPacket(id -> new ServerboundUseItemPacket(
                 InteractionHand.MAIN_HAND,
                 id,
-                mc.player.getYRot(),
-                mc.player.getXRot()
+                FreeLookRepo.freeYaw,
+                FreeLookRepo.freePitch
         ));
         mc.player.connection.send(new ServerboundSwingPacket(InteractionHand.MAIN_HAND));
         mc.gameMode.handleInventoryMouseClick(
@@ -142,8 +143,8 @@ public class UseHandler implements IMinecraft {
                     PlayerUtil.sendSequencedPacket(id -> new ServerboundUseItemPacket(
                             InteractionHand.MAIN_HAND,
                             id,
-                            player.getYRot(),
-                            player.getXRot()
+                            FreeLookRepo.freeYaw,
+                            FreeLookRepo.freePitch
                     ));
                     player.connection.send(new ServerboundSwingPacket(InteractionHand.MAIN_HAND));
                     Thread.sleep(delay);
@@ -160,8 +161,8 @@ public class UseHandler implements IMinecraft {
                     PlayerUtil.sendSequencedPacket(id -> new ServerboundUseItemPacket(
                             InteractionHand.MAIN_HAND,
                             id,
-                            player.getYRot(),
-                            player.getXRot()
+                            FreeLookRepo.freeYaw,
+                            FreeLookRepo.freePitch
                     ));
                     player.connection.send(new ServerboundSwingPacket(InteractionHand.MAIN_HAND));
                     Thread.sleep(delay);

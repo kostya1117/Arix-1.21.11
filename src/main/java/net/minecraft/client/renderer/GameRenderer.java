@@ -125,6 +125,8 @@ import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
+import ru.arixcompany.Arix;
+import ru.arixcompany.features.module.modules.player.ChestStealer;
 import ru.arixcompany.utils.math.ProjectUtils;
 
 public class GameRenderer implements TrackedWaypoint.Projector, AutoCloseable {
@@ -671,11 +673,11 @@ public class GameRenderer implements TrackedWaypoint.Projector, AutoCloseable {
 
             if (this.guiLoadingVisible != (this.minecraft.getOverlay() != null)) {
                 if (this.minecraft.getOverlay() != null) {
-                    LoadingOverlay.registerTextures(this.minecraft.getTextureManager());
-                    if (this.minecraft.getOverlay() instanceof LoadingOverlay) {
-                        LoadingOverlay loadingoverlay = (LoadingOverlay)this.minecraft.getOverlay();
-                        loadingoverlay.update();
-                    }
+                   // LoadingOverlay.registerTextures(this.minecraft.getTextureManager());
+                    //if (this.minecraft.getOverlay() instanceof LoadingOverlay) {
+                        //LoadingOverlay loadingoverlay = (LoadingOverlay)this.minecraft.getOverlay();
+                        //loadingoverlay.update();
+                   // }
                 }
 
                 this.guiLoadingVisible = this.minecraft.getOverlay() != null;

@@ -20,12 +20,6 @@ import org.jspecify.annotations.Nullable;
 
 
 public class PlayerSkinWidget extends AbstractWidget {
-    private static final float MODEL_HEIGHT = 2.125F;
-    private static final float FIT_SCALE = 0.97F;
-    private static final float ROTATION_SENSITIVITY = 2.5F;
-    private static final float DEFAULT_ROTATION_X = -5.0F;
-    private static final float DEFAULT_ROTATION_Y = 30.0F;
-    private static final float ROTATION_X_LIMIT = 50.0F;
     private final PlayerModel wideModel;
     private final PlayerModel slimModel;
     private final Supplier<PlayerSkin> skin;

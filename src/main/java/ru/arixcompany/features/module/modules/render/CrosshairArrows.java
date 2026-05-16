@@ -113,7 +113,7 @@ public class CrosshairArrows extends Module {
                     : mc.gameRenderer.getMainCamera().yRot();
             smoothYaw = fast(smoothYaw, realYaw, 10f);
 
-            float targetRadius = anim * 50f;
+            float targetRadius = anim * 40f;
             if (mc.screen instanceof AbstractContainerScreen) targetRadius += 150f;
             else if (mc.screen instanceof InventoryScreen)    targetRadius += 130f;
 

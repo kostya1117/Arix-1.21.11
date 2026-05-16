@@ -5,12 +5,12 @@ Time: 2026-05-13 22:07:34
 Description: Initializing game
 
 java.lang.NullPointerException: Cannot invoke "ru.arixcompany.features.module.ModuleRepo.getModule(java.lang.Class)" because the return value of "ru.arixcompany.Arix.getModuleRepo()" is null
-	at ru.arixcompany.features.repos.sound.SoundRepo.getClientVolume(SoundRepo.java:113)
-	at ru.arixcompany.features.repos.sound.SoundRepo.play(SoundRepo.java:25)
-	at ru.arixcompany.features.repos.sound.SoundRepo.playOn(SoundRepo.java:17)
+	at ru.arixcompany.features.repos.SoundRepo.getClientVolume(SoundRepo.java:113)
+	at ru.arixcompany.features.repos.SoundRepo.play(SoundRepo.java:25)
+	at ru.arixcompany.features.repos.SoundRepo.playOn(SoundRepo.java:17)
 	at ru.arixcompany.features.module.Module.activate(Module.java:41)
 	at ru.arixcompany.features.module.Module.setState(Module.java:71)
-	at ru.arixcompany.features.module.modules.misc.ClickGui.<init>(ClickGui.java:20)
+	at ru.arixcompany.features.module.modules.misc.Core.<init>(ClickGui.java:20)
 	at ru.arixcompany.features.module.ModuleRepo.<init>(ModuleRepo.java:54)
 	at ru.arixcompany.Arix.<init>(Arix.java:73)
 	at net.minecraft.client.Minecraft.<init>(Minecraft.java:665)
@@ -24,12 +24,12 @@ A detailed walkthrough of the error, its code path and all known details is as f
 -- Head --
 Thread: Render thread
 Stacktrace:
-	at ru.arixcompany.features.repos.sound.SoundRepo.getClientVolume(SoundRepo.java:113)
-	at ru.arixcompany.features.repos.sound.SoundRepo.play(SoundRepo.java:25)
-	at ru.arixcompany.features.repos.sound.SoundRepo.playOn(SoundRepo.java:17)
+	at ru.arixcompany.features.repos.SoundRepo.getClientVolume(SoundRepo.java:113)
+	at ru.arixcompany.features.repos.SoundRepo.play(SoundRepo.java:25)
+	at ru.arixcompany.features.repos.SoundRepo.playOn(SoundRepo.java:17)
 	at ru.arixcompany.features.module.Module.activate(Module.java:41)
 	at ru.arixcompany.features.module.Module.setState(Module.java:71)
-	at ru.arixcompany.features.module.modules.misc.ClickGui.<init>(ClickGui.java:20)
+	at ru.arixcompany.features.module.modules.misc.Core.<init>(ClickGui.java:20)
 	at ru.arixcompany.features.module.ModuleRepo.<init>(ModuleRepo.java:54)
 	at ru.arixcompany.Arix.<init>(Arix.java:73)
 	at net.minecraft.client.Minecraft.<init>(Minecraft.java:665)

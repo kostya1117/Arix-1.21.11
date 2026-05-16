@@ -1,24 +1,3 @@
-/ah
-/ah sell 1399999
-/ah search ключ испытаний
-/ah sell 399999
-/ah search блэк
-/ah sell 749999
-/ah
-/ah search Икара
-/clan money
-/clan kick novaex
-/clan invite aeroyy999
-/clan menu
-/ah search алмаз
-/reg 1
-/an306
-/tpa aeroyy999
-/ah sell 199999
-/clan money
-/clan withdraw 5000000
-/casino
-/ah search Икара
 /pay aeroyy999 1499999
 /ah search Эндер жемчуг
 /ah search исцел
@@ -48,3 +27,24 @@
 /an306
 /hub
 /an306
+/ac
+/reg 123qwe111a 123qwe111a
+/hub
+/kit free
+/fly
+/rtp
+/near
+/hub
+/рги
+/hub
+/rtp
+/near
+/warp pvp
+/codes
+/code
+/free
+/reg 123qwe111a
+/reg 123qwe111a 123qwe111a
+/hub
+/kit
+/kit free

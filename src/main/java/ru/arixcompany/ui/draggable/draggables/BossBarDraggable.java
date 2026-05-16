@@ -9,6 +9,7 @@ import net.minecraft.world.BossEvent;
 import ru.arixcompany.Arix;
 import ru.arixcompany.ui.draggable.DraggableComponent;
 import ru.arixcompany.features.module.modules.render.Interface;
+import ru.arixcompany.utils.Colors;
 import ru.arixcompany.utils.render.RenderUtils;
 import ru.arixcompany.utils.render.font.CustomFont;
 import ru.arixcompany.utils.render.font.FontManager;
@@ -39,7 +40,7 @@ public class BossBarDraggable extends DraggableComponent {
     public static boolean isCustomBossBarActive() {
         if (Arix.getInstance() == null || Arix.getInstance().getModuleRepo() == null) return false;
         Interface iface = Arix.getInstance().getModuleRepo().getModule(Interface.class);
-        return iface != null && iface.isState() && iface.elements.isSelected("BossBar");
+        return iface != null && iface.isState() && iface.elements.isSelected("Боссбар");
     }
 
     @Override
@@ -82,7 +83,7 @@ public class BossBarDraggable extends DraggableComponent {
             int textColor  = argb(255, 255, 255, alpha);
             int notchColor = argb(0,   0,   0,   alpha * 0.5f);
 
-            RenderUtils.fillRoundRect(drawX, drawY, boxWidth, BOX_HEIGHT, 4f, bgColor);
+            Interface.drawClientRect(drawX, drawY, boxWidth, BOX_HEIGHT, 4f, bgColor);
 
             float nameW = font.getComponentWidth(name);
             float textX = drawX + (boxWidth - nameW) / 2f;
@@ -94,9 +95,9 @@ public class BossBarDraggable extends DraggableComponent {
             float barW  = boxWidth - PAD_X * 2f;
             float fillW = barW * progress;
 
-            RenderUtils.fillRoundRect(barX, barY, barW, BAR_HEIGHT, 2f, barBg);
+            Interface.drawClientRect(barX, barY, barW, BAR_HEIGHT, 2f, barBg);
             if (fillW > 0f) {
-                RenderUtils.fillRoundRect(barX, barY, fillW, BAR_HEIGHT, 2f, accent);
+                Interface.drawClientRect(barX, barY, fillW, BAR_HEIGHT, 2f, accent);
             }
 
             drawNotches(event.getOverlay(), barX, barY, barW, BAR_HEIGHT, notchColor);
@@ -121,7 +122,7 @@ public class BossBarDraggable extends DraggableComponent {
         if (count <= 1) return;
         for (int i = 1; i < count; i++) {
             float lx = x + w * i / count;
-            RenderUtils.fillRoundRect(lx - 0.5f, y, 1f, h, 0f, color);
+            Interface.drawClientRect(lx - 0.5f, y, 1f, h, 0f, color);
         }
     }
 

@@ -7,7 +7,6 @@ import ru.arixcompany.utils.Colors;
 import ru.arixcompany.ui.clickgui.Gui;
 import ru.arixcompany.ui.clickgui.components.IComponent;
 import ru.arixcompany.ui.clickgui.components.PanelComponent;
-import ru.arixcompany.ui.clickgui.components.module.settings.ColorSettingComponent;
 import ru.arixcompany.features.module.Category;
 import ru.arixcompany.features.module.Module;
 import ru.arixcompany.features.module.setting.Setting;
@@ -80,7 +79,10 @@ public final class ModuleComponent implements IComponent {
                 finishBind(module);
                 return true;
             }
-            module.toggle();
+
+            if (!module.isForced()) {
+                module.toggle();
+            }
             return true;
         }
         if (button == 1) {
@@ -150,11 +152,12 @@ public final class ModuleComponent implements IComponent {
                     textY + 1, Colors.textInactive(mainAlpha));
         }
 
-        renderModernToggle(guiGraphics, moduleX + moduleW - 20, moduleY + (MODULE_HEIGHT / 2) - 4, toggleAnim, mainAlpha);
+        if (!module.isForced()) {
+            renderModernToggle(guiGraphics, moduleX + moduleW - 20, moduleY + (MODULE_HEIGHT / 2) - 4, toggleAnim, mainAlpha);
+        }
 
         float nextY = renderSettingsBox(guiGraphics, mouseX, mouseY, mainAlpha, panelX, moduleY, module, cache);
 
-        // Рендерим попап биндов всегда (даже когда модуль закрыт), он просто расширяется вниз
         if (module.binding || (Gui.activeModuleBind == module && Gui.moduleBindAwaitingMode)) {
             nextY = renderBindPopup(guiGraphics, mouseX, mouseY, mainAlpha, moduleX, moduleY, moduleW, module, nextY);
         }
@@ -361,14 +364,6 @@ public final class ModuleComponent implements IComponent {
             }
         }
         return null;
-    }
-
-    public void renderOverlay(float mainAlpha) {
-        if (Gui.activeColorPicker == null) return;
-        IComponent comp = getOrCreate(Gui.activeColorPicker);
-        if (comp instanceof ColorSettingComponent colorComp) {
-            colorComp.renderColorPicker(mainAlpha);
-        }
     }
 
     public float calcSettingsHeight(Module m, Map<Setting, IComponent> cache) {

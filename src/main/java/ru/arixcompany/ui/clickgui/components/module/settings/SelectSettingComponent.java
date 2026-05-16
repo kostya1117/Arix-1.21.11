@@ -1,5 +1,6 @@
 package ru.arixcompany.ui.clickgui.components.module.settings;
 
+import com.mojang.blaze3d.platform.cursor.CursorTypes;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -89,6 +90,10 @@ public final class SelectSettingComponent implements IComponent {
             if (xCursor + btnW > x + width) {
                 xCursor = x;
                 yCursor += BTN_H + BTN_GAP_Y;
+            }
+
+            if (hovered(mouseX, mouseY, xCursor, yCursor, btnW, BTN_H)) {
+                guiGraphics.requestCursor(CursorTypes.POINTING_HAND);
             }
 
             boolean selected = mode.equals(setting.getSelected());

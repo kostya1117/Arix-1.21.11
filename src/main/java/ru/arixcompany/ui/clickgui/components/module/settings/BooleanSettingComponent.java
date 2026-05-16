@@ -1,5 +1,6 @@
 package ru.arixcompany.ui.clickgui.components.module.settings;
 
+import com.mojang.blaze3d.platform.cursor.CursorTypes;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.minecraft.client.gui.GuiGraphics;
@@ -35,6 +36,10 @@ public final class BooleanSettingComponent implements IComponent {
 
         float toggleX = x + width - TOGGLE_W - 3.0F;
         float toggleY = y + (getHeight() / 2.0F) - (TOGGLE_H / 2.0F);
+
+        if (hovered(mouseX, mouseY, toggleX, toggleY, TOGGLE_W, TOGGLE_H)) {
+            guiGraphics.requestCursor(CursorTypes.POINTING_HAND);
+        }
 
         RenderUtils.fillRoundRect(guiGraphics, toggleX, toggleY, TOGGLE_W, TOGGLE_H, TOGGLE_H / 2.0F, bgColor);
 

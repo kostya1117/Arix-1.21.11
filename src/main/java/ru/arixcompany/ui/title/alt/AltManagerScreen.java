@@ -39,7 +39,7 @@ public class AltManagerScreen extends Screen {
     private boolean draggingScrollbar = false;
 
     public AltManagerScreen(Screen parent) {
-        super(Component.literal("Alt Manager"));
+        super(Component.empty());
         this.parent = parent;
     }
 
@@ -70,26 +70,26 @@ public class AltManagerScreen extends Screen {
         nameField.setMaxLength(16);
         addRenderableWidget(nameField);
 
-        addRenderableWidget(Button.builder(Component.literal("Add"), b -> addAlt())
+        addRenderableWidget(Button.builder(Component.literal("Добавить"), b -> addAlt())
                 .bounds(panelX, height - 85, 70, 20).build());
 
-        addRenderableWidget(Button.builder(Component.literal("Login"), b -> loginSelected())
+        addRenderableWidget(Button.builder(Component.literal("Войти"), b -> loginSelected())
                 .bounds(panelX + 75, height - 85, 70, 20).build());
 
-        addRenderableWidget(Button.builder(Component.literal("Random"), b -> {
+        addRenderableWidget(Button.builder(Component.literal("Рандомный"), b -> {
             String name = NickGenerator.generateRandomName();
             AltRepo.add(new AltRepo.Alt(name));
             login(name);
             save();
         }).bounds(panelX + 150, height - 85, 70, 20).build());
 
-        addRenderableWidget(Button.builder(Component.literal("Clear All"), b -> {
+        addRenderableWidget(Button.builder(Component.literal("Очистить все"), b -> {
             AltRepo.clear();
             selectedIndex = -1;
             save();
         }).bounds(panelX, height - 60, PANEL_WIDTH, 20).build());
 
-        addRenderableWidget(Button.builder(Component.literal("Back"),
+        addRenderableWidget(Button.builder(Component.literal("Назад"),
                         b -> minecraft.setScreen(parent))
                 .bounds(panelX, height - 35, PANEL_WIDTH, 20).build());
 
@@ -241,9 +241,8 @@ public class AltManagerScreen extends Screen {
         String current = Minecraft.getInstance().getUser().getName();
 
         g.drawCenteredString(font, title, width / 2, 15, 0xFFFFFFFF);
-        g.drawCenteredString(font, "Current: " + current, width / 2, 28, 0xFFAAAAAA);
+        g.drawCenteredString(font, "Текущий: " + current, width / 2, 28, 0xFFAAAAAA);
 
-        // Рендеринг подсказок управления слева от списка
         int hintX = listX - 130;
         int hintY = listY + 4;
         g.drawString(font, "Управление:", hintX, hintY, 0xFFFFFFFF);

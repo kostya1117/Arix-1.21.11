@@ -1,22 +1,21 @@
 package net.minecraft.client.gui.components;
 
+import java.awt.*;
 import java.util.function.Supplier;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.input.InputWithModifiers;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jspecify.annotations.Nullable;
+import ru.arixcompany.Arix;
+import ru.arixcompany.features.module.modules.misc.Core;
+import ru.arixcompany.utils.render.RenderUtils;
+import ru.arixcompany.utils.render.font.FontManager;
 
 
 public abstract class Button extends AbstractButton {
-    public static final int SMALL_WIDTH = 120;
     public static final int DEFAULT_WIDTH = 150;
-    public static final int BIG_WIDTH = 200;
-    public static final int DEFAULT_HEIGHT = 20;
-    public static final int DEFAULT_SPACING = 8;
     protected static final Button.CreateNarration DEFAULT_NARRATION = p_253298_ -> p_253298_.get();
     protected final Button.OnPress onPress;
     protected final Button.CreateNarration createNarration;
@@ -26,7 +25,7 @@ public abstract class Button extends AbstractButton {
     }
 
     protected Button(
-        int p_259075_, int p_259271_, int p_260232_, int p_260028_, Component p_259351_, Button.OnPress p_260152_, Button.CreateNarration p_259552_
+            int p_259075_, int p_259271_, int p_260232_, int p_260028_, Component p_259351_, Button.OnPress p_260152_, Button.CreateNarration p_259552_
     ) {
         super(p_259075_, p_259271_, p_260232_, p_260028_, p_259351_);
         this.onPress = p_260152_;
@@ -48,7 +47,7 @@ public abstract class Button extends AbstractButton {
         this.defaultButtonNarrationText(p_259196_);
     }
 
-    
+
     public static class Builder {
         private final Component message;
         private final Button.OnPress onPress;
@@ -102,28 +101,27 @@ public abstract class Button extends AbstractButton {
         }
     }
 
-    
+
     public interface CreateNarration {
         MutableComponent createNarrationMessage(Supplier<MutableComponent> p_253695_);
     }
 
-    
     public interface OnPress {
         void onPress(Button p_93751_);
     }
 
-    
+
     public static class Plain extends Button {
         protected Plain(
-            int p_455297_, int p_455388_, int p_459653_, int p_452847_, Component p_459347_, Button.OnPress p_453378_, Button.CreateNarration p_456163_
+                int x, int y, int width, int height, Component message, Button.OnPress onPress, Button.CreateNarration narration
         ) {
-            super(p_455297_, p_455388_, p_459653_, p_452847_, p_459347_, p_453378_, p_456163_);
+            super(x, y, width, height, message, onPress, narration);
         }
 
         @Override
-        protected void renderContents(GuiGraphics p_460253_, int p_454889_, int p_455896_, float p_458060_) {
-            this.renderDefaultSprite(p_460253_);
-            this.renderDefaultLabel(p_460253_.textRendererForWidget(this, GuiGraphics.HoveredTextEffects.NONE));
+        protected void renderContents(GuiGraphics g, int mouseX, int mouseY, float partialTicks) {
+            this.renderDefaultSprite(g);
+            this.renderDefaultLabel(g.textRendererForWidget(this, GuiGraphics.HoveredTextEffects.NONE));
         }
     }
 }

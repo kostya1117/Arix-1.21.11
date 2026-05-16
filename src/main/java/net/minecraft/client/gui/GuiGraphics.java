@@ -90,7 +90,6 @@ import org.joml.Vector3f;
 import org.jspecify.annotations.Nullable;
 
 public class GuiGraphics implements IForgeGuiGraphics {
-    private static final int EXTRA_SPACE_AFTER_FIRST_TOOLTIP_LINE = 2;
     final Minecraft minecraft;
     private final Matrix3x2fStack pose;
     private final GuiGraphics.ScissorStack scissorStack = new GuiGraphics.ScissorStack();
