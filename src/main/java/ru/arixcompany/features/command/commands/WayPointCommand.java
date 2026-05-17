@@ -3,7 +3,6 @@ package ru.arixcompany.features.command.commands;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import lombok.AllArgsConstructor;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.multiplayer.ClientSuggestionProvider;
 import net.minecraft.network.chat.Component;
@@ -18,6 +17,7 @@ import ru.arixcompany.features.event.render.EventRender2D;
 import ru.arixcompany.features.repos.WayPointRepo;
 import ru.arixcompany.utils.Colors;
 import ru.arixcompany.utils.MessageSender;
+import ru.arixcompany.utils.Textures;
 import ru.arixcompany.utils.math.ProjectUtils;
 import ru.arixcompany.utils.render.ColorUtil;
 import ru.arixcompany.utils.render.RenderUtils;
@@ -28,8 +28,6 @@ import java.util.Map;
 
 public class WayPointCommand extends AbstractCommand {
     private static final Map<WayPointRepo.WayPoint, WaypointScreenData> waypointScreenData = new HashMap<>();
-    private static final net.minecraft.resources.Identifier WAYPOINT_TEX =
-            net.minecraft.resources.Identifier.withDefaultNamespace("textures/arix/waypoint.png");
 
     public WayPointCommand() {
         super("waypoint", "Управление вейпоинтами");
@@ -207,7 +205,7 @@ public class WayPointCommand extends AbstractCommand {
 
             RenderUtils.drawImage(
                     event.getGuiGraphics(),
-                    WAYPOINT_TEX,
+                    Textures.waypoint,
                     iconX, iconY,
                     iconSize, iconSize,
                     Colors.accent(1f)
@@ -244,7 +242,5 @@ public class WayPointCommand extends AbstractCommand {
         }
     }
 
-
-        private record WaypointScreenData(double x, double y, double z, double distance) {
-    }
+    private record WaypointScreenData(double x, double y, double z, double distance) {}
 }

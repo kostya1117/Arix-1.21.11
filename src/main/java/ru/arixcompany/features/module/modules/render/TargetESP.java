@@ -16,12 +16,15 @@ import org.joml.Matrix4f;
 import ru.arixcompany.Arix;
 import ru.arixcompany.features.event.EventHandler;
 import ru.arixcompany.features.event.render.EventRender3D;
+import ru.arixcompany.features.event.world.EventUpdate;
 import ru.arixcompany.features.module.Category;
 import ru.arixcompany.features.module.Module;
 import ru.arixcompany.features.module.modules.combat.HitAura;
 import ru.arixcompany.features.module.setting.implement.SelectSetting;
+import ru.arixcompany.features.module.setting.implement.ValueSetting;
 import ru.arixcompany.utils.animation.Animation;
 import ru.arixcompany.utils.animation.Direction;
+import ru.arixcompany.utils.Textures;
 import ru.arixcompany.utils.animation.impl.EaseInOutQuad;
 import ru.arixcompany.utils.animation.impl.EaseOutCubic;
 
@@ -29,24 +32,32 @@ import java.awt.*;
 
 public class TargetESP extends Module {
 
-    // ─── Текстуры ────────────────────────────────────────────────────────────
-    private static final Identifier TEX_SQUARE =
-            Identifier.withDefaultNamespace("textures/arix/target.png");
-    private static final Identifier TEX_GLOW =
-            Identifier.withDefaultNamespace("textures/arix/glow.png");
-
-    // ─── Настройки ───────────────────────────────────────────────────────────
     public static final SelectSetting mode =
             new SelectSetting("Режим")
-                    .value("Квадрат", "Призраки");
+                    .value("Квадрат", "Призраки", "Кристаллы","Круг");
+
+    private final ValueSetting crystalSize = new ValueSetting("Размер кристаллов")
+            .range(0.1f, 2.0f)
+            .setValue(0.8f)
+            .setStep(0.1f)
+            .visible(() -> mode.isSelected("Кристаллы"));
+
+    private final ValueSetting crystalCount = new ValueSetting("Кол-во кристаллов")
+            .range(8, 30)
+            .setValue(20)
+            .setStep(1)
+            .visible(() -> mode.isSelected("Кристаллы"));
 
     private static final Animation alpha = new EaseInOutQuad(350, 1.0);
     private final Animation spiritsAnim = new EaseOutCubic(400, 1.0, Direction.BACKWARDS);
+    private final Animation crystalsAnim = new EaseOutCubic(400, 1.0, Direction.BACKWARDS);
 
-    // ─── Состояние ───────────────────────────────────────────────────────────
     private LivingEntity lastTarget;
     private float animationNurik = 0.0f;
     private long currentTime = System.currentTimeMillis();
+
+    private float prevCircleStep = 0f;
+    private float circleStep = 0f;
 
     private static final RenderPipeline PIPELINE = RenderPipelines.register(
             RenderPipeline.builder(RenderPipelines.GUI_TEXTURED_SNIPPET)
@@ -70,9 +81,31 @@ public class TargetESP extends Module {
                     .build()
     );
 
+    private static final RenderPipeline PIPELINE_CRYSTAL = RenderPipelines.register(
+            RenderPipeline.builder(RenderPipelines.GUI_SNIPPET)
+                    .withLocation(Identifier.fromNamespaceAndPath("arix", "pipeline/world/crystal_triangles"))
+                    .withVertexFormat(DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.TRIANGLES)
+                    .withCull(false)
+                    .withDepthTestFunction(DepthTestFunction.NO_DEPTH_TEST)
+                    .withDepthWrite(false)
+                    .withBlend(BlendFunction.TRANSLUCENT)
+                    .build()
+    );
+
+    private static final RenderPipeline PIPELINE_STRIP = RenderPipelines.register(
+            RenderPipeline.builder(RenderPipelines.GUI_SNIPPET)
+                    .withLocation(Identifier.fromNamespaceAndPath("arix", "pipeline/world/triangle_strip"))
+                    .withVertexFormat(DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.TRIANGLE_STRIP)
+                    .withCull(false)
+                    .withDepthTestFunction(DepthTestFunction.NO_DEPTH_TEST)
+                    .withDepthWrite(false)
+                    .withBlend(BlendFunction.TRANSLUCENT)
+                    .build()
+    );
+
     public TargetESP() {
         super("TargetESP", Category.Render);
-        setup(mode);
+        setup(mode, crystalSize, crystalCount);
     }
 
     @EventHandler
@@ -87,8 +120,20 @@ public class TargetESP extends Module {
 
         if (mode.isSelected("Квадрат")) {
             renderSquareMode(e, target);
-        } else {
+        } else if (mode.isSelected("Призраки")) {
             renderSpiritsMode(e, target);
+        } else if (mode.isSelected("Кристаллы")) {
+            renderCrystalsMode(e, target);
+        } else if (mode.isSelected("Круг")) {
+            renderOldTargetEsp(e, target);
+        }
+    }
+
+    @EventHandler
+    public void onUpdate(EventUpdate event) {
+        if (mode.isSelected("Круг")) {
+            prevCircleStep = circleStep;
+            circleStep += 0.15f;
         }
     }
 
@@ -131,35 +176,32 @@ public class TargetESP extends Module {
         float rotation = (System.currentTimeMillis() % 2000L) / 2000.0f * 360.0f;
         matrices.mulPose(Axis.ZP.rotationDegrees(rotation));
 
-        Color baseColor  = Arix.getInstance().getCurrentTheme().getMain();
+        Color baseColor = Arix.getInstance().getCurrentTheme().getMain();
         Color damageColor = new Color(255, 60, 60);
-
 
         float rawProgress = clamp01((entity.hurtTime - tickDelta) / 10.0f);
         float hurtProgress = (float) Math.sin(rawProgress * Math.PI);
 
-        int r = lerpInt(baseColor.getRed(),   damageColor.getRed(),   hurtProgress);
+        int r = lerpInt(baseColor.getRed(), damageColor.getRed(), hurtProgress);
         int g = lerpInt(baseColor.getGreen(), damageColor.getGreen(), hurtProgress);
-        int b = lerpInt(baseColor.getBlue(),  damageColor.getBlue(),  hurtProgress);
+        int b = lerpInt(baseColor.getBlue(), damageColor.getBlue(), hurtProgress);
 
-        // При ударе спрайт чуть увеличивается (punch эффект), потом возвращается
-        float baseScale  = 1.1f;
+        float baseScale = 1.1f;
         float finalScale = baseScale + (0.12f * hurtProgress);
         matrices.scale(finalScale, finalScale, finalScale);
 
         Matrix4f matrix = matrices.last().pose();
-        VertexConsumer vertex = buffer.getBuffer(texLayerND(TEX_SQUARE, PIPELINE));
+        VertexConsumer vertex = buffer.getBuffer(texLayerND(Textures.target, PIPELINE));
 
         int alphaValue = (int) (255f * alpha.getOutput());
 
         vertex.addVertex(matrix, -0.5f, -0.5f, 0).setColor(r, g, b, alphaValue).setUv(0, 1);
-        vertex.addVertex(matrix,  0.5f, -0.5f, 0).setColor(r, g, b, alphaValue).setUv(1, 1);
-        vertex.addVertex(matrix,  0.5f,  0.5f, 0).setColor(r, g, b, alphaValue).setUv(1, 0);
-        vertex.addVertex(matrix, -0.5f,  0.5f, 0).setColor(r, g, b, alphaValue).setUv(0, 0);
+        vertex.addVertex(matrix, 0.5f, -0.5f, 0).setColor(r, g, b, alphaValue).setUv(1, 1);
+        vertex.addVertex(matrix, 0.5f, 0.5f, 0).setColor(r, g, b, alphaValue).setUv(1, 0);
+        vertex.addVertex(matrix, -0.5f, 0.5f, 0).setColor(r, g, b, alphaValue).setUv(0, 0);
 
         matrices.popPose();
     }
-
 
     private void renderSpiritsMode(EventRender3D e, LivingEntity target) {
         spiritsAnim.setDirection(target != null ? Direction.FORWARDS : Direction.BACKWARDS);
@@ -196,9 +238,9 @@ public class TargetESP extends Module {
         float hurtProgress = (float) Math.sin(rawHurt * Math.PI);
 
         Color damageColor = new Color(255, 60, 60);
-        int r = lerpInt(color.getRed(),   damageColor.getRed(),   hurtProgress);
+        int r = lerpInt(color.getRed(), damageColor.getRed(), hurtProgress);
         int g = lerpInt(color.getGreen(), damageColor.getGreen(), hurtProgress);
-        int b = lerpInt(color.getBlue(),  damageColor.getBlue(),  hurtProgress);
+        int b = lerpInt(color.getBlue(), damageColor.getBlue(), hurtProgress);
 
         int layers = 3;
         int particles = 12;
@@ -229,9 +271,9 @@ public class TargetESP extends Module {
                     matrices.mulPose(mc.gameRenderer.getMainCamera().rotation());
 
                     Matrix4f matrix = matrices.last().pose();
-                    VertexConsumer vertex = bufferSource.getBuffer(texLayerND(TEX_GLOW, PIPELINE_ADDITIVE));
+                    VertexConsumer vertex = bufferSource.getBuffer(texLayerND(Textures.glow, PIPELINE_ADDITIVE));
 
-                    vertex.addVertex(matrix,-19, 19, 0).setUv(0, 1).setColor(r, g, b, alphaValue);
+                    vertex.addVertex(matrix, -19, 19, 0).setUv(0, 1).setColor(r, g, b, alphaValue);
                     vertex.addVertex(matrix, 19, 19, 0).setUv(1, 1).setColor(r, g, b, alphaValue);
                     vertex.addVertex(matrix, 19, -19, 0).setUv(1, 0).setColor(r, g, b, alphaValue);
                     vertex.addVertex(matrix, -19, -19, 0).setUv(0, 0).setColor(r, g, b, alphaValue);
@@ -245,6 +287,279 @@ public class TargetESP extends Module {
         }
     }
 
+    private void renderCrystalsMode(EventRender3D e, LivingEntity target) {
+        crystalsAnim.setDirection(target != null ? Direction.FORWARDS : Direction.BACKWARDS);
+
+        if (crystalsAnim.getOutput() <= 0.0f) {
+            lastTarget = null;
+            return;
+        }
+
+        if (target != null) lastTarget = target;
+        if (lastTarget == null) return;
+
+        float easedAnim = (float) easeOutCubic(crystalsAnim.getOutput());
+        float tickDelta = e.getTickDelta();
+
+        Vec3 cam = mc.gameRenderer.getMainCamera().position();
+        Vec3 targetPos = new Vec3(
+                lerp(lastTarget.getX(), lastTarget.xOld, tickDelta),
+                lerp(lastTarget.getY(), lastTarget.yOld, tickDelta),
+                lerp(lastTarget.getZ(), lastTarget.zOld, tickDelta)
+        );
+
+        float time = (mc.player.tickCount + tickDelta) * 3.2f;
+        float entityHeight = lastTarget.getBbHeight();
+        float entityWidth = lastTarget.getBbWidth();
+        float halfWidth = entityWidth * 0.5f;
+
+        Color baseColor = getCurrentColor();
+        float rawHurt = clamp01((lastTarget.hurtTime - tickDelta) / 10.0f);
+        float hurtProgress = (float) Math.sin(rawHurt * Math.PI);
+        Color damageColor = new Color(255, 60, 60);
+
+        int cr = lerpInt(baseColor.getRed(), damageColor.getRed(), hurtProgress);
+        int cg = lerpInt(baseColor.getGreen(), damageColor.getGreen(), hurtProgress);
+        int cb = lerpInt(baseColor.getBlue(), damageColor.getBlue(), hurtProgress);
+
+        int count = crystalCount.getInt();
+        float scaleSetting = crystalSize.getValue();
+
+        PoseStack matrices = e.getMatrixStack();
+        matrices.pushPose();
+        matrices.translate(
+                targetPos.x - cam.x,
+                targetPos.y - cam.y,
+                targetPos.z - cam.z
+        );
+
+        ByteBufferBuilder glowAllocator = new ByteBufferBuilder(4096);
+        try (glowAllocator) {
+            MultiBufferSource.BufferSource glowBuffer = MultiBufferSource.immediate(glowAllocator);
+
+            for (int i = 0; i < count; i++) {
+                float seed1 = (float) Math.sin(i * 1.7f + 0.3f) * 0.5f + 0.5f;
+                float seed2 = (float) Math.cos(i * 2.3f + 0.7f) * 0.5f + 0.5f;
+                float seed3 = (float) Math.sin(i * 3.1f + 1.1f) * 0.5f + 0.5f;
+
+                float angleOffset = i * (360f / count) + seed1 * 12f;
+                float angle = time + angleOffset;
+                float radius = halfWidth + 0.25f + seed3 * 0.15f;
+
+                float x = radius * (float) Math.cos(Math.toRadians(angle));
+                float z = radius * (float) Math.sin(Math.toRadians(angle));
+                float y = seed2 * entityHeight * 1.05f;
+
+                float glowSize = 0.15f * easedAnim * scaleSetting * 3.2f;
+                int glowAlpha = (int) (255 * easedAnim * 0.25f);
+
+                matrices.pushPose();
+                matrices.translate(x, y, z);
+                matrices.mulPose(mc.gameRenderer.getMainCamera().rotation());
+
+                Matrix4f matrix = matrices.last().pose();
+                VertexConsumer vertex = glowBuffer.getBuffer(texLayerND(Textures.glow, PIPELINE_ADDITIVE));
+
+                float hs = glowSize / 2f;
+                vertex.addVertex(matrix, -hs, -hs, 0).setUv(0, 1).setColor(cr, cg, cb, glowAlpha);
+                vertex.addVertex(matrix, hs, -hs, 0).setUv(1, 1).setColor(cr, cg, cb, glowAlpha);
+                vertex.addVertex(matrix, hs, hs, 0).setUv(1, 0).setColor(cr, cg, cb, glowAlpha);
+                vertex.addVertex(matrix, -hs, hs, 0).setUv(0, 0).setColor(cr, cg, cb, glowAlpha);
+
+                matrices.popPose();
+            }
+
+            glowBuffer.endBatch();
+        }
+
+        ByteBufferBuilder crystalAllocator = new ByteBufferBuilder(8192);
+        try (crystalAllocator) {
+            MultiBufferSource.BufferSource crystalBuffer = MultiBufferSource.immediate(crystalAllocator);
+
+            for (int i = 0; i < count; i++) {
+                float seed1 = (float) Math.sin(i * 1.7f + 0.3f) * 0.5f + 0.5f;
+                float seed2 = (float) Math.cos(i * 2.3f + 0.7f) * 0.5f + 0.5f;
+                float seed3 = (float) Math.sin(i * 3.1f + 1.1f) * 0.5f + 0.5f;
+
+                float angleOffset = i * (360f / count) + seed1 * 12f;
+                float angle = time + angleOffset;
+                float radius = halfWidth + 0.25f + seed3 * 0.15f;
+
+                float x = radius * (float) Math.cos(Math.toRadians(angle));
+                float z = radius * (float) Math.sin(Math.toRadians(angle));
+                float y = seed2 * entityHeight * 1.05f;
+
+                float crystalScale = 0.15f * easedAnim * scaleSetting;
+                int crystalAlpha = (int) (180 * easedAnim * 0.8f);
+
+                drawCrystal(matrices, crystalBuffer, x, y, z, crystalScale, angle,
+                        cr, cg, cb, crystalAlpha);
+            }
+
+            crystalBuffer.endBatch();
+        }
+
+        matrices.popPose();
+    }
+
+    private void drawCrystal(PoseStack matrices, MultiBufferSource.BufferSource buffer,
+                             float x, float y, float z, float scale,
+                             float yaw, int r, int g, int b, int a) {
+
+        matrices.pushPose();
+        matrices.translate(x, y, z);
+        matrices.mulPose(Axis.YP.rotationDegrees(-yaw + 90f));
+        matrices.scale(scale, scale, scale);
+
+        Matrix4f matrix = matrices.last().pose();
+        VertexConsumer vertex = buffer.getBuffer(crystalRenderType());
+
+        int rL = Math.min(255, (int) (r * 1.3f));
+        int gL = Math.min(255, (int) (g * 1.3f));
+        int bL = Math.min(255, (int) (b * 1.3f));
+
+        int rD = (int) (r * 0.6f);
+        int gD = (int) (g * 0.6f);
+        int bD = (int) (b * 0.6f);
+
+        float w = 0.5f;
+        float h = 1.0f;
+
+        addTriangle(vertex, matrix, 0, 0, h, -w, 0, 0, 0, w, 0, rL, gL, bL, a);
+        addTriangle(vertex, matrix, 0, 0, h, 0, w, 0, w, 0, 0, rL, gL, bL, a);
+        addTriangle(vertex, matrix, 0, 0, h, w, 0, 0, 0, -w, 0, r, g, b, a);
+        addTriangle(vertex, matrix, 0, 0, h, 0, -w, 0, -w, 0, 0, r, g, b, a);
+
+        addTriangle(vertex, matrix, 0, 0, -h, 0, w, 0, -w, 0, 0, rD, gD, bD, a);
+        addTriangle(vertex, matrix, 0, 0, -h, w, 0, 0, 0, w, 0, rD, gD, bD, a);
+        addTriangle(vertex, matrix, 0, 0, -h, 0, -w, 0, w, 0, 0, rD, gD, bD, a);
+        addTriangle(vertex, matrix, 0, 0, -h, -w, 0, 0, 0, -w, 0, rD, gD, bD, a);
+
+        matrices.popPose();
+    }
+
+    private void addTriangle(VertexConsumer vertex, Matrix4f matrix,
+                             float x1, float y1, float z1,
+                             float x2, float y2, float z2,
+                             float x3, float y3, float z3,
+                             int r, int g, int b, int a) {
+        vertex.addVertex(matrix, x1, y1, z1).setColor(r, g, b, a);
+        vertex.addVertex(matrix, x2, y2, z2).setColor(r, g, b, a);
+        vertex.addVertex(matrix, x3, y3, z3).setColor(r, g, b, a);
+    }
+
+    private RenderType crystalRenderType() {
+        return RenderType.create(
+                "arix_crystal_triangles",
+                RenderSetup.builder(PIPELINE_CRYSTAL)
+                        .bufferSize(8192)
+                        .createRenderSetup()
+        );
+    }
+
+    private static double absSinAnimation(double input) {
+        return Math.abs(1 + Math.sin(input)) / 2;
+    }
+
+    private void renderOldTargetEsp(EventRender3D e, LivingEntity target) {
+        crystalsAnim.setDirection(target != null ? Direction.FORWARDS : Direction.BACKWARDS);
+
+        if (crystalsAnim.getOutput() <= 0.0f) {
+            lastTarget = null;
+            return;
+        }
+
+        if (target != null) lastTarget = target;
+        if (lastTarget == null) return;
+
+        float tickDelta = e.getTickDelta();
+        Vec3 cam = mc.gameRenderer.getMainCamera().position();
+
+        double cs = prevCircleStep + (circleStep - prevCircleStep) * tickDelta;
+        double prevSinAnim = absSinAnimation(cs - 0.45f);
+        double sinAnim = absSinAnimation(cs);
+
+        double ix = lerp(lastTarget.getX(), lastTarget.xOld, tickDelta) - cam.x;
+        double iy = lerp(lastTarget.getY(), lastTarget.yOld, tickDelta) - cam.y;
+        double iz = lerp(lastTarget.getZ(), lastTarget.zOld, tickDelta) - cam.z;
+
+        double bottomY = iy + prevSinAnim * lastTarget.getBbHeight();
+        double topY = iy + sinAnim * lastTarget.getBbHeight();
+
+        Color themeColor = Arix.getInstance().getCurrentTheme().getMain();
+
+        float rawHurt = clamp01((lastTarget.hurtTime - tickDelta) / 10.0f);
+        float hurtProgress = (float) Math.sin(rawHurt * Math.PI);
+        Color damageColor = new Color(255, 60, 60);
+        int cr = lerpInt(themeColor.getRed(), damageColor.getRed(), hurtProgress);
+        int cg = lerpInt(themeColor.getGreen(), damageColor.getGreen(), hurtProgress);
+        int cb = lerpInt(themeColor.getBlue(), damageColor.getBlue(), hurtProgress);
+
+        float animVal = (float) crystalsAnim.getOutput();
+        float width = lastTarget.getBbWidth() * 0.8f;
+
+        int segments = 64;
+
+        PoseStack matrices = e.getMatrixStack();
+        matrices.pushPose();
+
+        ByteBufferBuilder allocator = new ByteBufferBuilder(segments * 2 * 32 + 512);
+        try (allocator) {
+            MultiBufferSource.BufferSource bufferSource = MultiBufferSource.immediate(allocator);
+            Matrix4f matrix = matrices.last().pose();
+
+            VertexConsumer vertex = bufferSource.getBuffer(oldEspRenderType());
+            for (int i = 0; i <= segments; i++) {
+                double angle = i * (Math.PI * 2.0) / segments;
+                float px = (float) (ix + Math.cos(angle) * width);
+                float pz = (float) (iz + Math.sin(angle) * width);
+
+                int alphaTop = (int) (170 * animVal);
+
+                vertex.addVertex(matrix, px, (float) topY, pz)
+                        .setColor(cr, cg, cb, alphaTop);
+                vertex.addVertex(matrix, px, (float) bottomY, pz)
+                        .setColor(cr, cg, cb, 0);
+            }
+
+            bufferSource.endBatch();
+        }
+
+        ByteBufferBuilder allocator2 = new ByteBufferBuilder(segments * 2 * 32 + 512);
+        try (allocator2) {
+            MultiBufferSource.BufferSource bufferSource2 = MultiBufferSource.immediate(allocator2);
+            Matrix4f matrix = matrices.last().pose();
+
+            VertexConsumer vertex2 = bufferSource2.getBuffer(oldEspRenderType());
+            for (int i = segments; i >= 0; i--) {
+                double angle = i * (Math.PI * 2.0) / segments;
+                float px = (float) (ix + Math.cos(angle) * width);
+                float pz = (float) (iz + Math.sin(angle) * width);
+
+                int alphaTop = (int) (170 * animVal);
+
+                vertex2.addVertex(matrix, px, (float) topY, pz)
+                        .setColor(cr, cg, cb, alphaTop);
+                vertex2.addVertex(matrix, px, (float) bottomY, pz)
+                        .setColor(cr, cg, cb, 0);
+            }
+
+            bufferSource2.endBatch();
+        }
+
+        matrices.popPose();
+    }
+
+    private RenderType oldEspRenderType() {
+        return RenderType.create(
+                "arix_old_target_esp",
+                RenderSetup.builder(PIPELINE_STRIP)
+                        .bufferSize(4096)
+                        .createRenderSetup()
+        );
+    }
+
+
     private RenderType texLayerND(Identifier tex, RenderPipeline pipeline) {
         return RenderType.create(
                 tex.toString() + "_" + pipeline.getLocation(),
@@ -253,6 +568,26 @@ public class TargetESP extends Module {
                         .withTexture(RenderType.SAMPLER0, tex)
                         .createRenderSetup()
         );
+    }
+
+    private Color getCurrentColor() {
+        Color themeColor = Arix.getInstance().getCurrentTheme().getMain();
+
+        if (lastTarget == null) return themeColor;
+
+        float rawHurt = clamp01(lastTarget.hurtTime / 10.0f);
+        if (rawHurt <= 0) return themeColor;
+
+        Color redColor = new Color(255, 50, 50);
+        int r = lerpInt(themeColor.getRed(), redColor.getRed(), rawHurt);
+        int g = lerpInt(themeColor.getGreen(), redColor.getGreen(), rawHurt);
+        int b = lerpInt(themeColor.getBlue(), redColor.getBlue(), rawHurt);
+
+        return new Color(r, g, b);
+    }
+
+    private static double easeOutCubic(double x) {
+        return 1.0 - Math.pow(1.0 - x, 3.0);
     }
 
     private float clamp01(float value) {

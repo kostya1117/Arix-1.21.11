@@ -15,7 +15,7 @@ import org.jspecify.annotations.Nullable;
 
 public class GlTexture extends GpuTexture {
     private static final int EMPTY = -1;
-    protected final int id;
+    public final int id;
     private int firstFboId = -1;
     private int firstFboDepthId = -1;
     private @Nullable Int2IntMap fboCache;

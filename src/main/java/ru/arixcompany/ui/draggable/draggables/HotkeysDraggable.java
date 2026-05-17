@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import net.minecraft.client.gui.GuiGraphics;
 import org.lwjgl.glfw.GLFW;
 import ru.arixcompany.Arix;
+import ru.arixcompany.features.module.setting.implement.GroupSetting;
 import ru.arixcompany.ui.draggable.DraggableComponent;
 import ru.arixcompany.features.module.Module;
 import ru.arixcompany.features.module.modules.render.Interface;
@@ -12,10 +13,8 @@ import ru.arixcompany.features.module.setting.implement.BindSetting;
 import ru.arixcompany.utils.Colors;
 import ru.arixcompany.utils.animation.Direction;
 import ru.arixcompany.utils.math.StringUtil;
-import ru.arixcompany.utils.render.RenderUtils;
 import ru.arixcompany.utils.render.font.CustomFont;
 import ru.arixcompany.utils.render.font.FontManager;
-import ru.arixcompany.utils.render.shader.shaders.RoundBlurShader;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,6 +63,15 @@ public class HotkeysDraggable extends DraggableComponent {
                             list.add(new HotkeyEntry(s.getName(), StringUtil.getBindName(bs.getKey()), anim));
                         }
                     }
+                    if (s instanceof GroupSetting g) {
+                        for (Setting s1 : g.getChildren()) {
+                            if (s1 instanceof BindSetting bs) {
+                                if (bs.getKey() != GLFW.GLFW_KEY_UNKNOWN) {
+                                    list.add(new HotkeyEntry(bs.getName(), StringUtil.getBindName(bs.getKey()), anim));
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -91,8 +99,7 @@ public class HotkeysDraggable extends DraggableComponent {
         this.width = maxW;
         this.height = HEADER_HEIGHT + totalContentHeight + 2;
 
-        RoundBlurShader.drawBlur(graphics, rx, ry, width, height, 5, 3.0f, Colors.bgPrimary(alpha * 0.85f));
-        //Interface.drawClientRect(rx, ry, width, height, 5, Colors.bgPrimary(alpha * 0.85f));
+        Interface.drawClientRect(rx, ry, width, height, 5, Colors.bgPrimary(alpha * 0.85f));
         font.drawString(graphics, "Кейбинды", rx + PADDING, ry + (HEADER_HEIGHT - font.getHeight()) / 2f + 1, Colors.textActive(alpha));
 
         float yOff = ry + HEADER_HEIGHT;
@@ -113,8 +120,7 @@ public class HotkeysDraggable extends DraggableComponent {
                 float rectX = rx + width - PADDING - rectW;
                 float rectY = textY - 0.5f;
 
-                RoundBlurShader.drawBlur(graphics, rectX, rectY, rectW, rectH, 2f, 3.0f, Colors.accent(finalAlpha * 0.85f));
-                //Interface.drawClientRect(rectX, rectY, rectW, rectH, 2, Colors.accent(finalAlpha * 0.85f));
+                Interface.drawClientRect(rectX, rectY, rectW, rectH, 2, Colors.accent(finalAlpha * 0.85f));
 
                 font.drawString(graphics, bText, rectX + 2, textY, Colors.textActive(finalAlpha));
             }

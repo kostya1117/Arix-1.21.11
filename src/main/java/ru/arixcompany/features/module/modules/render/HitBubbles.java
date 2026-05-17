@@ -20,15 +20,12 @@ import ru.arixcompany.features.event.render.EventRender3D;
 import ru.arixcompany.features.module.Category;
 import ru.arixcompany.features.module.Module;
 import ru.arixcompany.features.module.setting.implement.ValueSetting;
+import ru.arixcompany.utils.Textures;
 
 import java.awt.*;
 import java.util.ArrayList;
 
 public class HitBubbles extends Module {
-
-    private static final Identifier TEX_BUBBLE =
-            Identifier.withDefaultNamespace("textures/arix/hitbubble.png");
-
     private static final RenderPipeline PIPELINE = RenderPipelines.register(
             RenderPipeline.builder(RenderPipelines.GUI_TEXTURED_SNIPPET)
                     .withLocation(Identifier.fromNamespaceAndPath("arix", "pipeline/world/hitbubble"))
@@ -150,7 +147,7 @@ public class HitBubbles extends Module {
                 "hitbubble",
                 RenderSetup.builder(PIPELINE)
                         .bufferSize(4096)
-                        .withTexture(RenderType.SAMPLER0, TEX_BUBBLE)
+                        .withTexture(RenderType.SAMPLER0, Textures.hitbubble)
                         .createRenderSetup()
         );
     }

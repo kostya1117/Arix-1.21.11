@@ -20,6 +20,7 @@ import ru.arixcompany.features.module.Module;
 import ru.arixcompany.features.module.setting.implement.BooleanSetting;
 import ru.arixcompany.features.module.setting.implement.ListSetting;
 import ru.arixcompany.features.module.setting.implement.ValueSetting;
+import ru.arixcompany.features.repos.FriendRepo;
 import ru.arixcompany.utils.player.inv.InventoryUtility;
 
 import java.util.List;
@@ -66,6 +67,11 @@ public class AutoTotem extends Module {
         if (mc.player == null || mc.level == null) return;
         if (mc.screen != null) return;
         if (stopifEat.isValue() && mc.player.isUsingItem()) return;
+
+        if (safety.isSelected("Булава") && isMaceDanger()) {
+            checkAndSwapInstantly();
+            return;
+        }
 
         if (delay > 0) {
             delay--;
@@ -115,6 +121,32 @@ public class AutoTotem extends Module {
             swappedByModule = true;
             performSwap(slot);
         }
+    }
+
+
+    private boolean isMaceDanger() {
+        for (Player p : mc.level.players()) {
+            if (p == mc.player || !p.isAlive() || p.isCreative()) continue;
+
+             if (FriendRepo.isFriend(p)) continue;
+
+            double diffX = p.getX() - mc.player.getX();
+            double diffZ = p.getZ() - mc.player.getZ();
+            double diffY = p.getY() - mc.player.getY();
+
+            double horizontalDist = Math.sqrt(diffX * diffX + diffZ * diffZ);
+
+            if (horizontalDist < 4.0 && diffY > 1.5 && diffY < 20.0) {
+                boolean hasMace = p.getMainHandItem().is(Items.MACE) || p.getOffhandItem().is(Items.MACE);
+
+                if (hasMace) {
+                    if (p.getDeltaMovement().y < -0.1 || p.fallDistance > 1.2f) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     private void resetState() {
@@ -169,22 +201,16 @@ public class AutoTotem extends Module {
             }
         }
 
-        if (checks.contains("Булава")) {
-            for (Player p : mc.level.players()) {
-                if (p == mc.player) continue;
-                if (mc.player.distanceTo(p) < 7 && p.getY() > mc.player.getY()) {
-                    if (p.getMainHandItem().is(Items.MACE) && p.fallDistance > 1.5f) return true;
-                }
-            }
-        }
+        if (checks.contains("Булава") && isMaceDanger()) return true;
+
         return false;
     }
 
     private void performSwap(int slot) {
         int containerSlot = slot < 9 ? slot + 36 : slot;
 
-        InventoryUtility.clickSlot(containerSlot, 0, ClickType.PICKUP, false);
-        InventoryUtility.clickSlot(45, 0, ClickType.PICKUP, false);
-        InventoryUtility.clickSlot(containerSlot, 0, ClickType.PICKUP, false);
+        InventoryUtility.clickSlot(containerSlot, 0, ClickType.SWAP, false);
+        InventoryUtility.clickSlot(45, 0, ClickType.SWAP, false);
+        InventoryUtility.clickSlot(containerSlot, 0, ClickType.SWAP, false);
     }
 }

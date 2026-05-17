@@ -1,0 +1,37 @@
+{
+  "stats": {
+    "minecraft:picked_up": {
+      "minecraft:enchanted_golden_apple": 128,
+      "minecraft:totem_of_undying": 5,
+      "minecraft:grass_block": 2,
+      "minecraft:torch": 2,
+      "minecraft:diamond_pickaxe": 2,
+      "minecraft:netherite_sword": 2
+    },
+    "minecraft:used": {
+      "minecraft:grass_block": 68,
+      "minecraft:totem_of_undying": 3,
+      "minecraft:enchanted_golden_apple": 1
+    },
+    "minecraft:custom": {
+      "minecraft:damage_resisted": 122,
+      "minecraft:time_since_rest": 1678,
+      "minecraft:walk_one_cm": 2848,
+      "minecraft:leave_game": 1,
+      "minecraft:damage_taken": 2028,
+      "minecraft:play_time": 4439,
+      "minecraft:damage_absorbed": 160,
+      "minecraft:jump": 49,
+      "minecraft:time_since_death": 1677,
+      "minecraft:sprint_one_cm": 4749,
+      "minecraft:fall_one_cm": 25775,
+      "minecraft:total_world_time": 4483,
+      "minecraft:fly_one_cm": 23095,
+      "minecraft:walk_on_water_one_cm": 325,
+      "minecraft:crouch_one_cm": 2136,
+      "minecraft:sneak_time": 489,
+      "minecraft:deaths": 2
+    }
+  },
+  "DataVersion": 4671
+}

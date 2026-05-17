@@ -7,7 +7,8 @@ import net.minecraft.network.protocol.game.ServerboundUseItemPacket;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.item.Item;
-import ru.arixcompany.features.module.modules.combat.aura.rotation.impl.FreeLookRepo;
+import net.minecraft.world.item.ItemStack;
+import ru.arixcompany.features.repos.alerts.AlertRepo;
 import ru.arixcompany.utils.IMinecraft;
 import ru.arixcompany.utils.player.PlayerUtil;
 
@@ -43,7 +44,11 @@ public class UseHandler implements IMinecraft {
         int invSlot = InventoryUtility.findItemInInventory(item).slot();
         if (invSlot != -1) {
             useFromInventory(invSlot, mode, swapDelay);
+            return;
         }
+
+        String itemName = item.getName(ItemStack.EMPTY).getString();
+        AlertRepo.error("Предмет " + itemName + " не найден!");
     }
 
     public void useFromHotbar(int slot, UseMode mode, int swapDelay) {
@@ -76,8 +81,8 @@ public class UseHandler implements IMinecraft {
         PlayerUtil.sendSequencedPacket(id -> new ServerboundUseItemPacket(
                 InteractionHand.MAIN_HAND,
                 id,
-                FreeLookRepo.freeYaw,
-                FreeLookRepo.freePitch
+                mc.player.getYRot(),
+                mc.player.getXRot()
         ));
         mc.player.connection.send(new ServerboundSwingPacket(InteractionHand.MAIN_HAND));
         mc.player.getInventory().setSelectedSlot(originalSlot);
@@ -99,8 +104,8 @@ public class UseHandler implements IMinecraft {
         PlayerUtil.sendSequencedPacket(id -> new ServerboundUseItemPacket(
                 InteractionHand.MAIN_HAND,
                 id,
-                FreeLookRepo.freeYaw,
-                FreeLookRepo.freePitch
+                mc.player.getYRot(),
+                mc.player.getXRot()
         ));
         mc.player.connection.send(new ServerboundSwingPacket(InteractionHand.MAIN_HAND));
         mc.gameMode.handleInventoryMouseClick(
@@ -143,8 +148,8 @@ public class UseHandler implements IMinecraft {
                     PlayerUtil.sendSequencedPacket(id -> new ServerboundUseItemPacket(
                             InteractionHand.MAIN_HAND,
                             id,
-                            FreeLookRepo.freeYaw,
-                            FreeLookRepo.freePitch
+                            mc.player.getYRot(),
+                            mc.player.getXRot()
                     ));
                     player.connection.send(new ServerboundSwingPacket(InteractionHand.MAIN_HAND));
                     Thread.sleep(delay);
@@ -161,8 +166,8 @@ public class UseHandler implements IMinecraft {
                     PlayerUtil.sendSequencedPacket(id -> new ServerboundUseItemPacket(
                             InteractionHand.MAIN_HAND,
                             id,
-                            FreeLookRepo.freeYaw,
-                            FreeLookRepo.freePitch
+                            mc.player.getYRot(),
+                            mc.player.getXRot()
                     ));
                     player.connection.send(new ServerboundSwingPacket(InteractionHand.MAIN_HAND));
                     Thread.sleep(delay);
@@ -175,6 +180,7 @@ public class UseHandler implements IMinecraft {
                     );
                 }
             } catch (InterruptedException e) {
+                AlertRepo.warn("Действие прервано!");
                 Thread.currentThread().interrupt();
             } finally {
                 if (isInventory) {

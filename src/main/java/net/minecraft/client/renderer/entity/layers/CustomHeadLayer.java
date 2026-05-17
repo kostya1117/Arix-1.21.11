@@ -20,7 +20,6 @@ import net.minecraft.world.level.block.SkullBlock;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-
 public class CustomHeadLayer<S extends LivingEntityRenderState, M extends EntityModel<S> & HeadedModel> extends RenderLayer<S, M> {
     private static final float ITEM_SCALE = 0.625F;
     private static final float SKULL_SCALE = 1.1875F;

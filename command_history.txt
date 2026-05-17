@@ -1,50 +1,50 @@
-/pay aeroyy999 1499999
-/ah search Эндер жемчуг
-/ah search исцел
-/ah search золотое
-/ah search Чарка
-/ah search сила
-/ah search Явная пыль
-/ah search золотая морковь
-/ah search Шалкер
-/ah search Хлопушка
-/ah search Молоко
-/clan home m
-/clan home b
-/msg Icutede ку
-/msg Icutede дай сет я пионер и я тебе тал круга дам
-/msg Icutede ты не прошел проверку
-/clan kick aeroyy999
-/kit
-/god
-/an306
-/ah search Эндер жемчуг
-/clan withdraw 129999
-/ah search Эндер жемчуг
-/rtp
-/ah
-/god
-/an306
-/hub
-/an306
-/ac
-/reg 123qwe111a 123qwe111a
-/hub
+/fly
 /kit free
+/free
+/rtp near
+/near
+/fly
+/kit free
+/l 1
+/eg 2
+/reg 1
+/reg 123qwe111a 123qwe111a
+/free
+/rtp
+/fly
+/kit bull
+/kit free
+/rtp near
+/near
+/fly
+/rtp near
 /fly
 /rtp
 /near
-/hub
-/рги
-/hub
+/fix a;;
+/fix all
+/ec
+/fly
+/spawn
+/free
+/shop
+/ec
+/codes
+/rtp near
+/near
+/fix all
 /rtp
 /near
-/warp pvp
-/codes
-/code
-/free
-/reg 123qwe111a
-/reg 123qwe111a 123qwe111a
-/hub
-/kit
-/kit free
+/rtp
+/near
+/rtp
+/ec
+/tpa KRUTIBR0
+/sethome
+/fly
+/home home
+/sethome
+/spawn
+/ec
+/home home
+/fly

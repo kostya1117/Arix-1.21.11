@@ -1,0 +1,131 @@
+---- Minecraft Crash Report ----
+// Why did you do that?
+
+Time: 2026-05-17 10:31:47
+Description: Rendering overlay
+
+java.lang.NullPointerException: Cannot invoke "net.minecraft.server.packs.resources.Resource.openAsReader()" because the return value of "java.util.Map.get(Object)" is null
+	at net.minecraft.client.renderer.ShaderManager$1.applyImport(ShaderManager.java:153)
+	at com.mojang.blaze3d.preprocessor.GlslPreprocessor.processImports(GlslPreprocessor.java:51)
+	at com.mojang.blaze3d.preprocessor.GlslPreprocessor.process(GlslPreprocessor.java:28)
+	at net.minecraft.client.renderer.ShaderManager.loadShader(ShaderManager.java:124)
+	at net.minecraft.client.renderer.ShaderManager.prepare(ShaderManager.java:86)
+	at net.minecraft.client.renderer.ShaderManager.prepare(ShaderManager.java:44)
+	at net.minecraft.server.packs.resources.SimplePreparableReloadListener.lambda$reload$0(SimplePreparableReloadListener.java:14)
+	at java.base/java.util.concurrent.CompletableFuture$AsyncSupply.run(CompletableFuture.java:1768)
+	at net.minecraft.server.packs.resources.SimpleReloadInstance.lambda$prepareTasks$0(SimpleReloadInstance.java:64)
+	at java.base/java.util.concurrent.ForkJoinTask$RunnableExecuteAction.exec(ForkJoinTask.java:1423)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:387)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1312)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1843)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1808)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:188)
+
+
+A detailed walkthrough of the error, its code path and all known details is as follows:
+---------------------------------------------------------------------------------------
+
+-- Head --
+Thread: Render thread
+Stacktrace:
+	at net.minecraft.client.renderer.ShaderManager$1.applyImport(ShaderManager.java:153)
+	at com.mojang.blaze3d.preprocessor.GlslPreprocessor.processImports(GlslPreprocessor.java:51)
+	at com.mojang.blaze3d.preprocessor.GlslPreprocessor.process(GlslPreprocessor.java:28)
+	at net.minecraft.client.renderer.ShaderManager.loadShader(ShaderManager.java:124)
+	at net.minecraft.client.renderer.ShaderManager.prepare(ShaderManager.java:86)
+	at net.minecraft.client.renderer.ShaderManager.prepare(ShaderManager.java:44)
+	at net.minecraft.server.packs.resources.SimplePreparableReloadListener.lambda$reload$0(SimplePreparableReloadListener.java:14)
+	at java.base/java.util.concurrent.CompletableFuture$AsyncSupply.run(CompletableFuture.java:1768)
+	at net.minecraft.server.packs.resources.SimpleReloadInstance.lambda$prepareTasks$0(SimpleReloadInstance.java:64)
+	at java.base/java.util.concurrent.ForkJoinTask$RunnableExecuteAction.exec(ForkJoinTask.java:1423)
+
+-- Overlay render details --
+Details:
+	Overlay name: net.minecraft.client.gui.screens.LoadingOverlay
+Stacktrace:
+	at net.minecraft.client.renderer.GameRenderer.render(GameRenderer.java:691)
+	at net.minecraft.client.Minecraft.runTick(Minecraft.java:1286)
+	at net.minecraft.client.Minecraft.run(Minecraft.java:878)
+	at net.minecraft.client.main.Main.main(Main.java:223)
+	at mcp.client.Start.main(Start.java:20)
+
+-- Uptime --
+Details:
+	JVM uptime: 34.544s
+	Wall uptime: 20.634s
+	High-res time: 19.958s
+	Client ticks: 10 ticks / 0.500s
+
+-- Last reload --
+Details:
+	Reload number: 1
+	Reload reason: initial
+	Finished: No
+	Packs: vanilla
+
+-- System Details --
+Details:
+	Minecraft Version: 1.21.11
+	Minecraft Version ID: 1.21.11
+	Operating System: Windows 10 (amd64) version 10.0
+	Java Version: 21.0.10, Microsoft
+	Java VM Version: OpenJDK 64-Bit Server VM (mixed mode, sharing), Microsoft
+	Memory: 303566400 bytes (289 MiB) / 601882624 bytes (574 MiB) up to 1591738368 bytes (1518 MiB)
+	CPUs: 4
+	Processor Vendor: AuthenticAMD
+	Processor Name: AMD Ryzen 3 3250U with Radeon Graphics         
+	Identifier: AuthenticAMD Family 23 Model 24 Stepping 1
+	Microarchitecture: Zen / Zen+
+	Frequency (GHz): 2.60
+	Number of physical packages: 1
+	Number of physical CPUs: 2
+	Number of logical CPUs: 4
+	Graphics card #0 name: AMD Radeon(TM) Vega 3 Graphics 
+	Graphics card #0 vendor: Advanced Micro Devices, Inc.
+	Graphics card #0 VRAM (MiB): 2048.00
+	Graphics card #0 deviceId: VideoController1
+	Graphics card #0 versionInfo: 31.0.21031.1005
+	Memory slot #0 capacity (MiB): 8192.00
+	Memory slot #0 clockSpeed (GHz): 3.20
+	Memory slot #0 type: DDR4
+	Virtual memory max (MiB): 16064.38
+	Virtual memory used (MiB): 12548.74
+	Swap memory total (MiB): 10000.00
+	Swap memory used (MiB): 3762.22
+	Space in storage for jna.tmpdir (MiB): <path not set>
+	Space in storage for org.lwjgl.system.SharedLibraryExtractPath (MiB): <path not set>
+	Space in storage for io.netty.native.workdir (MiB): <path not set>
+	Space in storage for java.io.tmpdir (MiB): available: 5671.77, total: 59103.00
+	Space in storage for workdir (MiB): available: 5671.77, total: 59103.00
+	JVM Flags: 0 total; 
+	Debug Flags: 0 total; 
+	Launched Version: mcp
+	Backend library: LWJGL version 3.3.3+5
+	Backend API: AMD Radeon(TM) Vega 3 Graphics  GL version 3.3.0 Core Profile Context 23.9.1.230821, ATI Technologies Inc.
+	Window size: 854x480
+	GFLW Platform: win32
+	Render Extensions: GL_ARB_buffer_storage, GL_KHR_debug, GL_ARB_vertex_attrib_binding, GL_ARB_direct_state_access, GL_EXT_texture_filter_anisotropic
+	GL debug messages: 
+	Is Modded: Definitely; Client brand changed to 'optifine'
+	Universe: 400921fb54442d18
+	Type: Client (map_client.txt)
+	Transparency: regular
+	Render Distance: 2/2 chunks
+	Resource Packs: vanilla
+	Current Language: ru_ru
+	Locale: ru_RU
+	System encoding: Cp1251
+	File encoding: UTF-8
+	CPU: 4x AMD Ryzen 3 3250U with Radeon Graphics 
+	OptiFine Version: OptiFine_1.21.11_HD_U_J9
+	OptiFine Build: null
+	Render Distance Chunks: 2
+	Mipmaps: 0
+	Anisotropic Filtering: 1
+	Antialiasing: 0
+	Multitexture: false
+	Shaders: null
+	OpenGlVersion: 3.3.0 Core Profile Context 23.9.1.230821
+	OpenGlRenderer: AMD Radeon(TM) Vega 3 Graphics 
+	OpenGlVendor: ATI Technologies Inc.
+	CpuCount: 4
