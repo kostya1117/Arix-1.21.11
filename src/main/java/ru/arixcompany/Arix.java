@@ -8,6 +8,7 @@ import net.minecraft.client.Minecraft;
 import ru.arixcompany.features.command.CommandRepo;
 import ru.arixcompany.features.module.modules.misc.Core;
 import ru.arixcompany.features.repos.OtherRepo;
+import ru.arixcompany.features.repos.ScriptRepo;
 import ru.arixcompany.ui.draggable.DraggableRepo;
 import ru.arixcompany.features.module.modules.combat.aura.rotation.ComponentRepo;
 import ru.arixcompany.features.repos.AltRepo;
@@ -62,12 +63,16 @@ public class Arix implements IMinecraft {
     ShadersRepo shadersRepo;
     @NonFinal
     OtherRepo otherRepo;
+    @NonFinal
+    ScriptRepo scriptRepo;
 
     public Arix(){
         instance = this;
         ViaMCP.create();
         ViaMCP.INSTANCE.initAsyncSlider();
         FontManager.init();
+
+        scriptRepo = new ScriptRepo();
 
         shadersRepo = new ShadersRepo();
         shadersRepo.init();

@@ -3,13 +3,8 @@ package ru.arixcompany.utils.player;
 import com.mojang.blaze3d.platform.InputConstants;
 import lombok.experimental.UtilityClass;
 import net.minecraft.client.KeyMapping;
-import net.minecraft.client.Minecraft;
 import net.minecraft.util.Mth;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.Vec3;
-import org.lwjgl.glfw.GLFW;
 import ru.arixcompany.features.event.player.EventInput;
-import ru.arixcompany.features.module.modules.combat.HitAura;
 import ru.arixcompany.utils.IMinecraft;
 
 import java.util.HashSet;
@@ -89,5 +84,42 @@ public class MoveUtils implements IMinecraft {
             }
         }
         return yaw;
+    }
+
+    public final Set<String> lockRequests = new HashSet<>();
+
+    public void lockMovement(String moduleName) {
+        if (mc.player != null && mc.player.isAlive() && mc.level != null) {
+            lockRequests.add(moduleName);
+            setMovementKeys(false);
+        }
+    }
+
+    public void unlockMovement(String moduleName) {
+        if (mc.player != null && mc.player.isAlive() && mc.level != null) {
+            lockRequests.remove(moduleName);
+            if (lockRequests.isEmpty() && mc.screen == null) {
+                setMovementKeys(true);
+            }
+        }
+    }
+
+    public boolean isMovementLocked() {
+        return !lockRequests.isEmpty();
+    }
+
+    private void setMovementKeys(boolean state) {
+        KeyMapping[] movementKeys = new KeyMapping[]{
+                mc.options.keyUp,
+                mc.options.keyDown,
+                mc.options.keyLeft,
+                mc.options.keyRight,
+                mc.options.keyJump
+        };
+
+        for (KeyMapping keyBinding : movementKeys) {
+            boolean pressed = state && InputConstants.isKeyDown(mc.getWindow(), keyBinding.getDefaultKey().getValue());
+            keyBinding.setDown(pressed);
+        }
     }
 }

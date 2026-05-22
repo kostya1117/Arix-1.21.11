@@ -44,7 +44,7 @@ public abstract class Team {
 
         public static final Codec<Team.CollisionRule> CODEC = StringRepresentable.fromEnum(Team.CollisionRule::values);
         private static final IntFunction<Team.CollisionRule> BY_ID = ByIdMap.continuous(
-            p_391151_ -> p_391151_.id, values(), ByIdMap.OutOfBoundsStrategy.ZERO
+                p_391151_ -> p_391151_.id, values(), ByIdMap.OutOfBoundsStrategy.ZERO
         );
         public static final StreamCodec<ByteBuf, Team.CollisionRule> STREAM_CODEC = ByteBufCodecs.idMapper(BY_ID, p_391152_ -> p_391152_.id);
         public final String name;
@@ -73,7 +73,7 @@ public abstract class Team {
 
         public static final Codec<Team.Visibility> CODEC = StringRepresentable.fromEnum(Team.Visibility::values);
         private static final IntFunction<Team.Visibility> BY_ID = ByIdMap.continuous(
-            p_391154_ -> p_391154_.id, values(), ByIdMap.OutOfBoundsStrategy.ZERO
+                p_391154_ -> p_391154_.id, values(), ByIdMap.OutOfBoundsStrategy.ZERO
         );
         public static final StreamCodec<ByteBuf, Team.Visibility> STREAM_CODEC = ByteBufCodecs.idMapper(BY_ID, p_391153_ -> p_391153_.id);
         public final String name;

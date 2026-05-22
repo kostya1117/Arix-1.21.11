@@ -11,7 +11,7 @@ import ru.arixcompany.features.module.modules.misc.funtime.autobuy.items.ItemTar
 import ru.arixcompany.features.module.modules.misc.funtime.utils.FuntimeUtil;
 import ru.arixcompany.utils.IMinecraft;
 import ru.arixcompany.utils.math.Timer;
-import ru.arixcompany.utils.player.inv.InventoryUtility;
+import ru.arixcompany.utils.player.inventory.PlayerInventoryUtil;
 
 import java.util.List;
 import java.util.Map;
@@ -174,7 +174,7 @@ public class AutoBuyEngine implements IMinecraft {
         confirmWatch.reset();
         clickCooldown.reset();
 
-        InventoryUtility.clickSlot(slot.index, 0, ClickType.QUICK_MOVE, false);
+        PlayerInventoryUtil.clickSlot(slot.index, 0, ClickType.QUICK_MOVE, false);
     }
 
     private void refreshPage() {
@@ -186,7 +186,7 @@ public class AutoBuyEngine implements IMinecraft {
             String name = slot.getItem().getHoverName().getString().toLowerCase();
 
             if (name.contains("обновить") || name.contains("refresh")) {
-                InventoryUtility.clickSlot(slot.index, 0, ClickType.PICKUP, false);
+                PlayerInventoryUtil.clickSlot(slot.index, 0, ClickType.PICKUP, false);
                 break;
             }
         }

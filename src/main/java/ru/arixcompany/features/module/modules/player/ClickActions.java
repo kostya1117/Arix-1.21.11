@@ -1,138 +1,84 @@
 package ru.arixcompany.features.module.modules.player;
 
-import net.minecraft.network.protocol.game.ServerboundContainerClosePacket;
-import net.minecraft.network.protocol.game.ServerboundPlayerCommandPacket;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.phys.EntityHitResult;
 import ru.arixcompany.features.event.EventHandler;
 import ru.arixcompany.features.event.player.EventKey;
 import ru.arixcompany.features.module.Category;
 import ru.arixcompany.features.module.Module;
-import ru.arixcompany.features.module.setting.implement.*;
-import ru.arixcompany.features.repos.alerts.AlertRepo;
-import ru.arixcompany.utils.math.Timer;
-import ru.arixcompany.utils.player.inv.InventoryUtility;
-import ru.arixcompany.utils.player.inv.SearchInvResult;
-import ru.arixcompany.utils.player.inv.UseHandler;
+import ru.arixcompany.features.module.setting.implement.BindSetting;
+import ru.arixcompany.features.module.setting.implement.GroupSetting;
+import ru.arixcompany.features.repos.FriendRepo;
+import ru.arixcompany.utils.player.inventory.PlayerInventoryComponent;
+import ru.arixcompany.utils.player.inventory.PlayerInventoryUtil;
 
-import static ru.arixcompany.utils.player.inv.InventoryUtility.clickSlot;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ClickActions extends Module {
-    private final UseHandler useHandler = new UseHandler();
-
-    private final SelectSetting mode = new SelectSetting("Режим").value("Обычный", "Незаметный");
-    private final ValueSetting swapDelay = new ValueSetting("Задержка свапа")
-            .range(30, 300)
-            .setValue(100)
-            .setStep(1);
-
-    //предметы
-    private final BindSetting pearl = new BindSetting("Эндер жемчуг");
-    private final BindSetting zaradvetra = new BindSetting("Заряд ветра");
-
-    private final BindSetting eKey = new BindSetting("Кнопка элитры");
-    private final BindSetting fKey = new BindSetting("Кнопка фейерверк");
-    private final BooleanSetting startFireWork = new BooleanSetting("Авто фейерверк");
-
-    private final Timer switchTimer = new Timer();
-    public static boolean swapping = false;
 
     public ClickActions() {
         super("ClickActions", Category.Player);
-        setup(mode, swapDelay, pearl, zaradvetra,
-                new GroupSetting("Элитры", eKey, fKey, startFireWork));
+        init();
+    }
+
+    private final BindSetting friendBind = new BindSetting("Добавить друга");
+    private final BindSetting elytraSetting = new BindSetting("Кнопка свапа");
+    private final BindSetting fireworkSetting = new BindSetting("Кнопка фейерверка");
+
+    private final List<KeyBind> keyBindings = new ArrayList<>();
+
+    public void init() {
+        keyBindings.add(new KeyBind(Items.ENDER_PEARL, new BindSetting("Эндер перл")));
+        keyBindings.add(new KeyBind(Items.WIND_CHARGE, new BindSetting("Заряд ветра")));
+
+        setup(friendBind,
+                new GroupSetting("Элитры",
+                        elytraSetting,
+                        fireworkSetting
+                )
+        );
+        for (KeyBind k : keyBindings) {
+            setup(k.setting);
+        }
     }
 
     @EventHandler
-    public void onKey(EventKey event) {
-        if (event.getAction() != 1 || mc.screen != null) return;
-        int key = event.getKey();
-
-        if (key == pearl.getKey()) usePearl();
-        if (key == zaradvetra.getKey()) useZarad();
-
-        if (eKey.getKey() == key && switchTimer.every(200)) {
-            swapChest();
+    public void onKey(EventKey e) {
+        if (e.isKeyDown(friendBind)
+                && mc.hitResult instanceof EntityHitResult result
+                && result.getEntity() instanceof Player player) {
+            String name = player.getGameProfile().name();
+            if (FriendRepo.isFriend(name)) FriendRepo.remove(name);
+            else FriendRepo.add(name);
         }
 
-        if (fKey.getKey() == key && mc.player.isFallFlying()) {
-            useFireWork();
-        }
-    }
-
-    private void usePearl() {
-        useHandler
-                .setMode(mode.isSelected("Незаметный") ? UseHandler.UseMode.SILENT : UseHandler.UseMode.NORMAL)
-                .setSwapDelay(swapDelay.getInt())
-                .use(Items.ENDER_PEARL);
-    }
-
-    private void useZarad() {
-        useHandler
-                .setMode(mode.isSelected("Незаметный") ? UseHandler.UseMode.SILENT : UseHandler.UseMode.NORMAL)
-                .setSwapDelay(swapDelay.getInt())
-                .use(Items.WIND_CHARGE);
-    }
-
-    private void useFireWork() {
-        useHandler
-                .setMode(mode.isSelected("Незаметный") ? UseHandler.UseMode.SILENT : UseHandler.UseMode.NORMAL)
-                .setSwapDelay(swapDelay.getInt())
-                .use(Items.FIREWORK_ROCKET);
-    }
-
-    public static int getChestPlateSlot() {
-        Item[] items = {Items.NETHERITE_CHESTPLATE, Items.DIAMOND_CHESTPLATE, Items.CHAINMAIL_CHESTPLATE, Items.IRON_CHESTPLATE, Items.GOLDEN_CHESTPLATE, Items.LEATHER_CHESTPLATE};
-        for (Item item : items) {
-            SearchInvResult res = InventoryUtility.findItemInInventory(item);
-            if (res.found()) return res.slot();
-        }
-        return -1;
-    }
-
-    private void swapChest() {
-        if (swapping) return;
-
-        boolean hasElytraOn = mc.player.getInventory().getItem(38).getItem() == Items.ELYTRA;
-        int targetSlot;
-
-        if (hasElytraOn) {
-            targetSlot = getChestPlateSlot();
-            if (targetSlot == -1) {
-                AlertRepo.error("Нагрудник не найден!");
-                return;
+        for (KeyBind bind : keyBindings) {
+            if (e.isKeyDown(bind.setting())) {
+                PlayerInventoryComponent.addTask( ()-> {
+                    PlayerInventoryUtil.swapAndUse(bind.item());
+                },1,1);
             }
-        } else {
-            SearchInvResult result = InventoryUtility.findItemInInventory(Items.ELYTRA);
-            if (!result.found()) {
-                AlertRepo.error("Элитры не найдены!");
-                return;
-            }
-            targetSlot = result.slot();
         }
 
-        new Thread(() -> {
-            try {
-                swapping = true;
-                clickSlot(targetSlot);
-                Thread.sleep(swapDelay.getInt());
-                clickSlot(6);
-                Thread.sleep(swapDelay.getInt());
-                clickSlot(targetSlot);
-                Thread.sleep(swapDelay.getInt());
-
-                mc.player.connection.send(new ServerboundContainerClosePacket(mc.player.containerMenu.containerId));
-
-                if (!hasElytraOn && startFireWork.isValue() && mc.player.fallDistance > 0.05) {
-                    mc.player.connection.send(new ServerboundPlayerCommandPacket(mc.player, ServerboundPlayerCommandPacket.Action.START_FALL_FLYING));
-                }
-
-                AlertRepo.success(hasElytraOn ? "Надет нагрудник" : "Надеты элитры");
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                swapping = false;
+        if (e.isKeyDown(elytraSetting.getKey())) {
+            Slot slot = PlayerInventoryUtil.chestPlate();
+            if (slot != null) {
+                PlayerInventoryComponent.addTask( ()-> {
+                    PlayerInventoryUtil.moveItem(slot, 6, true);
+                    PlayerInventoryUtil.closeScreen(true);
+                },1,1);
             }
-        }).start();
+        } else if (e.isKeyDown(fireworkSetting.getKey()) && mc.player.isFallFlying()) {
+            PlayerInventoryComponent.addTask( ()-> {
+                PlayerInventoryUtil.swapAndUse(Items.FIREWORK_ROCKET);
+            },1,1);
+        }
+    }
+
+    public record KeyBind(Item item, BindSetting setting) {
     }
 }

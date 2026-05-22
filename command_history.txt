@@ -1,50 +1,50 @@
 /fly
 /kit free
-/free
-/rtp near
-/near
-/fly
-/kit free
-/l 1
-/eg 2
-/reg 1
-/reg 123qwe111a 123qwe111a
-/free
-/rtp
-/fly
-/kit bull
-/kit free
-/rtp near
-/near
-/fly
-/rtp near
-/fly
-/rtp
-/near
-/fix a;;
-/fix all
+/codes
 /ec
+/hub
+/kit free
+/rtp
+/codes
 /fly
-/spawn
-/free
+/codes
 /shop
 /ec
+/rtp
+/near
+/rtp
+/rto
+/rtp
+/near
+/rtp
+/near\
+/near
+/rtp
+/warp pvp
+/duel
+/rtp
+/fly
+/near
+/warp pvp
+/rtp
+/fly
+/rtp
+/near
+/nearfly
+/fly
+/near
+/warp pvp
+/reg 123qwe111a
+/fly
+/rtp
 /codes
-/rtp near
-/near
-/fix all
-/rtp
-/near
-/rtp
-/near
-/rtp
-/ec
-/tpa KRUTIBR0
-/sethome
 /fly
-/home home
-/sethome
-/spawn
-/ec
-/home home
+/f;y
 /fly
+/rtp
+/near
+/rpt
+/rtp
+/near
+/god
+/kit

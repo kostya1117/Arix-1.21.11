@@ -44,17 +44,17 @@ public class PlayerTeam extends Team {
 
     public PlayerTeam.Packed pack() {
         return new PlayerTeam.Packed(
-            this.name,
-            Optional.of(this.displayName),
-            this.color != ChatFormatting.RESET ? Optional.of(this.color) : Optional.empty(),
-            this.allowFriendlyFire,
-            this.seeFriendlyInvisibles,
-            this.playerPrefix,
-            this.playerSuffix,
-            this.nameTagVisibility,
-            this.deathMessageVisibility,
-            this.collisionRule,
-            List.copyOf(this.players)
+                this.name,
+                Optional.of(this.displayName),
+                this.color != ChatFormatting.RESET ? Optional.of(this.color) : Optional.empty(),
+                this.allowFriendlyFire,
+                this.seeFriendlyInvisibles,
+                this.playerPrefix,
+                this.playerSuffix,
+                this.nameTagVisibility,
+                this.deathMessageVisibility,
+                this.collisionRule,
+                List.copyOf(this.players)
         );
     }
 
@@ -207,33 +207,33 @@ public class PlayerTeam extends Team {
     }
 
     public record Packed(
-        String name,
-        Optional<Component> displayName,
-        Optional<ChatFormatting> color,
-        boolean allowFriendlyFire,
-        boolean seeFriendlyInvisibles,
-        Component memberNamePrefix,
-        Component memberNameSuffix,
-        Team.Visibility nameTagVisibility,
-        Team.Visibility deathMessageVisibility,
-        Team.CollisionRule collisionRule,
-        List<String> players
+            String name,
+            Optional<Component> displayName,
+            Optional<ChatFormatting> color,
+            boolean allowFriendlyFire,
+            boolean seeFriendlyInvisibles,
+            Component memberNamePrefix,
+            Component memberNameSuffix,
+            Team.Visibility nameTagVisibility,
+            Team.Visibility deathMessageVisibility,
+            Team.CollisionRule collisionRule,
+            List<String> players
     ) {
         public static final Codec<PlayerTeam.Packed> CODEC = RecordCodecBuilder.create(
-            p_391724_ -> p_391724_.group(
-                    Codec.STRING.fieldOf("Name").forGetter(PlayerTeam.Packed::name),
-                    ComponentSerialization.CODEC.optionalFieldOf("DisplayName").forGetter(PlayerTeam.Packed::displayName),
-                    ChatFormatting.COLOR_CODEC.optionalFieldOf("TeamColor").forGetter(PlayerTeam.Packed::color),
-                    Codec.BOOL.optionalFieldOf("AllowFriendlyFire", true).forGetter(PlayerTeam.Packed::allowFriendlyFire),
-                    Codec.BOOL.optionalFieldOf("SeeFriendlyInvisibles", true).forGetter(PlayerTeam.Packed::seeFriendlyInvisibles),
-                    ComponentSerialization.CODEC.optionalFieldOf("MemberNamePrefix", CommonComponents.EMPTY).forGetter(PlayerTeam.Packed::memberNamePrefix),
-                    ComponentSerialization.CODEC.optionalFieldOf("MemberNameSuffix", CommonComponents.EMPTY).forGetter(PlayerTeam.Packed::memberNameSuffix),
-                    Team.Visibility.CODEC.optionalFieldOf("NameTagVisibility", Team.Visibility.ALWAYS).forGetter(PlayerTeam.Packed::nameTagVisibility),
-                    Team.Visibility.CODEC.optionalFieldOf("DeathMessageVisibility", Team.Visibility.ALWAYS).forGetter(PlayerTeam.Packed::deathMessageVisibility),
-                    Team.CollisionRule.CODEC.optionalFieldOf("CollisionRule", Team.CollisionRule.ALWAYS).forGetter(PlayerTeam.Packed::collisionRule),
-                    Codec.STRING.listOf().optionalFieldOf("Players", List.of()).forGetter(PlayerTeam.Packed::players)
-                )
-                .apply(p_391724_, PlayerTeam.Packed::new)
+                p_391724_ -> p_391724_.group(
+                                Codec.STRING.fieldOf("Name").forGetter(PlayerTeam.Packed::name),
+                                ComponentSerialization.CODEC.optionalFieldOf("DisplayName").forGetter(PlayerTeam.Packed::displayName),
+                                ChatFormatting.COLOR_CODEC.optionalFieldOf("TeamColor").forGetter(PlayerTeam.Packed::color),
+                                Codec.BOOL.optionalFieldOf("AllowFriendlyFire", true).forGetter(PlayerTeam.Packed::allowFriendlyFire),
+                                Codec.BOOL.optionalFieldOf("SeeFriendlyInvisibles", true).forGetter(PlayerTeam.Packed::seeFriendlyInvisibles),
+                                ComponentSerialization.CODEC.optionalFieldOf("MemberNamePrefix", CommonComponents.EMPTY).forGetter(PlayerTeam.Packed::memberNamePrefix),
+                                ComponentSerialization.CODEC.optionalFieldOf("MemberNameSuffix", CommonComponents.EMPTY).forGetter(PlayerTeam.Packed::memberNameSuffix),
+                                Team.Visibility.CODEC.optionalFieldOf("NameTagVisibility", Team.Visibility.ALWAYS).forGetter(PlayerTeam.Packed::nameTagVisibility),
+                                Team.Visibility.CODEC.optionalFieldOf("DeathMessageVisibility", Team.Visibility.ALWAYS).forGetter(PlayerTeam.Packed::deathMessageVisibility),
+                                Team.CollisionRule.CODEC.optionalFieldOf("CollisionRule", Team.CollisionRule.ALWAYS).forGetter(PlayerTeam.Packed::collisionRule),
+                                Codec.STRING.listOf().optionalFieldOf("Players", List.of()).forGetter(PlayerTeam.Packed::players)
+                        )
+                        .apply(p_391724_, PlayerTeam.Packed::new)
         );
     }
 }

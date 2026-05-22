@@ -98,8 +98,8 @@ public final class MutableComponent implements Component {
     @Override
     public boolean equals(Object p_237209_) {
         return this == p_237209_
-            ? true
-            : p_237209_ instanceof MutableComponent mutablecomponent
+                ? true
+                : p_237209_ instanceof MutableComponent mutablecomponent
                 && this.contents.equals(mutablecomponent.contents)
                 && this.style.equals(mutablecomponent.style)
                 && this.siblings.equals(mutablecomponent.siblings);

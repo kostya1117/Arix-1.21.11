@@ -8,11 +8,10 @@ import ru.arixcompany.features.event.EventHandler;
 import ru.arixcompany.features.event.world.EventTick;
 import ru.arixcompany.features.module.Category;
 import ru.arixcompany.features.module.Module;
-import ru.arixcompany.features.module.setting.implement.BooleanSetting;
 import ru.arixcompany.features.module.setting.implement.SelectSetting;
 import ru.arixcompany.features.module.setting.implement.ValueSetting;
 import ru.arixcompany.utils.math.Timer;
-import ru.arixcompany.utils.player.inv.InventoryUtility;
+import ru.arixcompany.utils.player.inventory.PlayerInventoryUtil;
 
 public class ChestStealer extends Module {
     Timer stopWatch = new Timer();
@@ -36,14 +35,14 @@ public class ChestStealer extends Module {
             case "ФанТайм" -> {
                 if (mc.screen instanceof ContainerScreen sh && sh.getTitle().getString().toLowerCase().contains("мистический") && !mc.player.getCooldowns().isOnCooldown(Items.GUNPOWDER.getDefaultInstance())) {
                     sh.getMenu().slots.stream().filter(s -> s.hasItem() && !s.container.equals(mc.player.getInventory()) && stopWatch.every(150))
-                            .forEach(s -> InventoryUtility.clickSlot(s, 0, ClickType.QUICK_MOVE, true));
+                            .forEach(s -> PlayerInventoryUtil.clickSlot(s, 0, ClickType.QUICK_MOVE, true));
                 }
             }
             case "Обычный" -> {
                 if (mc.player.containerMenu instanceof ChestMenu sh) sh.slots.forEach(s -> {
                     boolean isDefaultMode = mode.equals("Обычный");
                     if (s.hasItem() && !s.container.equals(mc.player.getInventory()) && isDefaultMode && stopWatch.every((long) delaySetting.getValue())) {
-                        InventoryUtility.clickSlot(s, 0, ClickType.QUICK_MOVE, true);
+                        PlayerInventoryUtil.clickSlot(s, 0, ClickType.QUICK_MOVE, true);
                     }
                 });
             }

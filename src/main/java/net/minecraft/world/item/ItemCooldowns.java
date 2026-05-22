@@ -11,7 +11,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.item.component.UseCooldown;
 
 public class ItemCooldowns {
-    private final Map<Identifier, ItemCooldowns.CooldownInstance> cooldowns = Maps.newHashMap();
+    public final Map<Identifier, ItemCooldowns.CooldownInstance> cooldowns = Maps.newHashMap();
     private int tickCount;
 
     public boolean isOnCooldown(ItemStack p_369547_) {
@@ -71,6 +71,6 @@ public class ItemCooldowns {
     protected void onCooldownEnded(Identifier p_454919_) {
     }
 
-    record CooldownInstance(int startTime, int endTime) {
+    public record CooldownInstance(int startTime, int endTime) {
     }
 }

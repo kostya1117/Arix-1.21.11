@@ -45,7 +45,6 @@ import ru.arixcompany.features.event.EventRepo;
 import ru.arixcompany.features.event.render.EventArmRender;
 import ru.arixcompany.features.event.render.EventHeldItemRenderer;
 import ru.arixcompany.features.module.modules.combat.aura.aiming.RotationManager;
-import ru.arixcompany.features.module.modules.combat.aura.rotation.impl.FreeLookRepo;
 import ru.arixcompany.features.module.modules.render.HandView;
 
 public class ItemInHandRenderer {
@@ -488,6 +487,7 @@ public class ItemInHandRenderer {
                 boolean flag = p_109375_ == InteractionHand.MAIN_HAND;
                 HumanoidArm humanoidarm = flag ? p_109372_.getMainArm() : p_109372_.getMainArm().getOpposite();
                 p_109379_.pushPose();
+
                 if (p_109377_.isEmpty()) {
                     if (flag && !p_109372_.isInvisible()) {
                         EventRepo.call(new EventArmRender(this.currentHand, p_109379_));

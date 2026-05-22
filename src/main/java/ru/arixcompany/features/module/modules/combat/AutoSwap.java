@@ -1,7 +1,9 @@
 package ru.arixcompany.features.module.modules.combat;
 
-import net.minecraft.world.inventory.ClickType;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import ru.arixcompany.features.event.EventHandler;
 import ru.arixcompany.features.event.player.EventKey;
@@ -9,86 +11,70 @@ import ru.arixcompany.features.module.Category;
 import ru.arixcompany.features.module.Module;
 import ru.arixcompany.features.module.setting.implement.BindSetting;
 import ru.arixcompany.features.module.setting.implement.SelectSetting;
-import ru.arixcompany.features.repos.alerts.AlertRepo;
-import ru.arixcompany.utils.player.inv.InventoryUtility;
+import ru.arixcompany.utils.player.inventory.PlayerInventoryComponent;
+import ru.arixcompany.utils.player.inventory.PlayerInventoryUtil;
+
+import java.util.Comparator;
 
 public class AutoSwap extends Module {
 
-    private final SelectSetting swapFrom = new SelectSetting("С чего свапать")
-            .value("Сфера", "Талисман");
-
-    private final SelectSetting swapTo = new SelectSetting("На что свапать")
-            .value("Сфера", "Талисман");
-
-    private final BindSetting swapBind = new BindSetting("Кнопка");
-
     public AutoSwap() {
         super("AutoSwap", Category.Combat);
-        setup(swapFrom, swapTo, swapBind);
+        setup(itemType,swapType,keyToSwap);
     }
+
+    private final SelectSetting itemType = new SelectSetting("Предмет")
+            .value("Щит", "Геплы", "Тотем", "Шар");
+    private final SelectSetting swapType = new SelectSetting("Свапать на")
+            .value("Щит", "Геплы", "Тотем", "Шар");
+    private final BindSetting keyToSwap = new BindSetting("Кнопка");
 
     @EventHandler
     public void onKey(EventKey event) {
-        if (mc.player == null || mc.level == null) return;
         if (mc.screen != null) return;
         if (event.getAction() != 1) return;
-        if (event.getKey() != swapBind.getKey()) return;
+        if (event.getKey() != keyToSwap.getKey()) return;
 
-        String firstType = swapFrom.getSelected();
-        String secondType = swapTo.getSelected();
+        Slot first = PlayerInventoryUtil.getSlot(
+                getItemByType(itemType.getSelected()),
+                Comparator.comparing(s -> s.getItem().isEnchanted()),
+                s -> s.index != 46 && s.index != 45
+        );
 
-        if (firstType.equals(secondType)) {
-            AlertRepo.error("Выбери разные предметы для свапа");
+        Slot second = PlayerInventoryUtil.getSlot(
+                getItemByType(swapType.getSelected()),
+                Comparator.comparing(s -> s.getItem().isEnchanted()),
+                s -> s.index != 46 && s.index != 45
+        );
+
+        Slot validSlot = first != null && mc.player.getOffhandItem().getItem() != first.getItem().getItem()
+                ? first
+                : second;
+
+        if (validSlot == null) {
             return;
         }
 
-        ItemStack offhand = mc.player.getOffhandItem();
+        //String itemName = validSlot.getItem().getHoverName().getString();
 
-        String targetType = isMatchingItem(offhand, firstType) ? secondType : firstType;
-
-        int targetSlot = findItemSlot(targetType);
-        if (targetSlot == -1) {
-            AlertRepo.error("Предмет не найден: " + targetType);
-            return;
-        }
-
-        performSwap(targetSlot);
-        AlertRepo.success("Свапнул на " + targetType);
-    }
-
-    private boolean isMatchingItem(ItemStack stack, String type) {
-        return switch (type) {
-            case "Сфера" -> isSfera(stack);
-            case "Талисман" -> isTalisman(stack);
-            default -> false;
-        };
-    }
-
-    private boolean isTalisman(ItemStack stack) {
-        return stack.is(Items.TOTEM_OF_UNDYING) && stack.isEnchanted();
-    }
-
-    public boolean isSfera(ItemStack stack) {
-        return stack.is(Items.PLAYER_HEAD);
-    }
-
-    private int findItemSlot(String type) {
-        for (int i = 0; i <= 44; i++) {
-            ItemStack stack = mc.player.getInventory().getItem(i);
-            if (stack.isEmpty()) continue;
-
-            if (isMatchingItem(stack, type)) {
-                return i;
+        PlayerInventoryComponent.addTask(() -> {
+            try {
+                PlayerInventoryUtil.swapHand(validSlot, InteractionHand.OFF_HAND, false);
+                PlayerInventoryUtil.closeScreen(true);
+                //sendOverlayMessage(Text.of("Свапнул на " + Formatting.GREEN + itemName));
+            } catch (Exception e) {
+                //sendOverlayMessage(Text.of(Formatting.RED + "Не удалось свапнуть"));
             }
-        }
-        return -1;
+        },1,1);
     }
 
-    private void performSwap(int slot) {
-        int containerSlot = slot < 9 ? slot + 36 : slot;
-
-        InventoryUtility.clickSlot(containerSlot, 0, ClickType.SWAP, false);
-        InventoryUtility.clickSlot(45, 0, ClickType.SWAP, false);
-        InventoryUtility.clickSlot(containerSlot, 0, ClickType.SWAP, false);
+    private Item getItemByType(String type) {
+        return switch (type) {
+            case "Щит" -> Items.SHIELD;
+            case "Тотем" -> Items.TOTEM_OF_UNDYING ;
+            case "Геплы" -> Items.GOLDEN_APPLE;
+            case "Шар" -> Items.PLAYER_HEAD;
+            default -> Items.AIR;
+        };
     }
 }

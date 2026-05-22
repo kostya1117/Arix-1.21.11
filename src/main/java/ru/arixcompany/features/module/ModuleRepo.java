@@ -56,11 +56,11 @@ public class ModuleRepo implements IMinecraft {
        modules.add(new NoPush());
        modules.add(new PearlPrediction());
        modules.add(new AutoRespawn());
-       modules.add(new ClickActions());
        modules.add(new ChestStealer());
        modules.add(new Particles());
-       modules.add(new PopCounter());
        modules.add(new AutoSwap());
+       modules.add(new ClickActions());
+       modules.add(new ServerAssist());
    }
 
    public void init() {
