@@ -120,13 +120,6 @@ public class StorageEsp extends Module {
         return null;
     }
 
-    private static AABB chestBox(BlockEntity be) {
-        double x = be.getBlockPos().getX();
-        double y = be.getBlockPos().getY();
-        double z = be.getBlockPos().getZ();
-        return new AABB(x + 0.06, y, z + 0.06, x + 0.94, y + 0.875, z + 0.94);
-    }
-
     private List<BlockEntity> getBlockEntities() {
         List<BlockEntity> list = new ArrayList<>();
         if (mc.level == null || mc.player == null) return list;

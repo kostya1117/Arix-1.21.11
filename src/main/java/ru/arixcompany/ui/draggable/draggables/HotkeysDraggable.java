@@ -77,7 +77,7 @@ public class HotkeysDraggable extends DraggableComponent {
                         for (Setting s1 : g.getChildren()) {
                             if (s1 instanceof BindSetting bs) {
                                 if (bs.getKey() != GLFW.GLFW_KEY_UNKNOWN) {
-                                    list.add(new HotkeyEntry(bs.getName(), StringUtil.getBindName(bs.getKey()), anim));
+                                    list.add(new HotkeyEntry(bs.getName(), StringUtil.getBindName(bs.getKey()), bAnim));
                                 }
                             }
                         }
