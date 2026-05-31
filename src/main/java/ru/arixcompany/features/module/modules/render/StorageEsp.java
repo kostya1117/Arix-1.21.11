@@ -6,9 +6,11 @@ import net.minecraft.world.entity.vehicle.minecart.MinecartChest;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.level.block.ShulkerBoxBlock;
 import net.minecraft.world.level.block.entity.*;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.chunk.status.ChunkStatus;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import ru.arixcompany.features.event.EventHandler;
 import ru.arixcompany.features.event.render.EventRender3D;
 import ru.arixcompany.features.module.Category;
@@ -70,16 +72,23 @@ public class StorageEsp extends Module {
         boolean doOutline = style.isSelected("Контур") || style.isSelected("Оба");
 
         for (BlockEntity be : getBlockEntities()) {
-            AABB box = getBox(be);
             Color col = getColor(be);
-            if (box == null || col == null) continue;
+            if (col == null) continue;
 
-            if (doFill) Render3dUtils.renderFilled(e.getMatrixStack(), box, fill(col), false);
-            if (doOutline) Render3dUtils.renderOutline(e.getMatrixStack(), box, col, false);
+            BlockState state = be.getBlockState();
+            VoxelShape shape = state.getShape(mc.level, be.getBlockPos());
+
+            if (shape.isEmpty()) continue;
+
+            for (AABB box : shape.toAabbs()) {
+                AABB accurateBox = box.move(be.getBlockPos());
+
+                if (doFill) Render3dUtils.renderFilled(e.getMatrixStack(), accurateBox, fill(col), false);
+                if (doOutline) Render3dUtils.renderOutline(e.getMatrixStack(), accurateBox, col, false);
+            }
         }
 
         for (var entity : mc.level.entitiesForRendering()) {
-
             if (cart.isValue() && entity instanceof MinecartChest mc2) {
                 AABB box = mc2.getBoundingBox();
                 if (doFill) Render3dUtils.renderFilled(e.getMatrixStack(), box, fill(C_CART), false);
@@ -108,18 +117,6 @@ public class StorageEsp extends Module {
         if (be instanceof AbstractFurnaceBlockEntity) return furnace.isValue() ? C_FURNACE : null;
         if (be instanceof DispenserBlockEntity) return dispenser.isValue() ? C_DISPENSER : null;
         if (be instanceof HopperBlockEntity) return hopper.isValue() ? C_HOPPER : null;
-        return null;
-    }
-
-    private AABB getBox(BlockEntity be) {
-        if (be instanceof TrappedChestBlockEntity) return chestBox(be);
-        if (be instanceof ChestBlockEntity) return chestBox(be);
-        if (be instanceof EnderChestBlockEntity) return chestBox(be);
-        if (be instanceof ShulkerBoxBlockEntity) return new AABB(be.getBlockPos());
-        if (be instanceof BarrelBlockEntity) return new AABB(be.getBlockPos());
-        if (be instanceof AbstractFurnaceBlockEntity) return new AABB(be.getBlockPos());
-        if (be instanceof DispenserBlockEntity) return new AABB(be.getBlockPos());
-        if (be instanceof HopperBlockEntity) return new AABB(be.getBlockPos());
         return null;
     }
 

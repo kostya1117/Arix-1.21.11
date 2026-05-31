@@ -1,0 +1,16 @@
+{
+  "stats": {
+    "minecraft:used": {
+      "minecraft:infested_stone": 1
+    },
+    "minecraft:custom": {
+      "minecraft:time_since_rest": 869,
+      "minecraft:total_world_time": 880,
+      "minecraft:leave_game": 1,
+      "minecraft:fly_one_cm": 3525,
+      "minecraft:play_time": 869,
+      "minecraft:time_since_death": 869
+    }
+  },
+  "DataVersion": 4671
+}

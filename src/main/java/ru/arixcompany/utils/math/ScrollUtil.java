@@ -46,9 +46,6 @@ public class ScrollUtil implements IMinecraft {
    }
 
    public void handleScroll(double scrollY) {
-      // Scroll работает как в Minecraft: от 0 до max (положительные значения)
-      // scrollY > 0 = скролл вверх (уменьшаем scroll)
-      // scrollY < 0 = скролл вниз (увеличиваем scroll)
       float delta = (float) scrollY * this.speed;
       this.target = Mth.clamp(this.target - delta, 0.0F, this.max);
    }
@@ -58,21 +55,15 @@ public class ScrollUtil implements IMinecraft {
       double start = input.doubleValue();
       double end = target.doubleValue();
       double result = start + step * (end - start);
-      if (input instanceof Integer) {
-         return (T) Integer.valueOf((int) Math.round(result));
-      } else if (input instanceof Double) {
-         return (T) Double.valueOf(result);
-      } else if (input instanceof Float) {
-         return (T) Float.valueOf((float) result);
-      } else if (input instanceof Long) {
-         return (T) Long.valueOf(Math.round(result));
-      } else if (input instanceof Short) {
-         return (T) Short.valueOf((short) Math.round(result));
-      } else if (input instanceof Byte) {
-         return (T) Byte.valueOf((byte) Math.round(result));
-      } else {
-         throw new IllegalArgumentException("Unsupported type: " + input.getClass().getSimpleName());
-      }
+       return switch (input) {
+           case Integer i -> (T) Integer.valueOf((int) Math.round(result));
+           case Double v -> (T) Double.valueOf(result);
+           case Float v -> (T) Float.valueOf((float) result);
+           case Long l -> (T) Long.valueOf(Math.round(result));
+           case Short i -> (T) Short.valueOf((short) Math.round(result));
+           case Byte b -> (T) Byte.valueOf((byte) Math.round(result));
+           default -> throw new IllegalArgumentException("Unsupported type: " + input.getClass().getSimpleName());
+       };
    }
 
    public static void enable() {
@@ -100,7 +91,6 @@ public class ScrollUtil implements IMinecraft {
    }
 
    public void setMax(float max) {
-      // max теперь всегда положительное значение (contentHeight - visibleHeight)
       this.max = Math.max(0.0F, max);
    }
 
@@ -121,5 +111,4 @@ public class ScrollUtil implements IMinecraft {
          }
       }
    }
-
 }
