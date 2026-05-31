@@ -1,10 +1,14 @@
 package net.minecraft.client.multiplayer;
 
+import baritone.utils.accessor.IChunkArray;
+import baritone.utils.accessor.IClientChunkProvider;
 import com.mojang.logging.LogUtils;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReferenceArray;
 import java.util.function.BooleanSupplier;
@@ -30,7 +34,7 @@ import net.optifine.reflect.Reflector;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 
-public class ClientChunkCache extends ChunkSource {
+public class ClientChunkCache extends ChunkSource implements IClientChunkProvider {
     static final Logger LOGGER = LogUtils.getLogger();
     private final LevelChunk emptyChunk;
     private final LevelLightEngine lightEngine;
@@ -49,6 +53,32 @@ public class ClientChunkCache extends ChunkSource {
         return this.lightEngine;
     }
 
+    @Override
+    public ClientChunkCache createThreadSafeCopy() {
+        IChunkArray arr = extractReferenceArray();
+        ClientChunkCache result = new ClientChunkCache(level, arr.viewDistance() - 3); // -3 because its adds 3 for no reason lmao
+        IChunkArray copyArr = ((IClientChunkProvider) result).extractReferenceArray();
+        copyArr.copyFrom(arr);
+        if (copyArr.viewDistance() != arr.viewDistance()) {
+            throw new IllegalStateException(copyArr.viewDistance() + " " + arr.viewDistance());
+        }
+        return result;
+    }
+
+    @Override
+    public IChunkArray extractReferenceArray() {
+        for (Field f : ClientChunkCache.class.getDeclaredFields()) {
+            if (IChunkArray.class.isAssignableFrom(f.getType())) {
+                try {
+                    return (IChunkArray) f.get(this);
+                } catch (IllegalAccessException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+        throw new RuntimeException(Arrays.toString(ClientChunkCache.class.getDeclaredFields()));
+    }
+
     private static boolean isValidChunk(@Nullable LevelChunk p_104439_, int p_104440_, int p_104441_) {
         if (p_104439_ == null) {
             return false;
@@ -57,6 +87,7 @@ public class ClientChunkCache extends ChunkSource {
         ChunkPos chunkpos = p_104439_.getPos();
         return chunkpos.x == p_104440_ && chunkpos.z == p_104441_;
     }
+
 
     public void drop(ChunkPos p_298665_) {
         if (this.storage.inRange(p_298665_.x, p_298665_.z)) {
@@ -199,7 +230,7 @@ public class ClientChunkCache extends ChunkSource {
         this.storage.onSectionEmptinessChanged(p_366771_, p_363867_, p_364686_, p_362705_);
     }
 
-    final class Storage {
+    final class Storage implements IChunkArray {
         final AtomicReferenceArray<@Nullable LevelChunk> chunks;
         final LongOpenHashSet loadedEmptySections = new LongOpenHashSet();
         final int chunkRadius;
@@ -269,6 +300,47 @@ public class ClientChunkCache extends ChunkSource {
                 if (levelchunksection.hasOnlyAir()) {
                     ChunkPos chunkpos = p_362756_.getPos();
                     this.loadedEmptySections.add(SectionPos.asLong(chunkpos.x, p_362756_.getSectionYFromSectionIndex(i), chunkpos.z));
+                }
+            }
+        }
+
+        @Override
+        public int centerX() {
+            return viewCenterX;
+        }
+
+        @Override
+        public int centerZ() {
+            return viewCenterZ;
+        }
+
+        @Override
+        public int viewDistance() {
+            return chunkRadius;
+        }
+
+        @Override
+        public AtomicReferenceArray<LevelChunk> getChunks() {
+            return chunks;
+        }
+
+        @Override
+        public void copyFrom(IChunkArray other) {
+            viewCenterX = other.centerX();
+            viewCenterZ = other.centerZ();
+
+            AtomicReferenceArray<LevelChunk> copyingFrom = other.getChunks();
+            for (int k = 0; k < copyingFrom.length(); ++k) {
+                LevelChunk chunk = copyingFrom.get(k);
+                if (chunk != null) {
+                    ChunkPos chunkpos = chunk.getPos();
+                    if (inRange(chunkpos.x, chunkpos.z)) {
+                        int index = getIndex(chunkpos.x, chunkpos.z);
+                        if (chunks.get(index) != null) {
+                            throw new IllegalStateException("Doing this would mutate the client's REAL loaded chunks?!");
+                        }
+                        replace(index, chunk);
+                    }
                 }
             }
         }

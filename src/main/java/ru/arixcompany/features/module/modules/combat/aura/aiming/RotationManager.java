@@ -1,44 +1,27 @@
-/*
- * This file is part of LiquidBounce (https://github.com/CCBlueX/LiquidBounce)
- *
- * Copyright (c) 2015 - 2026 CCBlueX
- *
- * LiquidBounce is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * LiquidBounce is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with LiquidBounce. If not, see <https://www.gnu.org/licenses/>.
- */
 package ru.arixcompany.features.module.modules.combat.aura.aiming;
 
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.protocol.game.ClientboundPlayerPositionPacket;
 import net.minecraft.network.protocol.game.ServerboundMovePlayerPacket;
 import net.minecraft.network.protocol.game.ServerboundUseItemPacket;
 import net.minecraft.util.Mth;
+import org.jetbrains.annotations.Nullable;
 import ru.arixcompany.features.event.EventHandler;
 import ru.arixcompany.features.event.player.EventInput;
 import ru.arixcompany.features.event.player.EventLook;
-import ru.arixcompany.features.event.player.EventMotion;
 import ru.arixcompany.features.event.player.EventRotation;
+import ru.arixcompany.features.event.render.EventGameRender3D;
 import ru.arixcompany.features.event.world.EventGameTick;
 import ru.arixcompany.features.event.world.EventPacket;
 import ru.arixcompany.features.module.modules.combat.aura.aiming.data.Rotation;
-import ru.arixcompany.features.module.modules.combat.aura.aiming.features.processors.FailRotationProcessor;
+import ru.arixcompany.features.module.modules.combat.aura.aiming.features.MovementCorrection;
 import ru.arixcompany.features.module.modules.combat.aura.rotation.Component;
 import ru.arixcompany.features.module.modules.combat.HitAura;
 import ru.arixcompany.utils.player.MoveUtils;
 
-/**
- * A rotation manager
- */
-public class RotationManager extends Component {
+import static ru.arixcompany.features.module.modules.combat.aura.aiming.data.Rotation.angleDifference;
+
+public class RotationManager extends Component implements RequestHandler.RequestProvider {
 
     private static RotationManager INSTANCE;
 
@@ -47,81 +30,76 @@ public class RotationManager extends Component {
         return INSTANCE;
     }
 
-    /**
-     * Our final target rotation. This rotation is only used to define our current rotation.
-     * Mirrors LiquidBounce's rotationTargetHandler.
-     */
-    private static final RequestHandler<RotationTarget> rotationTargetHandler = new RequestHandler<>();
+    @Override
+    public boolean isRunning() {
+        return true;
+    }
 
+    private static final RequestHandler<RotationTarget> rotationTargetHandler = new RequestHandler<>();
     private static RotationTarget getRotationTarget() {
         return rotationTargetHandler.getActiveRequestValue();
     }
 
-    /**
-     * activeRotationTarget = rotationTarget ?: previousRotationTarget
-     * Mirrors LiquidBounce's activeRotationTarget property.
-     */
-    public static RotationTarget activeRotationTarget = null;
     public static RotationTarget previousRotationTarget = null;
-
-    /**
-     * The rotation we want to aim at. This DOES NOT mean that the server already received this rotation.
-     */
     public static Rotation currentRotation = null;
-
-    // Used for rotation interpolation
     public static Rotation previousRotation = null;
-
-    // Used for player rotation tracking (mirrors LiquidBounce's playerRotation)
     public static Rotation playerRotation = null;
-
-    /**
-     * The rotation that was already sent to the server and is currently active.
-     */
     public static Rotation actualServerRotation = Rotation.ZERO;
+    public static Rotation theoreticalServerRotation = Rotation.ZERO;
 
-    public static boolean isRotating() {
-        return activeRotationTarget != null;
+    // Freelook
+    public static float freeYaw = 0f;
+    public static float freePitch = 0f;
+
+    public boolean isRotating() {
+        return getActiveRotationTarget() != null;
     }
 
-    /**
-     * Mirrors LiquidBounce's setRotationTarget(plan, priority, provider).
-     * provider = the KillAuraRotationsValueGroup instance (used for deduplication).
-     */
-    public static void setRotationTarget(RotationTarget target, int priority, Object provider) {
-        if (!isRotatingAllowed(target)) return;
+    @Nullable
+    public RotationTarget getActiveRotationTarget() {
+        RotationTarget target = getRotationTarget();
+        return (target != null) ? target : previousRotationTarget;
+    }
 
+    private boolean isSilentActive() {
+        RotationTarget active = getActiveRotationTarget();
+        return active != null && active.movementCorrection == MovementCorrection.SILENT;
+    }
+
+    public static void setRotationTarget(RotationTarget target, int priority, RequestHandler.RequestProvider provider) {
+        if (!isRotatingAllowed(target)) return;
         rotationTargetHandler.request(
-            new RequestHandler.Request<>(target.ticksUntilReset, priority, provider, target)
+                new RequestHandler.Request<>(
+                        target.movementCorrection == MovementCorrection.CHANGE_LOOK ? 1 : target.ticksUntilReset,
+                        priority,
+                        provider,
+                        target
+                )
         );
     }
 
+    public static void setCurrentRotation(@Nullable Rotation value) {
+        if (value == null) {
+            previousRotation = null;
+        } else {
+            previousRotation = (currentRotation != null) ? currentRotation :
+                    (mc.player != null ? new Rotation(mc.player) : Rotation.ZERO);
+        }
+        currentRotation = value;
+    }
+
     public static void setRotationTarget(RotationTarget target, int priority) {
-        setRotationTarget(target, priority, RotationManager.class);
+        setRotationTarget(target, priority, RotationManager.getInstance());
     }
 
     public static void setRotationTarget(RotationTarget target) {
         setRotationTarget(target, 1);
     }
 
-    /**
-     * Checks if the rotation is allowed to be updated.
-     * Mirrors LiquidBounce's isRotatingAllowed().
-     */
     public static boolean isRotatingAllowed(RotationTarget target) {
         if (mc.player == null) return false;
-        if (mc.screen != null) return false;
+        if (mc.screen != null && !HitAura.extraSettings.isSelected("Игнорировать инвентарь")) return false;
         return true;
-    }
-
-    /**
-     * Immediately clears all rotation state.
-     */
-    public static void stopRotation() {
-        currentRotation        = null;
-        previousRotation       = null;
-        activeRotationTarget   = null;
-        previousRotationTarget = null;
     }
 
     // ── Tick handler ──────────────────────────────────────────────────────
@@ -130,141 +108,109 @@ public class RotationManager extends Component {
     public void onTick(EventGameTick event) {
         if (mc.player == null) return;
 
-        // Tick FailRotationProcessor if present
-        if (activeRotationTarget != null) {
-            for (var p : activeRotationTarget.processors) {
-                if (p instanceof FailRotationProcessor fp) {
-                    fp.onTick(event);
-                }
-            }
-        }
-
         update();
     }
 
-    private static void update() {
-        if (mc.player == null) return;
-
-        Rotation playerRot = new Rotation(mc.player);
-        playerRotation = playerRot;
+    public void update() {
+        playerRotation = new Rotation(mc.player);
 
         RotationTarget rotationTarget = getRotationTarget();
-        RotationTarget active = rotationTarget != null ? rotationTarget : previousRotationTarget;
+        RotationTarget activeRotationTarget = getActiveRotationTarget();
+        if (activeRotationTarget == null) return;
 
-        activeRotationTarget = active;
+        if (isRotatingAllowed(activeRotationTarget)) {
+            Rotation fromRotation = (currentRotation != null) ? currentRotation : playerRotation;
+            Rotation rotation = activeRotationTarget.towards(fromRotation, rotationTarget == null).normalize();
+            float diff = rotation.angleTo(playerRotation);
 
-        if (active == null) {
-            if (currentRotation != null) {
-                currentRotation = null;
-            } else {
-                freeYaw = mc.player.getYRot();
-                freePitch = mc.player.getXRot();
-            }
-            rotationTargetHandler.tick();
-            return;
-        }
+            if (rotationTarget == null && (activeRotationTarget.movementCorrection == MovementCorrection.CHANGE_LOOK
+                    || activeRotationTarget.processors.isEmpty()
+                    || diff <= activeRotationTarget.resetThreshold)) {
 
-        if (isRotatingAllowed(active)) {
-            Rotation fromRotation = currentRotation != null ? currentRotation : playerRot;
-            boolean isResetting = rotationTarget == null;
-            Rotation rotation = active.towards(fromRotation, isResetting).normalize();
-
-            float diff = rotation.angleTo(playerRot);
-
-            if (isResetting && (active.processors.isEmpty() || diff <= active.resetThreshold)) {
                 if (currentRotation != null) {
-                    mc.player.setYRot(freeYaw);
-                    mc.player.setXRot(freePitch);
+                    if (activeRotationTarget.movementCorrection == MovementCorrection.SILENT) {
+                        float yawDiff = Mth.wrapDegrees(freeYaw - mc.player.yRot);
+                        mc.player.setYRot(mc.player.yRot + yawDiff);
+                        mc.player.setXRot(freePitch);
+                        playerRotation = new Rotation(mc.gameRenderer.getMainCamera().yRot(),mc.gameRenderer.getMainCamera().xRot());
+                    }
                 }
-                currentRotation        = null;
+                setCurrentRotation(null);
                 previousRotationTarget = null;
             } else {
-                previousRotation       = fromRotation;
-                currentRotation        = rotation;
-                previousRotationTarget = active;
+                setCurrentRotation(rotation);
 
-                mc.player.setYRot(rotation.yaw());
-                mc.player.setXRot(rotation.pitch());
+                if (activeRotationTarget.movementCorrection == MovementCorrection.SILENT && currentRotation != null) {
+                    mc.player.setYRot(currentRotation.yaw());
+                    mc.player.setXRot(currentRotation.pitch());
+                }
+
+                previousRotationTarget = activeRotationTarget;
             }
         }
 
         rotationTargetHandler.tick();
     }
 
-    /**
-     * Applies the current rotation to the player via EventMotion (серверный пакет).
-     */
     @EventHandler
-    public void onRotation(EventMotion event) {
-        if (currentRotation == null) return;
-        event.setYaw(currentRotation.yaw());
-        event.setPitch(currentRotation.pitch());
+    private void onWorldRender(EventGameRender3D event) {
+        RotationTarget active = getActiveRotationTarget();
+        if (active == null) return;
+
+        if (!isRotatingAllowed(active)) return;
+
+        if (active.movementCorrection == MovementCorrection.CHANGE_LOOK) {
+            if (playerRotation == null || currentRotation == null) return;
+//            float timerSpeed = Timer.INSTANCE.getTimerSpeed();
+//            Rotation interpolated = playerRotation.interpolateTo(currentRotation, event.getTickDelta() * timerSpeed);
+            mc.player.setYRot(currentRotation.yaw());
+            mc.player.setXRot(currentRotation.pitch());
+        }
     }
 
-    /**
-     * freeYaw/freePitch — куда смотрит камера.
-     * Синхронизируются из Camera пока аура не активна (как в FreeLookRepo).
-     * Когда аура активна — обновляются только дельтами мыши.
-     */
-    public static float freeYaw   = 0f;
-    public static float freePitch = 0f;
-
-    /**
-     * EventRotation — контролирует камеру (Camera.java).
-     * В режиме "Свободная": подставляем freeYaw/freePitch.
-     * Иначе — не трогаем, Camera читает из mc.player.
-     */
     @EventHandler
-    public void onCameraRotation(EventRotation event) {
-        if (currentRotation == null) {
-            // Аура не активна — синхронизируем freeYaw/freePitch с камерой (как FreeLookRepo)
-            freeYaw   = event.getYaw();
-            freePitch = event.getPitch();
+    private void onMouseRotation(EventLook event) {
+        RotationTarget active = getActiveRotationTarget();
+        if (active == null || !isRotatingAllowed(active)) {
             return;
         }
 
-        if ("Свободная".equals(ru.arixcompany.features.module.modules.combat.HitAura.motion.getSelected())) {
+        if (active.movementCorrection == MovementCorrection.CHANGE_LOOK) {
+            float f = (float) event.pitch * 0.15f;
+            float g = (float) event.yaw * 0.15f;
+
+            if (playerRotation != null) {
+                playerRotation = adjustRotation(playerRotation, f, g);
+            }
+            if (currentRotation != null) {
+                setCurrentRotation(adjustRotation(currentRotation, f, g));
+            }
+        } else if (active.movementCorrection == MovementCorrection.SILENT) {
+            float newPitch = freePitch + (float) event.getPitch() * 0.15f;
+            float newYaw = freeYaw + (float) event.getYaw() * 0.15f;
+
+            freeYaw = Mth.wrapDegrees(newYaw);
+            freePitch = Mth.clamp(newPitch, -90.0F, 90.0F);
+            event.cancel();
+        }
+    }
+
+    @EventHandler
+    private void onRotation(EventRotation event) {
+        if (isSilentActive()) {
             event.setYaw(freeYaw);
             event.setPitch(freePitch);
+        } else {
+            freeYaw = event.getYaw();
+            freePitch = event.getPitch();
         }
     }
 
-    /**
-     * onLook — движение мыши.
-     * Когда аура активна: обновляем freeYaw/freePitch дельтой мыши.
-     * Когда аура не активна: не трогаем — freeYaw синхронизируется из Camera в onCameraRotation.
-     */
-    @EventHandler
-    public void onLook(EventLook event) {
-        if (currentRotation == null) return;
-
-        float f = (float) (event.getPitch() * 0.15);
-        float g = (float) (event.getYaw()   * 0.15);
-
-        freePitch = Mth.clamp(freePitch + f, -90f, 90f);
-        freeYaw   = freeYaw + g;
-
-        if ("Свободная".equals(ru.arixcompany.features.module.modules.combat.HitAura.motion.getSelected())) {
-            event.cancel();
-            return;
-        }
-
-        if (playerRotation != null) {
-            playerRotation = new Rotation(
-                playerRotation.yaw()   + g,
-                Mth.clamp(playerRotation.pitch() + f, -90f, 90f)
-            );
-        }
-
-        currentRotation = new Rotation(
-            currentRotation.yaw()   + g,
-            Mth.clamp(currentRotation.pitch() + f, -90f, 90f)
-        );
-
-        event.cancel();
+    private Rotation adjustRotation(Rotation rotation, float f, float g) {
+        float newYaw = rotation.yaw() + g;
+        float newPitch = Math.clamp(rotation.pitch() + f, -90f, 90f);
+        return new Rotation(newYaw, newPitch);
     }
-
-    // ── EventInput — movement correction ─────────────────────────────────
 
     @EventHandler
     public void onInput(EventInput event) {
@@ -273,13 +219,8 @@ public class RotationManager extends Component {
         }
     }
 
-    // ── Packet tracking ───────────────────────────────────────────────────
-
-    /**
-     * Track rotation changes
-     */
     @EventHandler
-    public static void onPacket(EventPacket event) {
+    public void onPacket(EventPacket event) {
         Rotation r;
         switch (event.getPacket()) {
             case ServerboundMovePlayerPacket p -> {
@@ -287,11 +228,12 @@ public class RotationManager extends Component {
                 r = new Rotation(p.yRot, p.xRot, true);
             }
             case ClientboundPlayerPositionPacket p ->
-                r = new Rotation(p.change().yRot(), p.change().xRot(), true);
+                    r = new Rotation(p.change().yRot(), p.change().xRot(), true);
             case ServerboundUseItemPacket p ->
-                r = new Rotation(p.getYRot(), p.getXRot(), true);
+                    r = new Rotation(p.getYRot(), p.getXRot(), true);
             case null, default -> { return; }
         }
+        theoreticalServerRotation = r;
         if (!event.isCancelled()) {
             actualServerRotation = r;
         }

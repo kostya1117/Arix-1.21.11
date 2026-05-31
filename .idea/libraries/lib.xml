@@ -90,7 +90,9 @@
       <root url="jar://$PROJECT_DIR$/lib/ViaRewind-4.1.0.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/ViaVersion-5.9.0.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/ViaBackwards-5.9.0.jar!/" />
-      <root url="jar://$PROJECT_DIR$/lib/MediaPlayerInfo-0.1.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/encog-core-3.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/nether-pathfinder-1.4.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/xz-1.9.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

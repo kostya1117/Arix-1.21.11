@@ -1,5 +1,6 @@
 package net.minecraft.client.renderer.rendertype;
 
+import baritone.utils.accessor.IRenderType;
 import com.mojang.blaze3d.buffers.GpuBuffer;
 import com.mojang.blaze3d.buffers.GpuBufferSlice;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
@@ -29,7 +30,7 @@ import org.joml.Matrix4fStack;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
-public class RenderType {
+public class RenderType implements IRenderType {
     private static final int MEGABYTE = 1048576;
     public static final int BIG_BUFFER_SIZE = 4194304;
     public static final int SMALL_BUFFER_SIZE = 786432;
@@ -60,6 +61,10 @@ public class RenderType {
 
     public static RenderType create(String p_452180_, RenderSetup p_453207_) {
         return new RenderType(p_452180_, p_453207_);
+    }
+    @Override
+    public RenderType createRenderType(final String name, final RenderSetup renderSetup) {
+        return create(name, renderSetup);
     }
 
     @Override

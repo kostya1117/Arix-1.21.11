@@ -53,7 +53,7 @@ public class LegacyServerPinger extends SimpleChannelInboundHandler<ByteBuf> {
         if (short1 == 255) {
             String s = LegacyProtocolUtils.readLegacyString(p_298668_);
             List<String> list = SPLITTER.splitToList(s);
-            if ("\u00a71".equals(list.get(0))) {
+            if ("§1".equals(list.get(0))) {
                 int i = Mth.getInt(list.get(1), 0);
                 String s1 = list.get(2);
                 String s2 = list.get(3);

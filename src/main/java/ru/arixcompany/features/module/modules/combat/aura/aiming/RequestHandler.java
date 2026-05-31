@@ -1,25 +1,9 @@
-/*
- * This file is part of LiquidBounce (https://github.com/CCBlueX/LiquidBounce)
- *
- * Copyright (c) 2015 - 2026 CCBlueX
- *
- * LiquidBounce is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * LiquidBounce is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with LiquidBounce. If not, see <https://www.gnu.org/licenses/>.
- */
 package ru.arixcompany.features.module.modules.combat.aura.aiming;
 
+import net.minecraft.client.Minecraft;
+
 import java.util.Comparator;
-import java.util.PriorityQueue;
+import java.util.concurrent.PriorityBlockingQueue;
 
 /**
  * Mirrors LiquidBounce's RequestHandler<T>.
@@ -28,8 +12,9 @@ public class RequestHandler<T> {
 
     private int currentTick = 0;
 
-    private final PriorityQueue<Request<T>> activeRequests =
-        new PriorityQueue<>(11, Comparator.comparingInt(r -> -r.priority));
+    // PriorityBlockingQueue для потокобезопасности (как в LiquidBounce)
+    private final PriorityBlockingQueue<Request<T>> activeRequests =
+            new PriorityBlockingQueue<>(11, Comparator.comparingInt(r -> -r.priority));
 
     public void tick() {
         tick(1);
@@ -40,7 +25,7 @@ public class RequestHandler<T> {
     }
 
     public void request(Request<T> request) {
-        // we remove all requests provided by the same provider on new request
+        // Удаляем старые запросы от того же провайдера
         activeRequests.removeIf(r -> r.provider == request.provider);
         request.expiresIn += currentTick;
         activeRequests.add(request);
@@ -50,10 +35,11 @@ public class RequestHandler<T> {
         Request<T> top = activeRequests.peek();
         if (top == null) return null;
 
-        // remove all outdated requests
-        while (top != null && top.expiresIn <= currentTick) {
-            activeRequests.poll();
-            top = activeRequests.peek();
+        if (Minecraft.getInstance().isSameThread()){
+            while (top != null && (top.expiresIn <= currentTick || !top.provider.isRunning())) {
+                activeRequests.poll();
+                top = activeRequests.peek();
+            }
         }
 
         return top != null ? top.value : null;
@@ -66,20 +52,28 @@ public class RequestHandler<T> {
      *
      * @param expiresIn in how many ticks should this request expire?
      * @param priority  higher = higher priority
-     * @param provider  object which requested the value (used for deduplication)
+     * @param provider  module which requested value (must implement RequestProvider)
      * @param value     the requested value
      */
     public static class Request<T> {
         public int expiresIn;
         public final int priority;
-        public final Object provider;
+        public final RequestProvider provider;
         public final T value;
 
-        public Request(int expiresIn, int priority, Object provider, T value) {
+        public Request(int expiresIn, int priority, RequestProvider provider, T value) {
             this.expiresIn = expiresIn;
-            this.priority  = priority;
-            this.provider  = provider;
-            this.value     = value;
+            this.priority = priority;
+            this.provider = provider;
+            this.value = value;
         }
+    }
+
+    /**
+     * Interface for request providers (e.g., Modules).
+     * Allows the handler to automatically clean up requests when the provider is disabled.
+     */
+    public interface RequestProvider {
+        boolean isRunning();
     }
 }

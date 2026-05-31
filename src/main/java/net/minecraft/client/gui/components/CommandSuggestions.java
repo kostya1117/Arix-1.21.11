@@ -1,5 +1,7 @@
 package net.minecraft.client.gui.components;
 
+import baritone.api.BaritoneAPI;
+import baritone.api.event.events.TabCompleteEvent;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
@@ -10,6 +12,7 @@ import com.mojang.brigadier.ParseResults;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.context.CommandContextBuilder;
 import com.mojang.brigadier.context.ParsedArgument;
+import com.mojang.brigadier.context.StringRange;
 import com.mojang.brigadier.context.SuggestionContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.Suggestion;
@@ -25,6 +28,7 @@ import java.util.Map.Entry;
 import java.util.concurrent.CompletableFuture;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -194,12 +198,50 @@ public class CommandSuggestions {
         return list;
     }
 
-    @Nullable
-    private ParseResults<SharedSuggestionProvider> prodlasioParse;
-
     public void updateCommandInfo() {
         String inputText = this.input.getValue();
         int cursor = this.input.getCursorPosition();
+
+        // === ВСТРОЕННЫЙ ИНЖЕКТ ИЗ МИКСИНА preUpdateSuggestion (HEAD) ===
+        String prefix = inputText.substring(0, Math.min(inputText.length(), cursor));
+
+        TabCompleteEvent event = new TabCompleteEvent(prefix);
+        BaritoneAPI.getProvider().getPrimaryBaritone().getGameEventHandler().onPreTabComplete(event);
+
+        if (event.isCancelled()) {
+            return; // эквивалент ci.cancel()
+        }
+
+        if (event.completions != null) {
+            this.currentParse = null; // stop coloring
+
+            if (this.keepSuggestions) {
+                return;
+            }
+
+            this.input.setSuggestion(null);
+            this.suggestions = null;
+            this.commandUsage.clear();
+
+            if (event.completions.length == 0) {
+                this.pendingSuggestions = Suggestions.empty();
+            } else {
+                StringRange range = StringRange.between(prefix.lastIndexOf(" ") + 1, prefix.length());
+
+                List<Suggestion> suggestionList = Stream.of(event.completions)
+                        .map(s -> new Suggestion(range, s))
+                        .collect(Collectors.toList());
+
+                Suggestions suggestions = new Suggestions(range, suggestionList);
+
+                this.pendingSuggestions = new CompletableFuture<>();
+                this.pendingSuggestions.complete(suggestions);
+            }
+
+            this.showSuggestions(true);
+            return; // эквивалент ci.cancel()
+        }
+        // === КОНЕЦ ИНЖЕКТА ===
 
         // Сбрасываем parse, если текст изменился
         if (this.currentParse != null &&
@@ -221,10 +263,8 @@ public class CommandSuggestions {
         if (reader.canRead(CommandRepo.COMMAND_TARGET.length()) &&
                 reader.getString().startsWith(CommandRepo.COMMAND_TARGET, reader.getCursor())) {
 
-            // Пропускаем префикс
             reader.setCursor(reader.getCursor() + CommandRepo.COMMAND_TARGET.length());
 
-            // Парсим через твой кастомный dispatcher (теперь ClientSuggestionProvider)
             if (this.currentParse == null) {
                 CommandDispatcher<ClientSuggestionProvider> dispatcher =
                         Arix.getInstance().getCommandRepo().getCommandDispatcher();
@@ -234,7 +274,6 @@ public class CommandSuggestions {
                 this.currentParse = dispatcher.parse(reader, source);
             }
 
-            // Запрашиваем suggestions + usage
             if (cursor >= 1 && (this.suggestions == null || !this.keepSuggestions)) {
                 CommandDispatcher<ClientSuggestionProvider> dispatcher =
                         Arix.getInstance().getCommandRepo().getCommandDispatcher();
@@ -245,12 +284,10 @@ public class CommandSuggestions {
                     if (this.pendingSuggestions != null && this.pendingSuggestions.isDone()) {
                         this.suggestions = null;
 
-                        // Показываем подсказки
                         if (this.allowSuggestions && this.minecraft.options.autoSuggestions().get()) {
                             this.showSuggestions(false);
                         }
 
-                        // 👉 Ключевой момент: показываем usage / аргументы
                         this.updateUsageInfo();
                     }
                 });
@@ -291,14 +328,14 @@ public class CommandSuggestions {
         }
 
         // === 3) Обычный текст → кастомные таб‑подсказки игрока ===
-        String prefix = inputText.substring(0, cursor);
-        int lastWord = getLastWordIndex(prefix);
+        String prefixWord = inputText.substring(0, cursor);
+        int lastWord = getLastWordIndex(prefixWord);
         Collection<String> custom = this.minecraft.player.connection
                 .getSuggestionsProvider()
                 .getCustomTabSugggestions();
 
         this.pendingSuggestions = SharedSuggestionProvider.suggest(custom,
-                new SuggestionsBuilder(prefix, lastWord));
+                new SuggestionsBuilder(prefixWord, lastWord));
     }
 
     private static int getLastWordIndex(String p_93913_) {

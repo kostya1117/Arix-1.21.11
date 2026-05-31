@@ -18,6 +18,9 @@
  */
 package ru.arixcompany.features.module.modules.combat.aura.aiming.features.processors.anglesmooth;
 
+import net.minecraft.util.Mth;
+import net.minecraft.util.Util;
+import ru.arixcompany.features.module.modules.combat.HitAura;
 import ru.arixcompany.features.module.modules.combat.aura.aiming.RotationTarget;
 import ru.arixcompany.features.module.modules.combat.aura.aiming.data.Rotation;
 
@@ -35,11 +38,11 @@ public abstract class FactorAngleSmooth extends AngleSmooth {
      */
     public abstract float[] calculateFactors(RotationTarget rotationTarget, Rotation currentRotation, Rotation targetRotation);
 
-    @Override
-    public Rotation process(RotationTarget rotationTarget, Rotation currentRotation, Rotation targetRotation) {
-        float[] factors = calculateFactors(rotationTarget, currentRotation, targetRotation);
-        return currentRotation.towardsLinear(targetRotation, factors[0], factors[1]);
-    }
+@Override
+public Rotation process(RotationTarget rotationTarget, Rotation currentRotation, Rotation targetRotation) {
+    float[] factors = calculateFactors(rotationTarget, currentRotation, targetRotation);
+    return currentRotation.towardsLinear(targetRotation, factors[0], factors[1]);
+}
 
     @Override
     public int calculateTicks(Rotation currentRotation, Rotation targetRotation) {

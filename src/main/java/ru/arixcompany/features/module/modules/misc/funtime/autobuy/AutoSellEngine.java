@@ -10,8 +10,8 @@ import ru.arixcompany.features.module.modules.misc.funtime.autobuy.items.ItemTar
 import ru.arixcompany.features.module.modules.misc.funtime.utils.FuntimeUtil;
 import ru.arixcompany.utils.IMinecraft;
 import ru.arixcompany.utils.MessageSender;
-import ru.arixcompany.utils.math.Timer;
-import ru.arixcompany.utils.player.inventory.PlayerInventoryUtil;
+import ru.arixcompany.utils.math.TimerUtils;
+import ru.arixcompany.utils.player.inv.InventoryUtility;
 
 import java.util.ArrayDeque;
 import java.util.LinkedHashMap;
@@ -42,7 +42,7 @@ public class AutoSellEngine implements IMinecraft {
 
     private final Queue<SellTask>        queue      = new ArrayDeque<>();
     private final Map<Integer, Integer>  slotPrices = new LinkedHashMap<>();
-    private final Timer                  timer      = new Timer();
+    private final TimerUtils timer      = new TimerUtils();
 
     @Getter private boolean running = false;
     private Phase    phase     = Phase.IDLE;
@@ -55,7 +55,7 @@ public class AutoSellEngine implements IMinecraft {
     private int refreshMs   = 2500;
 
     // для обновления страницы во время сканирования
-    private final Timer refreshTimer = new Timer();
+    private final TimerUtils refreshTimer = new TimerUtils();
 
     public void setParams(int discountPct, int scanMs, int refreshMs) {
         this.discountPct = discountPct;
@@ -286,8 +286,8 @@ public class AutoSellEngine implements IMinecraft {
         // Перемещаем в хотбар если нужно
         if (slot >= 9) {
             int hotbar = mc.player.getInventory().selected;
-            PlayerInventoryUtil.clickSlot(slot, 0, ClickType.PICKUP, false);
-            PlayerInventoryUtil.clickSlot(hotbar, 0, ClickType.PICKUP, false);
+            InventoryUtility.clickSlot(slot, 0, ClickType.PICKUP, false);
+            InventoryUtility.clickSlot(hotbar, 0, ClickType.PICKUP, false);
             count = mc.player.getInventory().getItem(hotbar).getCount();
             if (count == 0) count = task.count(); // fallback
         } else {
@@ -307,7 +307,7 @@ public class AutoSellEngine implements IMinecraft {
         for (Slot slot : screen.getMenu().slots) {
             String name = slot.getItem().getHoverName().getString().toLowerCase();
             if (name.contains("обновить") || name.contains("refresh")) {
-                PlayerInventoryUtil.clickSlot(slot.index, 0, ClickType.PICKUP, false);
+                InventoryUtility.clickSlot(slot.index, 0, ClickType.PICKUP, false);
                 break;
             }
         }

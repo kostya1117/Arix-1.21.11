@@ -1,5 +1,6 @@
 package net.minecraft.client.renderer;
 
+import baritone.utils.accessor.IRenderPipelines;
 import com.mojang.blaze3d.pipeline.BlendFunction;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
 import com.mojang.blaze3d.platform.DepthTestFunction;
@@ -17,7 +18,7 @@ import java.util.Map;
 import com.mojang.blaze3d.vertex.VertexFormatElement;
 import net.minecraft.resources.Identifier;
 
-public class RenderPipelines {
+public class RenderPipelines implements IRenderPipelines {
     private static final Map<Identifier, RenderPipeline> PIPELINES_BY_LOCATION = new HashMap<>();
     public static final RenderPipeline.Snippet MATRICES_PROJECTION_SNIPPET = RenderPipeline.builder()
         .withUniform("DynamicTransforms", UniformType.UNIFORM_BUFFER)
@@ -759,6 +760,19 @@ public class RenderPipelines {
     public static RenderPipeline register(RenderPipeline p_396877_) {
         PIPELINES_BY_LOCATION.put(p_396877_.getLocation(), p_396877_);
         return p_396877_;
+    }
+    public RenderPipeline.Snippet getLinesSnippet() {
+        return LINES_SNIPPET;
+    }
+
+    @Override
+    public RenderPipeline.Snippet getMatricesFogSnippet() {
+        return MATRICES_FOG_SNIPPET;
+    }
+
+    @Override
+    public RenderPipeline baritone$registerPipeline(final RenderPipeline pipeline) {
+        return register(pipeline);
     }
 
     public static List<RenderPipeline> getStaticPipelines() {

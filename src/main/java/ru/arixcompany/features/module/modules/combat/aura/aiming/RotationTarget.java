@@ -19,6 +19,7 @@
 package ru.arixcompany.features.module.modules.combat.aura.aiming;
 
 import ru.arixcompany.features.module.modules.combat.aura.aiming.data.Rotation;
+import ru.arixcompany.features.module.modules.combat.aura.aiming.features.MovementCorrection;
 import ru.arixcompany.features.module.modules.combat.aura.aiming.features.processors.RotationProcessor;
 import ru.arixcompany.utils.IMinecraft;
 
@@ -54,14 +55,29 @@ public class RotationTarget implements IMinecraft {
      */
     public final float resetThreshold;
 
+    /**
+     * Movement correction mode for this rotation target.
+     * Mirrors LiquidBounce's MovementCorrection.
+     */
+    public final MovementCorrection movementCorrection;
+
     public RotationTarget(Rotation rotation,
                           List<RotationProcessor> processors,
                           int ticksUntilReset,
                           float resetThreshold) {
-        this.rotation        = rotation;
-        this.processors      = processors;
-        this.ticksUntilReset = ticksUntilReset;
-        this.resetThreshold  = resetThreshold;
+        this(rotation, processors, ticksUntilReset, resetThreshold, MovementCorrection.SILENT);
+    }
+
+    public RotationTarget(Rotation rotation,
+                          List<RotationProcessor> processors,
+                          int ticksUntilReset,
+                          float resetThreshold,
+                          MovementCorrection movementCorrection) {
+        this.rotation           = rotation;
+        this.processors         = processors;
+        this.ticksUntilReset    = ticksUntilReset;
+        this.resetThreshold     = resetThreshold;
+        this.movementCorrection = movementCorrection;
     }
 
     /**
@@ -73,8 +89,7 @@ public class RotationTarget implements IMinecraft {
      */
     public Rotation towards(Rotation currentRotation, boolean isResetting) {
         if (isResetting) {
-            // Mirrors LiquidBounce: return to player.rotation on reset
-            return process(currentRotation, new Rotation(RotationManager.freeYaw,RotationManager.freePitch));
+            return process(currentRotation, new Rotation(mc.gameRenderer.getMainCamera().yRot(),mc.gameRenderer.getMainCamera().xRot()));
         }
         return process(currentRotation, rotation);
     }

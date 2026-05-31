@@ -1,5 +1,11 @@
 package net.minecraft.client.player;
 
+import baritone.api.BaritoneAPI;
+import baritone.api.IBaritone;
+import baritone.api.event.events.PlayerUpdateEvent;
+import baritone.api.event.events.SprintStateEvent;
+import baritone.api.event.events.type.EventState;
+import baritone.behavior.LookBehavior;
 import com.google.common.collect.Lists;
 import com.mojang.logging.LogUtils;
 import java.util.Iterator;
@@ -110,7 +116,6 @@ import ru.arixcompany.features.event.player.EventMotion;
 import ru.arixcompany.features.event.player.EventSprint;
 import ru.arixcompany.features.event.world.EventUpdate;
 import ru.arixcompany.features.module.modules.combat.aura.aiming.RotationManager;
-import ru.arixcompany.features.module.modules.combat.aura.rotation.impl.FreeLookRepo;
 import ru.arixcompany.features.module.modules.movement.AutoSprint;
 import ru.arixcompany.features.module.modules.player.NoPush;
 
@@ -236,6 +241,10 @@ public class LocalPlayer extends AbstractClientPlayer {
         if (this.connection.hasClientLoaded()) {
             this.dropSpamThrottler.tick();
             super.tick();
+            IBaritone baritone = BaritoneAPI.getProvider().getBaritoneForPlayer(this);
+            if (baritone != null) {
+                baritone.getGameEventHandler().onPlayerUpdate(new PlayerUpdateEvent(EventState.PRE));
+            }
             EventRepo.call(new EventUpdate());
             if (!this.lastSentInput.equals(this.input.keyPresses)) {
                 this.connection.send(new ServerboundPlayerInputPacket(this.input.keyPresses));
@@ -562,7 +571,7 @@ public class LocalPlayer extends AbstractClientPlayer {
         return this.startedUsingItem;
     }
 
-    private boolean isSlowDueToUsingItem() {
+    public boolean isSlowDueToUsingItem() {
         return this.isUsingItem() && !this.useItem.getOrDefault(DataComponents.USE_EFFECTS, UseEffects.DEFAULT).canSprint();
     }
 
@@ -699,13 +708,13 @@ public class LocalPlayer extends AbstractClientPlayer {
             this.xBobO = this.xBob;
 //            this.xBob = this.xBob + (this.getXRot() - this.xBob) * 0.5F;
 //            this.yBob = this.yBob + (this.getYRot() - this.yBob) * 0.5F;
-            if (RotationManager.isRotating()) {
-                this.xBob = (float) ((double) this.xBob + (double) (minecraft.gameRenderer.getMainCamera().xRot() - this.xBob) * 0.5D);
-                this.yBob = (float) ((double) this.yBob + (double) (minecraft.gameRenderer.getMainCamera().yRot() - this.yBob) * 0.5D);
-            } else {
+//            if (RotationManager.isRotating()) {
+//                this.xBob = (float) ((double) this.xBob + (double) (minecraft.gameRenderer.getMainCamera().xRot() - this.xBob) * 0.5D);
+//                this.yBob = (float) ((double) this.yBob + (double) (minecraft.gameRenderer.getMainCamera().yRot() - this.yBob) * 0.5D);
+//            } else {
                 this.xBob = (float) ((double) this.xBob + (double) (getXRot() - this.xBob) * 0.5D);
                 this.yBob = (float) ((double) this.yBob + (double) (getYRot() - this.yBob) * 0.5D);
-            }
+          //  }
         } else {
             super.applyInput();
         }
@@ -810,7 +819,12 @@ public class LocalPlayer extends AbstractClientPlayer {
             this.sprintTriggerTime = 0;
         }
 
-        if (!Arix.getInstance().getModuleRepo().getModule(AutoSprint.class).isState() && this.canStartSprinting()) {
+        boolean canStartSprint = this.canStartSprinting();
+        var event0 = new EventSprint(canStartSprint, EventSprint.Source.MOVEMENT_TICK);
+        EventRepo.call(event0);
+        canStartSprint = event0.isSprinting();
+        IBaritone baritone = BaritoneAPI.getProvider().getBaritoneForPlayer(this);
+        if (canStartSprint) {
             if (!flag2) {
                 if (this.sprintTriggerTime > 0) {
                     this.setSprinting(true);
@@ -819,25 +833,27 @@ public class LocalPlayer extends AbstractClientPlayer {
                 }
             }
 
-            if (this.input.keyPresses.sprint()) {
-                this.setSprinting(true);
-            }
-        }
-        if (Arix.getInstance().getModuleRepo().getModule(AutoSprint.class).isState() && this.input.hasForwardImpulse()
-                && this.isSprintingPossible(this.getAbilities().flying)
-                && !this.isSlowDueToUsingItem()
-                && (!this.isFallFlying() || this.isUnderWater())
-                && (!this.isMovingSlowly() || this.isUnderWater())) {
-            if (!flag2) {
-                if (this.sprintTriggerTime > 0) {
-                    this.setSprinting(true);
+            boolean sprintKey;
+            if (baritone == null) {
+                sprintKey = this.input.keyPresses.sprint();
+            } else {
+                SprintStateEvent event = new SprintStateEvent();
+                baritone.getGameEventHandler().onPlayerSprintState(event);
+                if (event.getState() != null) {
+                    sprintKey = event.getState();
+                } else if (baritone != BaritoneAPI.getProvider().getPrimaryBaritone()) {
+                    sprintKey = false; // hitting control shouldn't make all bots sprint
                 } else {
-                    this.sprintTriggerTime = this.minecraft.options.sprintWindow().get();
+                    sprintKey = this.input.keyPresses.sprint();
                 }
             }
-            EventSprint eventSprint = new EventSprint(this.input.keyPresses.forward());
-            EventRepo.call(eventSprint);
-            this.setSprinting(eventSprint.isSprinting());
+            var event1 = new EventSprint(sprintKey, EventSprint.Source.MOVEMENT_TICK);
+            EventRepo.call(event1);
+            sprintKey = event1.isSprinting();
+
+            if (sprintKey) {
+                this.setSprinting(true);
+            }
         }
 
         if (this.isSprinting()) {
@@ -851,7 +867,14 @@ public class LocalPlayer extends AbstractClientPlayer {
         }
 
         boolean flag4 = false;
-        if (abilities.mayfly) {
+        boolean canFly;
+        if (baritone == null) {
+            canFly = abilities.mayfly;
+        } else {
+            canFly = !baritone.getPathingBehavior().isPathing() && abilities.mayfly;
+        }
+
+        if (canFly) {
             if (this.minecraft.gameMode.isSpectator()) {
                 if (!abilities.flying) {
                     abilities.flying = true;
@@ -874,7 +897,14 @@ public class LocalPlayer extends AbstractClientPlayer {
             }
         }
 
-        if (this.input.keyPresses.jump() && !flag4 && !flag && !this.onClimbable() && this.tryToStartFallFlying()) {
+        boolean shouldStartElytra;
+        if (baritone != null && baritone.getPathingBehavior().isPathing()) {
+            shouldStartElytra = false;
+        } else {
+            shouldStartElytra = this.tryToStartFallFlying();
+        }
+
+        if (this.input.keyPresses.jump() && !flag4 && !flag && !this.onClimbable() && shouldStartElytra) {
             this.connection.send(new ServerboundPlayerCommandPacket(this, ServerboundPlayerCommandPacket.Action.START_FALL_FLYING));
         }
 
@@ -941,6 +971,7 @@ public class LocalPlayer extends AbstractClientPlayer {
         }
     }
 
+
     private boolean shouldStopRunSprinting() {
         return !this.isSprintingPossible(this.getAbilities().flying) || !this.input.hasForwardImpulse() || this.horizontalCollision && !this.minorHorizontalCollision;
     }
@@ -989,6 +1020,10 @@ public class LocalPlayer extends AbstractClientPlayer {
     @Override
     public void rideTick() {
         super.rideTick();
+        IBaritone baritone = BaritoneAPI.getProvider().getBaritoneForPlayer(this);
+        if (baritone != null) {
+            ((LookBehavior) baritone.getLookBehavior()).pig();
+        }
         this.handsBusy = false;
         if (this.getControlledVehicle() instanceof AbstractBoat abstractboat) {
             abstractboat.setInput(
@@ -1153,11 +1188,11 @@ public class LocalPlayer extends AbstractClientPlayer {
         return this.isAutoJumpEnabled() && this.autoJumpTime <= 0 && this.onGround() && !this.isStayingOnGroundSurface() && !this.isPassenger() && this.isMoving() && this.getBlockJumpFactor() >= 1.0;
     }
 
-    private boolean isMoving() {
+    public boolean isMoving() {
         return this.input.getMoveVector().lengthSquared() > 0.0F;
     }
 
-    private boolean isSprintingPossible(boolean p_425414_) {
+    public boolean isSprintingPossible(boolean p_425414_) {
         return !this.isMobilityRestricted() && (this.isPassenger() ? this.vehicleCanSprint(this.getVehicle()) : this.hasEnoughFoodToDoExhaustiveManoeuvres()) && (p_425414_ || !this.isInShallowWater());
     }
 

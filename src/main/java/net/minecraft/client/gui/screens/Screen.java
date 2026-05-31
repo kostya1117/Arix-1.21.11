@@ -1,5 +1,8 @@
 package net.minecraft.client.gui.screens;
 
+import baritone.api.BaritoneAPI;
+import baritone.api.IBaritone;
+import baritone.api.event.events.ChatEvent;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
 import com.mojang.logging.LogUtils;
@@ -50,6 +53,8 @@ import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import ru.arixcompany.Arix;
 import ru.arixcompany.features.module.modules.render.NoRender;
+
+import static baritone.api.command.IBaritoneChatControl.FORCE_COMMAND_PREFIX;
 
 
 public abstract class Screen extends AbstractContainerEventHandler implements Renderable {
@@ -250,8 +255,20 @@ public abstract class Screen extends AbstractContainerEventHandler implements Re
     protected void insertText(String p_96587_, boolean p_96588_) {
     }
 
-    protected static void defaultHandleGameClickEvent(ClickEvent p_408337_, Minecraft p_407842_,  Screen p_407429_) {
+    protected static void defaultHandleGameClickEvent(ClickEvent p_408337_, Minecraft p_407842_, Screen p_407429_) {
         LocalPlayer localplayer = Objects.requireNonNull(p_407842_.player, "Player not available");
+
+        if (p_408337_ instanceof ClickEvent.RunCommand) {
+            String command = ((ClickEvent.RunCommand) p_408337_).command();
+            if (command.startsWith(FORCE_COMMAND_PREFIX)) {
+                IBaritone baritone = BaritoneAPI.getProvider().getPrimaryBaritone();
+                if (baritone != null) {
+                    baritone.getGameEventHandler().onSendChatMessage(new ChatEvent(command));
+                }
+                return;
+            }
+        }
+
         switch (p_408337_) {
             case ClickEvent.RunCommand(String s):
                 clickCommandAction(localplayer, s, p_407429_);
@@ -269,6 +286,7 @@ public abstract class Screen extends AbstractContainerEventHandler implements Re
                 defaultHandleClickEvent(p_408337_, p_407842_, p_407429_);
         }
     }
+
 
     protected static void defaultHandleClickEvent(ClickEvent p_407893_, Minecraft p_410530_,  Screen p_407004_) {
         boolean flag = switch (p_407893_) {

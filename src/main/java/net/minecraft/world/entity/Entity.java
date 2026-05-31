@@ -1,5 +1,7 @@
 package net.minecraft.world.entity;
 
+import baritone.api.BaritoneAPI;
+import baritone.api.event.events.RotationMoveEvent;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -32,6 +34,7 @@ import net.minecraft.CrashReport;
 import net.minecraft.CrashReportCategory;
 import net.minecraft.ReportedException;
 import net.minecraft.advancements.CriteriaTriggers;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.commands.CommandSource;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.arguments.EntityAnchorArgument;
@@ -1644,13 +1647,28 @@ public abstract class Entity implements SyncedDataHolder, DebugValueSource, Name
     public boolean isInLava() {
         return !this.firstTick && this.fluidHeight.getDouble(FluidTags.LAVA) > 0.0;
     }
+    private RotationMoveEvent motionUpdateRotationEvent;
 
     public void moveRelative(float p_19921_, Vec3 p_19922_) {
+        // noinspection ConstantConditions
+        if (!LocalPlayer.class.isInstance(this) || (BaritoneAPI.getProvider().getBaritoneForPlayer((LocalPlayer) (Object) this) == null)) {
+            return;
+        }
+        this.motionUpdateRotationEvent = new RotationMoveEvent(RotationMoveEvent.Type.MOTION_UPDATE, this.yRot, this.xRot);
+        BaritoneAPI.getProvider().getBaritoneForPlayer((LocalPlayer) (Object) this).getGameEventHandler().onPlayerRotationMove(motionUpdateRotationEvent);
+        this.yRot = this.motionUpdateRotationEvent.getYaw();
+        this.xRot = this.motionUpdateRotationEvent.getPitch();
+
         Vec3 vec3 = getInputVector(p_19922_, p_19921_, this.getYRot());
         this.setDeltaMovement(this.getDeltaMovement().add(vec3));
+        if (this.motionUpdateRotationEvent != null) {
+            this.yRot = this.motionUpdateRotationEvent.getOriginal().getYaw();
+            this.xRot = this.motionUpdateRotationEvent.getOriginal().getPitch();
+            this.motionUpdateRotationEvent = null;
+        }
     }
 
-    protected static Vec3 getInputVector(Vec3 p_20016_, float p_20017_, float p_20018_) {
+    public static Vec3 getInputVector(Vec3 p_20016_, float p_20017_, float p_20018_) {
         double d0 = p_20016_.lengthSqr();
         if (d0 < 1.0E-7) {
             return Vec3.ZERO;
@@ -2063,9 +2081,9 @@ public abstract class Entity implements SyncedDataHolder, DebugValueSource, Name
             this.needsSync = true;
             double d0 = 3.0000512E7;
             this.setPosRaw(
-                Mth.clamp(vec3.x, -3.0000512E7, 3.0000512E7),
+                Mth.clamp(vec3.x, -d0, d0),
                 Mth.clamp(vec3.y, -2.0E7, 2.0E7),
-                Mth.clamp(vec3.z, -3.0000512E7, 3.0000512E7)
+                Mth.clamp(vec3.z, -d0, d0)
             );
             this.setYRot(vec2.x);
             this.setXRot(vec2.y);

@@ -4,14 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import net.minecraft.resources.Identifier;
@@ -103,8 +96,7 @@ public class ResUtils {
         } else {
             List list = new ArrayList();
 
-            for(int i = 0; i < paths.length; ++i) {
-                String path = paths[i];
+            for (String path : paths) {
                 if (!isLowercase(path)) {
                     Config.warn("Skipping non-lowercase path: " + path);
                 } else {
@@ -128,8 +120,7 @@ public class ResUtils {
             return new String[0];
         }
 
-        for (int i = 0; i < afile.length; i++) {
-            File file1 = afile[i];
+        for (File file1 : afile) {
             if (file1.isFile()) {
                 String s3 = basePath + file1.getName();
                 if (s3.startsWith(s)) {
@@ -146,10 +137,7 @@ public class ResUtils {
                 String s1 = basePath + file1.getName() + "/";
                 String[] astring = collectFilesFolder(file1, s1, prefixes, suffixes);
 
-                for (int j = 0; j < astring.length; j++) {
-                    String s2 = astring[j];
-                    list.add(s2);
-                }
+                Collections.addAll(list, astring); //TEST
             }
         }
 
@@ -162,10 +150,10 @@ public class ResUtils {
 
         try {
             ZipFile zf = new ZipFile(tpFile);
-            Enumeration en = zf.entries();
+            Enumeration<? extends ZipEntry> en = zf.entries();
 
             while(en.hasMoreElements()) {
-                ZipEntry ze = (ZipEntry)en.nextElement();
+                ZipEntry ze = en.nextElement();
                 String name = ze.getName();
                 if (name.startsWith(prefixAssets)) {
                     name = name.substring(prefixAssets.length());

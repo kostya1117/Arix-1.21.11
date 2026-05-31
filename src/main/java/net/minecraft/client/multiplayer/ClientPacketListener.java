@@ -1,5 +1,13 @@
 package net.minecraft.client.multiplayer;
 
+import baritone.Baritone;
+import baritone.api.BaritoneAPI;
+import baritone.api.IBaritone;
+import baritone.api.event.events.BlockChangeEvent;
+import baritone.api.event.events.ChatEvent;
+import baritone.api.event.events.ChunkEvent;
+import baritone.api.event.events.type.EventState;
+import baritone.cache.CachedChunk;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -807,13 +815,13 @@ public class ClientPacketListener extends ClientCommonPacketListenerImpl impleme
 //                    player.getX(), player.getY(), player.getZ(), player.getYRot(), player.getXRot(), false, false
 //                )
 //            );
-        if (player instanceof LocalPlayer) {
-            EventMotion eventSync = new EventMotion(player.getYRot(), player.getXRot(), player.getX(), player.getY(), player.getZ(), false, false);
-            EventRepo.call(eventSync);
-            this.connection.send(new ServerboundMovePlayerPacket.PosRot(eventSync.getX(), eventSync.getY(), eventSync.getZ(), eventSync.getYaw(), eventSync.getPitch(),false, false));
-        } else {
+//        if (player instanceof LocalPlayer) {
+//            EventMotion eventSync = new EventMotion(player.getYRot(), player.getXRot(), player.getX(), player.getY(), player.getZ(), false, false);
+//            EventRepo.call(eventSync);
+//            this.connection.send(new ServerboundMovePlayerPacket.PosRot(eventSync.getX(), eventSync.getY(), eventSync.getZ(), eventSync.getYaw(), eventSync.getPitch(),false, false));
+//        } else {
             this.connection.send(new ServerboundMovePlayerPacket.PosRot(player.getX(), player.getY(), player.getZ(), player.getYRot(), player.getXRot(),false, false));
-        }
+        //}
     }
 
     private static boolean setValuesFromPositionPacket(PositionMoveRotation p_361901_, Set<Relative> p_362559_, Entity p_368395_, boolean p_366293_) {
@@ -855,6 +863,22 @@ public class ClientPacketListener extends ClientCommonPacketListenerImpl impleme
     public void handleChunkBlocksUpdate(ClientboundSectionBlocksUpdatePacket p_105070_) {
         PacketUtils.ensureRunningOnSameThread(p_105070_, this, this.minecraft.packetProcessor());
         p_105070_.runUpdates((p_284633_, p_284634_) -> this.level.setServerVerifiedBlockState(p_284633_, p_284634_, 19));
+        IBaritone baritone = BaritoneAPI.getProvider().getBaritoneForConnection((ClientPacketListener) (Object) this);
+        if (baritone == null) {
+            return;
+        }
+
+        List<baritone.api.utils.Pair<BlockPos, BlockState>> changes = new ArrayList<>();
+        p_105070_.runUpdates((mutPos, state) -> {
+            changes.add(new baritone.api.utils.Pair<>(mutPos.immutable(), state));
+        });
+        if (changes.isEmpty()) {
+            return;
+        }
+        baritone.getGameEventHandler().onBlockChange(new BlockChangeEvent(
+                new ChunkPos(changes.get(0).first()),
+                changes
+        ));
     }
 
     @Override
@@ -872,6 +896,20 @@ public class ClientPacketListener extends ClientCommonPacketListenerImpl impleme
                 this.minecraft.levelRenderer.onChunkReadyToRender(levelchunk.getPos());
             }
         });
+
+        for (IBaritone ibaritone : BaritoneAPI.getProvider().getAllBaritones()) {
+            LocalPlayer player = ibaritone.getPlayerContext().player();
+            if (player != null && player.connection == (ClientPacketListener) (Object) this) {
+                ibaritone.getGameEventHandler().onChunkEvent(
+                        new ChunkEvent(
+                                EventState.POST,
+                                !p_194241_.isSkippable() ? ChunkEvent.Type.POPULATE_FULL : ChunkEvent.Type.POPULATE_PARTIAL,
+                                p_194241_.getX(),
+                                p_194241_.getZ()
+                        )
+                );
+            }
+        }
     }
 
     @Override
@@ -934,10 +972,26 @@ public class ClientPacketListener extends ClientCommonPacketListenerImpl impleme
 
     @Override
     public void handleForgetLevelChunk(ClientboundForgetLevelChunkPacket p_105014_) {
+        for (IBaritone ibaritone : BaritoneAPI.getProvider().getAllBaritones()) {
+            LocalPlayer player = ibaritone.getPlayerContext().player();
+            if (player != null && player.connection == (ClientPacketListener) (Object) this) {
+                ibaritone.getGameEventHandler().onChunkEvent(
+                        new ChunkEvent(EventState.PRE, ChunkEvent.Type.UNLOAD, p_105014_.pos().x, p_105014_.pos().z)
+                );
+            }
+        }
         PacketUtils.ensureRunningOnSameThread(p_105014_, this, this.minecraft.packetProcessor());
         this.level.getChunkSource().drop(p_105014_.pos());
         this.debugSubscriber.dropChunk(p_105014_.pos());
         this.queueLightRemoval(p_105014_);
+        for (IBaritone ibaritone : BaritoneAPI.getProvider().getAllBaritones()) {
+            LocalPlayer player = ibaritone.getPlayerContext().player();
+            if (player != null && player.connection == (ClientPacketListener) (Object) this) {
+                ibaritone.getGameEventHandler().onChunkEvent(
+                        new ChunkEvent(EventState.POST, ChunkEvent.Type.UNLOAD, p_105014_.pos().x, p_105014_.pos().z)
+                );
+            }
+        }
     }
 
     private void queueLightRemoval(ClientboundForgetLevelChunkPacket p_194253_) {
@@ -962,6 +1016,25 @@ public class ClientPacketListener extends ClientCommonPacketListenerImpl impleme
     public void handleBlockUpdate(ClientboundBlockUpdatePacket p_104980_) {
         PacketUtils.ensureRunningOnSameThread(p_104980_, this, this.minecraft.packetProcessor());
         this.level.setServerVerifiedBlockState(p_104980_.getPos(), p_104980_.getBlockState(), 19);
+        if (!Baritone.settings().repackOnAnyBlockChange.value) {
+            return;
+        }
+        if (!CachedChunk.BLOCKS_TO_KEEP_TRACK_OF.contains(p_104980_.getBlockState().getBlock())) {
+            return;
+        }
+        for (IBaritone ibaritone : BaritoneAPI.getProvider().getAllBaritones()) {
+            LocalPlayer player = ibaritone.getPlayerContext().player();
+            if (player != null && player.connection == (ClientPacketListener) (Object) this) {
+                ibaritone.getGameEventHandler().onChunkEvent(
+                        new ChunkEvent(
+                                EventState.POST,
+                                ChunkEvent.Type.POPULATE_FULL,
+                                p_104980_.getPos().getX() >> 4,
+                                p_104980_.getPos().getZ() >> 4
+                        )
+                );
+            }
+        }
     }
 
     @Override
@@ -1828,6 +1901,13 @@ public class ClientPacketListener extends ClientCommonPacketListenerImpl impleme
         PacketUtils.ensureRunningOnSameThread(p_171775_, this, this.minecraft.packetProcessor());
         Entity entity = this.level.getEntity(p_171775_.playerId());
         if (entity == this.minecraft.player) {
+            for (IBaritone ibaritone : BaritoneAPI.getProvider().getAllBaritones()) {
+                LocalPlayer player = ibaritone.getPlayerContext().player();
+                if (player != null && player.connection == (ClientPacketListener) (Object) this) {
+                    ibaritone.getGameEventHandler().onPlayerDeath();
+                }
+            }
+
             if (this.minecraft.player.shouldShowDeathScreen()) {
                 this.minecraft.setScreen(new DeathScreen(p_171775_.message(), this.level.getLevelData().isHardcore(), this.minecraft.player));
             } else {
@@ -1835,6 +1915,7 @@ public class ClientPacketListener extends ClientCommonPacketListenerImpl impleme
             }
         }
     }
+
 
     @Override
     public void handleChangeDifficulty(ClientboundChangeDifficultyPacket p_104984_) {
@@ -2637,6 +2718,15 @@ public class ClientPacketListener extends ClientCommonPacketListenerImpl impleme
     }
 
     public void sendChat(String p_249888_) {
+        ChatEvent baritoneEvent = new ChatEvent(p_249888_);
+        IBaritone baritone = BaritoneAPI.getProvider().getBaritoneForPlayer(this.minecraft.player);
+        if (baritone != null) {
+            baritone.getGameEventHandler().onSendChatMessage(baritoneEvent);
+            if (baritoneEvent.isCancelled()) {
+                return;
+            }
+        }
+
         if (p_249888_.startsWith(CommandRepo.COMMAND_TARGET)) {
             try {
                 Arix.getInstance().getCommandRepo().getCommandDispatcher().execute(

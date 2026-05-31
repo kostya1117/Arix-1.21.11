@@ -1,5 +1,6 @@
 package net.minecraft.client.renderer.entity;
 
+import baritone.utils.accessor.IEntityRenderManager;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.blaze3d.vertex.PoseStack;
 import java.util.Collections;
@@ -47,7 +48,7 @@ import net.optifine.render.RenderState;
 import org.joml.Quaternionf;
 import org.jspecify.annotations.Nullable;
 
-public class EntityRenderDispatcher implements ResourceManagerReloadListener {
+public class EntityRenderDispatcher implements ResourceManagerReloadListener, IEntityRenderManager {
     private Map<EntityType<?>, EntityRenderer<?, ?>> renderers = ImmutableMap.of();
     private Map<PlayerModelType, AvatarRenderer<AbstractClientPlayer>> playerRenderers = Map.of();
     private Map<PlayerModelType, AvatarRenderer<ClientMannequin>> mannequinRenderers = Map.of();
@@ -285,5 +286,19 @@ public class EntityRenderDispatcher implements ResourceManagerReloadListener {
 
     public Map<PlayerModelType, AvatarRenderer<ClientMannequin>> getMannequinRenderers() {
         return Collections.unmodifiableMap(this.mannequinRenderers);
+    }
+    @Override
+    public double renderPosX() {
+        return ((EntityRenderDispatcher) (Object) this).camera.position().x;
+    }
+
+    @Override
+    public double renderPosY() {
+        return ((EntityRenderDispatcher) (Object) this).camera.position().y;
+    }
+
+    @Override
+    public double renderPosZ() {
+        return ((EntityRenderDispatcher) (Object) this).camera.position().z;
     }
 }

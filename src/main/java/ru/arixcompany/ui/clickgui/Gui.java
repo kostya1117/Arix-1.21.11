@@ -17,6 +17,7 @@ import ru.arixcompany.features.module.Category;
 import ru.arixcompany.features.module.Module;
 import ru.arixcompany.features.module.Theme;
 import ru.arixcompany.features.module.setting.implement.BindSetting;
+import ru.arixcompany.features.module.setting.implement.BooleanSetting;
 import ru.arixcompany.features.module.setting.implement.ValueSetting;
 import ru.arixcompany.features.module.setting.implement.TextSetting;
 import ru.arixcompany.features.module.setting.implement.ColorSetting;
@@ -37,6 +38,7 @@ public final class Gui extends Screen implements IMinecraft {
     public static final Animation animation15 = new EaseInOutQuad(300, 1.0);
 
     public static BindSetting activeBindSetting = null;
+    public static BooleanSetting activeBooleanBindSetting = null;
     public static TextSetting activeStringSetting = null;
     public static ValueSetting activeValueSetting = null;
     public static ColorSetting activeColorSetting = null;
@@ -164,6 +166,14 @@ public final class Gui extends Screen implements IMinecraft {
             activeBindSetting.setKey(-100 - button);
             activeBindSetting.active = false;
             activeBindSetting = null;
+            return true;
+        }
+
+        if (activeBooleanBindSetting != null && button >= 0 && button != 0 && button != 2) {
+            // bind mouse buttons other than LMB and MMB
+            activeBooleanBindSetting.setKey(-100 - button);
+            activeBooleanBindSetting.setActive(false);
+            activeBooleanBindSetting = null;
             return true;
         }
 

@@ -45,8 +45,8 @@ public class MouseHandler {
     private boolean isMiddlePressed;
     @Getter
     private boolean isRightPressed;
-    private double xpos;
-    private double ypos;
+    public double xpos;
+    public double ypos;
     private MouseHandler.@Nullable LastClick lastClick;
     @MouseButtonInfo.MouseButton
     protected int lastClickButton;
@@ -70,7 +70,7 @@ public class MouseHandler {
     }
 
     private void onButton(long p_428888_, MouseButtonInfo p_424132_, @MouseButtonInfo.Action int p_423948_) {
-        EventKey event = new EventKey(p_424132_.button(),p_423948_);
+        EventKey event = new EventKey(p_424132_.button(), p_423948_);
         EventRepo.call(event);
 
         Window window = this.minecraft.getWindow();
@@ -113,9 +113,9 @@ public class MouseHandler {
                         try {
                             long i = Util.getMillis();
                             boolean flag1 = this.lastClick != null
-                                && i - this.lastClick.time() < 250L
-                                && this.lastClick.screen() == screen
-                                && this.lastClickButton == mousebuttonevent.button();
+                                    && i - this.lastClick.time() < 250L
+                                    && this.lastClick.screen() == screen
+                                    && this.lastClickButton == mousebuttonevent.button();
                             if (screen.mouseClicked(mousebuttonevent, flag1)) {
                                 this.lastClick = new MouseHandler.LastClick(i, screen);
                                 this.lastClickButton = mousebuttoninfo.button();
@@ -182,27 +182,27 @@ public class MouseHandler {
 
     public void fillMousePositionDetails(CrashReportCategory p_398230_, Window p_398216_) {
         p_398230_.setDetail(
-            "Mouse location",
-            () -> String.format(
-                Locale.ROOT,
-                "Scaled: (%f, %f). Absolute: (%f, %f)",
-                getScaledXPos(p_398216_, this.xpos),
-                getScaledYPos(p_398216_, this.ypos),
-                this.xpos,
-                this.ypos
-            )
+                "Mouse location",
+                () -> String.format(
+                        Locale.ROOT,
+                        "Scaled: (%f, %f). Absolute: (%f, %f)",
+                        getScaledXPos(p_398216_, this.xpos),
+                        getScaledYPos(p_398216_, this.ypos),
+                        this.xpos,
+                        this.ypos
+                )
         );
         p_398230_.setDetail(
-            "Screen size",
-            () -> String.format(
-                Locale.ROOT,
-                "Scaled: (%d, %d). Absolute: (%d, %d). Scale factor of %d",
-                p_398216_.getGuiScaledWidth(),
-                p_398216_.getGuiScaledHeight(),
-                p_398216_.getWidth(),
-                p_398216_.getHeight(),
-                p_398216_.getGuiScale()
-            )
+                "Screen size",
+                () -> String.format(
+                        Locale.ROOT,
+                        "Scaled: (%d, %d). Absolute: (%d, %d). Scale factor of %d",
+                        p_398216_.getGuiScaledWidth(),
+                        p_398216_.getGuiScaledHeight(),
+                        p_398216_.getWidth(),
+                        p_398216_.getHeight(),
+                        p_398216_.getGuiScale()
+                )
         );
     }
 
@@ -264,33 +264,33 @@ public class MouseHandler {
 
     public void setup(Window p_426305_) {
         InputConstants.setupMouseCallbacks(
-            p_426305_,
-            (p_91591_, p_91592_, p_91593_) -> this.minecraft.execute(() -> this.onMove(p_91591_, p_91592_, p_91593_)),
-            (p_420648_, p_420649_, p_420650_, p_420651_) -> {
-                MouseButtonInfo mousebuttoninfo = new MouseButtonInfo(p_420649_, p_420651_);
-                this.minecraft.execute(() -> this.onButton(p_420648_, mousebuttoninfo, p_420650_));
-            },
-            (p_91576_, p_91577_, p_91578_) -> this.minecraft.execute(() -> this.onScroll(p_91576_, p_91577_, p_91578_)),
-            (p_340767_, p_340768_, p_340769_) -> {
-                List<Path> list = new ArrayList<>(p_340768_);
-                int i = 0;
+                p_426305_,
+                (p_91591_, p_91592_, p_91593_) -> this.minecraft.execute(() -> this.onMove(p_91591_, p_91592_, p_91593_)),
+                (p_420648_, p_420649_, p_420650_, p_420651_) -> {
+                    MouseButtonInfo mousebuttoninfo = new MouseButtonInfo(p_420649_, p_420651_);
+                    this.minecraft.execute(() -> this.onButton(p_420648_, mousebuttoninfo, p_420650_));
+                },
+                (p_91576_, p_91577_, p_91578_) -> this.minecraft.execute(() -> this.onScroll(p_91576_, p_91577_, p_91578_)),
+                (p_340767_, p_340768_, p_340769_) -> {
+                    List<Path> list = new ArrayList<>(p_340768_);
+                    int i = 0;
 
-                for (int j = 0; j < p_340768_; j++) {
-                    String s = GLFWDropCallback.getName(p_340769_, j);
+                    for (int j = 0; j < p_340768_; j++) {
+                        String s = GLFWDropCallback.getName(p_340769_, j);
 
-                    try {
-                        list.add(Paths.get(s));
-                    } catch (InvalidPathException invalidpathexception) {
-                        i++;
-                        LOGGER.error("Failed to parse path '{}'", s, invalidpathexception);
+                        try {
+                            list.add(Paths.get(s));
+                        } catch (InvalidPathException invalidpathexception) {
+                            i++;
+                            LOGGER.error("Failed to parse path '{}'", s, invalidpathexception);
+                        }
+                    }
+
+                    if (!list.isEmpty()) {
+                        int k = i;
+                        this.minecraft.execute(() -> this.onDrop(p_340767_, list, k));
                     }
                 }
-
-                if (!list.isEmpty()) {
-                    int k = i;
-                    this.minecraft.execute(() -> this.onDrop(p_340767_, list, k));
-                }
-            }
         );
     }
 
@@ -381,26 +381,42 @@ public class MouseHandler {
         return getScaledYPos(p_398224_, this.ypos);
     }
 
-    private void turnPlayer(double deltaTime) {
-        double sensitivity = this.minecraft.options.sensitivity().get() * 0.6F + 0.2F;
-        double multiplier = sensitivity * sensitivity * sensitivity * 8.0;
-
-        double yawDelta = this.accumulatedDX * multiplier;
-        double pitchDelta = this.accumulatedDY * multiplier;
-
-        if (this.minecraft.options.invertMouseX().get())
-            yawDelta = -yawDelta;
-
-        if (this.minecraft.options.invertMouseY().get())
-            pitchDelta = -pitchDelta;
-
-        EventLook event = new EventLook(yawDelta, pitchDelta);
+    private void turnPlayer(double p_330750_) {
+        double d2 = this.minecraft.options.sensitivity().get() * 0.6F + 0.2F;
+        double d3 = d2 * d2 * d2;
+        double d4 = d3 * 8.0;
+        double d0;
+        double d1;
+        if (this.minecraft.options.smoothCamera) {
+            double d5 = this.smoothTurnX.getNewDeltaValue(this.accumulatedDX * d4, p_330750_ * d4);
+            double d6 = this.smoothTurnY.getNewDeltaValue(this.accumulatedDY * d4, p_330750_ * d4);
+            d0 = d5;
+            d1 = d6;
+        } else if (this.minecraft.options.getCameraType().isFirstPerson() && this.minecraft.player.isScoping()) {
+            this.smoothTurnX.reset();
+            this.smoothTurnY.reset();
+            d0 = this.accumulatedDX * d3;
+            d1 = this.accumulatedDY * d3;
+        } else {
+            this.smoothTurnX.reset();
+            this.smoothTurnY.reset();
+            d0 = this.accumulatedDX * d4;
+            d1 = this.accumulatedDY * d4;
+        }
+        EventLook event = new EventLook(this.minecraft.options.invertMouseX().get() ? -d0 : d0, this.minecraft.options.invertMouseY().get() ? -d1 : d1);
         EventRepo.call(event);
 
         if (!event.isCancelled() && this.minecraft.player != null) {
             this.minecraft.getTutorial().onMouse(event.getYaw(), event.getPitch());
             this.minecraft.player.turn(event.getYaw(), event.getPitch());
         }
+
+//    this.minecraft.getTutorial().onMouse(d0, d1);
+//    if (this.minecraft.player != null) {
+//        this.minecraft
+//                .player
+//                .turn(this.minecraft.options.invertMouseX().get() ? -d0 : d0, this.minecraft.options.invertMouseY().get() ? -d1 : d1);
+//    }
     }
 
     public double xpos() {
@@ -451,10 +467,10 @@ public class MouseHandler {
         double d0 = this.getScaledXPos(window);
         double d1 = this.getScaledYPos(window) - 8.0;
         String s = String.format(Locale.ROOT, "%.0f,%.0f", d0, d1);
-        p_398226_.drawString(p_398229_, s, (int)d0, (int)d1, -1);
+        p_398226_.drawString(p_398229_, s, (int) d0, (int) d1, -1);
     }
 
-    
+
     record LastClick(long time, Screen screen) {
     }
 }

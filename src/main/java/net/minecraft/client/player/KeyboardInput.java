@@ -2,8 +2,10 @@ package net.minecraft.client.player;
 
 import net.minecraft.client.Options;
 import net.minecraft.world.entity.player.Input;
+import ru.arixcompany.features.event.Event;
 import ru.arixcompany.features.event.EventRepo;
 import ru.arixcompany.features.event.player.EventInput;
+import ru.arixcompany.features.event.player.EventSprint;
 
 public class KeyboardInput extends ClientInput {
     private final Options options;
@@ -22,6 +24,8 @@ public class KeyboardInput extends ClientInput {
 
     @Override
     public void tick() {
+        final EventSprint eventSprint = new EventSprint(this.options.keySprint.isDown(),EventSprint.Source.INPUT);
+        EventRepo.call(eventSprint);
         this.keyPresses = new Input(
                 this.options.keyUp.isDown(),
                 this.options.keyDown.isDown(),
@@ -29,7 +33,7 @@ public class KeyboardInput extends ClientInput {
                 this.options.keyRight.isDown(),
                 this.options.keyJump.isDown(),
                 this.options.keyShift.isDown(),
-                this.options.keySprint.isDown()
+                eventSprint.isSprinting()
         );
         final EventInput moveInputEvent = new EventInput(forwardImpulse, leftImpulse, jumping, shiftKeyDown, 0.3D);
         EventRepo.call(moveInputEvent);

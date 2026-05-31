@@ -1,5 +1,11 @@
 package net.minecraft.client;
 
+import baritone.api.BaritoneAPI;
+import baritone.api.IBaritone;
+import baritone.api.event.events.PlayerUpdateEvent;
+import baritone.api.event.events.TickEvent;
+import baritone.api.event.events.WorldEvent;
+import baritone.api.event.events.type.EventState;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.mojang.authlib.GameProfile;
@@ -52,6 +58,7 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.TimeUnit;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -387,6 +394,7 @@ public class Minecraft extends ReentrantBlockableEventLoop<Runnable> implements 
     private final PacketProcessor packetProcessor;
     private final SimpleGizmoCollector perTickGizmos = new SimpleGizmoCollector();
     private List<SimpleGizmoCollector.GizmoInstance> drainedLatestTickGizmos = new ArrayList<>();
+    private BiFunction<EventState, TickEvent.Type, TickEvent> tickProvider;
 
     public Minecraft(final GameConfig p_91084_) {
         super("Client");
@@ -662,6 +670,7 @@ public class Minecraft extends ReentrantBlockableEventLoop<Runnable> implements 
         }
 
         this.packetProcessor = new PacketProcessor(this.gameThread);
+        BaritoneAPI.getProvider().getPrimaryBaritone();
         new Arix();
     }
 
@@ -1316,10 +1325,16 @@ public class Minecraft extends ReentrantBlockableEventLoop<Runnable> implements 
 
         this.window.setErrorSection("Post render");
         this.frames++;
+
         boolean flag1 = this.pause;
+        Screen actualScreen = this.screen;
+        if (BaritoneAPI.getProvider().getPrimaryBaritone().getPathingBehavior().isPathing() && player != null) {
+            actualScreen = null;
+        }
+
         this.pause = this.hasSingleplayerServer()
-            && (this.screen != null && this.screen.isPauseScreen() || this.overlay != null && this.overlay.isPauseScreen())
-            && !this.singleplayerServer.isPublished();
+                && (actualScreen != null && actualScreen.isPauseScreen() || this.overlay != null && this.overlay.isPauseScreen())
+                && !this.singleplayerServer.isPublished();
         if (!flag1 && this.pause) {
             this.soundManager.pauseAllExcept(SoundSource.MUSIC, SoundSource.UI);
         }
@@ -1719,6 +1734,15 @@ public class Minecraft extends ReentrantBlockableEventLoop<Runnable> implements 
     }
 
     public void tick() {
+        this.tickProvider = TickEvent.createNextProvider();
+
+        for (IBaritone baritone : BaritoneAPI.getProvider().getAllBaritones()) {
+            TickEvent.Type type = baritone.getPlayerContext().player() != null && baritone.getPlayerContext().world() != null
+                    ? TickEvent.Type.IN
+                    : TickEvent.Type.OUT;
+            baritone.getGameEventHandler().onTick(this.tickProvider.apply(EventState.PRE, type));
+        }
+
         this.clientTickCount++;
         if (this.level != null && !this.pause) {
             this.level.tickRateManager().tick();
@@ -1793,6 +1817,12 @@ public class Minecraft extends ReentrantBlockableEventLoop<Runnable> implements 
                 this.gameRenderer.tick();
                 profilerfiller.popPush("entities");
                 this.level.tickEntities();
+
+                IBaritone baritone = BaritoneAPI.getProvider().getBaritoneForPlayer(this.player);
+                if (baritone != null) {
+                    baritone.getGameEventHandler().onPlayerUpdate(new PlayerUpdateEvent(EventState.POST));
+                }
+
                 profilerfiller.popPush("blockEntities");
                 this.level.tickBlockEntities();
             }
@@ -1853,6 +1883,17 @@ public class Minecraft extends ReentrantBlockableEventLoop<Runnable> implements 
         profilerfiller.popPush("keyboard");
         this.keyboardHandler.tick();
         profilerfiller.pop();
+
+        if (this.tickProvider != null) {
+            for (IBaritone baritone : BaritoneAPI.getProvider().getAllBaritones()) {
+                TickEvent.Type type = baritone.getPlayerContext().player() != null && baritone.getPlayerContext().world() != null
+                        ? TickEvent.Type.IN
+                        : TickEvent.Type.OUT;
+                baritone.getGameEventHandler().onPostTick(this.tickProvider.apply(EventState.POST, type));
+            }
+
+            this.tickProvider = null;
+        }
     }
 
     private boolean isLevelRunningNormally() {
@@ -2071,8 +2112,25 @@ public class Minecraft extends ReentrantBlockableEventLoop<Runnable> implements 
     }
 
     public void setLevel(ClientLevel p_91157_) {
+        if (this.level == null && p_91157_ == null) {
+            // ignore
+        } else {
+            BaritoneAPI.getProvider().getPrimaryBaritone().getGameEventHandler().onWorldEvent(
+                    new WorldEvent(
+                            p_91157_,
+                            EventState.PRE
+                    )
+            );
+        }
+
         this.level = p_91157_;
         this.updateLevelInEngines(p_91157_);
+        BaritoneAPI.getProvider().getPrimaryBaritone().getGameEventHandler().onWorldEvent(
+                new WorldEvent(
+                        p_91157_,
+                        EventState.POST
+                )
+        );
     }
 
     public void disconnectFromWorld(Component p_426769_) {

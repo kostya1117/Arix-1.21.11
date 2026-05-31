@@ -1,0 +1,163 @@
+---- Minecraft Crash Report ----
+// Uh... Did I do that?
+
+Time: 2026-05-30 21:56:59
+Description: Getting biome
+
+net.minecraft.world.level.chunk.MissingPaletteEntryException: Missing Palette entry for index 0.
+	at net.minecraft.world.level.chunk.LinearPalette.valueFor(LinearPalette.java:73)
+	at net.minecraft.world.level.chunk.PalettedContainer.get(PalettedContainer.java:150)
+	at net.minecraft.world.level.chunk.PalettedContainer.get(PalettedContainer.java:145)
+	at net.minecraft.world.level.chunk.LevelChunkSection.getNoiseBiome(LevelChunkSection.java:158)
+	at net.minecraft.world.level.chunk.ChunkAccess.getNoiseBiome(ChunkAccess.java:433)
+	at net.minecraft.world.level.LevelReader.getNoiseBiome(LevelReader.java:64)
+	at net.minecraft.world.level.biome.BiomeManager.getBiome(BiomeManager.java:64)
+	at net.minecraft.world.level.LevelReader.getBiome(LevelReader.java:43)
+	at net.minecraft.client.renderer.fog.environment.AtmosphericFogEnvironment.updateRainFogState(AtmosphericFogEnvironment.java:99)
+	at net.minecraft.client.renderer.fog.environment.AtmosphericFogEnvironment.setupFog(AtmosphericFogEnvironment.java:78)
+	at net.minecraft.client.renderer.fog.FogRenderer.setupFog(FogRenderer.java:203)
+	at net.minecraft.client.renderer.GameRenderer.renderLevel(GameRenderer.java:977)
+	at net.minecraft.client.renderer.GameRenderer.render(GameRenderer.java:645)
+	at net.minecraft.client.Minecraft.runTick(Minecraft.java:1286)
+	at net.minecraft.client.Minecraft.run(Minecraft.java:878)
+	at net.minecraft.client.main.Main.main(Main.java:223)
+	at mcp.client.Start.main(Start.java:20)
+
+
+A detailed walkthrough of the error, its code path and all known details is as follows:
+---------------------------------------------------------------------------------------
+
+-- Head --
+Thread: Render thread
+Stacktrace:
+	at net.minecraft.world.level.chunk.LinearPalette.valueFor(LinearPalette.java:73)
+	at net.minecraft.world.level.chunk.PalettedContainer.get(PalettedContainer.java:150)
+	at net.minecraft.world.level.chunk.PalettedContainer.get(PalettedContainer.java:145)
+	at net.minecraft.world.level.chunk.LevelChunkSection.getNoiseBiome(LevelChunkSection.java:158)
+	at net.minecraft.world.level.chunk.ChunkAccess.getNoiseBiome(ChunkAccess.java:433)
+	at net.minecraft.world.level.LevelReader.getNoiseBiome(LevelReader.java:64)
+	at net.minecraft.world.level.biome.BiomeManager.getBiome(BiomeManager.java:64)
+	at net.minecraft.world.level.LevelReader.getBiome(LevelReader.java:43)
+	at net.minecraft.client.renderer.fog.environment.AtmosphericFogEnvironment.updateRainFogState(AtmosphericFogEnvironment.java:99)
+	at net.minecraft.client.renderer.fog.environment.AtmosphericFogEnvironment.setupFog(AtmosphericFogEnvironment.java:78)
+	at net.minecraft.client.renderer.fog.FogRenderer.setupFog(FogRenderer.java:203)
+	at net.minecraft.client.renderer.GameRenderer.renderLevel(GameRenderer.java:977)
+
+-- Biome being got --
+Details:
+	Location: World: (-1,49,2), Section: (at 15,1,2 in -1,3,0; chunk contains blocks -16,0,0 to -1,255,15), Region: (-1,0; contains chunks -32,0 to -1,31, blocks -512,0,0 to -1,255,511)
+Stacktrace:
+	at net.minecraft.world.level.chunk.ChunkAccess.getNoiseBiome(ChunkAccess.java:433)
+	at net.minecraft.world.level.LevelReader.getNoiseBiome(LevelReader.java:64)
+	at net.minecraft.world.level.biome.BiomeManager.getBiome(BiomeManager.java:64)
+	at net.minecraft.world.level.LevelReader.getBiome(LevelReader.java:43)
+	at net.minecraft.client.renderer.fog.environment.AtmosphericFogEnvironment.updateRainFogState(AtmosphericFogEnvironment.java:99)
+	at net.minecraft.client.renderer.fog.environment.AtmosphericFogEnvironment.setupFog(AtmosphericFogEnvironment.java:78)
+	at net.minecraft.client.renderer.fog.FogRenderer.setupFog(FogRenderer.java:203)
+	at net.minecraft.client.renderer.GameRenderer.renderLevel(GameRenderer.java:977)
+	at net.minecraft.client.renderer.GameRenderer.render(GameRenderer.java:645)
+	at net.minecraft.client.Minecraft.runTick(Minecraft.java:1286)
+	at net.minecraft.client.Minecraft.run(Minecraft.java:878)
+	at net.minecraft.client.main.Main.main(Main.java:223)
+	at mcp.client.Start.main(Start.java:20)
+
+-- Uptime --
+Details:
+	JVM uptime: 354.042s
+	Wall uptime: 342.795s
+	High-res time: 341.296s
+	Client ticks: 6029 ticks / 301.450s
+Stacktrace:
+	at net.minecraft.client.Minecraft.fillReport(Minecraft.java:2304)
+	at net.minecraft.client.Minecraft.emergencySaveAndCrash(Minecraft.java:942)
+	at net.minecraft.client.Minecraft.run(Minecraft.java:898)
+	at net.minecraft.client.main.Main.main(Main.java:223)
+	at mcp.client.Start.main(Start.java:20)
+
+-- Affected level --
+Details:
+	All players: 1 total; LocalPlayer{name=zaneerxd, id=1, pos=(-1.5, 200.0, 9.5), mode=SURVIVAL, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x0000024c5c21f0f0@610594b1}
+	Chunk stats: 729, 8
+	Level dimension: minecraft:overworld
+	Level spawn location: World: (-1,200,9), Section: (at 15,8,9 in -1,12,0; chunk contains blocks -16,0,0 to -1,255,15), Region: (-1,0; contains chunks -32,0 to -1,31, blocks -512,0,0 to -1,255,511)
+	Level time: 1066 game time, 1066 day time
+	Server brand: LimboAPI (1.1.27-SNAPSHOT (git-c463aeb)) -> LimboFilter
+	Server type: Non-integrated multiplayer server
+	Tracked entity count: 1
+
+-- Last reload --
+Details:
+	Reload number: 1
+	Reload reason: initial
+	Finished: Yes
+	Packs: vanilla
+
+-- System Details --
+Details:
+	Minecraft Version: 1.21.11
+	Minecraft Version ID: 1.21.11
+	Operating System: Windows 11 (amd64) version 10.0
+	Java Version: 21.0.11, Amazon.com Inc.
+	Java VM Version: OpenJDK 64-Bit Server VM (mixed mode, sharing), Amazon.com Inc.
+	Memory: 93025456 bytes (88 MiB) / 490733568 bytes (468 MiB) up to 4271898624 bytes (4074 MiB)
+	CPUs: 4
+	Processor Vendor: GenuineIntel
+	Processor Name: Intel(R) Core(TM) i5-4460  CPU @ 3.20GHz
+	Identifier: Intel64 Family 6 Model 60 Stepping 3
+	Microarchitecture: Haswell (Client)
+	Frequency (GHz): 3.19
+	Number of physical packages: 1
+	Number of physical CPUs: 4
+	Number of logical CPUs: 4
+	Graphics card #0 name: NVIDIA GeForce GTX 1080
+	Graphics card #0 vendor: NVIDIA
+	Graphics card #0 VRAM (MiB): 8192.00
+	Graphics card #0 deviceId: VideoController1
+	Graphics card #0 versionInfo: 32.0.15.8228
+	Memory slot #0 capacity (MiB): 8192.00
+	Memory slot #0 clockSpeed (GHz): 1.60
+	Memory slot #0 type: DDR3
+	Memory slot #1 capacity (MiB): 8192.00
+	Memory slot #1 clockSpeed (GHz): 1.60
+	Memory slot #1 type: DDR3
+	Virtual memory max (MiB): 31137.52
+	Virtual memory used (MiB): 15842.80
+	Swap memory total (MiB): 14848.00
+	Swap memory used (MiB): 0.00
+	Space in storage for jna.tmpdir (MiB): <path not set>
+	Space in storage for org.lwjgl.system.SharedLibraryExtractPath (MiB): <path not set>
+	Space in storage for io.netty.native.workdir (MiB): <path not set>
+	Space in storage for java.io.tmpdir (MiB): available: 3628.53, total: 476108.00
+	Space in storage for workdir (MiB): available: 3628.53, total: 476108.00
+	JVM Flags: 0 total; 
+	Debug Flags: 0 total; 
+	Launched Version: mcp
+	Backend library: LWJGL version 3.3.3+5
+	Backend API: NVIDIA GeForce GTX 1080/PCIe/SSE2 GL version 3.3.0 NVIDIA 582.28, NVIDIA Corporation
+	Window size: 1920x1009
+	GFLW Platform: win32
+	Render Extensions: GL_ARB_buffer_storage, GL_KHR_debug, GL_ARB_vertex_attrib_binding, GL_ARB_direct_state_access, GL_EXT_texture_filter_anisotropic
+	GL debug messages: 
+	Is Modded: Definitely; Client brand changed to 'optifine'
+	Universe: 400921fb54442d18
+	Type: Client (map_client.txt)
+	Transparency: regular
+	Render Distance: 10/16 chunks
+	Resource Packs: vanilla
+	Current Language: ru_ru
+	Locale: ru_RU
+	System encoding: Cp1251
+	File encoding: UTF-8
+	CPU: 4x Intel(R) Core(TM) i5-4460 CPU @ 3.20GHz
+	OptiFine Version: OptiFine_1.21.11_HD_U_J9
+	OptiFine Build: null
+	Render Distance Chunks: 16
+	Mipmaps: 4
+	Anisotropic Filtering: 1
+	Antialiasing: 0
+	Multitexture: false
+	Shaders: null
+	OpenGlVersion: 3.3.0 NVIDIA 582.28
+	OpenGlRenderer: NVIDIA GeForce GTX 1080/PCIe/SSE2
+	OpenGlVendor: NVIDIA Corporation
+	CpuCount: 4

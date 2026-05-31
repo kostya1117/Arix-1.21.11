@@ -1,5 +1,6 @@
 package net.minecraft.world.level.storage.loot;
 
+import baritone.api.utils.BlockOptionalMeta;
 import com.google.common.collect.Sets;
 import java.util.Optional;
 import java.util.Set;
@@ -7,6 +8,7 @@ import java.util.function.Consumer;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.ReloadableServerRegistries;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.StringRepresentable;
@@ -111,7 +113,7 @@ public class LootContext {
 
     public static class Builder {
         private final LootParams params;
-        private  RandomSource random;
+        private RandomSource random;
 
         public Builder(LootParams p_287628_) {
             this.params = p_287628_;
@@ -138,9 +140,21 @@ public class LootContext {
             ServerLevel serverlevel = this.getLevel();
             MinecraftServer minecraftserver = serverlevel.getServer();
             RandomSource randomsource = Optional.ofNullable(this.random).or(() -> p_299315_.map(serverlevel::getRandomSequence)).orElseGet(serverlevel::getRandom);
-            return new LootContext(this.params, randomsource, minecraftserver.reloadableRegistries().lookup());
+
+            // встроенный редирект из миксина
+            ReloadableServerRegistries.Holder holder;
+            if (minecraftserver != null) {
+                holder = minecraftserver.reloadableRegistries();
+            } else if (serverlevel instanceof BlockOptionalMeta.ServerLevelStub sls) {
+                holder = sls.holder();
+            } else {
+                holder = null;
+            }
+
+            return new LootContext(this.params, randomsource, holder != null ? holder.lookup() : null);
         }
     }
+
 
     public enum EntityTarget implements StringRepresentable, LootContextArg.SimpleGetter<Entity> {
         THIS("this", LootContextParams.THIS_ENTITY),

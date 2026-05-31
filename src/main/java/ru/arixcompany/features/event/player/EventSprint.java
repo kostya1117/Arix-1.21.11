@@ -9,5 +9,12 @@ import ru.arixcompany.features.event.Event;
 @Setter
 @AllArgsConstructor
 public class EventSprint extends Event {
+
     private boolean sprinting;
+    private Source source;
+
+    public enum Source {
+        MOVEMENT_TICK,
+        INPUT
+    }
 }

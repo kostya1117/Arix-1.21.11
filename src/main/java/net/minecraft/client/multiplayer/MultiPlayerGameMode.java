@@ -1,5 +1,6 @@
 package net.minecraft.client.multiplayer;
 
+import baritone.utils.accessor.IPlayerControllerMP;
 import com.google.common.collect.Lists;
 import com.google.common.primitives.Shorts;
 import com.google.common.primitives.SignedBytes;
@@ -71,7 +72,7 @@ import ru.arixcompany.features.event.EventRepo;
 import ru.arixcompany.features.event.player.EventAttack;
 
 
-public class MultiPlayerGameMode {
+public class MultiPlayerGameMode implements IPlayerControllerMP {
     private static final Logger LOGGER = LogUtils.getLogger();
     private final Minecraft minecraft;
     private final ClientPacketListener connection;
@@ -575,5 +576,30 @@ public class MultiPlayerGameMode {
 
     public void handleSlotStateChanged(int p_312970_, int p_309738_, boolean p_310073_) {
         this.connection.send(new ServerboundContainerSlotStateChangedPacket(p_312970_, p_309738_, p_310073_));
+    }
+
+    @Override
+    public void setIsHittingBlock(boolean isHittingBlock) {
+        this.isDestroying = isHittingBlock;
+    }
+
+    @Override
+    public boolean isHittingBlock() {
+        return this.isDestroying;
+    }
+
+    @Override
+    public BlockPos getCurrentBlock() {
+        return this.destroyBlockPos;
+    }
+
+    @Override
+    public void callSyncCurrentPlayItem() {
+        this.ensureHasSentCarriedItem();
+    }
+
+    @Override
+    public void setDestroyDelay(int destroyDelay) {
+        this.destroyDelay = destroyDelay;
     }
 }

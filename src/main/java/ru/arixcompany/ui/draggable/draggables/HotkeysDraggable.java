@@ -10,6 +10,7 @@ import ru.arixcompany.features.module.Module;
 import ru.arixcompany.features.module.modules.render.Interface;
 import ru.arixcompany.features.module.setting.Setting;
 import ru.arixcompany.features.module.setting.implement.BindSetting;
+import ru.arixcompany.features.module.setting.implement.BooleanSetting;
 import ru.arixcompany.utils.Colors;
 import ru.arixcompany.utils.animation.Direction;
 import ru.arixcompany.utils.math.StringUtil;
@@ -48,20 +49,29 @@ public class HotkeysDraggable extends DraggableComponent {
 
         for (Module m : Arix.getInstance().getModuleRepo().getModules()) {
             this.updateModuleAnimation(m);
-            float anim = m.getAnimation().getOutput();
+            float moduleAnim = m.getAnimation().getOutput();
 
-            if (anim <= ALPHA_EPSILON) continue;
-
-            if (m.getBind() != GLFW.GLFW_KEY_UNKNOWN) {
-                list.add(new HotkeyEntry(m.getName(), StringUtil.getBindName(m.getBind()), anim));
+            // Module bind — показывается только когда модуль активен
+            if (moduleAnim > ALPHA_EPSILON && m.getBind() != GLFW.GLFW_KEY_UNKNOWN) {
+                list.add(new HotkeyEntry(m.getName(), StringUtil.getBindName(m.getBind()), moduleAnim));
             }
 
-            if (m.isState() && !m.isForced()) {
+            // BindSetting — только когда модуль активен
+            if (moduleAnim > ALPHA_EPSILON && m.isState() && !m.isForced()) {
                 for (Setting s : m.getSettingsForGUI()) {
-                    if (s instanceof BindSetting bs) {
-                        if (bs.getKey() != GLFW.GLFW_KEY_UNKNOWN) {
-                            list.add(new HotkeyEntry(s.getName(), StringUtil.getBindName(bs.getKey()), anim));
-                        }
+                    if (s instanceof BindSetting bs && bs.getKey() != GLFW.GLFW_KEY_UNKNOWN) {
+                        list.add(new HotkeyEntry(s.getName(), StringUtil.getBindName(bs.getKey()), moduleAnim));
+                    }
+                }
+            }
+
+            // BooleanSetting с биндом — анимация по value
+            for (Setting s : m.settings()) {
+                if (s instanceof BooleanSetting boolSetting && boolSetting.getKey() != GLFW.GLFW_KEY_UNKNOWN) {
+                    updateBooleanAnimation(boolSetting);
+                    float bAnim = (float) boolSetting.getHotkeyAnim().getOutput();
+                    if (bAnim > ALPHA_EPSILON) {
+                        list.add(new HotkeyEntry(s.getName(), StringUtil.getBindName(boolSetting.getKey()), bAnim));
                     }
                     if (s instanceof GroupSetting g) {
                         for (Setting s1 : g.getChildren()) {
@@ -76,6 +86,13 @@ public class HotkeysDraggable extends DraggableComponent {
             }
         }
         return list;
+    }
+
+    private void updateBooleanAnimation(BooleanSetting setting) {
+        Direction target = setting.isValue() ? Direction.FORWARDS : Direction.BACKWARDS;
+        if (setting.getHotkeyAnim().getDirection() != target) {
+            setting.getHotkeyAnim().setDirection(target);
+        }
     }
 
     @Override

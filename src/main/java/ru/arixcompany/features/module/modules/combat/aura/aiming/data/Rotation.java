@@ -18,11 +18,14 @@
  */
 package ru.arixcompany.features.module.modules.combat.aura.aiming.data;
 
+import net.minecraft.client.DeltaTracker;
 import net.minecraft.util.Mth;
+import net.minecraft.util.Util;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
 import ru.arixcompany.features.module.modules.combat.aura.aiming.RotationManager;
 import ru.arixcompany.utils.IMinecraft;
+import ru.arixcompany.utils.animation.Interpolation;
 
 public record Rotation(float yaw, float pitch, boolean isNormalized) implements IMinecraft {
 
@@ -62,25 +65,41 @@ public record Rotation(float yaw, float pitch, boolean isNormalized) implements 
      * @return [Rotation] with fixed yaw and pitch
      */
     public Rotation normalize() {
-        if (isNormalized) return this;
-        if (mc.player == null) return ZERO;
+        if (this.isNormalized) return this;
 
-        double sens = mc.options.sensitivity().get() * 0.6 + 0.2;
-        double gcd = sens * sens * sens * 8.0 * 0.15;
+        var gcd = getGCDValue();
 
-        Rotation currentRotation = RotationManager.currentRotation != null
-                ? RotationManager.currentRotation
-                : new Rotation(mc.player);
+        Rotation currentRotation = RotationManager.currentRotation;
+        if (currentRotation == null) {
+            currentRotation = RotationManager.playerRotation;
+        }
 
         RotationDelta diff = currentRotation.rotationDeltaTo(this);
 
-        float g1 = (float) (Math.round(diff.deltaYaw() / gcd) * gcd);
-        float g2 = (float) (Math.round(diff.deltaPitch() / gcd) * gcd);
+        float stepYaw = (float) (Math.round(diff.deltaYaw() / gcd) * gcd);
+        float stepPitch = (float) (Math.round(diff.deltaPitch() / gcd) * gcd);
 
-        float newYaw   = currentRotation.yaw + g1;
-        float newPitch = Mth.clamp(currentRotation.pitch + g2, -90f, 90f);
+        float yaw = currentRotation.yaw + stepYaw;
+        float pitch = Math.clamp(currentRotation.pitch + stepPitch, -90f, 90f);
 
-        return new Rotation(newYaw, newPitch, true);
+        return new Rotation(yaw, pitch, true);
+    }
+    public static double getSensitivity(float rot) {
+        return getDeltaMouse(rot) * getGCDValue();
+    }
+
+    public static double getGCDValue() {
+        return getGCD() * 0.15;
+    }
+
+    public static double getGCD() {
+        double d2 = mc.options.sensitivity().get() * 0.6F + 0.2F;
+        double d3 = d2 * d2 * d2;
+        return d3 * 8.0;
+    }
+
+    public static float getDeltaMouse(float delta) {
+        return Math.round(delta / getGCDValue());
     }
 
     /**
@@ -95,12 +114,12 @@ public record Rotation(float yaw, float pitch, boolean isNormalized) implements 
     /**
      * Calculates what angles would need to be added to arrive at [other].
      *
-     * Wrapped 360°
+     * Wrapped 360° for yaw, clamped for pitch
      */
     public RotationDelta rotationDeltaTo(Rotation other) {
         return new RotationDelta(
-            angleDifference(other.yaw, this.yaw),
-            angleDifference(other.pitch, this.pitch)
+                angleDifference(other.yaw, this.yaw),
+                angleDifference(other.pitch, this.pitch)
         );
     }
 
@@ -108,33 +127,135 @@ public record Rotation(float yaw, float pitch, boolean isNormalized) implements 
      * Calculates a new rotation that is closer to the [other] rotation by a limiting factor of
      * [horizontalFactor] and [verticalFactor], which should be between 0 and 180 degrees.
      */
+//    public Rotation towardsLinear(Rotation other, float horizontalFactor, float verticalFactor) {
+//        RotationDelta diff = rotationDeltaTo(other);
+//
+//        float yawStep = horizontalFactor;
+//        float pitchStep = verticalFactor;
+//
+////        if (Math.abs(diff.deltaYaw()) < yawStep) {
+////            yawStep = Math.abs(diff.deltaYaw());
+////        }
+////        if (Math.abs(diff.deltaPitch()) < pitchStep) {
+////            pitchStep = Math.abs(diff.deltaPitch());
+////        }
+//
+//        return new Rotation(
+//                this.yaw + Math.copySign(yawStep, diff.deltaYaw()),
+//                Mth.clamp(this.pitch + Math.copySign(pitchStep, diff.deltaPitch()), -90f, 90f)
+//        );
+//    }
+//    public Rotation towardsLinear(Rotation other, float horizontalFactor, float verticalFactor) {
+//        RotationDelta diff = rotationDeltaTo(other);
+//
+//        float rotationDifference = diff.length();
+//
+//        float straightLineYaw =
+//                Math.abs(diff.deltaYaw() / rotationDifference) * horizontalFactor;
+//
+//        float straightLinePitch =
+//                Math.abs(diff.deltaPitch() / rotationDifference) * verticalFactor;
+//
+//        return new Rotation(
+//                this.yaw + clamp(diff.deltaYaw(), -straightLineYaw, straightLineYaw),
+//                this.pitch + clamp(diff.deltaPitch(), -straightLinePitch, straightLinePitch)
+//        );
+//    }
+
+//    public Rotation towardsLinear(Rotation other, float horizontalFactor, float verticalFactor) {
+//        RotationDelta diff = rotationDeltaTo(other);
+//
+//        // Простая нормализация без лишних переменных
+//        float tYaw   = Math.abs(diff.deltaYaw())   / 180f;
+//        float tPitch = Math.abs(diff.deltaPitch()) / 90f;
+//
+//        // Лёгкая кривая — QUAD OUT быстрее BACK и без overshoot
+//        float yawMult   = (float) (1.0 - Math.pow(1.0 - tYaw,   2.0)); // QUAD OUT вручную
+//        float pitchMult = (float) (1.0 - Math.pow(1.0 - tPitch, 2.0));
+//
+//        float straightLineYaw   = yawMult   * horizontalFactor;
+//        float straightLinePitch = pitchMult * verticalFactor;
+//
+//        float targetYaw   = this.yaw   + clamp(diff.deltaYaw(),   -straightLineYaw,   straightLineYaw);
+//        float targetPitch = this.pitch + clamp(diff.deltaPitch(), -straightLinePitch, straightLinePitch);
+//
+//        // EMA сглаживание
+//        float smoothedYaw   = Mth.lerp(mc.gameRenderer.getMainCamera().getPartialTickTime(), targetYaw,   this.yaw);
+//        float smoothedPitch = Mth.lerp(mc.gameRenderer.getMainCamera().getPartialTickTime(), targetPitch, this.pitch);
+//
+//        return new Rotation(smoothedYaw, smoothedPitch);
+//    }
+//    public Rotation towardsLinear(Rotation other, float horizontalFactor, float verticalFactor) {
+//        RotationDelta diff = rotationDeltaTo(other);
+//
+//        float rotationDifference = diff.length();
+//
+//        // Нормализуем каждую ось отдельно [0..1]
+//        float tYaw   = Mth.clamp(Math.abs(diff.deltaYaw())   / 180f, 0f, 1f);
+//        float tPitch = Mth.clamp(Math.abs(diff.deltaPitch())  / 90f,  0f, 1f);
+//
+//        // Кривая для yaw
+//        float yawCurve = (float) Interpolation.interpolate(
+//                0.0, 1.0, tYaw,
+//                Interpolation.Type.BOUNCE,
+//                Interpolation.Ease.OUT
+//        );
+//
+//        // Кривая для pitch
+//        float pitchCurve = (float) Interpolation.interpolate(
+//                0.0, 1.0, tPitch,
+//                Interpolation.Type.BOUNCE,
+//                Interpolation.Ease.OUT
+//        );
+//
+//        float straightLineYaw   = yawCurve   * horizontalFactor;
+//        float straightLinePitch = pitchCurve * verticalFactor;
+//
+//        float targetYaw   = this.yaw   + clamp(diff.deltaYaw(),   -straightLineYaw,   straightLineYaw);
+//        float targetPitch = this.pitch + clamp(diff.deltaPitch(), -straightLinePitch, straightLinePitch);
+//
+//        // EMA сглаживание с коэффициентом 0.7
+//        float partialticks = mc.getDeltaTracker().getGameTimeDeltaPartialTick(true);
+//        float f1 = this.mc.level.tickRateManager().isEntityFrozen(mc.player) ? 1.0F : partialticks;
+//        float smoothedYaw   = Mth.lerp(f1, targetYaw,   this.yaw);
+//        float smoothedPitch = Mth.lerp(f1, targetPitch, this.pitch);
+//
+//        return new Rotation(smoothedYaw, smoothedPitch);
+//    }
+//    public Rotation towardsLinear(Rotation other, float horizontalFactor, float verticalFactor) {
+//        RotationDelta diff = rotationDeltaTo(other);
+//
+//        float targetYaw   = this.yaw   + clamp(diff.deltaYaw(),   -horizontalFactor,   horizontalFactor);
+//        float targetPitch = this.pitch + clamp(diff.deltaPitch(), -verticalFactor, verticalFactor);
+//
+////мда у тебя явные отклонения
+////        float smoothedYaw   = Mth.lerp(mc.gameRenderer.getMainCamera().getPartialTickTime(), targetYaw,   this.yaw);
+////        float smoothedPitch = Mth.lerp(mc.gameRenderer.getMainCamera().getPartialTickTime(), targetPitch, this.pitch);
+//        float smoothedYaw   = Mth.rotLerp(mc.gameRenderer.getMainCamera().getPartialTickTime(), targetYaw, this.yaw);
+//        float smoothedPitch   = Mth.rotLerp(mc.gameRenderer.getMainCamera().getPartialTickTime(), targetPitch, this.pitch);
+//
+//        return new Rotation(smoothedYaw, smoothedPitch);
+//    }
     public Rotation towardsLinear(Rotation other, float horizontalFactor, float verticalFactor) {
         RotationDelta diff = rotationDeltaTo(other);
-        float rotationDifference = diff.length();
-        if (rotationDifference == 0f) return this;
 
-        float straightLineYaw   = Math.abs(diff.deltaYaw()   / rotationDifference) * horizontalFactor;
-        float straightLinePitch = Math.abs(diff.deltaPitch() / rotationDifference) * verticalFactor;
+        float targetYaw   = this.yaw   + clamp(diff.deltaYaw(),   -horizontalFactor,   horizontalFactor);
+        float targetPitch = this.pitch + clamp(diff.deltaPitch(), -verticalFactor, verticalFactor);
 
-        return new Rotation(
-            this.yaw   + Mth.clamp(diff.deltaYaw(),   -straightLineYaw,   straightLineYaw),
-            this.pitch + Mth.clamp(diff.deltaPitch(), -straightLinePitch, straightLinePitch)
-        );
-    }
-    public static float crosshairAngleToEntity(Entity entity) {
-        if (mc.player == null) {
-            return 0.0F;
-        }
+        float tickDelta = mc.getDeltaTracker().getGameTimeDeltaTicks();
+        float smoothedYaw   = Mth.rotLerp(tickDelta, this.yaw, targetYaw);
+        float smoothedPitch = Mth.rotLerp(tickDelta, this.pitch, targetPitch);
 
-        Vec3 eyes = mc.player.getEyePosition(1.0F);
-        Vec3 targetPoint = entity.getBoundingBox().getCenter();
-
-        Rotation rotationToEntity = Rotation.lookingAt(targetPoint, eyes);
-        Rotation playerRotation = new Rotation(mc.player);
-
-        return playerRotation.angleTo(rotationToEntity);
+        return new Rotation(smoothedYaw, smoothedPitch);
     }
 
+
+
+
+
+    private static float clamp(float value, float min, float max) {
+        return Math.max(min, Math.min(max, value));
+    }
     /**
      * Interpolates this rotation towards [other] using the given [factor].
      */

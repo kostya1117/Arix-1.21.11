@@ -1,5 +1,8 @@
 package net.minecraft.world.entity;
 
+import baritone.api.BaritoneAPI;
+import baritone.api.IBaritone;
+import baritone.api.event.events.RotationMoveEvent;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;
@@ -146,6 +149,7 @@ import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import ru.arixcompany.Arix;
 import ru.arixcompany.features.event.EventRepo;
+import ru.arixcompany.features.event.player.EventDamage;
 import ru.arixcompany.features.module.modules.render.NoRender;
 
 public abstract class LivingEntity extends Entity implements Attackable, WaypointTransmitter {
@@ -218,7 +222,7 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
     public int deathTime;
     public float oAttackAnim;
     public float attackAnim;
-    protected int attackStrengthTicker;
+    public int attackStrengthTicker;
     protected int itemSwapTicker;
     public final WalkAnimationState walkAnimation = new WalkAnimationState();
     public float yBodyRot;
@@ -265,6 +269,12 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
     private final EnumMap<EquipmentSlot, Reference2ObjectMap<Enchantment, Set<EnchantmentLocationBasedEffect>>> activeLocationDependentEnchantments = new EnumMap<>(EquipmentSlot.class);
     protected final EntityEquipment equipment;
     private Waypoint.Icon locatorBarIcon = new Waypoint.Icon();
+    /**
+     * Event called to override the movement direction when jumping
+     */
+    private RotationMoveEvent jumpRotationEvent;
+
+    private RotationMoveEvent elytraRotationEvent;
 
     protected LivingEntity(EntityType<? extends LivingEntity> p_20966_, Level p_20967_) {
         super(p_20966_, p_20967_);
@@ -1241,6 +1251,14 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
                 } else if (p_361865_.getSourcePosition() != null) {
                     d0 = p_361865_.getSourcePosition().x() - this.getX();
                     d1 = p_361865_.getSourcePosition().z() - this.getZ();
+                }
+
+                if (p_361865_.is(DamageTypes.THORNS)) {
+                    EventDamage event = new EventDamage((Player)(Object)this, p_361865_, p_365677_);
+                    EventRepo.call(event);
+
+                    if (event.isCancelled())
+                        return true;
                 }
 
                 this.knockback(0.4F, d0, d1);
@@ -2281,21 +2299,42 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
     public float getJumpBoostPower() {
         return this.hasEffect(MobEffects.JUMP_BOOST) ? 0.1F * (this.getEffect(MobEffects.JUMP_BOOST).getAmplifier() + 1.0F) : 0.0F;
     }
+    private Optional<IBaritone> getBaritone() {
+        // noinspection ConstantConditions
+        if (LocalPlayer.class.isInstance(this)) {
+            return Optional.ofNullable(BaritoneAPI.getProvider().getBaritoneForPlayer((LocalPlayer) (Object) this));
+        } else {
+            return Optional.empty();
+        }
+    }
 
     @VisibleForTesting
     public void jumpFromGround() {
+        this.getBaritone().ifPresent(baritone -> {
+            this.jumpRotationEvent = new RotationMoveEvent(RotationMoveEvent.Type.JUMP, this.getYRot(), this.getXRot());
+            baritone.getGameEventHandler().onPlayerRotationMove(this.jumpRotationEvent);
+        });
+
         float f = this.getJumpPower();
         if (!(f <= 1.0E-5F)) {
             Vec3 vec3 = this.getDeltaMovement();
             this.setDeltaMovement(vec3.x, Math.max(f, vec3.y), vec3.z);
             if (this.isSprinting()) {
-                float f1 = this.getYRot() * (float) (Math.PI / 180.0);
+                float yaw;
+                if (this instanceof LocalPlayer && BaritoneAPI.getProvider().getBaritoneForPlayer((LocalPlayer) (Object) this) != null) {
+                    yaw = this.jumpRotationEvent.getYaw();
+                } else {
+                    yaw = this.getYRot();
+                }
+
+                float f1 = yaw * (float) (Math.PI / 180.0);
                 this.addDeltaMovement(new Vec3(-Mth.sin(f1) * 0.2, 0.0, Mth.cos(f1) * 0.2));
             }
 
             this.needsSync = true;
         }
     }
+
 
     protected void goDownInWater() {
         this.setDeltaMovement(this.getDeltaMovement().add(0.0, -0.04F, 0.0));
@@ -2464,6 +2503,13 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
             double d0 = vec3.horizontalDistance();
             this.setDeltaMovement(this.updateFallFlyingMovement(vec3));
             this.move(MoverType.SELF, this.getDeltaMovement());
+
+            if (this.elytraRotationEvent != null) {
+                this.setYRot(this.elytraRotationEvent.getOriginal().getYaw());
+                this.setXRot(this.elytraRotationEvent.getOriginal().getPitch());
+                this.elytraRotationEvent = null;
+            }
+
             if (!this.level().isClientSide()) {
                 double d1 = this.getDeltaMovement().horizontalDistance();
                 this.handleFallFlyingCollisions(d0, d1);
@@ -2477,6 +2523,13 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
     }
 
     private Vec3 updateFallFlyingMovement(Vec3 p_366729_) {
+        this.getBaritone().ifPresent(baritone -> {
+            this.elytraRotationEvent = new RotationMoveEvent(RotationMoveEvent.Type.MOTION_UPDATE, this.getYRot(), this.getXRot());
+            baritone.getGameEventHandler().onPlayerRotationMove(this.elytraRotationEvent);
+            this.setYRot(this.elytraRotationEvent.getYaw());
+            this.setXRot(this.elytraRotationEvent.getPitch());
+        });
+
         Vec3 vec3 = this.getLookAngle();
         float f = this.getXRot() * (float) (Math.PI / 180.0);
         double d0 = Math.sqrt(vec3.x * vec3.x + vec3.z * vec3.z);

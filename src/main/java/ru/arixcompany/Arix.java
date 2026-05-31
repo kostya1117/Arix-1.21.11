@@ -24,6 +24,7 @@ import ru.arixcompany.features.file.exception.FileProcessingException;
 import ru.arixcompany.features.module.ModuleRepo;
 import ru.arixcompany.features.module.Theme;
 import ru.arixcompany.utils.IMinecraft;
+import ru.arixcompany.utils.math.Timer;
 import ru.arixcompany.utils.render.shader.ShadersRepo;
 import ru.arixcompany.utils.render.font.FontManager;
 
@@ -76,6 +77,7 @@ public class Arix implements IMinecraft {
 
         shadersRepo = new ShadersRepo();
         shadersRepo.init();
+        new Timer();
 
         otherRepo = new OtherRepo();
 

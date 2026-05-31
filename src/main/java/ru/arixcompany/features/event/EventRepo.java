@@ -29,15 +29,20 @@ public class EventRepo {
     private static void register(Method method, Object object) {
         try {
             Class<? extends Event> indexClass = (Class<? extends Event>) method.getParameterTypes()[0];
-            MethodData data = new MethodData(object, method);
+            EventHandler annotation = method.getAnnotation(EventHandler.class);
+            int priority = annotation.priority().getValue();
+
+            MethodData data = new MethodData(object, method, priority);
 
             if (!data.getTarget().isAccessible()) {
                 data.getTarget().setAccessible(true);
             }
 
             if (REGISTRY_MAP.containsKey(indexClass)) {
-                if (!REGISTRY_MAP.get(indexClass).contains(data)) {
-                    REGISTRY_MAP.get(indexClass).add(data);
+                List<MethodData> list = REGISTRY_MAP.get(indexClass);
+                if (!list.contains(data)) {
+                    list.add(data);
+                    sortByPriority(list);
                 }
             } else {
                 REGISTRY_MAP.put(indexClass, new CopyOnWriteArrayList<>() {{
@@ -47,6 +52,10 @@ public class EventRepo {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private static void sortByPriority(List<MethodData> list) {
+        list.sort(Comparator.comparingInt(MethodData::getPriority).reversed());
     }
 
     public static void cleanMap(boolean onlyEmptyEntries) {
@@ -87,10 +96,12 @@ public class EventRepo {
     private static final class MethodData {
         private final Object source;
         private final Method target;
+        private final int priority;
 
-        public MethodData(Object source, Method target) {
+        public MethodData(Object source, Method target, int priority) {
             this.source = source;
             this.target = target;
+            this.priority = priority;
         }
 
         @Override

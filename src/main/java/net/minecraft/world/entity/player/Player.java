@@ -1854,7 +1854,7 @@ public abstract class Player extends Avatar implements ContainerUser {
     }
 
     @Override
-    protected float getBlockSpeedFactor() {
+    public float getBlockSpeedFactor() {
         return !this.abilities.flying && !this.isFallFlying() ? super.getBlockSpeedFactor() : 1.0F;
     }
 
