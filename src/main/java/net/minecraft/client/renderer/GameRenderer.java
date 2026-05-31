@@ -127,6 +127,7 @@ import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import ru.arixcompany.Arix;
 import ru.arixcompany.features.module.modules.player.ChestStealer;
+import ru.arixcompany.features.module.modules.render.AspectRatio;
 import ru.arixcompany.utils.math.ProjectUtils;
 
 public class GameRenderer implements TrackedWaypoint.Projector, AutoCloseable {
@@ -555,6 +556,7 @@ public class GameRenderer implements TrackedWaypoint.Projector, AutoCloseable {
 
     private Matrix4f cachedProjectionMatrix = new Matrix4f();
     private float lastZoomFactor = 1.0F;
+
     public Matrix4f getProjectionMatrix(float p_364788_) {
         boolean zoom = false;
         if (this.minecraft.screen == null) {
@@ -565,10 +567,9 @@ public class GameRenderer implements TrackedWaypoint.Projector, AutoCloseable {
             this.cachedProjectionMatrix = null;
         }
 
-        // Плавная интерполяция зума
         float targetZoom = zoom ? 1.0F : 0.0F;
         this.zoomProgress = Mth.lerp(0.15F, this.zoomProgress, targetZoom);
-        
+
         float zoomFactor = Mth.lerp(this.zoomProgress, 1.0F, 4.0F);
 
         this.lastZoomFactor = zoomFactor;
@@ -581,6 +582,9 @@ public class GameRenderer implements TrackedWaypoint.Projector, AutoCloseable {
 
         float aspect = (float)this.minecraft.getWindow().getWidth() /
                 this.minecraft.getWindow().getHeight();
+
+        aspect += AspectRatio.getAspectRation();
+
         float adjustedFOV = p_364788_ / zoomFactor;
 
         Matrix4f result = new Matrix4f();

@@ -9,11 +9,6 @@ import net.minecraft.client.main.Main;
 
 public class Start {
     public static void main(String[] args) throws IOException {
-        /*
-         * start minecraft game application
-         * --version is just used as 'launched version' in snoop data and is required
-         * Working directory is used as gameDir if not provided
-         */
         int INDEX = 29;
         String assets = findAssets(INDEX);
 
