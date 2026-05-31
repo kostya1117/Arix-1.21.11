@@ -20,6 +20,7 @@ import ru.arixcompany.features.event.world.EventUpdate;
 import ru.arixcompany.features.module.Category;
 import ru.arixcompany.features.module.Module;
 import ru.arixcompany.features.module.setting.implement.ValueSetting;
+import ru.arixcompany.utils.Textures;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -28,10 +29,6 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class JumpCircle extends Module {
-
-    private static final Identifier TEX_CIRCLE =
-            Identifier.withDefaultNamespace("textures/arix/circle.png");
-
     private static final float ROTATE_SPEED = 2f;
 
     private static final RenderPipeline PIPELINE = RenderPipelines.register(
@@ -49,7 +46,7 @@ public class JumpCircle extends Module {
             "jump_circle",
             RenderSetup.builder(PIPELINE)
                     .bufferSize(4096)
-                    .withTexture(RenderType.SAMPLER0, TEX_CIRCLE)
+                    .withTexture(RenderType.SAMPLER0, Textures.circle)
                     .createRenderSetup()
     );
 

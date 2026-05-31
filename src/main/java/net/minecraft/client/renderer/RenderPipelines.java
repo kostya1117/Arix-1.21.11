@@ -45,7 +45,7 @@ public class RenderPipelines implements IRenderPipelines {
         .withVertexShader("core/block")
         .withFragmentShader("core/block")
         .buildSnippet();
-    private static final RenderPipeline.Snippet ENTITY_SNIPPET = RenderPipeline.builder(MATRICES_FOG_LIGHT_DIR_SNIPPET)
+    public static final RenderPipeline.Snippet ENTITY_SNIPPET = RenderPipeline.builder(MATRICES_FOG_LIGHT_DIR_SNIPPET)
         .withVertexShader("core/entity")
         .withFragmentShader("core/entity")
         .withSampler("Sampler0")

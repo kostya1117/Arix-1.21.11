@@ -2,10 +2,12 @@ package ru.arixcompany.utils.render.shader.shaders;
 
 import com.mojang.blaze3d.pipeline.BlendFunction;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
+import com.mojang.blaze3d.pipeline.RenderTarget;
 import com.mojang.blaze3d.platform.DepthTestFunction;
 import com.mojang.blaze3d.platform.DestFactor;
 import com.mojang.blaze3d.platform.SourceFactor;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.textures.GpuTextureView;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.ByteBufferBuilder;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
@@ -14,6 +16,7 @@ import com.mojang.blaze3d.vertex.VertexFormat;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
 import net.optifine.render.BufferUploader;
@@ -22,13 +25,11 @@ import ru.arixcompany.utils.render.shader.shaders.states.RoundRectRenderState;
 
 public final class RoundRectShader implements IShader {
 
-    private static boolean initialized = false;
-
     private static final RenderPipeline ROUND_RECT_PIPELINE = RenderPipelines.register(
             RenderPipeline.builder(RenderPipelines.GUI_TEXTURED_SNIPPET)
-                    .withLocation("pipeline/round_rect")
-                    .withVertexShader("core/round_rect")
-                    .withFragmentShader("core/round_rect")
+                    .withLocation(Identifier.arix("pipeline/round_rect")) // Передаем объект, а не строку!
+                    .withVertexShader(Identifier.arix("core/round_rect"))
+                    .withFragmentShader(Identifier.arix("core/round_rect"))
                     .withVertexFormat(DefaultVertexFormat.POSITION_TEX_COLOR, VertexFormat.Mode.QUADS)
                     .withBlend(new BlendFunction(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA))
                     .withDepthWrite(false)
@@ -39,9 +40,9 @@ public final class RoundRectShader implements IShader {
 
     private static final RenderPipeline ROUND_RECT_OUTLINE_PIPELINE = RenderPipelines.register(
             RenderPipeline.builder(RenderPipelines.GUI_TEXTURED_SNIPPET)
-                    .withLocation("pipeline/round_rect_outline")
-                    .withVertexShader("core/round_rect_outline")
-                    .withFragmentShader("core/round_rect_outline")
+                    .withLocation(Identifier.arix("pipeline/round_rect_outline")) // Передаем объект!
+                    .withVertexShader(Identifier.arix("core/round_rect_outline"))
+                    .withFragmentShader(Identifier.arix("core/round_rect_outline"))
                     .withVertexFormat(DefaultVertexFormat.POSITION_TEX_COLOR, VertexFormat.Mode.QUADS)
                     .withBlend(new BlendFunction(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA))
                     .withDepthWrite(false)
@@ -52,9 +53,9 @@ public final class RoundRectShader implements IShader {
 
     private static final RenderPipeline ROUND_RECT_CORNERS_PIPELINE = RenderPipelines.register(
             RenderPipeline.builder(RenderPipelines.GUI_TEXTURED_SNIPPET)
-                    .withLocation("pipeline/round_rect_corners")
-                    .withVertexShader("core/round_rect_corners")
-                    .withFragmentShader("core/round_rect_corners")
+                    .withLocation(Identifier.arix("pipeline/round_rect_corners")) // Передаем объект!
+                    .withVertexShader(Identifier.arix("core/round_rect_corners"))
+                    .withFragmentShader(Identifier.arix("core/round_rect_corners"))
                     .withVertexFormat(DefaultVertexFormat.POSITION_TEX_COLOR, VertexFormat.Mode.QUADS)
                     .withBlend(new BlendFunction(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA))
                     .withDepthWrite(false)
@@ -63,11 +64,8 @@ public final class RoundRectShader implements IShader {
                     .build()
     );
 
-
     @Override
     public void init() {
-        if (initialized) return;
-        initialized = true;
     }
 
     public static void drawRoundRect(float x, float y, float w, float h, float radius, int color) {

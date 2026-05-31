@@ -28,7 +28,6 @@ import java.awt.*;
 
 public class ChinaHat extends Module {
 
-    // ... (старые PIPELINE и RenderType оставляем без изменений)
     private static final RenderPipeline PIPELINE_FILL = RenderPipelines.register(
             RenderPipeline.builder(RenderPipelines.MATRICES_PROJECTION_SNIPPET)
                     .withLocation(Identifier.fromNamespaceAndPath("arix", "pipeline/world/chinahat_fill"))

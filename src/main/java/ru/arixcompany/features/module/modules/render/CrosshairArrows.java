@@ -2,7 +2,6 @@ package ru.arixcompany.features.module.modules.render;
 
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
-import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 import org.joml.Matrix3x2fStack;
 import ru.arixcompany.Arix;
@@ -18,6 +17,7 @@ import ru.arixcompany.features.repos.FriendRepo;
 import ru.arixcompany.utils.Colors;
 import ru.arixcompany.utils.animation.Animation;
 import ru.arixcompany.utils.animation.Direction;
+import ru.arixcompany.utils.Textures;
 import ru.arixcompany.utils.animation.impl.EaseInOutQuad;
 import ru.arixcompany.utils.render.RenderUtils;
 import ru.arixcompany.utils.render.font.FontManager;
@@ -28,20 +28,20 @@ import java.util.List;
 
 public class CrosshairArrows extends Module {
 
-    private static final Identifier TEX_ARROW =
-            Identifier.withDefaultNamespace("textures/arix/arrow.png");
-
     private final ValueSetting arrowSize = new ValueSetting("Размер")
             .setValue(24).range(8, 48).step(1);
 
     private final BooleanSetting showDistance = new BooleanSetting("Расстояние")
             .setValue(true);
 
+    private final BooleanSetting onlyFriends = new BooleanSetting("Только друзья")
+            .setValue(false);
+
     private final List<ArrowEntry> entries = new ArrayList<>();
 
     public CrosshairArrows() {
         super("CrosshairArrows", Category.Render);
-        setup(arrowSize, showDistance);
+        setup(arrowSize, showDistance, onlyFriends);
     }
 
     @Override
@@ -102,7 +102,15 @@ public class CrosshairArrows extends Module {
         void update(List<Player> alivePlayers) {
             boolean alive = alivePlayers.contains(player) && player.isAlive();
             boolean isTarget = player == HitAura.getTarget();
-            animation.setDirection(alive && !isTarget ? Direction.FORWARDS : Direction.BACKWARDS);
+            boolean isFriend = FriendRepo.isFriend(player);
+
+            boolean shouldShow = alive && !isTarget;
+
+            if (onlyFriends.isValue()) {
+                shouldShow = shouldShow && isFriend;
+            }
+
+            animation.setDirection(shouldShow ? Direction.FORWARDS : Direction.BACKWARDS);
         }
 
         void render(EventRender2D e, float cx, float cy, float sz) {
@@ -156,7 +164,7 @@ public class CrosshairArrows extends Module {
             pose.translate((float) xPos, (float) yPos);
             pose.rotate((float)(angleRad - Math.PI / 2.0));
             float half = sz / 2f;
-            RenderUtils.drawImage(e.getGuiGraphics(), TEX_ARROW,
+            RenderUtils.drawImage(e.getGuiGraphics(), Textures.arrow,
                     -half, -half, sz, sz, color);
 
             pose.popMatrix();

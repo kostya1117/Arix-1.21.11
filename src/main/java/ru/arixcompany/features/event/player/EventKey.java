@@ -3,6 +3,7 @@ package ru.arixcompany.features.event.player;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import ru.arixcompany.features.event.Event;
+import ru.arixcompany.features.module.setting.implement.BindSetting;
 
 @AllArgsConstructor
 @Getter
@@ -15,5 +16,13 @@ public final class EventKey extends Event {
             return -100 - key;
         }
         return key;
+    }
+
+    public boolean isKeyDown(int key) {
+        return getKey() == key;
+    }
+
+    public boolean isKeyDown(BindSetting b) {
+        return getKey() == b.getKey();
     }
 }

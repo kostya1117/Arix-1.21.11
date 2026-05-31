@@ -30,7 +30,6 @@ import net.optifine.reflect.Reflector;
 import net.optifine.shaders.Shaders;
 import org.apache.commons.lang3.tuple.Pair;
 import org.joml.Matrix4f;
-import org.jspecify.annotations.Nullable;
 import ru.arixcompany.Arix;
 import ru.arixcompany.features.module.modules.render.NoRender;
 
@@ -112,19 +111,29 @@ public class ScreenEffectRenderer {
             float f2 = f * f1;
             float f3 = 10.25F * f2 * f1 - 24.95F * f1 * f1 + 25.5F * f2 - 13.8F * f1 + 4.0F * f;
             float f4 = f3 * (float) Math.PI;
-            float f5 = (float)this.minecraft.getWindow().getWidth() / this.minecraft.getWindow().getHeight();
+            float f5 = (float) this.minecraft.getWindow().getWidth() / this.minecraft.getWindow().getHeight();
             float f6 = this.itemActivationOffX * 0.3F * f5;
             float f7 = this.itemActivationOffY * 0.3F;
             p_408146_.pushPose();
-            p_408146_.translate(f6 * Mth.abs(Mth.sin(f4 * 2.0F)), f7 * Mth.abs(Mth.sin(f4 * 2.0F)), -10.0F + 9.0F * Mth.sin(f4));
-            float f8 = 0.8F;
+            p_408146_.translate(
+                    f6 * Mth.abs(Mth.sin(f4 * 2.0F)),
+                    f7 * Mth.abs(Mth.sin(f4 * 2.0F)),
+                    -10.0F + 9.0F * Mth.sin(f4)
+            );
             p_408146_.scale(0.8F, 0.8F, 0.8F);
             p_408146_.mulPose(Axis.YP.rotationDegrees(900.0F * Mth.abs(Mth.sin(f4))));
             p_408146_.mulPose(Axis.XP.rotationDegrees(6.0F * Mth.cos(f * 8.0F)));
             p_408146_.mulPose(Axis.ZP.rotationDegrees(6.0F * Mth.cos(f * 8.0F)));
             this.minecraft.gameRenderer.getLighting().setupFor(Lighting.Entry.ITEMS_3D);
             ItemStackRenderState itemstackrenderstate = new ItemStackRenderState();
-            this.minecraft.getItemModelResolver().updateForTopItem(itemstackrenderstate, this.itemActivationItem, ItemDisplayContext.FIXED, this.minecraft.level, null, 0);
+            this.minecraft.getItemModelResolver().updateForTopItem(
+                    itemstackrenderstate,
+                    this.itemActivationItem,
+                    ItemDisplayContext.FIXED,
+                    this.minecraft.level,
+                    null,
+                    0
+            );
             itemstackrenderstate.submit(p_408146_, p_425832_, 15728880, OverlayTexture.NO_OVERLAY, 0);
             p_408146_.popPose();
         }

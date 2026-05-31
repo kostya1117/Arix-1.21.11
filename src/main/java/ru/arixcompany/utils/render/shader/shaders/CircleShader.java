@@ -14,6 +14,7 @@ import com.mojang.blaze3d.vertex.VertexFormat;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
 import net.optifine.render.BufferUploader;
@@ -21,14 +22,11 @@ import ru.arixcompany.utils.render.shader.IShader;
 import ru.arixcompany.utils.render.shader.shaders.states.CircleRenderState;
 
 public final class CircleShader implements IShader {
-
-    private static boolean initialized = false;
-
     private static final RenderPipeline CIRCLE_PIPELINE = RenderPipelines.register(
             RenderPipeline.builder(RenderPipelines.GUI_TEXTURED_SNIPPET)
-                    .withLocation("pipeline/circle")
-                    .withVertexShader("core/circle")
-                    .withFragmentShader("core/circle")
+                    .withLocation(Identifier.arix("pipeline/circle"))
+                    .withVertexShader(Identifier.arix("core/circle"))
+                    .withFragmentShader(Identifier.arix("core/circle"))
                     .withVertexFormat(DefaultVertexFormat.POSITION_TEX_COLOR, VertexFormat.Mode.QUADS)
                     .withBlend(new BlendFunction(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA))
                     .withDepthWrite(false)
@@ -39,8 +37,6 @@ public final class CircleShader implements IShader {
 
     @Override
     public void init() {
-        if (initialized) return;
-        initialized = true;
     }
 
     public static void drawCircle(float cx, float cy, float startDeg, float endDeg, float radius, float thickness, int color) {

@@ -149,12 +149,14 @@ public class VanillaPackResourcesBuilder {
     }
 
     public VanillaPackResources build(PackLocationInfo p_332000_) {
+        this.namespaces.add("arix");
+
         return new VanillaPackResources(
-            p_332000_,
-            this.metadata,
-            Set.copyOf(this.namespaces),
-            copyAndReverse(this.rootPaths),
-            Util.makeEnumMap(PackType.class, p_390159_ -> copyAndReverse(this.pathsForType.getOrDefault(p_390159_, Set.of())))
+                p_332000_,
+                this.metadata,
+                Set.copyOf(this.namespaces),
+                copyAndReverse(this.rootPaths),
+                Util.makeEnumMap(PackType.class, p_390159_ -> copyAndReverse(this.pathsForType.getOrDefault(p_390159_, Set.of())))
         );
     }
 

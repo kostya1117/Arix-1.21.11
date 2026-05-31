@@ -13,6 +13,7 @@ import com.mojang.blaze3d.vertex.MeshData;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.optifine.render.BufferUploader;
 import ru.arixcompany.utils.render.shader.shaders.states.FractalFlameRenderState;
@@ -24,9 +25,9 @@ public final class FractalFlameShader implements IShader {
 
     private static final RenderPipeline FRACTAL_FLAME_PIPELINE = RenderPipelines.register(
             RenderPipeline.builder(RenderPipelines.GUI_TEXTURED_SNIPPET)
-                    .withLocation("pipeline/fractal_flame")
-                    .withVertexShader("core/fractal_flame")
-                    .withFragmentShader("core/fractal_flame")
+                    .withLocation(Identifier.arix("pipeline/fractal_flame"))
+                    .withVertexShader(Identifier.arix("core/fractal_flame"))
+                    .withFragmentShader(Identifier.arix("core/fractal_flame"))
                     .withVertexFormat(DefaultVertexFormat.POSITION_TEX_COLOR, VertexFormat.Mode.QUADS)
                     .withBlend(new BlendFunction(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA))
                     .withDepthWrite(false)

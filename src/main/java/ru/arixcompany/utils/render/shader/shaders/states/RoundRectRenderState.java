@@ -2,6 +2,7 @@ package ru.arixcompany.utils.render.shader.shaders.states;
 
 import com.mojang.blaze3d.pipeline.RenderPipeline;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.gui.render.TextureSetup;
 import net.minecraft.client.gui.render.state.GuiElementRenderState;
@@ -19,8 +20,8 @@ public record RoundRectRenderState(
 
     @Override
     public void buildVertices(VertexConsumer buf) {
-        float guiWidth  = net.minecraft.client.Minecraft.getInstance().getWindow().getGuiScaledWidth();
-        float guiHeight = net.minecraft.client.Minecraft.getInstance().getWindow().getGuiScaledHeight();
+        float guiWidth  = Minecraft.getInstance().getWindow().getGuiScaledWidth();
+        float guiHeight = Minecraft.getInstance().getWindow().getGuiScaledHeight();
 
         float x1 = x / guiWidth  * 2.0f - 1.0f;
         float y1 = 1.0f - y / guiHeight * 2.0f;

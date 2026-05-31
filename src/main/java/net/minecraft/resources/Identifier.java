@@ -18,9 +18,6 @@ public final class Identifier implements Comparable<Identifier> {
     public static final Codec<Identifier> CODEC = Codec.STRING.comapFlatMap(Identifier::read, Identifier::toString).stable();
     public static final StreamCodec<ByteBuf, Identifier> STREAM_CODEC = ByteBufCodecs.STRING_UTF8.map(Identifier::parse, Identifier::toString);
     public static final SimpleCommandExceptionType ERROR_INVALID = new SimpleCommandExceptionType(Component.translatable("argument.id.invalid"));
-    public static final char NAMESPACE_SEPARATOR = ':';
-    public static final String DEFAULT_NAMESPACE = "minecraft";
-    public static final String REALMS_NAMESPACE = "realms";
     private final String namespace;
     private final String path;
     private final boolean defaultNamespace;
@@ -59,6 +56,13 @@ public final class Identifier implements Comparable<Identifier> {
 
     public static Identifier withDefaultNamespace(String p_450610_) {
         return new Identifier("minecraft", assertValidPath("minecraft", p_450610_));
+    }
+
+    public static Identifier arix(String path) {
+        if (path.startsWith("arix/")) {
+            path = path.substring(5);
+        }
+        return new Identifier("arix", path);
     }
 
     public static  Identifier tryParse(String p_456562_) {

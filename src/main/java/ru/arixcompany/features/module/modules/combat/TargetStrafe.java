@@ -19,7 +19,6 @@ import ru.arixcompany.features.module.setting.implement.BooleanSetting;
 import ru.arixcompany.features.module.setting.implement.SelectSetting;
 import ru.arixcompany.features.module.setting.implement.ValueSetting;
 import ru.arixcompany.utils.player.MoveUtils;
-import ru.arixcompany.utils.player.inv.InventoryUtility;
 
 public class TargetStrafe extends Module {
 
@@ -35,14 +34,7 @@ public class TargetStrafe extends Module {
 
     public static final SelectSetting boost =
             new SelectSetting("Буст")
-                    .value("Нет", "Элитра", "Урон");
-
-    public static final ValueSetting setSpeed =
-            new ValueSetting("Скорость элитры")
-                    .range(0.0f, 2.0f)
-                    .setValue(1.3f)
-                    .setStep(0.05f)
-                    .visible(() -> boost.isSelected("Элитра"));
+                    .value("Нет", "Урон");
 
     public static final ValueSetting velReduction =
             new ValueSetting("Снижение скорости")
@@ -71,7 +63,7 @@ public class TargetStrafe extends Module {
 
     public TargetStrafe() {
         super("TargetStrafe", Category.Combat);
-        setup(jump, distance, boost, setSpeed, velReduction, maxVelocitySpeed);
+        setup(jump, distance, boost, velReduction, maxVelocitySpeed);
     }
 
     @Override
@@ -133,10 +125,6 @@ public class TargetStrafe extends Module {
 
         if (mc.player.onGround()) {
             n8 = speedAttr * n7;
-            if (motionY > 0) {
-                n8 += boost.isSelected("Элитра") && InventoryUtility.getElytra() != -1 && disabled
-                        ? 0.65f : 0.2f;
-            }
             disabled = false;
         } else {
             n8 = 0.0255f;
@@ -170,29 +158,6 @@ public class TargetStrafe extends Module {
         return speed;
     }
 
-    public static void doElytraBoost(int elytraSlot) {
-        if (elytraSlot == -1) return;
-        if (System.currentTimeMillis() - disableTime <= 190L) return;
-
-        if (elytraSlot != -2) {
-            mc.gameMode.handleInventoryMouseClick(0, elytraSlot, 1, ClickType.PICKUP, mc.player);
-            mc.gameMode.handleInventoryMouseClick(0, 6, 1, ClickType.PICKUP, mc.player);
-        }
-
-        mc.player.connection.send(new ServerboundPlayerCommandPacket(
-                mc.player, ServerboundPlayerCommandPacket.Action.START_FALL_FLYING));
-        mc.player.connection.send(new ServerboundPlayerCommandPacket(
-                mc.player, ServerboundPlayerCommandPacket.Action.START_FALL_FLYING));
-
-        if (elytraSlot != -2) {
-            mc.gameMode.handleInventoryMouseClick(0, 6, 1, ClickType.PICKUP, mc.player);
-            mc.gameMode.handleInventoryMouseClick(0, elytraSlot, 1, ClickType.PICKUP, mc.player);
-        }
-
-        disableTime = System.currentTimeMillis();
-        disabled = true;
-    }
-
     private double angleToPoint(double x, double z) {
         double dx = x - mc.player.getX();
         double dz = z - mc.player.getZ();
@@ -205,29 +170,12 @@ public class TargetStrafe extends Module {
 
         LivingEntity target = HitAura.target;
 
-        if (boost.isSelected("Элитра")) {
-            int elytraSlot = InventoryUtility.getElytra();
-            if (elytraSlot != -1 && !mc.player.onGround()
-                    && mc.player.fallDistance > 0 && !disabled) {
-                doElytraBoost(elytraSlot);
-            }
-        }
-
         if (!canStrafe() || target == null) {
             oldSpeed = 0;
             return;
         }
 
         double motionY = mc.player.getDeltaMovement().y;
-
-        if (boost.isSelected("Элитра") && InventoryUtility.getElytra() != -1) {
-            if (MoveUtils.isMoving() && !mc.player.onGround()
-                    && mc.level.getBlockCollisions(mc.player,
-                    mc.player.getBoundingBox().move(0, motionY, 0)).iterator().hasNext()
-                    && disabled) {
-                oldSpeed = setSpeed.getValue();
-            }
-        }
 
         double speed = calculateSpeed(motionY);
 

@@ -4,6 +4,7 @@ import ru.arixcompany.features.module.Category;
 import ru.arixcompany.features.module.Module;
 import ru.arixcompany.features.module.setting.implement.ListSetting;
 import ru.arixcompany.utils.render.RenderUtils;
+import ru.arixcompany.utils.render.shader.shaders.RoundRectShader;
 
 public class Interface extends Module {
 

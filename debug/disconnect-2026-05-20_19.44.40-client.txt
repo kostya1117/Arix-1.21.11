@@ -1,0 +1,105 @@
+---- Minecraft Network Protocol Error Report ----
+// Are you sure you are not moving wrongly?
+
+Time: 2026-05-20 19:44:41
+Description: Packet handling error
+
+java.lang.NullPointerException: Cannot invoke "net.minecraft.client.gui.components.LerpingBossEvent.setName(net.minecraft.network.chat.Component)" because the return value of "java.util.Map.get(Object)" is null
+	at net.minecraft.client.gui.components.BossHealthOverlay$1.updateName(BossHealthOverlay.java:156)
+	at net.minecraft.network.protocol.game.ClientboundBossEventPacket$UpdateNameOperation.dispatch(ClientboundBossEventPacket.java:227)
+	at net.minecraft.network.protocol.game.ClientboundBossEventPacket.dispatch(ClientboundBossEventPacket.java:110)
+	at net.minecraft.client.gui.components.BossHealthOverlay.update(BossHealthOverlay.java:127)
+	at net.minecraft.client.multiplayer.ClientPacketListener.handleBossUpdate(ClientPacketListener.java:2117)
+	at net.minecraft.network.protocol.game.ClientboundBossEventPacket.handle(ClientboundBossEventPacket.java:106)
+	at net.minecraft.network.protocol.game.ClientboundBossEventPacket.handle(ClientboundBossEventPacket.java:13)
+	at net.minecraft.network.PacketProcessor$ListenerAndPacket.handle(PacketProcessor.java:73)
+	at net.minecraft.network.PacketProcessor.processQueuedPackets(PacketProcessor.java:58)
+	at net.minecraft.client.Minecraft.runTick(Minecraft.java:1229)
+	at net.minecraft.client.Minecraft.run(Minecraft.java:878)
+	at net.minecraft.client.main.Main.main(Main.java:223)
+	at mcp.client.Start.main(Start.java:20)
+
+
+A detailed walkthrough of the error, its code path and all known details is as follows:
+---------------------------------------------------------------------------------------
+
+-- Head --
+Thread: Render thread
+Stacktrace:
+	at net.minecraft.client.gui.components.BossHealthOverlay$1.updateName(BossHealthOverlay.java:156)
+	at net.minecraft.network.protocol.game.ClientboundBossEventPacket$UpdateNameOperation.dispatch(ClientboundBossEventPacket.java:227)
+	at net.minecraft.network.protocol.game.ClientboundBossEventPacket.dispatch(ClientboundBossEventPacket.java:110)
+	at net.minecraft.client.gui.components.BossHealthOverlay.update(BossHealthOverlay.java:127)
+
+-- Incoming Packet --
+Details:
+	Type: clientbound/minecraft:boss_event
+	Is Terminal: false
+	Is Skippable: false
+Stacktrace:
+	at net.minecraft.network.protocol.PacketUtils.fillCrashReport(PacketUtils.java:41)
+	at net.minecraft.client.multiplayer.ClientCommonPacketListenerImpl.storeDisconnectionReport(ClientCommonPacketListenerImpl.java:132)
+	at net.minecraft.client.multiplayer.ClientCommonPacketListenerImpl.onPacketError(ClientCommonPacketListenerImpl.java:118)
+	at net.minecraft.network.PacketProcessor$ListenerAndPacket.handle(PacketProcessor.java:79)
+	at net.minecraft.network.PacketProcessor.processQueuedPackets(PacketProcessor.java:58)
+	at net.minecraft.client.Minecraft.runTick(Minecraft.java:1229)
+	at net.minecraft.client.Minecraft.run(Minecraft.java:878)
+	at net.minecraft.client.main.Main.main(Main.java:223)
+	at mcp.client.Start.main(Start.java:20)
+
+-- Connection --
+Details:
+	Protocol: play
+	Flow: CLIENTBOUND
+	Is Local: false
+	Server type: OTHER
+	Server brand: LimboAPI (1.1.27-SNAPSHOT (git-2a79564)) -> LimboFilter
+
+-- System Details --
+Details:
+	Minecraft Version: 1.21.11
+	Minecraft Version ID: 1.21.11
+	Operating System: Windows 10 (amd64) version 10.0
+	Java Version: 21.0.10, Microsoft
+	Java VM Version: OpenJDK 64-Bit Server VM (mixed mode, sharing), Microsoft
+	Memory: 134307944 bytes (128 MiB) / 466616320 bytes (445 MiB) up to 1591738368 bytes (1518 MiB)
+	CPUs: 4
+	Processor Vendor: AuthenticAMD
+	Processor Name: AMD Ryzen 3 3250U with Radeon Graphics         
+	Identifier: AuthenticAMD Family 23 Model 24 Stepping 1
+	Microarchitecture: Zen / Zen+
+	Frequency (GHz): 2.60
+	Number of physical packages: 1
+	Number of physical CPUs: 2
+	Number of logical CPUs: 4
+	Graphics card #0 name: AMD Radeon(TM) Vega 3 Graphics 
+	Graphics card #0 vendor: Advanced Micro Devices, Inc.
+	Graphics card #0 VRAM (MiB): 2048.00
+	Graphics card #0 deviceId: VideoController1
+	Graphics card #0 versionInfo: 31.0.21031.1005
+	Memory slot #0 capacity (MiB): 8192.00
+	Memory slot #0 clockSpeed (GHz): 3.20
+	Memory slot #0 type: DDR4
+	Virtual memory max (MiB): 16064.38
+	Virtual memory used (MiB): 9828.27
+	Swap memory total (MiB): 10000.00
+	Swap memory used (MiB): 1190.73
+	Space in storage for jna.tmpdir (MiB): <path not set>
+	Space in storage for org.lwjgl.system.SharedLibraryExtractPath (MiB): <path not set>
+	Space in storage for io.netty.native.workdir (MiB): <path not set>
+	Space in storage for java.io.tmpdir (MiB): available: 9082.31, total: 59103.00
+	Space in storage for workdir (MiB): available: 58021.72, total: 184138.00
+	JVM Flags: 0 total; 
+	Debug Flags: 0 total; 
+	OptiFine Version: OptiFine_1.21.11_HD_U_J9
+	OptiFine Build: null
+	Render Distance Chunks: 2
+	Mipmaps: 0
+	Anisotropic Filtering: 1
+	Antialiasing: 0
+	Multitexture: false
+	Shaders: null
+	OpenGlVersion: 3.3.0 Core Profile Context 23.9.1.230821
+	OpenGlRenderer: AMD Radeon(TM) Vega 3 Graphics 
+	OpenGlVendor: ATI Technologies Inc.
+	CpuCount: 4

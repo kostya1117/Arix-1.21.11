@@ -1,0 +1,24 @@
+{
+  "stats": {
+    "minecraft:used": {
+      "minecraft:totem_of_undying": 2,
+      "minecraft:enchanted_golden_apple": 1
+    },
+    "minecraft:custom": {
+      "minecraft:damage_resisted": 276,
+      "minecraft:time_since_rest": 1815,
+      "minecraft:walk_one_cm": 314,
+      "minecraft:leave_game": 1,
+      "minecraft:damage_taken": 794,
+      "minecraft:play_time": 1815,
+      "minecraft:damage_absorbed": 320,
+      "minecraft:jump": 36,
+      "minecraft:time_since_death": 1815,
+      "minecraft:sprint_one_cm": 1611,
+      "minecraft:fall_one_cm": 15941,
+      "minecraft:total_world_time": 1842,
+      "minecraft:fly_one_cm": 13372
+    }
+  },
+  "DataVersion": 4671
+}

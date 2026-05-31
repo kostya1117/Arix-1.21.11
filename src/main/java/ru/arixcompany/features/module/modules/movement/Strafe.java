@@ -14,11 +14,9 @@ import ru.arixcompany.features.event.world.EventPreTick;
 import ru.arixcompany.features.event.world.EventUpdate;
 import ru.arixcompany.features.module.Category;
 import ru.arixcompany.features.module.Module;
-import ru.arixcompany.features.module.setting.implement.BooleanSetting;
 import ru.arixcompany.features.module.setting.implement.SelectSetting;
 import ru.arixcompany.features.module.setting.implement.ValueSetting;
 import ru.arixcompany.utils.player.MoveUtils;
-import ru.arixcompany.utils.player.inv.InventoryUtility;
 
 public class Strafe extends Module {
 
@@ -26,11 +24,7 @@ public class Strafe extends Module {
             .value("Обычный", "Matrix");
 
     private final SelectSetting boost = new SelectSetting("Буст")
-            .value("Нет", "Элитра", "Урон");
-
-    private final ValueSetting setSpeed = new ValueSetting("Скорость элитры")
-            .range(0.0f, 2.0f).setValue(1.3f).setStep(0.05f)
-            .visible(() -> boost.isSelected("Элитра"));
+            .value("Нет", "Урон");
 
     private final ValueSetting velReduction = new ValueSetting("Снижение скорости")
             .range(0.1f, 10.0f).setValue(6.0f).setStep(0.1f)
@@ -50,7 +44,7 @@ public class Strafe extends Module {
 
     public Strafe() {
         super("Strafe", Category.Movement);
-        setup(mode, boost, setSpeed, velReduction, maxVelocitySpeed);
+        setup(mode, boost, velReduction, maxVelocitySpeed);
     }
 
     @Override
@@ -93,13 +87,6 @@ public class Strafe extends Module {
 
         if (mc.player.onGround()) {
             n8 = speedAttr * n7;
-            if (motionY > 0) {
-                boolean elytraBoost = boost.isSelected("Элитра")
-                        && InventoryUtility.getElytra() != -1
-                        && disabled
-                        && System.currentTimeMillis() - disableTime < 300;
-                n8 += elytraBoost ? 0.65f : 0.2f;
-            }
             disabled = false;
         } else {
             n8 = 0.0255f;
@@ -137,29 +124,12 @@ public class Strafe extends Module {
     public void onPreTick(EventPreTick e) {
         if (mc.player == null || mc.level == null) return;
 
-        int elytraSlot = InventoryUtility.getElytra();
-
-        if (boost.isSelected("Элитра") && elytraSlot != -1) {
-            if (!mc.player.onGround() && mc.player.fallDistance > 0 && !disabled) {
-                doElytraBoost(elytraSlot);
-            }
-        }
-
         if (!canStrafe()) {
             oldSpeed = 0;
             return;
         }
 
         double motionY = mc.player.getDeltaMovement().y;
-
-        if (boost.isSelected("Элитра") && elytraSlot != -1) {
-            if (MoveUtils.isMoving() && !mc.player.onGround()
-                    && mc.level.getBlockCollisions(mc.player,
-                    mc.player.getBoundingBox().move(0, motionY, 0)).iterator().hasNext()
-                    && disabled) {
-                oldSpeed = setSpeed.getValue();
-            }
-        }
 
         if (MoveUtils.isMoving()) {
             double speed = calculateSpeed(motionY);
@@ -208,27 +178,6 @@ public class Strafe extends Module {
                 e.cancel();
             }
         }
-    }
-
-    private static void doElytraBoost(int elytraSlot) {
-        if (elytraSlot == -1) return;
-        if (System.currentTimeMillis() - disableTime <= 190L) return;
-
-        if (elytraSlot != -2) {
-            mc.gameMode.handleInventoryMouseClick(0, elytraSlot, 1, ClickType.PICKUP, mc.player);
-            mc.gameMode.handleInventoryMouseClick(0, 6, 1, ClickType.PICKUP, mc.player);
-        }
-
-        mc.player.connection.send(new ServerboundPlayerCommandPacket(mc.player, ServerboundPlayerCommandPacket.Action.START_FALL_FLYING));
-        mc.player.connection.send(new ServerboundPlayerCommandPacket(mc.player, ServerboundPlayerCommandPacket.Action.START_FALL_FLYING));
-
-        if (elytraSlot != -2) {
-            mc.gameMode.handleInventoryMouseClick(0, 6, 1, ClickType.PICKUP, mc.player);
-            mc.gameMode.handleInventoryMouseClick(0, elytraSlot, 1, ClickType.PICKUP, mc.player);
-        }
-
-        disableTime = System.currentTimeMillis();
-        disabled = true;
     }
 
     private static double[] forward(double speed) {
