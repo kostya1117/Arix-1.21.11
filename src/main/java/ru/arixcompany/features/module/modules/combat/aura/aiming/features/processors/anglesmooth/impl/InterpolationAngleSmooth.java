@@ -35,8 +35,6 @@ public class InterpolationAngleSmooth extends FactorAngleSmooth {
     private final int directionChangeFactorMax;
     private final float midpoint;
 
-    private Rotation previousTargetRotation = null;
-
     public InterpolationAngleSmooth(int horizontalSpeedMin, int horizontalSpeedMax,
                                     int verticalSpeedMin, int verticalSpeedMax,
                                     int directionChangeFactorMin, int directionChangeFactorMax,
@@ -56,16 +54,18 @@ public class InterpolationAngleSmooth extends FactorAngleSmooth {
 
     @Override
     public float[] calculateFactors(RotationTarget rotationTarget, Rotation currentRotation, Rotation targetRotation) {
-        float yawDiff   = Rotation.angleDifference(targetRotation.yaw(),   currentRotation.yaw());
+        float yawDiff   = Rotation.angleDifference(targetRotation.yaw(), currentRotation.yaw());
         float pitchDiff = targetRotation.pitch() - currentRotation.pitch();
 
         float directionChange = 0f;
-        if (rotationTarget != null && previousTargetRotation != null) {
-            float angleDiff = previousTargetRotation.angleTo(targetRotation);
-            float normalized = Math.min(angleDiff / 180f, 1f);
+        // Используем RotationManager, чтобы состояние не терялось при пересоздании класса
+        RotationTarget prevTarget = RotationManager.previousRotationTarget;
+
+        if (rotationTarget != null && prevTarget != null) {
+            float angleDiff = prevTarget.rotation.angleTo(targetRotation);
+            float normalized = Math.clamp(angleDiff / 180f, 0f, 1f);
             directionChange = normalized * (randomInt(directionChangeFactorMin, directionChangeFactorMax) / 100f);
         }
-        if (rotationTarget != null) previousTargetRotation = targetRotation;
 
         float hSpeed = (rotationTarget != null ? randomInt(horizontalSpeedMin, horizontalSpeedMax) : horizontalSpeedMin) / 100f;
         float vSpeed = (rotationTarget != null ? randomInt(verticalSpeedMin,   verticalSpeedMax)   : verticalSpeedMin)   / 100f;

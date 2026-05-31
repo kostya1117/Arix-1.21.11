@@ -105,9 +105,7 @@ public class CustomSky {
             w = lastWorldId + 1;
             CustomSkyLayer[][] wslsTrim = new CustomSkyLayer[w][0];
 
-            for(int i = 0; i < wslsTrim.length; ++i) {
-                wslsTrim[i] = wsls[i];
-            }
+            System.arraycopy(wsls, 0, wslsTrim, 0, wslsTrim.length);
 
             return wslsTrim;
         }
@@ -136,8 +134,7 @@ public class CustomSky {
                         thunderStrength /= rainStrength;
                     }
 
-                    for(int i = 0; i < sls.length; ++i) {
-                        CustomSkyLayer sl = sls[i];
+                    for (CustomSkyLayer sl : sls) {
                         if (sl.isActive(world, timeOfDay)) {
                             sl.render(world, matrixStackIn, timeOfDay, celestialAngle, rainStrength, thunderStrength);
                         }

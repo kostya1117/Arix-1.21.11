@@ -1,5 +1,6 @@
 package net.minecraft.world.level.chunk;
 
+import baritone.utils.accessor.IPalettedContainer;
 import com.google.common.annotations.VisibleForTesting;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
@@ -9,6 +10,12 @@ import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 import it.unimi.dsi.fastutil.ints.IntArraySet;
 import it.unimi.dsi.fastutil.ints.IntSet;
 import it.unimi.dsi.fastutil.ints.Int2IntMap.Entry;
+
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -24,7 +31,7 @@ import net.minecraft.util.ThreadingDetector;
 import net.minecraft.util.ZeroBitStorage;
 import org.jspecify.annotations.Nullable;
 
-public class PalettedContainer<T> implements PaletteResize<T>, PalettedContainerRO<T> {
+public class PalettedContainer<T> implements PaletteResize<T>, PalettedContainerRO<T>, IPalettedContainer<T> {
     private static final int MIN_PALETTE_BITS = 0;
     private volatile PalettedContainer.Data<T> data;
     private final Strategy<T> strategy;
@@ -274,6 +281,66 @@ public class PalettedContainer<T> implements PaletteResize<T>, PalettedContainer
 
         return aint;
     }
+    private static final MethodHandle DATA_GETTER;
+
+    // Mixin has no way of referring to the data field and we can't use inheritance
+    // tricks to determine its name, so we use this ugly workaround instead.
+    // Classloading is hell here and causes accessor mixins (@Mixin interfaces with
+    // only @Accessor and @Invoker methods) to break on use and proguard hates method
+    // handles and on top of that mojang decided that error messages during world
+    // load are not needed so if you want to debug this you'll probably need an extra
+    // mixin just to display the error and hard quit the game before follow up errors
+    // blow up your log file.
+    // Mumphrey, please add the shadow classes you promised 5 years ago.
+    static {
+        Field dataField = null;
+        for (Field field : PalettedContainer.class.getDeclaredFields()) {
+            Class<?> fieldType = field.getType();
+            if (IData.class.isAssignableFrom(fieldType)) {
+                if ((field.getModifiers() & (Modifier.STATIC | Modifier.FINAL)) != 0 || field.isSynthetic()) {
+                    continue;
+                }
+                if (dataField != null) {
+                    throw new IllegalStateException("PalettedContainer has more than one Data field.");
+                }
+                dataField = field;
+            }
+        }
+        if (dataField == null) {
+            throw new IllegalStateException("PalettedContainer has no Data field.");
+        }
+        MethodHandle rawGetter;
+        try {
+            rawGetter = MethodHandles.lookup().unreflectGetter(dataField);
+        } catch (IllegalAccessException impossible) {
+            // we literally are the owning class, wtf?
+            throw new IllegalStateException("PalettedContainer may not access its own field?!", impossible);
+        }
+        MethodType getterType = MethodType.methodType(IData.class, PalettedContainer.class);
+        DATA_GETTER = MethodHandles.explicitCastArguments(rawGetter, getterType);
+    }
+
+    @Override
+    public Palette<T> getPalette() {
+        return data().getPalette();
+    }
+
+    @Override
+    public BitStorage getStorage() {
+        return data().getStorage();
+    }
+    private IData<T> data() {
+        try {
+            // cast to Object first so the method handle doesn't hide the interface usage from proguard
+            return (IData<T>) (Object) DATA_GETTER.invoke((PalettedContainer<T>) this);
+        } catch (Throwable t) {
+            throw sneaky(t, RuntimeException.class);
+        }
+    }
+
+    private static <T extends Throwable> T sneaky(Throwable t, Class<T> as) throws T {
+        throw (T) t;
+    }
 
     @Override
     public int getSerializedSize() {
@@ -321,7 +388,7 @@ public class PalettedContainer<T> implements PaletteResize<T>, PalettedContainer
         void accept(T p_63145_, int p_63146_);
     }
 
-    record Data<T>(Configuration configuration, BitStorage storage, Palette<T> palette) {
+    record Data<T>(Configuration configuration, BitStorage storage, Palette<T> palette) implements IData<T> {
         public void copyFrom(Palette<T> p_188112_, BitStorage p_188113_) {
             PaletteResize<T> paletteresize = PaletteResize.noResizeExpected();
 
@@ -329,6 +396,14 @@ public class PalettedContainer<T> implements PaletteResize<T>, PalettedContainer
                 T t = p_188112_.valueFor(p_188113_.get(i));
                 this.storage.set(i, this.palette.idFor(t, paletteresize));
             }
+        }
+
+        public Palette<T> getPalette() {
+            return palette;
+        }
+
+        public BitStorage getStorage() {
+            return storage;
         }
 
         public int getSerializedSize(IdMap<T> p_424384_) {

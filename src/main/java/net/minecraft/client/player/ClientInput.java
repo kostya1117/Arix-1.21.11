@@ -2,6 +2,8 @@ package net.minecraft.client.player;
 
 import net.minecraft.world.entity.player.Input;
 import net.minecraft.world.phys.Vec2;
+import ru.arixcompany.features.event.EventRepo;
+import ru.arixcompany.features.event.player.EventSprint;
 
 public class ClientInput {
     public Input keyPresses = Input.EMPTY;
@@ -25,6 +27,8 @@ public class ClientInput {
     }
 
     public void makeJump() {
+        final EventSprint eventSprint = new EventSprint(this.keyPresses.sprint(), EventSprint.Source.INPUT);
+        EventRepo.call(eventSprint);
         this.keyPresses = new Input(
                 this.keyPresses.forward(),
                 this.keyPresses.backward(),
@@ -32,7 +36,7 @@ public class ClientInput {
                 this.keyPresses.right(),
                 true,
                 this.keyPresses.shift(),
-                this.keyPresses.sprint()
+                eventSprint.isSprinting()
         );
     }
 }

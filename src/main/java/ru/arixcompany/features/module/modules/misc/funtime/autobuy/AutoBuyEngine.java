@@ -10,7 +10,7 @@ import net.minecraft.world.item.ItemStack;
 import ru.arixcompany.features.module.modules.misc.funtime.autobuy.items.ItemTarget;
 import ru.arixcompany.features.module.modules.misc.funtime.utils.FuntimeUtil;
 import ru.arixcompany.utils.IMinecraft;
-import ru.arixcompany.utils.math.Timer;
+import ru.arixcompany.utils.math.TimerUtils;
 import ru.arixcompany.utils.player.inv.InventoryUtility;
 
 import java.util.List;
@@ -19,9 +19,9 @@ import java.util.Map;
 public class AutoBuyEngine implements IMinecraft {
 
     private final Map<String, ItemTarget> targets;
-    private final Timer clickCooldown;
-    private final Timer scanWatch;
-    private final Timer updateWatch;
+    private final TimerUtils clickCooldown;
+    private final TimerUtils scanWatch;
+    private final TimerUtils updateWatch;
 
     @Setter
     private ContainerScreen currentAuctionScreen;
@@ -34,7 +34,7 @@ public class AutoBuyEngine implements IMinecraft {
     @Setter
     private int clickDelay = 200;
 
-    private final Timer confirmWatch = new Timer();
+    private final TimerUtils confirmWatch = new TimerUtils();
     private boolean reopenRequested = false;
 
     @Getter private ItemTarget lastTarget;
@@ -47,9 +47,9 @@ public class AutoBuyEngine implements IMinecraft {
     @Getter private int lastBoughtPerItem;
 
     public AutoBuyEngine(Map<String, ItemTarget> targets,
-                         Timer clickCooldown,
-                         Timer scanWatch,
-                         Timer updateWatch) {
+                         TimerUtils clickCooldown,
+                         TimerUtils scanWatch,
+                         TimerUtils updateWatch) {
 
         this.targets = targets;
         this.clickCooldown = clickCooldown;

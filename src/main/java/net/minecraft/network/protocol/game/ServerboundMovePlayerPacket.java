@@ -22,22 +22,22 @@ public abstract class ServerboundMovePlayerPacket implements Packet<ServerGamePa
     static int packFlags(boolean p_362343_, boolean p_368893_) {
         int i = 0;
         if (p_362343_) {
-            i |= 1;
+            i |= FLAG_ON_GROUND;
         }
 
         if (p_368893_) {
-            i |= 2;
+            i |= FLAG_HORIZONTAL_COLLISION;
         }
 
         return i;
     }
 
     static boolean unpackOnGround(int p_362368_) {
-        return (p_362368_ & 1) != 0;
+        return (p_362368_ & FLAG_ON_GROUND) != 0;
     }
 
     static boolean unpackHorizontalCollision(int p_366014_) {
-        return (p_366014_ & 2) != 0;
+        return (p_366014_ & FLAG_HORIZONTAL_COLLISION) != 0;
     }
 
     protected ServerboundMovePlayerPacket(

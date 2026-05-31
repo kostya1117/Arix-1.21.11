@@ -1,4 +1,4 @@
-#Sat May 16 09:07:29 MSK 2026
+#Thu May 21 20:50:09 YEKT 2026
 TexMagFilB=0
 TexMagFilN=0
 TexMagFilS=0
@@ -12,7 +12,7 @@ normalMapEnabled=true
 oldHandLight=default
 oldLighting=default
 renderResMul=1.0
-shaderPack=
+shaderPack=OFF
 shadowClipFrustrum=true
 shadowResMul=1.0
 specularMapEnabled=true

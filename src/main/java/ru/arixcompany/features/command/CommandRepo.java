@@ -6,7 +6,6 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import lombok.Getter;
 import net.minecraft.client.multiplayer.ClientSuggestionProvider;
-import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.server.permissions.PermissionSet;
 import ru.arixcompany.features.command.commands.ConfigCommand;
 import ru.arixcompany.features.command.commands.FriendCommand;
@@ -31,16 +30,19 @@ public class CommandRepo implements IMinecraft {
     }
 
     public void setup() {
+        System.out.println("[CommandRepo] Setting up commands...");
         List.of(
                 new ConfigCommand(),
                 new FriendCommand(),
                 new WayPointCommand()
         ).forEach(command -> {
+            System.out.println("[CommandRepo] Registering command: " + command.getName());
             commandList.add(command);
-            LiteralArgumentBuilder<ClientSuggestionProvider > builder = LiteralArgumentBuilder.literal(command.getName());
+            LiteralArgumentBuilder<ClientSuggestionProvider> builder = LiteralArgumentBuilder.literal(command.getName());
             command.build(builder);
             commandDispatcher.register(builder);
         });
+        System.out.println("[CommandRepo] Commands setup complete. Total: " + commandList.size());
     }
 
     @EventHandler

@@ -8,7 +8,7 @@ import ru.arixcompany.features.module.Category;
 import ru.arixcompany.features.module.Module;
 import ru.arixcompany.features.module.setting.implement.ListSetting;
 import ru.arixcompany.features.repos.WayPointRepo;
-import ru.arixcompany.utils.math.Timer;
+import ru.arixcompany.utils.math.TimerUtils;
 
 public class AutoRespawn extends Module {
     public AutoRespawn() {
@@ -21,7 +21,7 @@ public class AutoRespawn extends Module {
 
     private boolean flag;
     private int waypointCount = 0;
-    private final Timer timer = new Timer();
+    private final TimerUtils timer = new TimerUtils();
 
     @EventHandler
     public void onUpdate(EventUpdate e) {

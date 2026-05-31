@@ -1,5 +1,6 @@
 package net.minecraft.world.entity.projectile;
 
+import baritone.utils.accessor.IFireworkRocketEntity;
 import it.unimi.dsi.fastutil.doubles.DoubleDoubleImmutablePair;
 import java.util.List;
 import java.util.OptionalInt;
@@ -33,7 +34,7 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
-public class FireworkRocketEntity extends Projectile implements ItemSupplier {
+public class FireworkRocketEntity extends Projectile implements ItemSupplier, IFireworkRocketEntity {
     private static final EntityDataAccessor<ItemStack> DATA_ID_FIREWORKS_ITEM = SynchedEntityData.defineId(FireworkRocketEntity.class, EntityDataSerializers.ITEM_STACK);
     private static final EntityDataAccessor<OptionalInt> DATA_ATTACHED_TO_TARGET = SynchedEntityData.defineId(FireworkRocketEntity.class, EntityDataSerializers.OPTIONAL_UNSIGNED_INT);
     private static final EntityDataAccessor<Boolean> DATA_SHOT_AT_ANGLE = SynchedEntityData.defineId(FireworkRocketEntity.class, EntityDataSerializers.BOOLEAN);
@@ -68,6 +69,7 @@ public class FireworkRocketEntity extends Projectile implements ItemSupplier {
         this.setOwner(p_37037_);
     }
 
+
     public FireworkRocketEntity(Level p_37058_, ItemStack p_37059_, LivingEntity p_37060_) {
         this(p_37058_, p_37060_, p_37060_.getX(), p_37060_.getY(), p_37060_.getZ(), p_37059_);
         this.entityData.set(DATA_ATTACHED_TO_TARGET, OptionalInt.of(p_37060_.getId()));
@@ -100,6 +102,16 @@ public class FireworkRocketEntity extends Projectile implements ItemSupplier {
     public boolean shouldRender(double p_37083_, double p_37084_, double p_37085_) {
         return super.shouldRender(p_37083_, p_37084_, p_37085_) && !this.isAttachedToEntity();
     }
+    @Override
+    public LivingEntity getBoostedEntity() {
+        if (this.isAttachedToEntity() && this.attachedToEntity == null) {
+            final Entity entity = this.level().getEntity(this.entityData.get(DATA_ATTACHED_TO_TARGET).getAsInt());
+            if (entity instanceof LivingEntity) {
+                this.attachedToEntity = (LivingEntity) entity;
+            }
+        }
+        return this.attachedToEntity;
+    }
 
     @Override
     public void tick() {
@@ -125,9 +137,9 @@ public class FireworkRocketEntity extends Projectile implements ItemSupplier {
                     this.attachedToEntity
                         .setDeltaMovement(
                             vec32.add(
-                                vec31.x * 0.1 + (vec31.x * 1.5 - vec32.x) * 0.5,
-                                vec31.y * 0.1 + (vec31.y * 1.5 - vec32.y) * 0.5,
-                                vec31.z * 0.1 + (vec31.z * 1.5 - vec32.z) * 0.5
+                                vec31.x * d1 + (vec31.x * d0 - vec32.x) * 0.5,
+                                vec31.y * d1 + (vec31.y * d0 - vec32.y) * 0.5,
+                                vec31.z * d1 + (vec31.z * d0 - vec32.z) * 0.5
                             )
                         );
                     vec3 = this.attachedToEntity.getHandHoldingItemAngle(Items.FIREWORK_ROCKET);

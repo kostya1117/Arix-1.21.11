@@ -2,6 +2,7 @@ package net.minecraft.client;
 
 import java.util.Arrays;
 
+import lombok.Getter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.tags.FluidTags;
@@ -49,6 +50,7 @@ public class Camera implements TrackedWaypoint.Camera {
     private boolean detached;
     private float eyeHeight;
     private float eyeHeightOld;
+    @Getter
     private float partialTickTime;
     private final EnvironmentAttributeProbe attributeProbe = new EnvironmentAttributeProbe();
 
@@ -107,7 +109,7 @@ public class Camera implements TrackedWaypoint.Camera {
         float eventYaw = p_90577_.getViewYRot(p_90580_);
         float eventPitch = p_90577_.getViewXRot(p_90580_);
         
-        if (this.rotationEvent != null && !this.rotationEvent.isCancelled()) {
+        if (!this.rotationEvent.isCancelled()) {
             eventYaw = this.rotationEvent.getYaw();
             eventPitch = this.rotationEvent.getPitch();
         }
@@ -168,7 +170,6 @@ public class Camera implements TrackedWaypoint.Camera {
         // Store the target (non-interpolated) angles for next frame's lerp
         this.previousYaw = eventYaw;
         this.previousPitch = eventPitch;
-        this.rotationEvent = null;
     }
 
     private float getMaxZoomWithTweaks(float desiredDistance) {
@@ -390,10 +391,6 @@ public class Camera implements TrackedWaypoint.Camera {
         this.lastCameraMode = 0;
         this.previousYaw = 0.0F;
         this.previousPitch = 0.0F;
-    }
-
-    public float getPartialTickTime() {
-        return this.partialTickTime;
     }
 
     public static class NearPlane {

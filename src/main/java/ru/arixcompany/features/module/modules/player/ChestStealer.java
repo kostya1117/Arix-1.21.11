@@ -8,14 +8,13 @@ import ru.arixcompany.features.event.EventHandler;
 import ru.arixcompany.features.event.world.EventTick;
 import ru.arixcompany.features.module.Category;
 import ru.arixcompany.features.module.Module;
-import ru.arixcompany.features.module.setting.implement.BooleanSetting;
 import ru.arixcompany.features.module.setting.implement.SelectSetting;
 import ru.arixcompany.features.module.setting.implement.ValueSetting;
-import ru.arixcompany.utils.math.Timer;
+import ru.arixcompany.utils.math.TimerUtils;
 import ru.arixcompany.utils.player.inv.InventoryUtility;
 
 public class ChestStealer extends Module {
-    Timer stopWatch = new Timer();
+    TimerUtils stopWatch = new TimerUtils();
 
     SelectSetting modeSetting = new SelectSetting("Тип")
             .value("ФанТайм", "Обычный");

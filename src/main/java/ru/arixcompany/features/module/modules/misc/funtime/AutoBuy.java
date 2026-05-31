@@ -18,7 +18,7 @@ import ru.arixcompany.features.module.setting.implement.BooleanSetting;
 import ru.arixcompany.features.module.setting.implement.ValueSetting;
 import ru.arixcompany.utils.MessageSender;
 import ru.arixcompany.utils.math.MathUtils;
-import ru.arixcompany.utils.math.Timer;
+import ru.arixcompany.utils.math.TimerUtils;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -57,10 +57,10 @@ public class AutoBuy extends Module {
 
     private final Map<String, ItemTarget> targets = new LinkedHashMap<>();
 
-    private final Timer clickCooldown = new Timer();
-    private final Timer scanWatch = new Timer();
-    private final Timer updateWatch = new Timer();
-    private final Timer autoSetupTimer = new Timer();
+    private final TimerUtils clickCooldown = new TimerUtils();
+    private final TimerUtils scanWatch = new TimerUtils();
+    private final TimerUtils updateWatch = new TimerUtils();
+    private final TimerUtils autoSetupTimer = new TimerUtils();
 
     @Getter
     public static final BalanceController balanceController = new BalanceController();

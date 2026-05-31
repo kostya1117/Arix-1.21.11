@@ -108,7 +108,7 @@ public class CrosshairArrows extends Module {
         void render(EventRender2D e, float cx, float cy, float sz) {
             float anim = animation.getOutput();
 
-            float realYaw = RotationManager.isRotating() && RotationManager.playerRotation != null
+            float realYaw = RotationManager.getInstance().isRotating() && RotationManager.playerRotation != null
                     ? RotationManager.playerRotation.yaw()
                     : mc.gameRenderer.getMainCamera().yRot();
             smoothYaw = fast(smoothYaw, realYaw, 10f);

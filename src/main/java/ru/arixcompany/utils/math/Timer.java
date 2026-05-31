@@ -1,55 +1,57 @@
 package ru.arixcompany.utils.math;
 
-public class Timer {
-   private long startTime;
-   public long lastMS = System.currentTimeMillis();
+import ru.arixcompany.features.event.EventHandler;
+import ru.arixcompany.features.event.EventRepo;
+import ru.arixcompany.features.event.world.EventGameTick;
+import ru.arixcompany.features.module.modules.combat.aura.aiming.RequestHandler;
+import ru.arixcompany.utils.IMinecraft;
 
-   public void reset() {
-      this.lastMS = System.currentTimeMillis();
-   }
+public class Timer implements IMinecraft {
+    public static final Timer INSTANCE = new Timer();
 
-   public boolean isReached(long time) {
-      return System.currentTimeMillis() - this.lastMS > time;
-   }
+    private final RequestHandler<Float> requestHandler = new RequestHandler<>();
 
-   public void setTime(long time) {
-      this.lastMS = time;
-   }
+    public Timer() {
+        EventRepo.register(this);
+    }
 
-   public boolean finished(double delay) {
-      return System.currentTimeMillis() - delay >= this.startTime;
-   }
+    /**
+     * You cannot set this manually. Use [requestTimerSpeed] instead.
+     */
+    public float getTimerSpeed() {
+        Float value = requestHandler.getActiveRequestValue();
+        return value != null ? value : 1.0f;
+    }
 
-   public long elapsedTime() {
-      return System.currentTimeMillis() - this.startTime;
-   }
+    @EventHandler
+    private void onTick(EventGameTick event) {
+        requestHandler.tick();
+    }
 
-   public void setMs(long ms) {
-      this.startTime = System.currentTimeMillis() - ms;
-   }
+    /**
+     * Requests a timer speed change. If another module requests with a higher priority,
+     * the other module is prioritized.
+     *
+     * @param timerSpeed      Target timer speed (e.g., 1.5f for 150% speed).
+     * @param priority        Higher = higher priority.
+     * @param provider        The module/requester (must implement RequestHandler.RequestProvider).
+     * @param resetAfterTicks After how many ticks the request expires.
+     */
+    public void requestTimerSpeed(float timerSpeed, int priority, RequestHandler.RequestProvider provider, int resetAfterTicks) {
+        requestHandler.request(
+                new RequestHandler.Request<>(
+                        resetAfterTicks + 1, // this prevents requests from being instantly removed
+                        priority,
+                        provider,
+                        timerSpeed
+                )
+        );
+    }
 
-   public boolean hasReached(double milliseconds) {
-      return this.getTimePassed() >= milliseconds;
-   }
-
-   public long getTimePassed() {
-      return System.currentTimeMillis() - this.lastMS;
-   }
-
-   public boolean finished(long delay) {
-      return System.currentTimeMillis() - this.lastMS >= delay;
-   }
-
-   public boolean every(long delay) {
-      if (System.currentTimeMillis() - this.lastMS >= delay) {
-         this.reset();
-         return true;
-      } else {
-         return false;
-      }
-   }
-
-    public long getElapsed() {
-        return System.currentTimeMillis() - this.startTime;
+    /**
+     * Overload for default resetAfterTicks = 1
+     */
+    public void requestTimerSpeed(float timerSpeed, int priority, RequestHandler.RequestProvider provider) {
+        requestTimerSpeed(timerSpeed, priority, provider, 1);
     }
 }

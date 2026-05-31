@@ -14,25 +14,25 @@ public record Input(boolean forward, boolean backward, boolean left, boolean rig
     public static final StreamCodec<FriendlyByteBuf, Input> STREAM_CODEC = new StreamCodec<FriendlyByteBuf, Input>() {
         public void encode(FriendlyByteBuf p_362132_, Input p_369013_) {
             byte b0 = 0;
-            b0 = (byte)(b0 | (p_369013_.forward() ? 1 : 0));
-            b0 = (byte)(b0 | (p_369013_.backward() ? 2 : 0));
-            b0 = (byte)(b0 | (p_369013_.left() ? 4 : 0));
-            b0 = (byte)(b0 | (p_369013_.right() ? 8 : 0));
-            b0 = (byte)(b0 | (p_369013_.jump() ? 16 : 0));
-            b0 = (byte)(b0 | (p_369013_.shift() ? 32 : 0));
-            b0 = (byte)(b0 | (p_369013_.sprint() ? 64 : 0));
+            b0 = (byte)(b0 | (p_369013_.forward() ? FLAG_FORWARD : 0));
+            b0 = (byte)(b0 | (p_369013_.backward() ? FLAG_BACKWARD : 0));
+            b0 = (byte)(b0 | (p_369013_.left() ? FLAG_LEFT : 0));
+            b0 = (byte)(b0 | (p_369013_.right() ? FLAG_RIGHT : 0));
+            b0 = (byte)(b0 | (p_369013_.jump() ? FLAG_JUMP : 0));
+            b0 = (byte)(b0 | (p_369013_.shift() ? FLAG_SHIFT : 0));
+            b0 = (byte)(b0 | (p_369013_.sprint() ? FLAG_SPRINT : 0));
             p_362132_.writeByte(b0);
         }
 
         public Input decode(FriendlyByteBuf p_366245_) {
             byte b0 = p_366245_.readByte();
-            boolean flag = (b0 & 1) != 0;
-            boolean flag1 = (b0 & 2) != 0;
-            boolean flag2 = (b0 & 4) != 0;
-            boolean flag3 = (b0 & 8) != 0;
-            boolean flag4 = (b0 & 16) != 0;
-            boolean flag5 = (b0 & 32) != 0;
-            boolean flag6 = (b0 & 64) != 0;
+            boolean flag = (b0 & FLAG_FORWARD) != 0;
+            boolean flag1 = (b0 & FLAG_BACKWARD) != 0;
+            boolean flag2 = (b0 & FLAG_LEFT) != 0;
+            boolean flag3 = (b0 & FLAG_RIGHT) != 0;
+            boolean flag4 = (b0 & FLAG_JUMP) != 0;
+            boolean flag5 = (b0 & FLAG_SHIFT) != 0;
+            boolean flag6 = (b0 & FLAG_SPRINT) != 0;
             return new Input(flag, flag1, flag2, flag3, flag4, flag5, flag6);
         }
     };

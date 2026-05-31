@@ -84,7 +84,7 @@ public class FoodHelper {
                 if (instance.getEffect().value() == MobEffects.REGENERATION.value()) {
                     int amp = instance.getAmplifier();
                     int dur = instance.getDuration();
-                    healthIncrement += (float) Math.floor(dur / Math.max(50 >> amp, 1));
+                    healthIncrement += (float) Math.floor((double) dur / Math.max(50 >> amp, 1));
                     break;
                 }
             }

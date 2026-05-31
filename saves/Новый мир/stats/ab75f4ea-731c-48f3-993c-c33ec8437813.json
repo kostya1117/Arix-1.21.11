@@ -1,0 +1,16 @@
+{
+  "stats": {
+    "minecraft:custom": {
+      "minecraft:time_since_rest": 8073,
+      "minecraft:total_world_time": 10180,
+      "minecraft:leave_game": 1,
+      "minecraft:play_time": 8073,
+      "minecraft:damage_dealt": 18,
+      "minecraft:time_since_death": 8073
+    },
+    "minecraft:used": {
+      "minecraft:zombie_spawn_egg": 1
+    }
+  },
+  "DataVersion": 4671
+}

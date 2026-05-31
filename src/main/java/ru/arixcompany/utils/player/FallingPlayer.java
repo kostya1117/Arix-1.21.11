@@ -1,21 +1,37 @@
 package ru.arixcompany.utils.player;
 
+import lombok.Getter;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.util.Mth;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.Pose;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
+import java.util.Optional;
+
+@SuppressWarnings("LongParameterList")
 public class FallingPlayer {
+
     private final LocalPlayer player;
-    private double x, y, z;
-    private double motionX, motionY, motionZ;
-    private final float yaw;
-    private int simulatedTicks;
+    public double x;
+    public double y;
+    public double z;
+    private double motionX;
+    private double motionY;
+    private double motionZ;
+    private final float yRot;
+    private int simulatedTicks = 0;
 
-    // Константы физики
-    private static final double GRAVITY = 0.08;
-    private static final double DRAG = 0.9800000190734863;
-
-    public FallingPlayer(LocalPlayer player, double x, double y, double z, double motionX, double motionY, double motionZ, float yaw) {
+    public FallingPlayer(LocalPlayer player, double x, double y, double z,
+                         double motionX, double motionY, double motionZ, float yRot) {
         this.player = player;
         this.x = x;
         this.y = y;
@@ -23,16 +39,15 @@ public class FallingPlayer {
         this.motionX = motionX;
         this.motionY = motionY;
         this.motionZ = motionZ;
-        this.yaw = yaw;
-        this.simulatedTicks = 0;
+        this.yRot = yRot;
     }
 
     public static FallingPlayer fromPlayer(LocalPlayer player) {
         return new FallingPlayer(
                 player,
-                player.position().x,
-                player.position().y,
-                player.position().z,
+                player.getX(),
+                player.getY(),
+                player.getZ(),
                 player.getDeltaMovement().x,
                 player.getDeltaMovement().y,
                 player.getDeltaMovement().z,
@@ -40,113 +55,107 @@ public class FallingPlayer {
         );
     }
 
-    /**
-     * Проверяет, будет ли игрок падать с заданной скоростью в следующем тике.
-     *
-     * @param fallDist минимальная скорость падения для проверки (в блоках/тик)
-     * @return true если |motionY| > fallDist
-     */
-    public boolean findFall(float fallDist) {
-        // Текущая скорость падения (отрицательное значение)
-        return Math.abs(motionY) > fallDist; // Нужен абсолютный модуль!
-    }
+    private void calculateForTick(Vec3 rotationVec) {
+        double d = 0.08;
+        boolean bl = this.motionY <= 0.0;
 
-    /**
-     * Симулирует несколько тиков вперёд и проверяет, начнёт ли игрок падать.
-     *
-     * Формула применяется: motionY = (motionY - gravity) * drag
-     *
-     * @param fallDist минимальная скорость падения для срабатывания
-     * @param ticks количество тиков для симуляции
-     * @return true если в течение симуляции скорость падения превысит fallDist
-     */
-    public boolean findFall(float fallDist, int ticks) {
-        double tempMotionY = motionY;
-
-        // Базовая гравитация (без модификаторов)
-        double gravity = GRAVITY;
-
-        // Проверяем текущую скорость падения
-        if (Math.abs(tempMotionY) > fallDist) {
-            return true;
+        if (bl && hasStatusEffect(MobEffects.SLOW_FALLING)) {
+            d = 0.01;
         }
 
-        // Симулируем падение на несколько тиков
-        for (int i = 0; i < ticks; i++) {
-            // Физическая формула: v = (v - g) * drag
-            // Гравитация замедляет игрока вниз, drag уменьшает ускорение
-            tempMotionY = (tempMotionY - gravity) * DRAG;
+        double j = (double) this.player.getXRot() * Mth.DEG_TO_RAD;
 
-            // Проверяем, достаточно ли быстро падаем
-            if (Math.abs(tempMotionY) > fallDist) {
-                return true;
+        double k = Math.sqrt(rotationVec.x * rotationVec.x + rotationVec.z * rotationVec.z);
+        double l = Math.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
+
+        double m = rotationVec.length();
+        double n = Mth.cos((float) j);
+
+        // n = (n.toDouble() * n.toDouble() * 1.0.coerceAtMost(m / 0.4)).toFloat()
+        n = (float) (n * n * Math.min(1.0, m / 0.4));
+
+        Vec3 vec3d5 = new Vec3(this.motionX, this.motionY, this.motionZ)
+                .add(0.0, d * (-1.0 + n * 0.75), 0.0);
+
+        double q;
+        if (vec3d5.y < 0.0 && k > 0.0) {
+            q = vec3d5.y * -0.1 * n;
+            vec3d5 = vec3d5.add(rotationVec.x * q / k, q, rotationVec.z * q / k);
+        }
+
+        if (j < 0.0 && k > 0.0) {
+            q = l * (-Mth.sin((float) j)) * 0.04;
+            vec3d5 = vec3d5.add(-rotationVec.x * q / k, q * 3.2, -rotationVec.z * q / k);
+        }
+
+        if (k > 0.0) {
+            vec3d5 = vec3d5.add((rotationVec.x / k * l - vec3d5.x) * 0.1, 0.0, (rotationVec.z / k * l - vec3d5.z) * 0.1);
+        }
+
+        vec3d5 = vec3d5.add(
+                Entity.getInputVector(
+                        new Vec3(
+                                this.player.input.leftImpulse * 0.98,
+                                0.0,
+                                this.player.input.forwardImpulse * 0.98
+                        ),
+                        0.02F,
+                        yRot
+                )
+        );
+
+        float velocityCoFactor = this.player.getBlockSpeedFactor();
+
+        this.motionX = vec3d5.x * 0.9900000095367432 * velocityCoFactor;
+        this.motionY = vec3d5.y * 0.9800000190734863;
+        this.motionZ = vec3d5.z * 0.9900000095367432 * velocityCoFactor;
+
+        this.x += this.motionX;
+        this.y += this.motionY;
+        this.z += this.motionZ;
+
+        this.simulatedTicks++;
+    }
+
+    private boolean hasStatusEffect(Holder<MobEffect> effect) {
+        var instance = player.getEffect(effect);
+        if (instance == null) return false;
+
+        return instance.getDuration() >= this.simulatedTicks;
+    }
+
+    public CollisionResult findCollision(int ticks) {
+        Vec3 rotationVec = player.getLookAngle();
+
+        for (int i = 0; i < ticks; i++) {
+            Vec3 start = new Vec3(x, y, z);
+
+            calculateForTick(rotationVec);
+
+            Vec3 end = new Vec3(x, y, z);
+
+            AABB box = player.getDimensions(Pose.STANDING)
+                    .makeBoundingBox(start.x, start.y, start.z)
+                    .expandTowards(end.subtract(start));
+
+            Optional<BlockPos> supportBlock = player.level().findSupportingBlock(player, box);
+
+            if (supportBlock.isPresent()) {
+                return new CollisionResult(supportBlock.get(), i);
             }
         }
-
-        return false;
+        return null;
     }
 
-    /**
-     * Продвинутая версия с учётом модификаторов (Slow Falling, в воде/лаве)
-     */
-    public boolean findFallAdvanced(float fallDist, int ticks, boolean inLiquid, boolean hasSlowFalling) {
-        double tempMotionY = motionY;
+    @Getter
+    public static class CollisionResult {
+        private final BlockPos pos;
+        private final int tick;
 
-        double gravity = GRAVITY;
-        double dragCoeff = DRAG;
-
-        // В жидкости гравитация и сопротивление намного выше
-        if (inLiquid) {
-            gravity = 0.02; // меньше гравитация в воде
-            dragCoeff = 0.8; // больше сопротивление
+        public CollisionResult(BlockPos pos, int tick) {
+            this.pos = pos;
+            this.tick = tick;
         }
 
-        // Slow Falling ещё больше замедляет падение
-        if (hasSlowFalling) {
-            gravity = 0.01;
-            dragCoeff = 0.9;
-        }
-
-        if (Math.abs(tempMotionY) > fallDist) {
-            return true;
-        }
-
-        for (int i = 0; i < ticks; i++) {
-            tempMotionY = (tempMotionY - gravity) * dragCoeff;
-
-            if (Math.abs(tempMotionY) > fallDist) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * Получить текущую скорость падения после симуляции N тиков
-     */
-    public double getMotionYAfterTicks(int ticks) {
-        double tempMotionY = motionY;
-
-        for (int i = 0; i < ticks; i++) {
-            tempMotionY = (tempMotionY - GRAVITY) * DRAG;
-        }
-
-        return tempMotionY;
-    }
-
-    /**
-     * Получить максимальную скорость падения которую достигнет игрок через N тиков
-     */
-    public double getMaxFallVelocityInTicks(int ticks) {
-        double maxVelocity = Math.abs(motionY);
-        double tempMotionY = motionY;
-
-        for (int i = 0; i < ticks; i++) {
-            tempMotionY = (tempMotionY - GRAVITY) * DRAG;
-            maxVelocity = Math.max(maxVelocity, Math.abs(tempMotionY));
-        }
-
-        return maxVelocity;
     }
 }

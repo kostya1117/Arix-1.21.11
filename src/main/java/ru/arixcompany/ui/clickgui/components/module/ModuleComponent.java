@@ -62,8 +62,7 @@ public final class ModuleComponent implements IComponent {
             if (PanelComponent.isHovered(mouseX, mouseY, moduleX, moduleY, moduleW, MODULE_HEIGHT)) {
                 return handleModuleClick(category, module, button);
             }
-            
-            // Обрабатываем любые кнопки мыши (3+) даже если модуль не в фокусе (для быстрого бинда)
+
             if (button >= 3 && Gui.activeModuleBind == module) {
                 return handleModuleClick(category, module, button);
             }
@@ -231,7 +230,6 @@ public final class ModuleComponent implements IComponent {
         float toggleX = moduleX + BTN_GAP;
         float holdX   = moduleX + BTN_GAP * 2 + btnW;
 
-        // Можно кликать на кнопки в любое время, даже во время ввода бинда
         if (PanelComponent.isHovered(mouseX, mouseY, toggleX, btnY, btnW, BTN_H)) {
             module.bindMode = Module.BindMode.TOGGLE;
             finishBind(module);

@@ -103,7 +103,11 @@ public class ModuleFile extends ClientFile {
             return;
         }
         if (setting instanceof BooleanSetting booleanSetting) {
-            moduleObject.addProperty(setting.getName(), booleanSetting.isValue());
+            JsonObject boolObj = new JsonObject();
+            boolObj.addProperty("value", booleanSetting.isValue());
+            boolObj.addProperty("key", booleanSetting.getKey());
+            moduleObject.add(setting.getName(), boolObj);
+            return;
         }
         if (setting instanceof ValueSetting valueSetting) {
             moduleObject.addProperty(setting.getName(), valueSetting.getValue());
@@ -170,7 +174,18 @@ public class ModuleFile extends ClientFile {
                 return;
             }
             if (setting instanceof BooleanSetting booleanSetting) {
-                booleanSetting.setValue(settingElement.getAsBoolean());
+                if (settingElement.isJsonObject()) {
+                    JsonObject boolObj = settingElement.getAsJsonObject();
+                    if (boolObj.has("value")) {
+                        booleanSetting.setValue(boolObj.get("value").getAsBoolean());
+                    }
+                    if (boolObj.has("key")) {
+                        booleanSetting.setKey(boolObj.get("key").getAsInt());
+                    }
+                } else {
+                    // Backward compatibility for old format
+                    booleanSetting.setValue(settingElement.getAsBoolean());
+                }
             }
             if (setting instanceof ValueSetting valueSetting) {
                 valueSetting.setValue(settingElement.getAsFloat());

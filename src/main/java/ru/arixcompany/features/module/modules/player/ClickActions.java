@@ -2,10 +2,6 @@ package ru.arixcompany.features.module.modules.player;
 
 import net.minecraft.network.protocol.game.ServerboundContainerClosePacket;
 import net.minecraft.network.protocol.game.ServerboundPlayerCommandPacket;
-import net.minecraft.network.protocol.game.ServerboundSwingPacket;
-import net.minecraft.network.protocol.game.ServerboundUseItemPacket;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import ru.arixcompany.features.event.EventHandler;
@@ -13,8 +9,7 @@ import ru.arixcompany.features.event.player.EventKey;
 import ru.arixcompany.features.module.Category;
 import ru.arixcompany.features.module.Module;
 import ru.arixcompany.features.module.setting.implement.*;
-import ru.arixcompany.utils.math.Timer;
-import ru.arixcompany.utils.player.PlayerUtil;
+import ru.arixcompany.utils.math.TimerUtils;
 import ru.arixcompany.utils.player.inv.InventoryUtility;
 import ru.arixcompany.utils.player.inv.SearchInvResult;
 import ru.arixcompany.utils.player.inv.UseHandler;
@@ -39,8 +34,8 @@ public class ClickActions extends Module {
     BindSetting fKey = new BindSetting("Кнопка фейерверк");
     BooleanSetting startFireWork = new BooleanSetting("Авто фейерверк");
 
-    private final Timer switchTimer = new Timer();
-    private final Timer fireworkTimer = new Timer();
+    private final TimerUtils switchTimer = new TimerUtils();
+    private final TimerUtils fireworkTimer = new TimerUtils();
 
     public static boolean swapping = false;
 

@@ -1,5 +1,6 @@
 package net.minecraft.world.level.storage.loot;
 
+import baritone.api.utils.accessor.ILootTable;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.mojang.logging.LogUtils;
@@ -31,7 +32,7 @@ import net.minecraft.world.level.storage.loot.functions.LootItemFunctions;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import org.slf4j.Logger;
 
-public class LootTable {
+public class LootTable implements ILootTable {
     private static final Logger LOGGER = LogUtils.getLogger();
     public static final Codec<ResourceKey<LootTable>> KEY_CODEC = ResourceKey.codec(Registries.LOOT_TABLE);
     public static final ContextKeySet DEFAULT_PARAM_SET = LootContextParamSets.ALL_PARAMS;
@@ -61,6 +62,10 @@ public class LootTable {
         this.pools = p_298771_;
         this.functions = p_301234_;
         this.compositeFunction = LootItemFunctions.compose(p_301234_);
+    }
+
+    public ObjectArrayList<ItemStack> invokeGetRandomItems(LootContext context) {
+        return getRandomItems(context);
     }
 
     public static Consumer<ItemStack> createStackSplitter(ServerLevel p_287765_, Consumer<ItemStack> p_251308_) {

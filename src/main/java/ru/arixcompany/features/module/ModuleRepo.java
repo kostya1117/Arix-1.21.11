@@ -16,6 +16,7 @@ import ru.arixcompany.features.module.modules.movement.AutoSprint;
 import ru.arixcompany.features.module.modules.movement.Strafe;
 import ru.arixcompany.features.module.modules.player.*;
 import ru.arixcompany.features.module.modules.render.*;
+import ru.arixcompany.features.module.setting.implement.BooleanSetting;
 import ru.arixcompany.utils.IMinecraft;
 
 import java.util.ArrayList;
@@ -51,6 +52,7 @@ public class ModuleRepo implements IMinecraft {
        modules.add(new JumpCircle());
        modules.add(new ChinaHat());
        modules.add(new NoRender());
+       modules.add(new Velocity());
        modules.add(new Interface());
        modules.add(new Animations());
        modules.add(new NoPush());
@@ -72,13 +74,25 @@ public class ModuleRepo implements IMinecraft {
       int key = event.getKey();
 
       Module[] modules = Arix.getInstance().getModuleRepo().getBind(key);
-      if (modules == null) return;
+      if (modules != null) {
+         for (Module module : modules) {
+            if (event.getAction() == 1) {
+               module.onBindPress();
+            } else if (event.getAction() == 0) {
+               module.onBindRelease();
+            }
+         }
+      }
 
-      for (Module module : modules) {
-         if (event.getAction() == 1) {
-            module.onBindPress();
-         } else if (event.getAction() == 0) {
-            module.onBindRelease();
+      if (event.getAction() == 1) {
+         for (Module module : Arix.getInstance().getModuleRepo().modules) {
+            for (ru.arixcompany.features.module.setting.Setting setting : module.settings()) {
+               if (setting instanceof BooleanSetting boolSetting) {
+                  if (boolSetting.getKey() == key) {
+                     boolSetting.setValue(!boolSetting.isValue());
+                  }
+               }
+            }
          }
       }
    }

@@ -11,7 +11,7 @@ import ru.arixcompany.features.module.modules.misc.funtime.autobuy.items.ItemTar
 import ru.arixcompany.features.module.modules.misc.funtime.utils.FuntimeUtil;
 import ru.arixcompany.utils.IMinecraft;
 import ru.arixcompany.utils.MessageSender;
-import ru.arixcompany.utils.math.Timer;
+import ru.arixcompany.utils.math.TimerUtils;
 import ru.arixcompany.utils.player.inv.InventoryUtility;
 
 import java.util.ArrayList;
@@ -24,10 +24,10 @@ public class AutoSetupEngine implements IMinecraft {
     private final AutoBuy parent;
     private final int total;
 
-    private final Timer pageTimer = new Timer();
-    private final Timer refreshTimer = new Timer();
-    private final Timer retryTimer = new Timer();
-    private final Timer transitionTimer = new Timer();
+    private final TimerUtils pageTimer = new TimerUtils();
+    private final TimerUtils refreshTimer = new TimerUtils();
+    private final TimerUtils retryTimer = new TimerUtils();
+    private final TimerUtils transitionTimer = new TimerUtils();
 
     @Getter private boolean running = false;
     private boolean waitingForAuction = false;

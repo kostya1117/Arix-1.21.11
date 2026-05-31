@@ -206,7 +206,7 @@ public class FriendlyByteBuf extends ByteBuf {
     }
 
     public <E extends Enum<E>> EnumSet<E> readEnumSet(Class<E> p_251289_) {
-        E[] ae = (E[])p_251289_.getEnumConstants();
+        E[] ae = p_251289_.getEnumConstants();
         BitSet bitset = this.readFixedBitSet(ae.length);
         EnumSet<E> enumset = EnumSet.noneOf(p_251289_);
 

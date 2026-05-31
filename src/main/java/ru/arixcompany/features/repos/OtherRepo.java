@@ -1,18 +1,15 @@
 package ru.arixcompany.features.repos;
 
 import net.minecraft.network.protocol.game.ClientboundSetHeldSlotPacket;
-import net.minecraft.network.protocol.game.ServerboundContainerClickPacket;
-import net.minecraft.network.protocol.game.ServerboundSetCarriedItemPacket;
-import org.jetbrains.annotations.NotNull;
 import ru.arixcompany.features.event.EventHandler;
 import ru.arixcompany.features.event.EventRepo;
 import ru.arixcompany.features.event.world.EventPacket;
 import ru.arixcompany.utils.IMinecraft;
-import ru.arixcompany.utils.math.Timer;
+import ru.arixcompany.utils.math.TimerUtils;
 
 public class OtherRepo implements IMinecraft {
     public static int serverSideSlot;
-    public final Timer switchTimer = new Timer();
+    public final TimerUtils switchTimer = new TimerUtils();
 
     public OtherRepo() {
         EventRepo.register(this);

@@ -1,5 +1,9 @@
 package net.minecraft.network;
 
+import baritone.api.BaritoneAPI;
+import baritone.api.IBaritone;
+import baritone.api.event.events.PacketEvent;
+import baritone.api.event.events.type.EventState;
 import com.google.common.collect.Queues;
 import com.mojang.logging.LogUtils;
 import com.viaversion.viaversion.api.connection.UserConnection;
@@ -160,6 +164,13 @@ public class Connection extends SimpleChannelInboundHandler<Packet<?>> {
 
             if (packetlistener.shouldHandleMessage(p_129488_)) {
                 try {
+                    if (this.receiving == PacketFlow.CLIENTBOUND) {
+                        for (IBaritone ibaritone : BaritoneAPI.getProvider().getAllBaritones()) {
+                            if (ibaritone.getPlayerContext().player() != null && ibaritone.getPlayerContext().player().connection.getConnection() == (Connection) (Object) this) {
+                                ibaritone.getGameEventHandler().onReceivePacket(new PacketEvent((Connection) (Object) this, EventState.PRE, p_129488_));
+                            }
+                        }
+                    }
                     genericsFtw(p_129488_, packetlistener);
                 } catch (RunningOnDifferentThreadException runningondifferentthreadexception) {
                 } catch (RejectedExecutionException rejectedexecutionexception) {
@@ -170,6 +181,13 @@ public class Connection extends SimpleChannelInboundHandler<Packet<?>> {
                 }
 
                 this.receivedPackets++;
+            }
+            if (this.receiving == PacketFlow.CLIENTBOUND) {
+                for (IBaritone ibaritone : BaritoneAPI.getProvider().getAllBaritones()) {
+                    if (ibaritone.getPlayerContext().player() != null && ibaritone.getPlayerContext().player().connection.getConnection() == this) {
+                        ibaritone.getGameEventHandler().onReceivePacket(new PacketEvent(this, EventState.POST, p_129488_));
+                    }
+                }
             }
         }
     }
@@ -323,11 +341,25 @@ public class Connection extends SimpleChannelInboundHandler<Packet<?>> {
     }
 
     private void sendPacket(Packet<?> p_129521_, @Nullable ChannelFutureListener p_409913_, boolean p_299777_) {
+        if (this.receiving == PacketFlow.CLIENTBOUND) {
+            for (IBaritone ibaritone : BaritoneAPI.getProvider().getAllBaritones()) {
+                if (ibaritone.getPlayerContext().player() != null && ibaritone.getPlayerContext().player().connection.getConnection() == (Connection) (Object) this) {
+                    ibaritone.getGameEventHandler().onSendPacket(new PacketEvent((Connection) (Object) this, EventState.PRE, p_129521_));
+                }
+            }
+        }
         this.sentPackets++;
         if (this.channel.eventLoop().inEventLoop()) {
             this.doSendPacket(p_129521_, p_409913_, p_299777_);
         } else {
             this.channel.eventLoop().execute(() -> this.doSendPacket(p_129521_, p_409913_, p_299777_));
+        }
+        if (this.receiving == PacketFlow.CLIENTBOUND) {
+            for (IBaritone ibaritone : BaritoneAPI.getProvider().getAllBaritones()) {
+                if (ibaritone.getPlayerContext().player() != null && ibaritone.getPlayerContext().player().connection.getConnection() == (Connection) (Object) this) {
+                    ibaritone.getGameEventHandler().onSendPacket(new PacketEvent((Connection) (Object) this, EventState.POST, p_129521_));
+                }
+            }
         }
     }
 

@@ -416,7 +416,7 @@ public class Esp extends Module {
 
         Component nameComponent = displayName.copy()
                 .append(Component.literal(" [").withStyle(ChatFormatting.GRAY))
-                .append(Component.literal(String.format("%.1f", health)).withStyle(ChatFormatting.WHITE))
+                .append(Component.literal(String.format("%.1f", health)).withStyle(ChatFormatting.RED))
                 .append(Component.literal("]").withStyle(ChatFormatting.GRAY));
 
         float fontSize = 10;

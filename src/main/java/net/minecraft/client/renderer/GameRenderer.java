@@ -70,6 +70,7 @@ import net.minecraft.client.server.IntegratedServer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.data.worldgen.Pools;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -126,6 +127,8 @@ import org.joml.Vector4f;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import ru.arixcompany.Arix;
+import ru.arixcompany.features.event.EventRepo;
+import ru.arixcompany.features.event.render.EventGameRender3D;
 import ru.arixcompany.features.module.modules.player.ChestStealer;
 import ru.arixcompany.utils.math.ProjectUtils;
 
@@ -914,6 +917,9 @@ public class GameRenderer implements TrackedWaypoint.Projector, AutoCloseable {
 
         ProfilerFiller profilerfiller = Profiler.get();
         boolean flag1 = this.shouldRenderBlockOutline();
+        EventRepo.call(
+                new EventGameRender3D(new PoseStack(), this.mainCamera, p_342230_.getGameTimeDeltaPartialTick(false))
+        );
         this.extractCamera(f);
         this.renderDistance = this.minecraft.options.getEffectiveRenderDistance() * 16;
         profilerfiller.push("matrices");

@@ -1,5 +1,6 @@
 package net.minecraft.world.item;
 
+import baritone.api.utils.accessor.IItemStack;
 import com.google.common.collect.Lists;
 import com.mojang.logging.LogUtils;
 import com.mojang.serialization.Codec;
@@ -101,7 +102,7 @@ import org.apache.commons.lang3.function.TriConsumer;
 import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.slf4j.Logger;
 
-public final class ItemStack implements DataComponentHolder {
+public final class ItemStack implements DataComponentHolder, IItemStack {
     private static final List<Component> OP_NBT_WARNING = List.of(
         Component.translatable("item.op_warning.line1").withStyle(ChatFormatting.RED, ChatFormatting.BOLD),
         Component.translatable("item.op_warning.line2").withStyle(ChatFormatting.RED),
@@ -169,6 +170,8 @@ public final class ItemStack implements DataComponentHolder {
     private final  Item item;
     final PatchedDataComponentMap components;
     private  Entity entityRepresentation;
+    private int baritoneHash;
+
 
     public static DataResult<ItemStack> validateStrict(ItemStack p_332181_) {
         DataResult<Unit> dataresult = validateComponents(p_332181_.getComponents());
@@ -236,6 +239,16 @@ public final class ItemStack implements DataComponentHolder {
         }
 
         return this.getItem().getTooltipImage(this);
+    }
+    private void recalculateHash() {
+        baritoneHash = item == null ? -1 : item.hashCode() + getDamageValue();
+    }
+    @Override
+    public int getBaritoneHash() {
+        // cannot do this in an init mixin because silentlib likes creating new
+        // items in getDamageValue, which we call in recalculateHash
+        if (baritoneHash == 0) recalculateHash();
+        return baritoneHash;
     }
 
     @Override
@@ -442,7 +455,10 @@ public final class ItemStack implements DataComponentHolder {
 
     public void setDamageValue(int p_41722_) {
         this.set(DataComponents.DAMAGE, Mth.clamp(p_41722_, 0, this.getMaxDamage()));
+
+        recalculateHash();
     }
+
 
     public int getMaxDamage() {
         return this.getOrDefault(DataComponents.MAX_DAMAGE, 0);

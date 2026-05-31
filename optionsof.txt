@@ -32,7 +32,7 @@ ofWeather:true
 ofSky:true
 ofStars:true
 ofSunMoon:true
-ofChunkUpdates:1
+ofChunkUpdates:2
 ofChunkUpdatesDynamic:true
 ofTime:0
 ofAaLevel:0

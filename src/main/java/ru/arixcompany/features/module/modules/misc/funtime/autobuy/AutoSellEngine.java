@@ -10,7 +10,7 @@ import ru.arixcompany.features.module.modules.misc.funtime.autobuy.items.ItemTar
 import ru.arixcompany.features.module.modules.misc.funtime.utils.FuntimeUtil;
 import ru.arixcompany.utils.IMinecraft;
 import ru.arixcompany.utils.MessageSender;
-import ru.arixcompany.utils.math.Timer;
+import ru.arixcompany.utils.math.TimerUtils;
 import ru.arixcompany.utils.player.inv.InventoryUtility;
 
 import java.util.ArrayDeque;
@@ -42,7 +42,7 @@ public class AutoSellEngine implements IMinecraft {
 
     private final Queue<SellTask>        queue      = new ArrayDeque<>();
     private final Map<Integer, Integer>  slotPrices = new LinkedHashMap<>();
-    private final Timer                  timer      = new Timer();
+    private final TimerUtils timer      = new TimerUtils();
 
     @Getter private boolean running = false;
     private Phase    phase     = Phase.IDLE;
@@ -55,7 +55,7 @@ public class AutoSellEngine implements IMinecraft {
     private int refreshMs   = 2500;
 
     // для обновления страницы во время сканирования
-    private final Timer refreshTimer = new Timer();
+    private final TimerUtils refreshTimer = new TimerUtils();
 
     public void setParams(int discountPct, int scanMs, int refreshMs) {
         this.discountPct = discountPct;

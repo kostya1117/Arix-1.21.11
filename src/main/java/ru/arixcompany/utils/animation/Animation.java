@@ -2,10 +2,10 @@ package ru.arixcompany.utils.animation;
 
 import lombok.Getter;
 import lombok.Setter;
-import ru.arixcompany.utils.math.Timer;
+import ru.arixcompany.utils.math.TimerUtils;
 
 public abstract class Animation {
-   public Timer timerUtil = new Timer();
+   public TimerUtils timerUtil = new TimerUtils();
    @Setter
    @Getter
    protected int duration;

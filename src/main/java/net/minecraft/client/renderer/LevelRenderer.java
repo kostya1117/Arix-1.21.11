@@ -1,5 +1,8 @@
 package net.minecraft.client.renderer;
 
+import baritone.api.BaritoneAPI;
+import baritone.api.IBaritone;
+import baritone.api.event.events.RenderEvent;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.mojang.blaze3d.ProjectionType;
@@ -760,6 +763,12 @@ public class LevelRenderer implements ResourceManagerReloadListener, AutoCloseab
             float tickDelta = p_342180_.getGameTimeDeltaPartialTick(true);
 
             EventRepo.call(new EventRender3D(stack,tickDelta));
+        }
+
+        for (IBaritone ibaritone : BaritoneAPI.getProvider().getAllBaritones()) {
+            PoseStack poseStack = new PoseStack();
+            poseStack.mulPose(p_254120_);
+            ibaritone.getGameEventHandler().onRenderPass(new RenderEvent(p_342180_.getGameTimeDeltaPartialTick(false), poseStack, p_330527_));
         }
 
         this.levelRenderState.reset();
