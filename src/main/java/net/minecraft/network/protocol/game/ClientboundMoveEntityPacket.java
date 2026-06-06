@@ -10,7 +10,7 @@ import net.minecraft.world.level.Level;
 import org.jspecify.annotations.Nullable;
 
 public abstract class ClientboundMoveEntityPacket implements Packet<ClientGamePacketListener> {
-    protected final int entityId;
+    public final int entityId;
     protected final short xa;
     protected final short ya;
     protected final short za;

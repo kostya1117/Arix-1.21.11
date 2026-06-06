@@ -1,75 +1,130 @@
 package ru.arixcompany.utils.math;
 
-import net.minecraft.util.Mth;
-import net.minecraft.world.effect.MobEffects;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import lombok.experimental.UtilityClass;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientboundMoveEntityPacket;
+import net.minecraft.network.protocol.game.ClientboundTeleportEntityPacket;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.PositionMoveRotation;
+import net.minecraft.world.entity.Relative;
 import net.minecraft.world.phys.Vec3;
+import ru.arixcompany.features.event.EventHandler;
+import ru.arixcompany.features.event.EventRepo;
+import ru.arixcompany.features.event.world.EventPacket;
+import ru.arixcompany.utils.IMinecraft;
 
-public final class PredictUtils {
+import java.util.Set;
 
-    /**
-     * Предикция позиции игрока на элитре через N тиков.
-     * Симулирует физику элитры пошагово (точная копия из LivingEntity.updateFallFlyingMovement).
-     */
-    public static Vec3 predict(LivingEntity entity, Vec3 pos, float ticks, float tps) {
-        double hSpeed = Math.hypot(entity.getX() - entity.xOld, entity.getZ() - entity.zOld) * tps;
-        double vSpeed = Math.abs(entity.getY() - entity.yOld) * tps;
-        if (hSpeed <= 5) {
-            return pos;
+public class PredictUtils {
+
+    public static Vec3 predict(LivingEntity target, int ticks) {
+        if (ticks <= 0) {
+            return target.position();
         }
 
-        Vec3 currentPos = pos;
-        Vec3 currentVel = entity.getDeltaMovement();
-
-        for (int t = 0; t < ticks; t++) {
-            currentVel = simulateElytraTick(entity, currentVel);
-            currentPos = currentPos.add(currentVel);
+        if (!target.isFallFlying()) {
+            return target.getEyePosition(1.0F);
         }
 
-        return currentPos;
+        Vec3 pos = target.position();
+        Vec3 vel = target.getDeltaMovement();
+
+        for (int i = 0; i < ticks; i++) {
+            vel = target.updateFallFlyingMovement(vel);
+            pos = pos.add(vel);
+        }
+
+        return pos;
     }
-
-    /**
-     * Один тик физики элитры — точная копия логики из LivingEntity.updateFallFlyingMovement().
-     */
-    private static Vec3 simulateElytraTick(LivingEntity entity, Vec3 velocity) {
-        // getLookAngle() из entity
-        float pitch = entity.getXRot() * (float) (Math.PI / 180.0);
-        float yaw = entity.getYRot() * (float) (Math.PI / 180.0);
-        float cosPitch = Mth.cos(pitch);
-        float sinPitch = Mth.sin(pitch);
-        float sinYaw = Mth.sin(yaw);
-        float cosYaw = Mth.cos(yaw);
-        Vec3 lookVec = new Vec3(sinYaw * cosPitch, -sinPitch, cosYaw * cosPitch);
-
-        double lookHLen = Math.sqrt(lookVec.x * lookVec.x + lookVec.z * lookVec.z);
-        double hVelLen = velocity.horizontalDistance();
-
-        // getEffectiveGravity()
-        boolean slowFalling = velocity.y <= 0.0 && entity.hasEffect(MobEffects.SLOW_FALLING);
-        double gravity = slowFalling
-                ? Math.min(entity.getGravity(), 0.01)
-                : entity.getGravity();
-
-        double cosPitch2 = Mth.square(Math.cos(pitch));
-
-        // точная копия из updateFallFlyingMovement (строки 2439-2456 твоего файла)
-        velocity = velocity.add(0.0, gravity * (-1.0 + cosPitch2 * 0.75), 0.0);
-
-        if (velocity.y < 0.0 && lookHLen > 0.0) {
-            double d4 = velocity.y * -0.1 * cosPitch2;
-            velocity = velocity.add(lookVec.x * d4 / lookHLen, d4, lookVec.z * d4 / lookHLen);
+    public static Vec3 predict2(LivingEntity target, int ticks) {
+        if (ticks <= 0) {
+            return target.position();
         }
 
-        if (pitch < 0.0F && lookHLen > 0.0) {
-            double d5 = hVelLen * -Mth.sin(pitch) * 0.04;
-            velocity = velocity.add(-lookVec.x * d5 / lookHLen, d5 * 3.2, -lookVec.z * d5 / lookHLen);
+        if (!target.isFallFlying()) {
+            return target.getEyePosition(1.0F);
         }
 
-        if (lookHLen > 0.0) {
-            velocity = velocity.add((lookVec.x / lookHLen * hVelLen - velocity.x) * 0.1, 0.0, (lookVec.z / lookHLen * hVelLen - velocity.z) * 0.1);
-        }
+        Vec3 pos = target.position();
+        Vec3 vel = target.getDeltaMovement();
 
-        return velocity.multiply(0.99F, 0.98F, 0.99F);
+        pos = pos.add(vel.scale(ticks));
+        vel = target.updateFallFlyingMovement(pos);
+        pos = pos.add(vel);
+
+        return pos;
     }
 }
+//public final class PredictUtils implements IMinecraft {
+//
+//    public PredictUtils() {
+//        EventRepo.register(this);
+//    }
+//
+//    private static final Int2ObjectMap<State> states = new Int2ObjectOpenHashMap<>();
+//
+//    @EventHandler
+//    public void onPacket(EventPacket e) {
+//        if (!e.isReceive()) return;
+//
+//        Packet<?> p = e.getPacket();
+//
+//        if (p instanceof ClientboundMoveEntityPacket move) {
+//            int id = move.entityId;
+//            Entity ent = mc.level.getEntity(id);
+//            if (!(ent instanceof LivingEntity)) return;
+//
+//            Vec3 pos = ent.position().add(
+//                    move.getXa() / 4096.0,
+//                    move.getYa() / 4096.0,
+//                    move.getZa() / 4096.0
+//            );
+//
+//            states.computeIfAbsent(id, k -> new State()).push(pos);
+//        }
+//    }
+//
+//    public static Vec3 predict(LivingEntity target, int ticks) {
+//        if (ticks <= 0) return target.position();
+//        if (!target.isFallFlying()) return target.getEyePosition(1.0F);
+//
+//        State st = states.get(target.getId());
+//
+//        Vec3 pos = st != null && st.hasSample ? st.serverPos : target.position();
+//        Vec3 vel = st != null && st.hasSample ? st.serverVelTick : target.getDeltaMovement();
+//
+//        for (int i = 0; i < ticks; i++) {
+//            vel = target.updateFallFlyingMovement(vel);
+//            pos = pos.add(vel);
+//        }
+//
+//        return pos;
+//    }
+//
+//    private static final class State {
+//        Vec3 serverPos = Vec3.ZERO;
+//        Vec3 serverVelTick = Vec3.ZERO;
+//        boolean hasSample;
+//        long lastMs;
+//
+//        void push(Vec3 newPos) {
+//            long now = System.currentTimeMillis();
+//
+//            if (hasSample) {
+//                double dtSec = Math.max(0.001, (now - lastMs) / 1000.0);
+//                Vec3 velSec = newPos.subtract(serverPos).scale(1.0 / dtSec);
+//                serverVelTick = velSec.scale(1.0 / 20.0);
+//            } else {
+//                hasSample = true;
+//                serverVelTick = Vec3.ZERO;
+//            }
+//
+//            serverPos = newPos;
+//            lastMs = now;
+//        }
+//    }
+//}
+

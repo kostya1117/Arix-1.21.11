@@ -9,6 +9,8 @@ import com.mojang.blaze3d.platform.Window;
 import com.mojang.logging.LogUtils;
 import java.nio.file.Path;
 import java.util.Locale;
+
+import de.maxhenkel.voicechat.events.InputEvents;
 import net.minecraft.ChatFormatting;
 import net.minecraft.CrashReport;
 import net.minecraft.CrashReportCategory;
@@ -463,6 +465,7 @@ public class KeyboardHandler {
         EventRepo.call(event);
 
         Window window = this.minecraft.getWindow();
+        InputEvents.KEYBOARD_KEY.invoker().onKeyboardEvent(p_423534_);
         if (p_90894_ == window.handle()) {
             this.minecraft.getFramerateLimitTracker().onInputReceived();
             Options options = this.minecraft.options;

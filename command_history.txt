@@ -1,50 +1,50 @@
-/login zaneerxd
-/ah
-/event delay
-/ah search Броня
-/ah search Поножи
-/ah search Нагрудник
-/ah search Шлем
-/ah search Шлем Крушителя
-/ah search Пузырек опыта
-/ah search Ботинки Крушителя
-/ah search Меч Крушителя
-/ah search талисман Карателя
-/ah search талисман Крушителя
-/ah search талисман Карателя
-/ah search талисман Крушителя
-/ah search Пузырек опыта
-/ah search зелье Силы
-/kit free
-/free
-/tg
-/free
-/tg
+//wand
+/warp pvp
+//wand
+/spawn
+/reg RaynNEW1117 RaynNEW1117
+/kit rabbit
+/ac
 /kit
-/free
-/ке
-/login zaneerxd
-/free
-/login PIDORLYA1117
-/god
-/kit pvp
+/kit claim
 /kit
-/reg PIDORLYA1117
-/login DrPrMHHxKi2nsGk
-/kit free
-/ec
-/kit free
-/login DrPrMHHxKi2nsGk
-/kit free
-/ec
-/kit pvp
-/login zaneerxd
-/login PIDORLYA1117
-/kit start
-/login zaneerxd
-/duel accept Zabipeat378
-/login DrPrMHHxKi2nsGk
+/give shield
+/reg RaynNEW1117
+/reg RaynNEW1117 RaynNEW1117
+/register RaynNEW1117 RaynNEW1117
+/register RaynNEW11171 RaynNEW11171
 /hub
-/rtp
+/kit pvp
+/fly
+/kit dragon
+/log
+/god
+/duel
+/duel Angre1598
+/duel ALEX555667
+/duel denisan67
 /kit start
-/login PIDORLYA1117
+//wand
+/warp PVP
+/login RaynNEW
+/login zaneerxd
+/reg Arixxx Arixxx
+/reg HolyFake HolyFake
+/register RaynNEW1117 RaynNEW1117
+/hub
+/login RaynNEW1117
+/hub
+/login cakkkkkkkkkkkkkk
+/login 1
+/рги
+/hub
+/HUB
+/an101
+/an102
+/an226
+/an236
+/an103
+/login RaynNEW1117
+/рги
+/duel KRUTASKA3
+/duel Shaftila

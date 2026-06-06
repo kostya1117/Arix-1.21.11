@@ -62,6 +62,12 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
+
+import de.maxhenkel.voicechat.FabricVoicechatMod;
+import de.maxhenkel.voicechat.VoicechatClient;
+import de.maxhenkel.voicechat.events.ClientWorldEvents;
+import de.maxhenkel.voicechat.events.InputEvents;
+import de.maxhenkel.voicechat.intercompatibility.FabricClientCompatibilityManager;
 import net.minecraft.ChatFormatting;
 import net.minecraft.CrashReport;
 import net.minecraft.CrashReportCategory;
@@ -262,9 +268,13 @@ import org.lwjgl.util.tinyfd.TinyFileDialogs;
 import org.slf4j.Logger;
 import ru.arixcompany.Arix;
 import ru.arixcompany.features.event.EventRepo;
+import ru.arixcompany.features.event.player.EventGameTicked;
+import ru.arixcompany.features.event.player.EventShield;
 import ru.arixcompany.features.event.world.EventGameTick;
 import ru.arixcompany.features.event.world.EventPreTick;
 import ru.arixcompany.features.event.world.EventTick;
+import ru.arixcompany.features.module.modules.combat.HitAura;
+import ru.arixcompany.utils.player.TickLoopTaskExecutor;
 
 public class Minecraft extends ReentrantBlockableEventLoop<Runnable> implements WindowEventHandler {
     static Minecraft instance;
@@ -441,6 +451,8 @@ public class Minecraft extends ReentrantBlockableEventLoop<Runnable> implements 
         this.fixerUpper = DataFixers.getDataFixer();
         this.gameThread = Thread.currentThread();
         this.options = new Options(this, this.gameDirectory);
+        FabricVoicechatMod.init();
+        VoicechatClient.initializeClient();
         this.debugEntries = new DebugScreenEntryList(this.gameDirectory);
         this.toastManager = new ToastManager(this, this.options);
         boolean flag = this.options.startedCleanly;
@@ -1734,6 +1746,8 @@ public class Minecraft extends ReentrantBlockableEventLoop<Runnable> implements 
     }
 
     public void tick() {
+        TickLoopTaskExecutor.onTickLoopStart();
+        EventRepo.call(new EventGameTicked());
         this.tickProvider = TickEvent.createNextProvider();
 
         for (IBaritone baritone : BaritoneAPI.getProvider().getAllBaritones()) {
@@ -1744,6 +1758,7 @@ public class Minecraft extends ReentrantBlockableEventLoop<Runnable> implements 
         }
 
         this.clientTickCount++;
+        FabricClientCompatibilityManager.fireClientTick();
         if (this.level != null && !this.pause) {
             this.level.tickRateManager().tick();
         }
@@ -1874,6 +1889,7 @@ public class Minecraft extends ReentrantBlockableEventLoop<Runnable> implements 
             ClientPacketListener clientpacketlistener = this.getConnection();
             if (clientpacketlistener != null && !this.pause) {
                 clientpacketlistener.send(ServerboundClientTickEndPacket.INSTANCE);
+                TickLoopTaskExecutor.onTickLoopCompleted();
             }
         } else if (this.pendingConnection != null) {
             profilerfiller.popPush("pendingConnection");
@@ -1894,6 +1910,10 @@ public class Minecraft extends ReentrantBlockableEventLoop<Runnable> implements 
 
             this.tickProvider = null;
         }
+
+        if (TickLoopTaskExecutor.isInTickLoop()) {
+            TickLoopTaskExecutor.onTickLoopCompleted();
+        }
     }
 
     private boolean isLevelRunningNormally() {
@@ -1905,6 +1925,7 @@ public class Minecraft extends ReentrantBlockableEventLoop<Runnable> implements 
     }
 
     private void handleKeybinds() {
+        InputEvents.HANDLE_KEYBINDS.invoker().run();
         while (this.options.keyTogglePerspective.consumeClick()) {
             CameraType cameratype = this.options.getCameraType();
             this.options.setCameraType(this.options.getCameraType().cycle());
@@ -1961,7 +1982,7 @@ public class Minecraft extends ReentrantBlockableEventLoop<Runnable> implements 
         }
 
         while (this.options.keyQuickActions.consumeClick()) {
-            this.getQuickActionsDialog().ifPresent(p_404787_ -> this.player.connection.showDialog((Holder<Dialog>)p_404787_, this.screen));
+            this.getQuickActionsDialog().ifPresent(p_404787_ -> this.player.connection.showDialog(p_404787_, this.screen));
         }
 
         while (this.options.keySwapOffhand.consumeClick()) {
@@ -1988,17 +2009,23 @@ public class Minecraft extends ReentrantBlockableEventLoop<Runnable> implements 
         }
 
         boolean flag2 = false;
+        EventShield eventShield = new EventShield(true, EventShield.Source.PRE);
+        EventRepo.call(eventShield);
+
         if (this.player.isUsingItem()) {
             if (!this.options.keyUse.isDown()) {
                 this.gameMode.releaseUsingItem(this.player);
             }
 
+//            //custom
+//            this.options.keyPickItem.clickCount = 0;
+//            this.options.keyUse.clickCount = 0;
+//            //custom
+
             while (this.options.keyAttack.consumeClick()) {
             }
-
             while (this.options.keyUse.consumeClick()) {
             }
-
             while (this.options.keyPickItem.consumeClick()) {
             }
         } else {
@@ -2007,21 +2034,20 @@ public class Minecraft extends ReentrantBlockableEventLoop<Runnable> implements 
             }
 
             while (this.options.keyUse.consumeClick()) {
-                this.startUseItem();
+                if (eventShield.isShieldUse()) {
+                    this.startUseItem();
+                }
             }
 
             while (this.options.keyPickItem.consumeClick()) {
                 this.pickBlock();
             }
-
-            if (this.player.isSpectator()) {
-                while (this.options.keySpectatorHotbar.consumeClick()) {
-                    this.gui.getSpectatorGui().onHotbarActionKeyPressed();
-                }
-            }
         }
 
-        if (this.options.keyUse.isDown() && this.rightClickDelay == 0 && !this.player.isUsingItem()) {
+        EventShield eventShieldPost = new EventShield(true, EventShield.Source.POST);
+        EventRepo.call(eventShieldPost);
+
+        if (this.options.keyUse.isDown() && eventShieldPost.isShieldUse() && this.rightClickDelay == 0 && !this.player.isUsingItem()) {
             this.startUseItem();
         }
 
@@ -2171,6 +2197,9 @@ public class Minecraft extends ReentrantBlockableEventLoop<Runnable> implements 
     }
 
     public void disconnect(Screen p_457642_, boolean p_451618_, boolean p_453114_) {
+        if (level != null) {
+            ClientWorldEvents.DISCONNECT.invoker().run();
+        }
         ClientPacketListener clientpacketlistener = this.getConnection();
         if (clientpacketlistener != null) {
             this.dropAllTasks();

@@ -76,9 +76,9 @@ public class VanillaPackResources implements PackResources {
                     suppIn = iosupplier;
                 }
             }
-
             p_249668_.accept(locIn, suppIn);
         };
+
         FileUtil.decomposePath(p_250848_).ifSuccess(partsIn -> {
             List<Path> list = this.pathsForType.get(p_248974_);
             int i = list.size();
@@ -99,6 +99,7 @@ public class VanillaPackResources implements PackResources {
                     map.forEach(packresources$resourceoutput);
                 }
             }
+
         }).ifError(errorIn -> LOGGER.error("Invalid path {}: {}", p_250848_, errorIn.message()));
     }
 

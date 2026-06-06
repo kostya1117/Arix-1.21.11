@@ -6,6 +6,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Supplier;
+
+import de.maxhenkel.voicechat.Voicechat;
+import de.maxhenkel.voicechat.voice.client.ClientManager;
+import de.maxhenkel.voicechat.voice.common.PlayerState;
 import net.minecraft.ChatFormatting;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.Minecraft;
@@ -47,6 +51,7 @@ public class PlayerEntry extends ContainerObjectSelectionList.Entry<PlayerEntry>
     private static final WidgetSprites UNMUTE_BUTTON_SPRITES = new WidgetSprites(
         Identifier.withDefaultNamespace("social_interactions/unmute_button"), Identifier.withDefaultNamespace("social_interactions/unmute_button_highlighted")
     );
+    private static final Identifier GROUP_ICON = Identifier.fromNamespaceAndPath(Voicechat.MODID, "icons/invite_button");
     private final Minecraft minecraft;
     private final List<AbstractWidget> children;
     private final UUID id;
@@ -78,9 +83,10 @@ public class PlayerEntry extends ContainerObjectSelectionList.Entry<PlayerEntry>
     public static final int BG_FILL_REMOVED = ARGB.color(255, 48, 48, 48);
     public static final int PLAYERNAME_COLOR = ARGB.color(255, 255, 255, 255);
     public static final int PLAYER_STATUS_COLOR = ARGB.color(140, 255, 255, 255);
-
+    private de.maxhenkel.voicechat.gui.widgets.ImageButton inviteButton;
+    private boolean invited;
     public PlayerEntry(
-        Minecraft p_243293_, SocialInteractionsScreen p_243214_, UUID p_243288_, String p_243311_, Supplier<PlayerSkin> p_243309_, boolean p_243297_
+            Minecraft p_243293_, SocialInteractionsScreen p_243214_, UUID p_243288_, String p_243311_, Supplier<PlayerSkin> p_243309_, boolean p_243297_
     ) {
         this.minecraft = p_243293_;
         this.id = p_243288_;
@@ -95,19 +101,20 @@ public class PlayerEntry extends ContainerObjectSelectionList.Entry<PlayerEntry>
         PlayerSocialManager playersocialmanager = p_243293_.getPlayerSocialManager();
         boolean flag = p_243293_.getChatStatus().isChatAllowed(p_243293_.isLocalServer());
         boolean flag1 = !p_243293_.player.getUUID().equals(p_243288_);
+
         if (!SharedConstants.DEBUG_SOCIAL_INTERACTIONS && (!flag1 || !flag || playersocialmanager.isBlocked(p_243288_))) {
             this.children = ImmutableList.of();
         } else {
             this.reportButton = new ImageButton(
-                0,
-                0,
-                20,
-                20,
-                REPORT_BUTTON_SPRITES,
-                p_238875_ -> reportingcontext.draftReportHandled(
-                    p_243293_, p_243214_, () -> p_243293_.setScreen(new ReportPlayerScreen(p_243214_, reportingcontext, this)), false
-                ),
-                Component.translatable("gui.socialInteractions.report")
+                    0,
+                    0,
+                    20,
+                    20,
+                    REPORT_BUTTON_SPRITES,
+                    p_238875_ -> reportingcontext.draftReportHandled(
+                            p_243293_, p_243214_, () -> p_243293_.setScreen(new ReportPlayerScreen(p_243214_, reportingcontext, this)), false
+                    ),
+                    Component.translatable("gui.socialInteractions.report")
             ) {
                 @Override
                 protected MutableComponent createNarrationMessage() {
@@ -117,6 +124,7 @@ public class PlayerEntry extends ContainerObjectSelectionList.Entry<PlayerEntry>
             this.reportButton.active = this.reportingEnabled;
             this.reportButton.setTooltip(this.createReportButtonTooltip());
             this.reportButton.setTooltipDelay(TOOLTIP_DELAY);
+
             this.hideButton = new ImageButton(0, 0, 20, 20, MUTE_BUTTON_SPRITES, p_100612_ -> {
                 playersocialmanager.hidePlayer(p_243288_);
                 this.onHiddenOrShown(true, Component.translatable("gui.socialInteractions.hidden_in_chat", p_243311_));
@@ -128,6 +136,7 @@ public class PlayerEntry extends ContainerObjectSelectionList.Entry<PlayerEntry>
             };
             this.hideButton.setTooltip(Tooltip.create(HIDE_TEXT_TOOLTIP, component));
             this.hideButton.setTooltipDelay(TOOLTIP_DELAY);
+
             this.showButton = new ImageButton(0, 0, 20, 20, UNMUTE_BUTTON_SPRITES, p_170074_ -> {
                 playersocialmanager.showPlayer(p_243288_);
                 this.onHiddenOrShown(false, Component.translatable("gui.socialInteractions.shown_in_chat", p_243311_));
@@ -139,10 +148,21 @@ public class PlayerEntry extends ContainerObjectSelectionList.Entry<PlayerEntry>
             };
             this.showButton.setTooltip(Tooltip.create(SHOW_TEXT_TOOLTIP, component1));
             this.showButton.setTooltipDelay(TOOLTIP_DELAY);
+
             this.children = new ArrayList<>();
             this.children.add(this.hideButton);
             this.children.add(this.reportButton);
             this.updateHideAndShowButton(playersocialmanager.isHidden(this.id));
+        }
+
+        if (this.children instanceof ArrayList) {
+            this.inviteButton = new de.maxhenkel.voicechat.gui.widgets.ImageButton(0, 0, GROUP_ICON, button -> {
+                this.minecraft.player.connection.sendCommand("voicechat invite %s".formatted(this.playerName));
+                this.invited = true;
+            });
+            this.inviteButton.setTooltip(Tooltip.create(Component.translatable("message.voicechat.invite_player", this.playerName)));
+            this.inviteButton.setTooltipDelay(TOOLTIP_DELAY);
+            this.children.add(this.inviteButton);
         }
     }
 
@@ -180,15 +200,33 @@ public class PlayerEntry extends ContainerObjectSelectionList.Entry<PlayerEntry>
 
         if (this.hideButton != null && this.showButton != null && this.reportButton != null) {
             float f = this.tooltipHoverTime;
+
             this.hideButton.setX(this.getContentX() + (this.getContentWidth() - this.hideButton.getWidth() - 4) - 20 - 4);
             this.hideButton.setY(this.getContentY() + (this.getContentHeight() - this.hideButton.getHeight()) / 2);
             this.hideButton.render(p_431504_, p_425199_, p_424281_, p_428030_);
+
             this.showButton.setX(this.getContentX() + (this.getContentWidth() - this.showButton.getWidth() - 4) - 20 - 4);
             this.showButton.setY(this.getContentY() + (this.getContentHeight() - this.showButton.getHeight()) / 2);
-            this.showButton.render(p_431504_, p_425199_, p_424281_, p_428030_);
+
+            if (this.inviteButton != null && this.hideButton != null && this.reportButton != null) {
+                if (ClientManager.getPlayerStateManager().getGroupID() == null || !this.canInvite()) {
+                    this.inviteButton.visible = false;
+                } else {
+                    this.inviteButton.visible = true;
+                    this.inviteButton.active = !this.invited;
+                    this.inviteButton.setPosition(
+                            this.getContentX() + (this.getContentWidth() - this.hideButton.getWidth() - 4 - this.reportButton.getWidth() - 4) - this.inviteButton.getWidth() - 4,
+                            this.getContentY() + (this.getContentHeight() - this.inviteButton.getHeight()) / 2
+                    );
+                    this.inviteButton.render(p_431504_, p_425199_, p_424281_, p_428030_);
+                }
+            }
+            this.showButton.render(p_431504_, p_425199_, p_424281_, p_428030_); // ordinal 1
+
             this.reportButton.setX(this.getContentX() + (this.getContentWidth() - this.showButton.getWidth() - 4));
             this.reportButton.setY(this.getContentY() + (this.getContentHeight() - this.showButton.getHeight()) / 2);
-            this.reportButton.render(p_431504_, p_425199_, p_424281_, p_428030_);
+            this.reportButton.render(p_431504_, p_425199_, p_424281_, p_428030_); // ordinal 2
+
             if (f == this.tooltipHoverTime) {
                 this.tooltipHoverTime = 0.0F;
             }
@@ -197,6 +235,13 @@ public class PlayerEntry extends ContainerObjectSelectionList.Entry<PlayerEntry>
         if (this.hasDraftReport && this.reportButton != null) {
             p_431504_.blitSprite(RenderPipelines.GUI_TEXTURED, DRAFT_REPORT_SPRITE, this.reportButton.getX() + 5, this.reportButton.getY() + 1, 15, 15);
         }
+    }
+    private boolean canInvite() {
+        PlayerState state = ClientManager.getPlayerStateManager().getState(this.id);
+        if (state == null) {
+            return false;
+        }
+        return !state.hasGroup();
     }
 
     @Override

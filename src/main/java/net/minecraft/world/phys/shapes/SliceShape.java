@@ -1,9 +1,10 @@
 package net.minecraft.world.phys.shapes;
 
 import it.unimi.dsi.fastutil.doubles.DoubleList;
+import malte0811.ferritecore.mixin.accessors.SliceShapeAccess;
 import net.minecraft.core.Direction;
 
-public class SliceShape extends VoxelShape {
+public class SliceShape extends VoxelShape implements SliceShapeAccess {
     private final VoxelShape delegate;
     private final Direction.Axis axis;
     private static final DoubleList SLICE_COORDS = new CubePointRange(1);
@@ -29,5 +30,15 @@ public class SliceShape extends VoxelShape {
     @Override
     public DoubleList getCoords(Direction.Axis p_83181_) {
         return p_83181_ == this.axis ? SLICE_COORDS : this.delegate.getCoords(p_83181_);
+    }
+
+    @Override
+    public VoxelShape getDelegate() {
+        return delegate;
+    }
+
+    @Override
+    public Direction.Axis getAxis() {
+        return axis;
     }
 }

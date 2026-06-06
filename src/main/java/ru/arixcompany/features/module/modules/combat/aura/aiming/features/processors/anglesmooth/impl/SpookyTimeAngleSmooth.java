@@ -24,7 +24,7 @@ public class SpookyTimeAngleSmooth extends FactorAngleSmooth implements IMinecra
     }
 
     public SpookyTimeAngleSmooth() {
-        this(43, 47);
+        this(44, 50);
     }
 
     @Override
@@ -35,7 +35,7 @@ public class SpookyTimeAngleSmooth extends FactorAngleSmooth implements IMinecra
         float baseYawSpeed = randomizer.nextFloat(yawSpeedMin, yawSpeedMax);
         float basePitchSpeed = computePitchAccel();
 
-//        LivingEntity target = HitAura.target;
+        LivingEntity target = HitAura.target;
 //        if (target != null && mc.player != null) {
 //            float distance = mc.player.distanceTo(target);
 //            float distMultiplier = Mth.clampedLerp((distance - 0.5f) / 2.5f, 0.5f, 1.0f);
@@ -43,7 +43,7 @@ public class SpookyTimeAngleSmooth extends FactorAngleSmooth implements IMinecra
 //        }
 
         float hCurve = calculateFactorWithCurve(yawDiff, baseYawSpeed);
-        float vCurve = calculateFactorWithCurvePitch(pitchDiff, basePitchSpeed);
+        float vCurve = calculateFactorWithCurve(pitchDiff, basePitchSpeed);
 
         float maxYawStep = hCurve * baseYawSpeed;
         float maxPitchStep = vCurve * basePitchSpeed;
@@ -54,30 +54,14 @@ public class SpookyTimeAngleSmooth extends FactorAngleSmooth implements IMinecra
     private float calculateFactorWithCurve(float rotationDifference, float speed) {
         float t = Math.min(rotationDifference / 180, 1.0f);
 
-        float speedInfluence = Mth.clampedLerp(speed, -1, 1);
+        float speedInfluence = Mth.clamp(speed, -1, 1);
 
         float adjustedT = (float) Math.pow(t, 1.0 / speedInfluence);
         adjustedT = Math.min(adjustedT, 1.0f);
 
         float curve = (float) Interpolation.interpolate(
                 0.0, 1.0, adjustedT,
-                Interpolation.Type.CUBIC,
-                Interpolation.Ease.OUT
-        );
-
-        return Math.min(curve, 1.0f);
-    }
-    private float calculateFactorWithCurvePitch(float rotationDifference, float speed) {
-        float t = Math.min(rotationDifference / 90, 1.0f);
-
-        float speedInfluence = Mth.clampedLerp(speed, -1, 1);
-
-        float adjustedT = (float) Math.pow(t, 1.0 / speedInfluence);
-        adjustedT = Math.min(adjustedT, 1.0f);
-
-        float curve = (float) Interpolation.interpolate(
-                0.0, 1.0, adjustedT,
-                Interpolation.Type.CUBIC,
+                Interpolation.Type.SINE,
                 Interpolation.Ease.OUT
         );
 
@@ -87,12 +71,11 @@ public class SpookyTimeAngleSmooth extends FactorAngleSmooth implements IMinecra
     @Override
     public Rotation process(RotationTarget rotationTarget, Rotation currentRotation, Rotation targetRotation) {
         double t = Util.getNanos() / 1.0E9 * Mth.PI2 * 2.0;
-        float yawJitter = 4f * Mth.sin(t);
-        float pitchJitter = 5f * Mth.cos(t);
+        float yawJitter = 6f * Mth.sin(t);
 
         Rotation jitteredTarget = new Rotation(
                 targetRotation.yaw() + yawJitter,
-                Mth.clamp(targetRotation.pitch() + pitchJitter, -90f, 90f)
+                Mth.clamp(targetRotation.pitch(), -90f, 90f)
         );
 
         float[] factors = calculateFactors(rotationTarget, currentRotation, jitteredTarget);

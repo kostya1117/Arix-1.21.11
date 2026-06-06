@@ -10,6 +10,8 @@ import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+
+import net.conczin.immersive_optimization.TickScheduler;
 import net.minecraft.CrashReport;
 import net.minecraft.CrashReportCategory;
 import net.minecraft.ReportedException;
@@ -524,6 +526,10 @@ public abstract class Level implements LevelAccessor, AutoCloseable {
     }
 
     public boolean shouldTickBlocksAt(long p_186456_) {
+        if (!TickScheduler.INSTANCE.shouldTick(this, p_186456_)) {
+            return false;
+        }
+
         return true;
     }
 

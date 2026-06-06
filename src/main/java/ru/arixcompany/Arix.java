@@ -1,10 +1,13 @@
 package ru.arixcompany;
 
 import de.florianmichael.viamcp.ViaMCP;
+import de.maxhenkel.voicechat.integration.ViaVersionCompatibility;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.NonFinal;
+import net.conczin.immersive_optimization.client.OptimizationDebugEntry;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.components.debug.DebugScreenEntries;
 import ru.arixcompany.features.command.CommandRepo;
 import ru.arixcompany.features.module.modules.misc.Core;
 import ru.arixcompany.features.repos.OtherRepo;
@@ -24,6 +27,7 @@ import ru.arixcompany.features.file.exception.FileProcessingException;
 import ru.arixcompany.features.module.ModuleRepo;
 import ru.arixcompany.features.module.Theme;
 import ru.arixcompany.utils.IMinecraft;
+import ru.arixcompany.utils.math.PredictUtils;
 import ru.arixcompany.utils.math.Timer;
 import ru.arixcompany.utils.render.shader.ShadersRepo;
 import ru.arixcompany.utils.render.font.FontManager;
@@ -71,7 +75,9 @@ public class Arix implements IMinecraft {
         instance = this;
         ViaMCP.create();
         ViaMCP.INSTANCE.initAsyncSlider();
+        ViaVersionCompatibility.register();
         FontManager.init();
+        DebugScreenEntries.register(OptimizationDebugEntry.ID, new OptimizationDebugEntry());
 
         scriptRepo = new ScriptRepo();
 
@@ -92,6 +98,8 @@ public class Arix implements IMinecraft {
 
         draggableRepo = new DraggableRepo();
         draggableRepo.init();
+
+        new PredictUtils();
 
         initFileManager();
         tryAutoLogin();

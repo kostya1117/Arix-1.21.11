@@ -2,10 +2,18 @@ package net.minecraft.client.player;
 
 import baritone.api.BaritoneAPI;
 import baritone.api.IBaritone;
+import baritone.api.behavior.IPathingBehavior;
 import baritone.api.event.events.PlayerUpdateEvent;
 import baritone.api.event.events.SprintStateEvent;
 import baritone.api.event.events.type.EventState;
+import baritone.api.process.ICustomGoalProcess;
+import baritone.api.process.IFollowProcess;
+import baritone.api.process.IMineProcess;
 import baritone.behavior.LookBehavior;
+import baritone.behavior.PathingBehavior;
+import baritone.process.CustomGoalProcess;
+import baritone.process.FollowProcess;
+import baritone.process.MineProcess;
 import com.google.common.collect.Lists;
 import com.mojang.logging.LogUtils;
 import java.util.Iterator;
@@ -706,15 +714,15 @@ public class LocalPlayer extends AbstractClientPlayer {
             this.jumping = this.input.keyPresses.jump();
             this.yBobO = this.yBob;
             this.xBobO = this.xBob;
-//            this.xBob = this.xBob + (this.getXRot() - this.xBob) * 0.5F;
-//            this.yBob = this.yBob + (this.getYRot() - this.yBob) * 0.5F;
+            this.xBob = this.xBob + (this.getXRot() - this.xBob) * 0.5F;
+            this.yBob = this.yBob + (this.getYRot() - this.yBob) * 0.5F;
 //            if (RotationManager.isRotating()) {
 //                this.xBob = (float) ((double) this.xBob + (double) (minecraft.gameRenderer.getMainCamera().xRot() - this.xBob) * 0.5D);
 //                this.yBob = (float) ((double) this.yBob + (double) (minecraft.gameRenderer.getMainCamera().yRot() - this.yBob) * 0.5D);
 //            } else {
-                this.xBob = (float) ((double) this.xBob + (double) (getXRot() - this.xBob) * 0.5D);
-                this.yBob = (float) ((double) this.yBob + (double) (getYRot() - this.yBob) * 0.5D);
-          //  }
+//            this.xBob = this.xBob + (this.getXRot() - this.xBob) * 0.5F;
+//            this.yBob = this.yBob + (this.getYRot() - this.yBob) * 0.5F;
+            //  }
         } else {
             super.applyInput();
         }
@@ -897,14 +905,13 @@ public class LocalPlayer extends AbstractClientPlayer {
             }
         }
 
-        boolean shouldStartElytra;
-        if (baritone != null && baritone.getPathingBehavior().isPathing()) {
-            shouldStartElytra = false;
-        } else {
-            shouldStartElytra = this.tryToStartFallFlying();
-        }
+//        boolean tryToStartFallFlying = this.tryToStartFallFlying();
+//        IBaritone baritones = BaritoneAPI.getProvider().getBaritoneForPlayer(this);
+//        if (baritones != null && baritones.getPathingBehavior().isPathing()) {
+//            tryToStartFallFlying = false;
+//        }
 
-        if (this.input.keyPresses.jump() && !flag4 && !flag && !this.onClimbable() && shouldStartElytra) {
+        if (this.input.keyPresses.jump() && !flag4 && !flag && !this.onClimbable() && this.tryToStartFallFlying()) {
             this.connection.send(new ServerboundPlayerCommandPacket(this, ServerboundPlayerCommandPacket.Action.START_FALL_FLYING));
         }
 

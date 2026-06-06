@@ -3,19 +3,9 @@ package net.minecraft.world.level.block.state;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import com.mojang.serialization.codecs.RecordCodecBuilder.Instance;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectArrayMap;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.function.BiConsumer;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.function.ToIntFunction;
-import java.util.stream.Stream;
+import malte0811.ferritecore.ducks.BlockStateCacheAccess;
+import malte0811.ferritecore.impl.BlockStateCacheImpl;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
@@ -46,31 +36,14 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.EmptyBlockGetter;
-import net.minecraft.world.level.Explosion;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.ScheduledTickAccess;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.EntityBlock;
-import net.minecraft.world.level.block.Mirror;
-import net.minecraft.world.level.block.RenderShape;
-import net.minecraft.world.level.block.Rotation;
-import net.minecraft.world.level.block.SoundType;
-import net.minecraft.world.level.block.SupportType;
+import net.minecraft.world.level.*;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraft.world.level.block.state.properties.Property;
-import net.minecraft.world.level.material.Fluid;
-import net.minecraft.world.level.material.FluidState;
-import net.minecraft.world.level.material.Fluids;
-import net.minecraft.world.level.material.MapColor;
-import net.minecraft.world.level.material.PushReaction;
+import net.minecraft.world.level.material.*;
 import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.world.level.storage.loot.LootParams;
@@ -84,6 +57,13 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jspecify.annotations.Nullable;
+
+import java.util.*;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.function.ToIntFunction;
+import java.util.stream.Stream;
 
 public abstract class BlockBehaviour implements FeatureElement {
     protected static final Direction[] UPDATE_SHAPE_ORDER = new Direction[]{
@@ -407,7 +387,7 @@ public abstract class BlockBehaviour implements FeatureElement {
         return this.properties.destroyTime;
     }
 
-    public abstract static class BlockStateBase extends StateHolder<Block, BlockState> {
+    public abstract static class BlockStateBase extends StateHolder<Block, BlockState>  {
         private static final Direction[] DIRECTIONS = Direction.values();
         private static final VoxelShape[] EMPTY_OCCLUSION_SHAPES = Util.make(new VoxelShape[DIRECTIONS.length], p_368402_ -> Arrays.fill(p_368402_, Shapes.empty()));
         private static final VoxelShape[] FULL_BLOCK_OCCLUSION_SHAPES = Util.make(new VoxelShape[DIRECTIONS.length], p_362279_ -> Arrays.fill(p_362279_, Shapes.block()));
@@ -433,7 +413,7 @@ public abstract class BlockBehaviour implements FeatureElement {
         private final boolean spawnTerrainParticles;
         private final NoteBlockInstrument instrument;
         private final boolean replaceable;
-        private BlockBehaviour.BlockStateBase.@Nullable Cache cache;
+        public BlockBehaviour.BlockStateBase.@Nullable Cache cache;
         private FluidState fluidState = Fluids.EMPTY.defaultFluidState();
         private boolean isRandomlyTicking;
         private boolean solidRender;
@@ -489,6 +469,7 @@ public abstract class BlockBehaviour implements FeatureElement {
         }
 
         public void initCache() {
+            BlockStateCacheImpl.deduplicateCachePre(asState());
             this.fluidState = this.owner.getFluidState(this.asState());
             this.isRandomlyTicking = this.owner.isRandomlyTicking(this.asState());
             if (!this.getBlock().hasDynamicShape()) {
@@ -512,6 +493,8 @@ public abstract class BlockBehaviour implements FeatureElement {
 
             this.propagatesSkylightDown = this.owner.propagatesSkylightDown(this.asState());
             this.lightBlock = this.owner.getLightBlock(this.asState());
+
+            BlockStateCacheImpl.deduplicateCachePost(asState());
         }
 
         public Block getBlock() {
@@ -910,12 +893,12 @@ public abstract class BlockBehaviour implements FeatureElement {
             return this.instrument;
         }
 
-        static final class Cache {
+        public static final class Cache implements BlockStateCacheAccess {
             private static final Direction[] DIRECTIONS = Direction.values();
             private static final int SUPPORT_TYPE_COUNT = SupportType.values().length;
-            protected final VoxelShape collisionShape;
+            protected VoxelShape collisionShape;
             protected final boolean largeCollisionShape;
-            private final boolean[] faceSturdy;
+            private boolean[] faceSturdy;
             protected final boolean isCollisionShapeFullBlock;
 
             Cache(BlockState p_60853_) {
@@ -944,6 +927,31 @@ public abstract class BlockBehaviour implements FeatureElement {
                 }
 
                 this.isCollisionShapeFullBlock = Block.isShapeFullBlock(p_60853_.getCollisionShape(EmptyBlockGetter.INSTANCE, BlockPos.ZERO));
+            }
+
+            @Override
+            public BlockStateCacheAccess ferritecore$getCache() {
+                return this;
+            }
+
+            @Override
+            public VoxelShape getCollisionShape() {
+                return this.collisionShape;
+            }
+
+            @Override
+            public void setCollisionShape(VoxelShape newShape) {
+                this.collisionShape = newShape;
+            }
+
+            @Override
+            public boolean[] getFaceSturdy() {
+                return faceSturdy;
+            }
+
+            @Override
+            public void setFaceSturdy(final boolean[] newFaceSturdyArray) {
+                this.faceSturdy = newFaceSturdyArray;
             }
 
             public boolean isFaceSturdy(Direction p_60862_, SupportType p_60863_) {

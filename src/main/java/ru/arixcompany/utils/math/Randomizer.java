@@ -6,14 +6,12 @@ public class Randomizer {
     private long state;
 
     public Randomizer() {
-        // ThreadLocalRandom даёт качественный seed без корреляций между инстансами
         this.state = ThreadLocalRandom.current().nextLong();
     }
 
     public Randomizer(long seed) {
-        // Прогоняем seed через SplitMix чтобы "размазать" плохие сиды (0, 1, 2...)
         this.state = seed;
-        nextLong(); // Прогрев
+        nextLong();
     }
 
     public int nextInt(int min, int max) {

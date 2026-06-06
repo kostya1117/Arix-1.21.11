@@ -32,6 +32,9 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import net.conczin.immersive_optimization.TickScheduler;
+import net.conczin.immersive_optimization.mixin.ServerLevelAccessor;
 import net.minecraft.CrashReport;
 import net.minecraft.CrashReportCategory;
 import net.minecraft.ReportType;
@@ -181,7 +184,7 @@ import net.minecraft.world.waypoints.WaypointTransmitter;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 
-public class ServerLevel extends Level implements ServerEntityGetter, WorldGenLevel {
+public class ServerLevel extends Level implements ServerEntityGetter, WorldGenLevel, ServerLevelAccessor {
     public static final BlockPos END_SPAWN_POINT = new BlockPos(100, 50, 0);
     public static final IntProvider RAIN_DELAY = UniformInt.of(12000, 180000);
     public static final IntProvider RAIN_DURATION = UniformInt.of(12000, 24000);
@@ -335,6 +338,7 @@ public class ServerLevel extends Level implements ServerEntityGetter, WorldGenLe
     }
 
     public void tick(BooleanSupplier p_8794_) {
+        TickScheduler.INSTANCE.startLevelTick(this);
         ProfilerFiller profilerfiller = Profiler.get();
         this.handlingTick = true;
         TickRateManager tickratemanager = this.tickRateManager();
@@ -802,6 +806,9 @@ public class ServerLevel extends Level implements ServerEntityGetter, WorldGenLe
     }
 
     public void tickNonPassenger(Entity p_8648_) {
+        if (TickScheduler.INSTANCE != null && !TickScheduler.INSTANCE.shouldTick(p_8648_)) {
+            return;
+        }
         p_8648_.setOldPosAndRot();
         ProfilerFiller profilerfiller = Profiler.get();
         p_8648_.tickCount++;
@@ -1844,6 +1851,11 @@ public class ServerLevel extends Level implements ServerEntityGetter, WorldGenLe
 
     public boolean isSpawnerBlockEnabled() {
         return this.getGameRules().get(GameRules.SPAWNER_BLOCKS_WORK);
+    }
+
+    @Override
+    public EntityTickList getEntityTickList() {
+        return entityTickList;
     }
 
     final class EntityCallbacks implements LevelCallback<Entity> {

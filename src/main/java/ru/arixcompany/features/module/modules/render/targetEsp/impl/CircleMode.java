@@ -37,7 +37,7 @@ public class CircleMode extends TargetEspMode {
                     .withCull(false)
                     .withDepthTestFunction(DepthTestFunction.NO_DEPTH_TEST)
                     .withDepthWrite(false)
-                    .withBlend(BlendFunction.TRANSLUCENT)
+                    .withBlend(BlendFunction.LIGHTNING)
                     .build()
     );
 

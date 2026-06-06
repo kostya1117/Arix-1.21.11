@@ -23,6 +23,9 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.logging.LogUtils;
+import de.maxhenkel.voicechat.intercompatibility.CommonCompatibilityManager;
+import de.maxhenkel.voicechat.intercompatibility.FabricClientCompatibilityManager;
+import de.maxhenkel.voicechat.net.FabricNetManager;
 import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
 import it.unimi.dsi.fastutil.objects.Object2IntMap.Entry;
 import java.lang.ref.WeakReference;
@@ -351,6 +354,7 @@ import ru.arixcompany.Arix;
 import ru.arixcompany.features.command.CommandRepo;
 import ru.arixcompany.features.event.EventRepo;
 import ru.arixcompany.features.event.player.EventMotion;
+import ru.arixcompany.features.event.player.EventTotemPop;
 import ru.arixcompany.features.event.world.EventChat;
 
 
@@ -566,6 +570,7 @@ public class ClientPacketListener extends ClientCommonPacketListenerImpl impleme
         this.telemetryManager.onPlayerInfoReceived(commonplayerspawninfo.gameType(), p_105030_.hardcore());
         this.minecraft.quickPlayLog().log(this.minecraft);
         this.serverEnforcesSecureChat = p_105030_.enforcesSecureChat();
+        FabricClientCompatibilityManager.fireJoinWorld();
     }
 
     @Override
@@ -1305,6 +1310,7 @@ public class ClientPacketListener extends ClientCommonPacketListenerImpl impleme
                     if (entity == this.minecraft.player) {
                         this.minecraft.gameRenderer.displayItemActivation(findTotem(this.minecraft.player));
                     }
+                    EventRepo.call(new EventTotemPop(entity));
                     break;
                 case 63:
                     this.minecraft.getSoundManager().play(new SnifferSoundInstance((Sniffer)entity));
@@ -2245,9 +2251,14 @@ public class ClientPacketListener extends ClientCommonPacketListenerImpl impleme
 
     @Override
     public void handleCustomPayload(CustomPacketPayload p_300286_) {
+        if (CommonCompatibilityManager.INSTANCE.getNetManager()
+                instanceof FabricNetManager voicechatNet) {
+            if (this.minecraft.player != null && voicechatNet.handleClientPayload(this.minecraft.player, p_300286_)) {
+                return;
+            }
+        }
         this.handleUnknownCustomPayload(p_300286_);
     }
-
     private void handleUnknownCustomPayload(CustomPacketPayload p_301051_) {
         LOGGER.warn("Unknown custom packet payload: {}", p_301051_.type().id());
     }

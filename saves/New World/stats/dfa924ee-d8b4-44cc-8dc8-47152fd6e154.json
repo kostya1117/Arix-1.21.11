@@ -1,0 +1,30 @@
+{
+  "stats": {
+    "minecraft:killed": {
+      "minecraft:horse": 6,
+      "minecraft:pig": 8
+    },
+    "minecraft:custom": {
+      "minecraft:sprint_one_cm": 712,
+      "minecraft:time_since_rest": 1659,
+      "minecraft:walk_one_cm": 809,
+      "minecraft:total_world_time": 1659,
+      "minecraft:fly_one_cm": 333,
+      "minecraft:mob_kills": 14,
+      "minecraft:play_time": 1659,
+      "minecraft:damage_dealt": 2100,
+      "minecraft:jump": 33,
+      "minecraft:time_since_death": 1659
+    },
+    "minecraft:used": {
+      "minecraft:netherite_sword": 26,
+      "minecraft:horse_spawn_egg": 6,
+      "minecraft:pig_spawn_egg": 8
+    },
+    "minecraft:picked_up": {
+      "minecraft:porkchop": 15,
+      "minecraft:leather": 5
+    }
+  },
+  "DataVersion": 4671
+}

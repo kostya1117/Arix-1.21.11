@@ -21,6 +21,8 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.function.Predicate;
+
+import de.maxhenkel.voicechat.events.PlayerEvents;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.BlockPos;
@@ -216,6 +218,7 @@ public abstract class PlayerList {
         p_11263_.initInventoryMenu();
         this.server.notificationManager().playerJoined(p_11263_);
         servergamepacketlistenerimpl.resumeFlushing();
+        PlayerEvents.PLAYER_LOGGED_IN.invoker().accept(p_11263_);
     }
 
     protected void updateEntireScoreboard(ServerScoreboard p_11274_, ServerPlayer p_11275_) {
@@ -298,6 +301,7 @@ public abstract class PlayerList {
     }
 
     public void remove(ServerPlayer p_11287_) {
+        PlayerEvents.PLAYER_LOGGED_OUT.invoker().accept(p_11287_);
         ServerLevel serverlevel = p_11287_.level();
         p_11287_.awardStat(Stats.LEAVE_GAME);
         this.save(p_11287_);

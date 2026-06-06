@@ -11,6 +11,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.BooleanSupplier;
+
+import de.maxhenkel.voicechat.events.PublishServerEvents;
 import net.minecraft.CrashReport;
 import net.minecraft.SharedConstants;
 import net.minecraft.SystemReport;
@@ -221,7 +223,7 @@ public class IntegratedServer extends MinecraftServer {
     }
 
     @Override
-    public boolean publishServer( GameType p_120041_, boolean p_120042_, int p_120043_) {
+    public boolean publishServer(GameType p_120041_, boolean p_120042_, int p_120043_) {
         try {
             this.minecraft.prepareForMultiplayer();
             this.minecraft.getConnection().prepareKeyPair();
@@ -238,6 +240,9 @@ public class IntegratedServer extends MinecraftServer {
             for (ServerPlayer serverplayer : this.getPlayerList().getPlayers()) {
                 this.getCommands().sendCommands(serverplayer);
             }
+
+            // Вставка из миксина (аналог @At("RETURN") при успешном выполнении)
+            PublishServerEvents.SERVER_PUBLISHED.invoker().accept(p_120043_);
 
             return true;
         } catch (IOException ioexception) {

@@ -921,9 +921,6 @@ public class GameRenderer implements TrackedWaypoint.Projector, AutoCloseable {
 
         ProfilerFiller profilerfiller = Profiler.get();
         boolean flag1 = this.shouldRenderBlockOutline();
-        EventRepo.call(
-                new EventGameRender3D(new PoseStack(), this.mainCamera, p_342230_.getGameTimeDeltaPartialTick(false))
-        );
         this.extractCamera(f);
         this.renderDistance = this.minecraft.options.getEffectiveRenderDistance() * 16;
         profilerfiller.push("matrices");
@@ -992,6 +989,9 @@ public class GameRenderer implements TrackedWaypoint.Projector, AutoCloseable {
             .renderLevel(this.resourcePool, p_342230_, flag1, this.mainCamera, matrix4f3, matrix4f, this.getProjectionMatrixForCulling(f2), gpubufferslice, vector4f, !flag2);
         profilerfiller.popPush("hand");
         boolean flag3 = this.minecraft.getCameraEntity() instanceof LivingEntity && ((LivingEntity)this.minecraft.getCameraEntity()).isSleeping();
+        EventRepo.call(
+                new EventGameRender3D(new PoseStack(), this.mainCamera, p_342230_.getGameTimeDeltaPartialTick(false))
+        );
         RenderSystem.setProjectionMatrix(
             this.hud3dProjectionMatrixBuffer.getBuffer(this.minecraft.getWindow().getWidth(), this.minecraft.getWindow().getHeight(), this.getFov(this.mainCamera, f, false)),
             ProjectionType.PERSPECTIVE

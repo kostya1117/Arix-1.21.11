@@ -1,16 +1,21 @@
 package ru.arixcompany.features.module.modules.combat.aura.utils;
 
 import lombok.experimental.UtilityClass;
+import net.minecraft.network.protocol.game.ServerboundSetCarriedItemPacket;
 import net.minecraft.util.Mth;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
+import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Vector4f;
 import ru.arixcompany.utils.IMinecraft;
+import ru.arixcompany.utils.player.inventory.PlayerInventoryUtil;
 
 @UtilityClass
 public class AuraUtil implements IMinecraft {
@@ -34,6 +39,32 @@ public class AuraUtil implements IMinecraft {
                 Mth.clamp(vec.y, aabb.minY, aabb.maxY),
                 Mth.clamp(vec.z, aabb.minZ, aabb.maxZ)
         );
+    }
+
+    public static void breakShield(LivingEntity target) {
+        if (target.isBlocking() && target.getActiveItem().getItem() == Items.SHIELD) {
+            int invSlot = PlayerInventoryUtil.getAxeInInventoryOrHotbar(false);
+            int hotBarSlot = PlayerInventoryUtil.getAxeInInventoryOrHotbar(true);
+
+            if (hotBarSlot == -1 && invSlot != -1) {
+                int bestSlot = PlayerInventoryUtil.findBestSlotInHotBar();
+                mc.gameMode.handleInventoryMouseClick(0, invSlot, 0, ClickType.PICKUP, mc.player);
+                mc.gameMode.handleInventoryMouseClick(0, bestSlot + 36, 0, ClickType.PICKUP, mc.player);
+                mc.player.connection.send(new ServerboundSetCarriedItemPacket(bestSlot));
+                mc.gameMode.attack(mc.player, target);
+                mc.player.swing(InteractionHand.MAIN_HAND);
+                mc.player.connection.send(new ServerboundSetCarriedItemPacket(mc.player.getInventory().selected));
+                mc.gameMode.handleInventoryMouseClick(0, bestSlot + 36, 0, ClickType.PICKUP, mc.player);
+                mc.gameMode.handleInventoryMouseClick(0, invSlot, 0, ClickType.PICKUP, mc.player);
+            }
+
+            if (hotBarSlot != -1) {
+                mc.player.connection.send(new ServerboundSetCarriedItemPacket(hotBarSlot));
+                mc.gameMode.attack(mc.player, target);
+                mc.player.swing(InteractionHand.MAIN_HAND);
+                mc.player.connection.send(new ServerboundSetCarriedItemPacket(mc.player.getInventory().selected));
+            }
+        }
     }
 
     public Vec3 getClosestVec(Vec3 vec, Entity entity) {

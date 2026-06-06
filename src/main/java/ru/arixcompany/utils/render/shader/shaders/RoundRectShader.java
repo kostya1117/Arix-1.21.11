@@ -27,7 +27,7 @@ public final class RoundRectShader implements IShader {
 
     private static final RenderPipeline ROUND_RECT_PIPELINE = RenderPipelines.register(
             RenderPipeline.builder(RenderPipelines.GUI_TEXTURED_SNIPPET)
-                    .withLocation(Identifier.arix("pipeline/round_rect")) // Передаем объект, а не строку!
+                    .withLocation(Identifier.arix("pipeline/round_rect"))
                     .withVertexShader(Identifier.arix("core/round_rect"))
                     .withFragmentShader(Identifier.arix("core/round_rect"))
                     .withVertexFormat(DefaultVertexFormat.POSITION_TEX_COLOR, VertexFormat.Mode.QUADS)
@@ -40,7 +40,7 @@ public final class RoundRectShader implements IShader {
 
     private static final RenderPipeline ROUND_RECT_OUTLINE_PIPELINE = RenderPipelines.register(
             RenderPipeline.builder(RenderPipelines.GUI_TEXTURED_SNIPPET)
-                    .withLocation(Identifier.arix("pipeline/round_rect_outline")) // Передаем объект!
+                    .withLocation(Identifier.arix("pipeline/round_rect_outline"))
                     .withVertexShader(Identifier.arix("core/round_rect_outline"))
                     .withFragmentShader(Identifier.arix("core/round_rect_outline"))
                     .withVertexFormat(DefaultVertexFormat.POSITION_TEX_COLOR, VertexFormat.Mode.QUADS)
@@ -53,7 +53,7 @@ public final class RoundRectShader implements IShader {
 
     private static final RenderPipeline ROUND_RECT_CORNERS_PIPELINE = RenderPipelines.register(
             RenderPipeline.builder(RenderPipelines.GUI_TEXTURED_SNIPPET)
-                    .withLocation(Identifier.arix("pipeline/round_rect_corners")) // Передаем объект!
+                    .withLocation(Identifier.arix("pipeline/round_rect_corners"))
                     .withVertexShader(Identifier.arix("core/round_rect_corners"))
                     .withFragmentShader(Identifier.arix("core/round_rect_corners"))
                     .withVertexFormat(DefaultVertexFormat.POSITION_TEX_COLOR, VertexFormat.Mode.QUADS)

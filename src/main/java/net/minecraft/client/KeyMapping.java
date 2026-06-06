@@ -25,9 +25,9 @@ public class KeyMapping implements Comparable<KeyMapping> {
     private final String name;
     private final InputConstants.Key defaultKey;
     private final KeyMapping.Category category;
-    protected InputConstants.Key key;
+    public InputConstants.Key key;
     private boolean isDown;
-    private int clickCount;
+    public int clickCount;
     private final int order;
 
     public static void click(InputConstants.Key p_90836_) {

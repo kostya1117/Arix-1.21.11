@@ -2,6 +2,7 @@ package net.minecraft.client.renderer.entity.player;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
+import de.maxhenkel.voicechat.events.RenderEvents;
 import net.minecraft.client.entity.ClientAvatarEntity;
 import net.minecraft.client.entity.ClientAvatarState;
 import net.minecraft.client.model.HumanoidModel;
@@ -157,17 +158,19 @@ public class AvatarRenderer<AvatarlikeEntity extends Avatar & ClientAvatarEntity
     protected void submitNameTag(AvatarRenderState p_425306_, PoseStack p_423892_, SubmitNodeCollector p_428344_, CameraRenderState p_426061_) {
         p_423892_.pushPose();
         int i = p_425306_.showExtraEars ? -10 : 0;
+
         if (p_425306_.scoreText != null) {
             p_428344_.submitNameTag(
-                p_423892_, p_425306_.nameTagAttachment, i, p_425306_.scoreText, !p_425306_.isDiscrete, p_425306_.lightCoords, p_425306_.distanceToCameraSq, p_426061_
+                    p_423892_, p_425306_.nameTagAttachment, i, p_425306_.scoreText, !p_425306_.isDiscrete, p_425306_.lightCoords, p_425306_.distanceToCameraSq, p_426061_
             );
             p_423892_.translate(0.0F, 9.0F * 1.15F * 0.025F, 0.0F);
         }
 
         if (p_425306_.nameTag != null) {
             p_428344_.submitNameTag(
-                p_423892_, p_425306_.nameTagAttachment, i, p_425306_.nameTag, !p_425306_.isDiscrete, p_425306_.lightCoords, p_425306_.distanceToCameraSq, p_426061_
+                    p_423892_, p_425306_.nameTagAttachment, i, p_425306_.nameTag, !p_425306_.isDiscrete, p_425306_.lightCoords, p_425306_.distanceToCameraSq, p_426061_
             );
+            RenderEvents.RENDER_NAMEPLATE.invoker().render(p_425306_, p_426061_, p_423892_, p_428344_);
         }
 
         p_423892_.popPose();

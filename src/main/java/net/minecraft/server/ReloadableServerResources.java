@@ -4,6 +4,8 @@ import com.mojang.logging.LogUtils;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
+
+import de.maxhenkel.voicechat.intercompatibility.FabricCommonCompatibilityManager;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.Commands;
 import net.minecraft.core.HolderLookup;
@@ -40,6 +42,7 @@ public class ReloadableServerResources {
         this.postponedTags = p_364269_;
         this.recipes = new RecipeManager(p_363207_);
         this.commands = new Commands(p_206858_, CommandBuildContext.simple(p_363207_, p_250695_));
+        FabricCommonCompatibilityManager.fireRegisterServerCommands(this.commands.getDispatcher());
         this.advancements = new ServerAdvancementManager(p_363207_);
         this.functionLibrary = new ServerFunctionLibrary(p_453006_, this.commands.getDispatcher());
     }

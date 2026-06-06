@@ -1,9 +1,10 @@
 package net.minecraft.world.phys.shapes;
 
+import malte0811.ferritecore.mixin.accessors.SubShapeAccess;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
 
-public final class SubShape extends DiscreteVoxelShape {
+public final class SubShape extends DiscreteVoxelShape implements SubShapeAccess {
     private final DiscreteVoxelShape parent;
     private final int startX;
     private final int startY;
@@ -47,5 +48,40 @@ public final class SubShape extends DiscreteVoxelShape {
         int i = p_166057_.choose(this.startX, this.startY, this.startZ);
         int j = p_166057_.choose(this.endX, this.endY, this.endZ);
         return Mth.clamp(p_166058_, i, j) - i;
+    }
+
+    @Override
+    public DiscreteVoxelShape getParent() {
+        return parent;
+    }
+
+    @Override
+    public int getStartX() {
+        return startX;
+    }
+
+    @Override
+    public int getStartY() {
+        return startY;
+    }
+
+    @Override
+    public int getStartZ() {
+        return startZ;
+    }
+
+    @Override
+    public int getEndX() {
+        return endX;
+    }
+
+    @Override
+    public int getEndY() {
+        return endY;
+    }
+
+    @Override
+    public int getEndZ() {
+        return endZ;
     }
 }

@@ -9,6 +9,11 @@
       "type": "minecraft:directory",
       "prefix": "mob_effect/",
       "source": "mob_effect"
+    },
+	  {
+      "type": "minecraft:directory",
+      "prefix": "icons/",
+      "source": "icons"
     }
   ]
 }

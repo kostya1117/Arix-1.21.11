@@ -10,6 +10,8 @@ import com.mojang.datafixers.DataFixer;
 import com.mojang.jtracy.DiscontinuousFrame;
 import com.mojang.jtracy.TracyClient;
 import com.mojang.logging.LogUtils;
+import de.maxhenkel.voicechat.FabricVoicechatMod;
+import de.maxhenkel.voicechat.intercompatibility.FabricCommonCompatibilityManager;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectArraySet;
 import java.io.File;
@@ -44,6 +46,8 @@ import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import net.conczin.immersive_optimization.TickScheduler;
 import net.minecraft.CrashReport;
 import net.minecraft.CrashReportCategory;
 import net.minecraft.ReportType;
@@ -281,6 +285,8 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
     private final SuppressedExceptionCollector suppressedExceptions = new SuppressedExceptionCollector();
     private final DiscontinuousFrame tickFrame;
     private final PacketProcessor packetProcessor;
+    private boolean voicechat$started;
+    private boolean voicechat$stopping;
 
     public static <S extends MinecraftServer> S spin(Function<Thread, S> p_129873_) {
         AtomicReference<S> atomicreference = new AtomicReference<>();
@@ -335,6 +341,8 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
         this.notificationManager = new NotificationManager();
         this.serverActivityMonitor = new ServerActivityMonitor(this.notificationManager, 30);
         this.packetProcessor = new PacketProcessor(p_236723_);
+        de.maxhenkel.voicechat.intercompatibility.FabricCommonCompatibilityManager.setServer(this);
+        FabricVoicechatMod.onInitialize();
     }
 
     protected abstract boolean initServer() throws IOException;
@@ -368,6 +376,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
     }
 
     protected void loadLevel() {
+        TickScheduler.setServer((MinecraftServer) (Object) this);
         boolean flag = !JvmProfiler.INSTANCE.isRunning() && SharedConstants.DEBUG_JFR_PROFILING_ENABLE_LEVEL_LOADING && JvmProfiler.INSTANCE.start(Environment.from(this));
         ProfiledDuration profiledduration = JvmProfiler.INSTANCE.onWorldLoadedStarted();
         this.worldData.setModdedInfo(this.getServerModName(), this.getModdedStatus().shouldReportAsModified());
@@ -636,6 +645,10 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
     }
 
     public void stopServer() {
+        if (!this.voicechat$stopping) {
+            this.voicechat$stopping = true;
+            de.maxhenkel.voicechat.intercompatibility.FabricCommonCompatibilityManager.fireServerStopping(this);
+        }
         this.packetProcessor.close();
         if (this.metricsRecorder.isRecording()) {
             this.cancelRecordingMetrics();
@@ -723,6 +736,10 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
             this.nextTickTimeNanos = Util.getNanos();
             this.statusIcon = this.loadStatusIcon().orElse(null);
             this.status = this.buildServerStatus();
+            if (!this.voicechat$started) {
+                this.voicechat$started = true;
+                FabricCommonCompatibilityManager.fireServerStarting(this);
+            }
 
             while (this.running) {
                 long i;

@@ -8,6 +8,8 @@ import com.mojang.brigadier.ParseResults;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.logging.LogUtils;
+import de.maxhenkel.voicechat.intercompatibility.CommonCompatibilityManager;
+import de.maxhenkel.voicechat.net.FabricNetManager;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMaps;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap.Entry;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
@@ -2067,6 +2069,12 @@ public class ServerGamePacketListenerImpl
 
     @Override
     public void handleCustomPayload(ServerboundCustomPayloadPacket p_329963_) {
+        if (CommonCompatibilityManager.INSTANCE.getNetManager()
+                instanceof FabricNetManager voicechatNet) {
+            if (voicechatNet.handleServerPayload(this.player, p_329963_.payload())) {
+                return;
+            }
+        }
     }
 
     @Override

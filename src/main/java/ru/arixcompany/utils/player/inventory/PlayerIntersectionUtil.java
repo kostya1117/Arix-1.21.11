@@ -20,7 +20,7 @@ public class PlayerIntersectionUtil implements IMinecraft {
 
     public static void sendSequencedPacket(PredictiveAction packetCreator) {
         if (mc.getConnection() == null || mc.level == null) return;
-        try (BlockStatePredictionHandler pendingUpdateManager = mc.level.blockStatePredictionHandler.startPredicting();) {
+        try (BlockStatePredictionHandler pendingUpdateManager = mc.level.blockStatePredictionHandler.startPredicting()) {
             int i = pendingUpdateManager.currentSequence();
             mc.getConnection().send(packetCreator.predict(i));
         }

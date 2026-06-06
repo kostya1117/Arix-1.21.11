@@ -1,15 +1,59 @@
 package ru.arixcompany.utils.render.font;
 
 import lombok.Getter;
-import net.minecraft.server.jsonrpc.methods.Message;
 import ru.arixcompany.utils.MessageSender;
 
+import java.awt.*;
 import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class FontManager {
     private static final Map<String, CustomFont> fonts = new ConcurrentHashMap<>();
+
+    /**
+     * Системный fallback-шрифт — подбирается под ОС
+     */
+    @Getter
+    private static Font commonFont;
+
+    /**
+     * CJK fallback — для китайских/японских/корейских символов
+     */
+    @Getter
+    private static Font cjkFont;
+
+    static {
+        String os = System.getProperty("os.name", "").toLowerCase();
+
+        // Общий fallback
+        if (os.contains("win")) {
+            commonFont = new Font("Segoe UI", Font.PLAIN, 1);
+        } else if (os.contains("mac")) {
+            commonFont = new Font("Helvetica", Font.PLAIN, 1);
+        } else {
+            commonFont = new Font("DejaVu Sans", Font.PLAIN, 1);
+        }
+
+        // CJK fallback
+        if (os.contains("win")) {
+            cjkFont = new Font("Microsoft YaHei", Font.PLAIN, 1);
+        } else if (os.contains("mac")) {
+            cjkFont = new Font("PingFang SC", Font.PLAIN, 1);
+        } else {
+            cjkFont = tryFont("Noto Sans CJK SC",
+                    "Noto Sans CJK",
+                    "WenQuanYi Micro Hei",
+                    "Droid Sans Fallback");
+        }
+    }
+
+    private static Font tryFont(String... names) {
+        for (String name : names) {
+            return new Font(name, Font.PLAIN, 1);
+        }
+        return null;
+    }
 
     @Getter
     public enum Fonts {
@@ -49,19 +93,7 @@ public class FontManager {
     }
 
     public static CustomFont get(float size) {
-        float roundedSize = Math.round(size * 2.0f) / 2.0f;
-        String key = Fonts.SF_MEDIUM.name() + "_" + roundedSize;
-
-        return fonts.computeIfAbsent(key, k -> {
-            try {
-                return new CustomFont(Fonts.SF_MEDIUM.getPath(), roundedSize);
-            } catch (IOException e) {
-                MessageSender.error("Ошибка при загрузке шрифта '"
-                        + Fonts.SF_MEDIUM.name() + "' размер " + roundedSize + ": " + e.getMessage());
-                e.printStackTrace();
-                return null;
-            }
-        });
+        return get(Fonts.SF_MEDIUM, size);
     }
 
     public static void init() {

@@ -1,9 +1,11 @@
 package net.minecraft.world.phys.shapes;
 
 import java.util.BitSet;
+
+import malte0811.ferritecore.mixin.accessors.BitSetDVSAccess;
 import net.minecraft.core.Direction;
 
-public final class BitSetDiscreteVoxelShape extends DiscreteVoxelShape {
+public final class BitSetDiscreteVoxelShape extends DiscreteVoxelShape implements BitSetDVSAccess {
     private final BitSet storage;
     private int xMin;
     private int yMin;
@@ -229,5 +231,40 @@ public final class BitSetDiscreteVoxelShape extends DiscreteVoxelShape {
             && this.isFull(p_327963_, p_332610_ + 1, p_332051_)
             && this.isFull(p_327963_, p_332610_, p_332051_ - 1)
             && this.isFull(p_327963_, p_332610_, p_332051_ + 1);
+    }
+
+    @Override
+    public BitSet getStorage() {
+        return storage;
+    }
+
+    @Override
+    public int getXMin() {
+        return xMin;
+    }
+
+    @Override
+    public int getYMin() {
+        return yMin;
+    }
+
+    @Override
+    public int getZMin() {
+        return zMin;
+    }
+
+    @Override
+    public int getXMax() {
+        return xMax;
+    }
+
+    @Override
+    public int getYMax() {
+        return yMax;
+    }
+
+    @Override
+    public int getZMax() {
+        return zMax;
     }
 }

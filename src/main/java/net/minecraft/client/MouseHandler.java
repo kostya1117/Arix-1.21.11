@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import de.maxhenkel.voicechat.events.InputEvents;
 import lombok.Getter;
 import net.minecraft.CrashReport;
 import net.minecraft.CrashReportCategory;
@@ -70,6 +71,7 @@ public class MouseHandler {
     }
 
     private void onButton(long p_428888_, MouseButtonInfo p_424132_, @MouseButtonInfo.Action int p_423948_) {
+        InputEvents.MOUSE_KEY.invoker().onMouseEvent(p_424132_, p_423948_);
         EventKey event = new EventKey(p_424132_.button(), p_423948_);
         EventRepo.call(event);
 

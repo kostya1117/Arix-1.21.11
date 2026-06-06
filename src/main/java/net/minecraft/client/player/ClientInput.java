@@ -27,8 +27,8 @@ public class ClientInput {
     }
 
     public void makeJump() {
-        final EventSprint eventSprint = new EventSprint(this.keyPresses.sprint(), EventSprint.Source.INPUT);
-        EventRepo.call(eventSprint);
+//        final EventSprint eventSprint = new EventSprint(this.keyPresses.sprint(), EventSprint.Source.INPUT);
+//        EventRepo.call(eventSprint);
         this.keyPresses = new Input(
                 this.keyPresses.forward(),
                 this.keyPresses.backward(),
@@ -36,7 +36,8 @@ public class ClientInput {
                 this.keyPresses.right(),
                 true,
                 this.keyPresses.shift(),
-                eventSprint.isSprinting()
+             //   eventSprint.isSprinting()
+                this.keyPresses.sprint()
         );
     }
 }

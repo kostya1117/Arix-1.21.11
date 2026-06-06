@@ -23,6 +23,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.HashedStack;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ServerGamePacketListener;
 import net.minecraft.network.protocol.game.ServerboundContainerButtonClickPacket;
@@ -70,6 +71,7 @@ import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import ru.arixcompany.features.event.EventRepo;
 import ru.arixcompany.features.event.player.EventAttack;
+import ru.arixcompany.utils.MessageSender;
 
 
 public class MultiPlayerGameMode implements IPlayerControllerMP {
@@ -443,6 +445,7 @@ public class MultiPlayerGameMode implements IPlayerControllerMP {
             p_105224_.attack(p_105225_);
             p_105224_.resetAttackStrengthTicker();
         }
+        MessageSender.sendOverlayMessage(Component.literal(minecraft.player.fallDistance + "")); //debug
     }
 
     public InteractionResult interact(Player p_105227_, Entity p_105228_, InteractionHand p_105229_) {

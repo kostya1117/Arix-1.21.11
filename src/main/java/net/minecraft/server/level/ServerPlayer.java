@@ -1571,7 +1571,7 @@ public class ServerPlayer extends Player {
     }
 
     @Override
-    protected void completeUsingItem() {
+    public void completeUsingItem() {
         if (!this.useItem.isEmpty() && this.isUsingItem()) {
             this.connection.send(new ClientboundEntityEventPacket(this, (byte)9));
             super.completeUsingItem();

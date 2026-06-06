@@ -1,7 +1,9 @@
 package ru.arixcompany.utils.math;
 
 import ru.arixcompany.features.event.EventHandler;
+import ru.arixcompany.features.event.EventPriority;
 import ru.arixcompany.features.event.EventRepo;
+import ru.arixcompany.features.event.player.EventGameTicked;
 import ru.arixcompany.features.event.world.EventGameTick;
 import ru.arixcompany.features.module.modules.combat.aura.aiming.RequestHandler;
 import ru.arixcompany.utils.IMinecraft;
@@ -23,8 +25,8 @@ public class Timer implements IMinecraft {
         return value != null ? value : 1.0f;
     }
 
-    @EventHandler
-    private void onTick(EventGameTick event) {
+    @EventHandler(priority = EventPriority.HIGHEST)
+    private void onTick(EventGameTicked event) {
         requestHandler.tick();
     }
 

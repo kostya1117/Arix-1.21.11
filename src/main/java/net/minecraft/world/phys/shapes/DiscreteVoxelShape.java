@@ -1,11 +1,12 @@
 package net.minecraft.world.phys.shapes;
 
 import com.mojang.math.OctahedralGroup;
+import malte0811.ferritecore.mixin.accessors.DiscreteVSAccess;
 import net.minecraft.core.AxisCycle;
 import net.minecraft.core.Direction;
 import org.joml.Vector3i;
 
-public abstract class DiscreteVoxelShape {
+public abstract class DiscreteVoxelShape implements DiscreteVSAccess {
     private static final Direction.Axis[] AXIS_VALUES = Direction.Axis.values();
     protected final int xSize;
     protected final int ySize;
@@ -19,6 +20,19 @@ public abstract class DiscreteVoxelShape {
         } else {
             throw new IllegalArgumentException("Need all positive sizes: x: " + p_82787_ + ", y: " + p_82788_ + ", z: " + p_82789_);
         }
+    }
+
+    @Override
+    public int getXSizeAccess() {
+        return xSize;
+    }
+    @Override
+    public int getYSizeAccess() {
+        return ySize;
+    }
+    @Override
+    public int getZSizeAccess() {
+        return zSize;
     }
 
     public DiscreteVoxelShape rotate(OctahedralGroup p_393550_) {

@@ -1,20 +1,20 @@
 package ru.arixcompany.features.module.modules.combat;
 
 import lombok.Getter;
-import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.core.Holder;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemUseAnimation;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.ShieldItem;
-import net.minecraft.world.level.block.WebBlock;
 import ru.arixcompany.Arix;
 import ru.arixcompany.features.event.EventHandler;
-import ru.arixcompany.features.event.EventPriority;
+import ru.arixcompany.features.event.player.EventGameTicked;
 import ru.arixcompany.features.event.player.EventSprint;
 import ru.arixcompany.features.event.world.EventGameTick;
-import ru.arixcompany.features.event.world.EventPreTick;
+import ru.arixcompany.features.event.world.EventTick;
 import ru.arixcompany.features.module.Category;
 import ru.arixcompany.features.module.Module;
 import ru.arixcompany.features.module.modules.combat.aura.AttackHandler;
@@ -26,9 +26,24 @@ import ru.arixcompany.features.module.setting.implement.BooleanSetting;
 import ru.arixcompany.features.module.setting.implement.ListSetting;
 import ru.arixcompany.features.module.setting.implement.SelectSetting;
 import ru.arixcompany.features.module.setting.implement.ValueSetting;
-import ru.arixcompany.utils.MessageSender;
+import ru.arixcompany.utils.math.TimerUtils;
+import ru.arixcompany.utils.player.TickLoopTaskExecutor;
 
 public class HitAura extends Module {
+
+
+    public static final SelectSetting angleSmooth =
+            new SelectSetting("Сглаживание")
+                    .value("Линейное", "Интерполяция", "Ускорение", "SpookyTime", "FuntimeSnap", "AI");
+
+    public static final SelectSetting motion =
+            new SelectSetting("Режим ротация")
+                    .value("Не менять", "Направлять", "Изменять взгяд игрока");
+
+    public final SelectSetting sprintReset =
+            new SelectSetting("Режим сброса спринта")
+                    .value("Пакет", "Легит")
+                    .visible(() -> extraSettings.isSelected("Сброс спринта"));
 
     public static final ValueSetting attackRange =
             new ValueSetting("Радиус атаки")
@@ -46,12 +61,11 @@ public class HitAura extends Module {
                     .range(5.0f, 30.0f).setValue(15.0f).setStep(1)
                     .visible(elytraTarget::isValue);
 
-    public static final SelectSetting angleSmooth =
-            new SelectSetting("Сглаживание")
-                    .value("Линейное", "Интерполяция", "Ускорение", "SpookyTime", "FuntimeSnap", "AI");
-
     public static final BooleanSetting throughWalls =
             new BooleanSetting("Сквозь стены").setValue(false);
+
+    public static final BooleanSetting randomfalldist =
+            new BooleanSetting("Рандомные удары").setValue(false);
 
     public static final ValueSetting horizontalTurnSpeedMin =
             new ValueSetting("Горизонталь мин.")
@@ -103,8 +117,10 @@ public class HitAura extends Module {
                     .value(
                             "Бить через блоки",
                             "Бить только оружием",
-                            "Не бить если кушаеш",
-                            "Не атакавать в контейнере",
+                            "Отжимать щит",
+                            "Ломать щит",
+                            "Не бить когда ешь",
+                            "Не бить в контейнере",
                             "Райкаст"
                     );
 
@@ -113,45 +129,80 @@ public class HitAura extends Module {
                     .value("Умные криты", "Сброс спринта", "Фикс удара при HurtTime",
                             "Игнорировать инвентарь");
 
-    public final SelectSetting sprintReset =
-            new SelectSetting("Режим сброса спринта")
-                    .value("Пакет", "Легит")
-                    .visible(() -> extraSettings.isSelected("Сброс спринта"));
-
-    public static final SelectSetting raycastMode =
-            new SelectSetting("Режим райкаста")
-                    .value("Все", "Враги", "Нет")
-                    .visible(() -> misc.isSelected("Райкаст"));
-
-    public static final SelectSetting motion =
-            new SelectSetting("Режим движения")
-                    .value("Без", "Свободная", "Сфокусированная", "FunTime");
-
     @Getter
     public static LivingEntity target;
     private final TargetHandler targetHandler = new TargetHandler();
     private final KillAuraRotationsValueGroup rotations = new KillAuraRotationsValueGroup();
-
+    public final TimerUtils sprintTimer = new TimerUtils();
     public int count;
-    public int waitTicks;
+    @Getter
+    public static InteractionHand enforcedBlockingHand = null;
+
+    public boolean prevKeyUse;
+//    public void onShield(EventShield e) {
+//        if (mc.player == null || target == null) return;
+//        if ((e.getSource() == EventShield.Source.POST || e.getSource() == EventShield.Source.PRE) && AttackHandler.shouldAttack()) {
+//            prevKeyUse = mc.options.keyUse.isDown();
+//            e.setShieldUse(false);
+//            mc.options.keyUse.setDown(false);
+//            MessageSender.print(e.isShieldUse() + "");
+//        } /*else {
+//            if (prevKeyUse) {
+//                mc.options.keyUse.setDown(true);
+//                prevKeyUse = false;
+//            }
+//        }*/
+//    }
+//@EventHandler
+//public void onShield(EventShield e) {
+//    if (mc.player == null) return;
+//
+//    // Просто ставим флаг.
+//    // Логика в handleKeybinds сама вызовет releaseUsingItem на основе этого флага.
+//    if (AttackHandler.shouldAttack()) {
+//        e.setShieldUse(false);
+//    }
+//}
+
+//    @EventHandler
+//    public void onShield(EventShield e) {
+//        if (mc.player == null || target == null) return;
+//
+//        boolean isAuraHittable = AttackHandler.shouldAttack() && AuraUtil.validDistance(target, attackRange.getValue());
+//
+//        if (e.getSource() == EventShield.Source.PRE) {
+//            if (isAuraHittable) {
+//                prevKeyUse = mc.options.keyUse.isDown();
+//                e.setShieldUse(false);
+//                mc.options.keyUse.setDown(false);
+//            }
+//        }
+//        else if (e.getSource() == EventShield.Source.POST) {
+//            if (prevKeyUse) {
+//                mc.options.keyUse.setDown(true);
+//                prevKeyUse = false;
+//            }
+//        }
+//    }
 
     public HitAura() {
         super("HitAura", Category.Combat);
         setup(
                 // Range
+                angleSmooth,sprintReset,motion,
                 attackRange, preRange,
                 // Elytra
                 elytraTarget, elytraRange,
                 // Rotation
-                angleSmooth, throughWalls,
+                throughWalls,randomfalldist,
                 horizontalTurnSpeedMin, horizontalTurnSpeedMax,
                 verticalTurnSpeedMin, verticalTurnSpeedMax,
                 yawAccelerationMin, yawAccelerationMax,
                 pitchAccelerationMin, pitchAccelerationMax,
                 // Targets
-                targets, misc, raycastMode,
+                targets, misc,
 
-                extraSettings, motion, sprintReset
+                extraSettings
         );
     }
 
@@ -162,6 +213,38 @@ public class HitAura extends Module {
         }
     }
 
+    public boolean stopBlocking() {
+        if (mc.player == null || mc.gameMode == null) return false;
+
+        if (!isBlockingServerside(mc.player)) {
+            return false;
+        }
+        TickLoopTaskExecutor.executeInTickLoop(() -> {
+            mc.gameMode.releaseUsingItem(mc.player);
+        });
+        return true;
+    }
+
+    public static boolean isInHand(LivingEntity entity, ItemStack itemStack, InteractionHand hand) {
+        return entity.getItemInHand(hand) == itemStack;
+    }
+
+    /**
+     * Проверка блокировки на стороне сервера (с учетом кросс-версионных особенностей).
+     */
+    public static boolean isBlockingServerside(LivingEntity entity) {
+        if (entity.isBlocking()) {
+            return true;
+        }
+
+        if (entity.isUsingItem()) {
+            ItemStack usingItem = entity.getUseItem();
+            return isInHand(entity, usingItem, InteractionHand.OFF_HAND) && usingItem.getItem() instanceof ShieldItem;
+        }
+
+        return false;
+    }
+
     @EventHandler
     public void onSprint(EventSprint e) {
         if (target == null || mc.player == null || mc.level == null) return;
@@ -170,20 +253,18 @@ public class HitAura extends Module {
             mc.player.setSprinting(false);
             if (Arix.getInstance().getModuleRepo().getModule(AutoSprint.class).isState()) {
                 Arix.getInstance().getModuleRepo().getModule(AutoSprint.class).sprint = false;
-            } else {
-                if (Arix.getInstance().getModuleRepo().getModule(AutoSprint.class).isState() && !Arix.getInstance().getModuleRepo().getModule(AutoSprint.class).sprint) {
-                    Arix.getInstance().getModuleRepo().getModule(AutoSprint.class).sprint = true;
-                }
+            }
+        } else {
+            if (Arix.getInstance().getModuleRepo().getModule(AutoSprint.class).isState() && !Arix.getInstance().getModuleRepo().getModule(AutoSprint.class).sprint) {
+                Arix.getInstance().getModuleRepo().getModule(AutoSprint.class).sprint = true;
             }
         }
         //MessageSender.print("AutoSprint: " +  Arix.getInstance().getModuleRepo().getModule(AutoSprint.class).sprint  + "," + "EventSprint" + e.isSprinting());
     }
 
     @EventHandler
-    public void onTick(EventPreTick e) {
+    public void onTick(EventGameTicked e) {
         if (mc.player == null || !mc.player.isAlive()) return;
-
-        if (waitTicks > 0) waitTicks--;
 
         targetHandler.updateTarget();
         target = targetHandler.getTarget();
@@ -198,9 +279,11 @@ public class HitAura extends Module {
             if (!mc.player.onGround()) {
                 sprint = !mc.player.isSprinting();
             }
-            if (AuraUtil.validDistance(target, rangeToHit)) {
-                AttackHandler.performAttack(target, misc.isSelected("Райкаст"), rangeToHit);
-            }
+            //if (!this.misc.isSelected("Не бить когда ешь") || !this.isUseItems()) {
+                if (AuraUtil.validDistance(target, rangeToHit)) {
+                    AttackHandler.performAttack(target, misc.isSelected("Райкаст"), rangeToHit);
+                }
+           // }
         } else {
             reset();
         }
@@ -268,22 +351,30 @@ public class HitAura extends Module {
 
     private boolean shouldBlockSprinting() {
         return extraSettings.isSelected("Сброс спринта")
-                && (/*mc.player.fallDistance > 0.0f ||*/ /*mc.player.getDeltaMovement().y < -0.1f*/ mc.player.getDeltaMovement().y < -0.08 || AttackHandler.shouldAttack())
+                && (AttackHandler.shouldAttack() || this.sprintTimer.getTimePassed() > 0L)
                 && hasStopSprint()
                 && AuraUtil.validDistance(target, attackRange.getValue());
     }
 
     private void reset() {
         target = null;
-        waitTicks = 0;
-        if (mc.player != null) count = 0;
+        if (mc.player != null) {
+            count = 0;
+            if (Arix.getInstance().getModuleRepo().getModule(AutoSprint.class).isState() && !Arix.getInstance().getModuleRepo().getModule(AutoSprint.class).sprint) {
+                Arix.getInstance().getModuleRepo().getModule(AutoSprint.class).sprint = true;
+            }
+        }
+
+        this.sprintTimer.setTime(0L);
     }
 
+    public boolean isUseItems() {
+        return mc.player.isUsingItem();
+    }
+
+
     private boolean skipAttack() {
-        return mc.player.isUsingItem()
-                && misc.isSelected("Не бить если кушаеш")
-                && !(mc.player.getActiveItem().getItem() instanceof ShieldItem)
-                || mc.screen != null && misc.isSelected("Не атакавать в контейнере")
+        return mc.screen != null && misc.isSelected("Не атакавать в контейнере")
                 && !extraSettings.isSelected("Игнорировать инвентарь")
                 || !mc.player.getMainHandItem().is(ItemTags.SWORDS)
                 && !mc.player.getMainHandItem().is(ItemTags.AXES)

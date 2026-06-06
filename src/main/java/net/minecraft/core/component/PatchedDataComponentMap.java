@@ -4,19 +4,15 @@ import it.unimi.dsi.fastutil.objects.Reference2ObjectArrayMap;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectMaps;
 import it.unimi.dsi.fastutil.objects.ReferenceArraySet;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.Map.Entry;
-import java.util.stream.Collectors;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.world.level.Level;
 import org.jspecify.annotations.Nullable;
+
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 public final class PatchedDataComponentMap implements DataComponentMap {
     private final DataComponentMap prototype;
@@ -32,6 +28,15 @@ public final class PatchedDataComponentMap implements DataComponentMap {
         this.prototype = p_335089_;
         this.patch = p_333211_;
         this.copyOnWrite = p_334948_;
+    }
+
+    private void saveMemoryIfEmpty() {
+        if (patch.isEmpty()) {
+            // Use a singleton empty map to reduce memory overhead from empty maps, use copyOnWrite to ensure we never
+            // try to modify this map
+            this.patch = Reference2ObjectMaps.emptyMap();
+            this.copyOnWrite = true;
+        }
     }
 
     public static PatchedDataComponentMap fromPatch(DataComponentMap p_334311_, DataComponentPatch p_332061_) {
@@ -81,6 +86,7 @@ public final class PatchedDataComponentMap implements DataComponentMap {
         }
 
         this.markDirty();
+        this.saveMemoryIfEmpty(); // Добавлено из Mixin
         return optional != null ? optional.orElse(t) : t;
     }
 
@@ -98,7 +104,9 @@ public final class PatchedDataComponentMap implements DataComponentMap {
             optional = (Optional<? extends T>)this.patch.remove(p_331496_);
         }
 
-        return (T)(optional != null ? optional.orElse(null) : t);
+        T result = (T)(optional != null ? optional.orElse(null) : t);
+        this.saveMemoryIfEmpty(); // Добавлено из Mixin
+        return result;
     }
 
     public void applyPatch(DataComponentPatch p_329626_) {
@@ -107,6 +115,7 @@ public final class PatchedDataComponentMap implements DataComponentMap {
         for (Entry<DataComponentType<?>, Optional<?>> entry : Reference2ObjectMaps.fastIterable(p_329626_.map)) {
             this.applyPatch(entry.getKey(), entry.getValue());
         }
+        this.saveMemoryIfEmpty(); // Добавлено из Mixin
     }
 
     private void applyPatch(DataComponentType<?> p_327856_, Optional<?> p_331456_) {
@@ -128,6 +137,7 @@ public final class PatchedDataComponentMap implements DataComponentMap {
         this.ensureMapOwnership();
         this.patch.clear();
         this.patch.putAll(p_331119_.map);
+        this.saveMemoryIfEmpty(); // Добавлено из Mixin
     }
 
     public void clearPatch() {
@@ -157,7 +167,7 @@ public final class PatchedDataComponentMap implements DataComponentMap {
         Set<DataComponentType<?>> set = new ReferenceArraySet<>(this.prototype.keySet());
 
         for (it.unimi.dsi.fastutil.objects.Reference2ObjectMap.Entry<DataComponentType<?>, Optional<?>> entry : Reference2ObjectMaps.fastIterable(
-            this.patch
+                this.patch
         )) {
             Optional<?> optional = entry.getValue();
             if (optional.isPresent()) {
@@ -179,7 +189,7 @@ public final class PatchedDataComponentMap implements DataComponentMap {
         List<TypedDataComponent<?>> list = new ArrayList<>(this.patch.size() + this.prototype.size());
 
         for (it.unimi.dsi.fastutil.objects.Reference2ObjectMap.Entry<DataComponentType<?>, Optional<?>> entry : Reference2ObjectMaps.fastIterable(
-            this.patch
+                this.patch
         )) {
             if (entry.getValue().isPresent()) {
                 list.add(TypedDataComponent.createUnchecked(entry.getKey(), entry.getValue().get()));
@@ -200,7 +210,7 @@ public final class PatchedDataComponentMap implements DataComponentMap {
         int i = this.prototype.size();
 
         for (it.unimi.dsi.fastutil.objects.Reference2ObjectMap.Entry<DataComponentType<?>, Optional<?>> entry : Reference2ObjectMaps.fastIterable(
-            this.patch
+                this.patch
         )) {
             boolean flag = entry.getValue().isPresent();
             boolean flag1 = this.prototype.has(entry.getKey());
@@ -233,10 +243,10 @@ public final class PatchedDataComponentMap implements DataComponentMap {
     @Override
     public boolean equals(Object p_335823_) {
         return this == p_335823_
-            ? true
-            : p_335823_ instanceof PatchedDataComponentMap patcheddatacomponentmap
-                && this.prototype.equals(patcheddatacomponentmap.prototype)
-                && this.patch.equals(patcheddatacomponentmap.patch);
+                ? true
+                : p_335823_ instanceof PatchedDataComponentMap patcheddatacomponentmap
+                  && this.prototype.equals(patcheddatacomponentmap.prototype)
+                  && this.patch.equals(patcheddatacomponentmap.patch);
     }
 
     @Override

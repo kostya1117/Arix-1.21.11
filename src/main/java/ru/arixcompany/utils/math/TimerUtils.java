@@ -27,6 +27,9 @@ public class TimerUtils {
    public void setMs(long ms) {
       this.startTime = System.currentTimeMillis() - ms;
    }
+   public void setLastMs(long ms) {
+      this.lastMS = System.currentTimeMillis() + ms;
+   }
 
    public boolean hasReached(double milliseconds) {
       return this.getTimePassed() >= milliseconds;

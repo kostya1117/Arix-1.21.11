@@ -60,9 +60,17 @@ public class CrystalsMode extends TargetEspMode {
                     .withCull(false)
                     .withDepthTestFunction(DepthTestFunction.NO_DEPTH_TEST)
                     .withDepthWrite(false)
-                    .withBlend(BlendFunction.TRANSLUCENT)
+                    .withBlend(BlendFunction.LIGHTNING)
                     .build()
     );
+
+    // [орбитальный радиус, Y высота, скорость орбиты, кол-во кристаллов, начальная фаза]
+    private static final float[][] CRYSTAL_RINGS = {
+            { 0.60f, 0.2f,  0.7f, 4, 0.0f },
+            { 0.70f, 0.8f, -0.5f, 3, 1.0f },
+            { 0.65f, 1.4f,  0.6f, 4, 0.5f },
+            { 0.55f, 2.0f, -0.4f, 3, 1.8f }
+    };
 
     public CrystalsMode() {
         super("Кристаллы");
@@ -94,128 +102,117 @@ public class CrystalsMode extends TargetEspMode {
                 lerp(lastTarget.getZ(), lastTarget.zOld, tickDelta)
         );
 
-        float time = (mc.player.tickCount + tickDelta) * 3.2f;
+        float totalTime = (mc.player.tickCount + tickDelta);
+        float time = totalTime * 3.2f;
         float entityHeight = lastTarget.getBbHeight();
         float entityWidth = lastTarget.getBbWidth();
-        float halfWidth = entityWidth * 0.5f;
 
-        Color baseColor = Arix.getInstance().getCurrentTheme().getMain();
+        Color themeColor = Arix.getInstance().getCurrentTheme().getMain();
         float rawHurt = clamp01((lastTarget.hurtTime - tickDelta) / 10.0f);
         float hurtProgress = (float) Math.sin(rawHurt * Math.PI);
         Color damageColor = new Color(255, 60, 60);
 
-        int cr = lerpInt(baseColor.getRed(), damageColor.getRed(), hurtProgress);
-        int cg = lerpInt(baseColor.getGreen(), damageColor.getGreen(), hurtProgress);
-        int cb = lerpInt(baseColor.getBlue(), damageColor.getBlue(), hurtProgress);
+        int cr = lerpInt(themeColor.getRed(), damageColor.getRed(), hurtProgress);
+        int cg = lerpInt(themeColor.getGreen(), damageColor.getGreen(), hurtProgress);
+        int cb = lerpInt(themeColor.getBlue(), damageColor.getBlue(), hurtProgress);
 
-        int count = crystalCount.getInt();
         float scaleSetting = crystalSize.getValue();
+        float crystalAlphaValue = easedAnim;
 
         PoseStack matrices = event.getMatrixStack();
         matrices.pushPose();
-        matrices.translate(
-                targetPos.x - cam.x,
-                targetPos.y - cam.y,
-                targetPos.z - cam.z
-        );
+        matrices.translate(targetPos.x - cam.x, targetPos.y - cam.y, targetPos.z - cam.z);
 
-        try (ByteBufferBuilder glowAllocator = new ByteBufferBuilder(4096)) {
+        // Свечение и Кристаллы
+        try (ByteBufferBuilder glowAllocator = new ByteBufferBuilder(4096);
+             ByteBufferBuilder crystalAllocator = new ByteBufferBuilder(8192)) {
             MultiBufferSource.BufferSource glowBuffer = MultiBufferSource.immediate(glowAllocator);
-
-            for (int i = 0; i < count; i++) {
-                float seed1 = (float) Math.sin(i * 1.7f + 0.3f) * 0.5f + 0.5f;
-                float seed2 = (float) Math.cos(i * 2.3f + 0.7f) * 0.5f + 0.5f;
-                float seed3 = (float) Math.sin(i * 3.1f + 1.1f) * 0.5f + 0.5f;
-
-                float angleOffset = i * (360f / count) + seed1 * 12f;
-                float angle = time + angleOffset;
-                float radius = halfWidth + 0.25f + seed3 * 0.15f;
-
-                float x = radius * (float) Math.cos(Math.toRadians(angle));
-                float z = radius * (float) Math.sin(Math.toRadians(angle));
-                float y = seed2 * entityHeight * 1.05f;
-
-                float glowSize = 0.15f * easedAnim * scaleSetting * 3.2f;
-                int glowAlpha = (int) (255 * easedAnim * 0.25f);
-
-                matrices.pushPose();
-                matrices.translate(x, y, z);
-                matrices.mulPose(mc.gameRenderer.getMainCamera().rotation());
-
-                Matrix4f matrix = matrices.last().pose();
-                VertexConsumer vertex = glowBuffer.getBuffer(createTexturedRenderType(Textures.glow));
-
-                float hs = glowSize / 2f;
-                vertex.addVertex(matrix, -hs, -hs, 0).setUv(0, 1).setColor(cr, cg, cb, glowAlpha);
-                vertex.addVertex(matrix, hs, -hs, 0).setUv(1, 1).setColor(cr, cg, cb, glowAlpha);
-                vertex.addVertex(matrix, hs, hs, 0).setUv(1, 0).setColor(cr, cg, cb, glowAlpha);
-                vertex.addVertex(matrix, -hs, hs, 0).setUv(0, 0).setColor(cr, cg, cb, glowAlpha);
-
-                matrices.popPose();
-            }
-
-            glowBuffer.endBatch();
-        }
-
-        try (ByteBufferBuilder crystalAllocator = new ByteBufferBuilder(8192)) {
             MultiBufferSource.BufferSource crystalBuffer = MultiBufferSource.immediate(crystalAllocator);
 
-            for (int i = 0; i < count; i++) {
-                float seed1 = (float) Math.sin(i * 1.7f + 0.3f) * 0.5f + 0.5f;
-                float seed2 = (float) Math.cos(i * 2.3f + 0.7f) * 0.5f + 0.5f;
-                float seed3 = (float) Math.sin(i * 3.1f + 1.1f) * 0.5f + 0.5f;
+            for (int ring = 0; ring < CRYSTAL_RINGS.length; ring++) {
+                float orbitRadius = CRYSTAL_RINGS[ring][0] * (entityWidth + 0.4f); // адаптируем под хитбокс
+                float ringY       = CRYSTAL_RINGS[ring][1] * (entityHeight / 2.0f); // адаптируем высоту
+                float orbitSpeed  = CRYSTAL_RINGS[ring][2];
+                int   count       = (int) CRYSTAL_RINGS[ring][3];
+                float initPhase   = CRYSTAL_RINGS[ring][4];
 
-                float angleOffset = i * (360f / count) + seed1 * 12f;
-                float angle = time + angleOffset;
-                float radius = halfWidth + 0.25f + seed3 * 0.15f;
+                double orbitAngle = totalTime * 0.05f * orbitSpeed + initPhase;
 
-                float x = radius * (float) Math.cos(Math.toRadians(angle));
-                float z = radius * (float) Math.sin(Math.toRadians(angle));
-                float y = seed2 * entityHeight * 1.05f;
+                for (int j = 0; j < count; j++) {
+                    double angle = orbitAngle + j * (Math.PI * 2.0 / count);
+                    float cx = (float) (Math.cos(angle) * orbitRadius);
+                    float cz = (float) (Math.sin(angle) * orbitRadius);
+                    float cy = ringY;
 
-                float crystalScale = 0.15f * easedAnim * scaleSetting;
-                int crystalAlpha = (int) (180 * easedAnim * 0.8f);
+                    // Glow render
+                    float pulse = 1.0f + (float) Math.sin(totalTime * 0.2f + (ring * count + j)) * 0.1f;
+                    float glowSize = 0.25f * crystalAlphaValue * scaleSetting * 3.2f * pulse;
+                    int glowAlpha = (int) (160 * crystalAlphaValue * (0.4f + pulse * 0.1f));
 
-                drawCrystal(matrices, crystalBuffer, x, y, z, crystalScale, angle, cr, cg, cb, crystalAlpha);
+                    matrices.pushPose();
+                    matrices.translate(cx, cy, cz);
+                    matrices.mulPose(mc.gameRenderer.getMainCamera().rotation());
+
+                    Matrix4f matrix = matrices.last().pose();
+                    VertexConsumer glowVertex = glowBuffer.getBuffer(createTexturedRenderType(Textures.glow));
+
+                    float hs = glowSize / 2f;
+                    glowVertex.addVertex(matrix, -hs, -hs, 0).setUv(0, 1).setColor(cr, cg, cb, glowAlpha);
+                    glowVertex.addVertex(matrix, hs, -hs, 0).setUv(1, 1).setColor(cr, cg, cb, glowAlpha);
+                    glowVertex.addVertex(matrix, hs, hs, 0).setUv(1, 0).setColor(cr, cg, cb, glowAlpha);
+                    glowVertex.addVertex(matrix, -hs, hs, 0).setUv(0, 0).setColor(cr, cg, cb, glowAlpha);
+                    matrices.popPose();
+
+                    // Crystal render
+                    float crystalScale = 0.18f * crystalAlphaValue * scaleSetting;
+                    drawAdvancedCrystal(matrices, crystalBuffer, cx, cy, cz, crystalScale, cr, cg, cb, (int)(220 * crystalAlphaValue), totalTime, ring * count + j);
+                }
             }
-
+            glowBuffer.endBatch();
             crystalBuffer.endBatch();
         }
 
         matrices.popPose();
     }
 
-    private void drawCrystal(PoseStack matrices, MultiBufferSource.BufferSource buffer,
-                             float x, float y, float z, float scale,
-                             float yaw, int r, int g, int b, int a) {
+    private void drawAdvancedCrystal(PoseStack matrices, MultiBufferSource.BufferSource buffer,
+                                     float x, float y, float z, float scale,
+                                     int r, int g, int b, int a, float time, int index) {
         matrices.pushPose();
         matrices.translate(x, y, z);
-        matrices.mulPose(Axis.YP.rotationDegrees(-yaw + 90f));
+
+        // Вращение вокруг своей оси
+        float selfRotation = time * 3.0f + index * 45f;
+        matrices.mulPose(Axis.YP.rotationDegrees(selfRotation));
+        matrices.mulPose(Axis.XP.rotationDegrees(selfRotation * 0.5f));
+
         matrices.scale(scale, scale, scale);
 
         Matrix4f matrix = matrices.last().pose();
         VertexConsumer vertex = buffer.getBuffer(createCrystalRenderType());
 
-        int rL = Math.min(255, (int) (r * 1.3f));
-        int gL = Math.min(255, (int) (g * 1.3f));
-        int bL = Math.min(255, (int) (b * 1.3f));
+        int rL = Math.min(255, (int) (r * 1.4f));
+        int gL = Math.min(255, (int) (g * 1.4f));
+        int bL = Math.min(255, (int) (b * 1.4f));
 
-        int rD = (int) (r * 0.6f);
-        int gD = (int) (g * 0.6f);
-        int bD = (int) (b * 0.6f);
+        int rD = (int) (r * 0.5f);
+        int gD = (int) (g * 0.5f);
+        int bD = (int) (b * 0.5f);
 
-        float w = 0.5f;
         float h = 1.0f;
+        float m = 0.35f;
 
-        addTriangle(vertex, matrix, 0, 0, h, -w, 0, 0, 0, w, 0, rL, gL, bL, a);
-        addTriangle(vertex, matrix, 0, 0, h, 0, w, 0, w, 0, 0, rL, gL, bL, a);
-        addTriangle(vertex, matrix, 0, 0, h, w, 0, 0, 0, -w, 0, r, g, b, a);
-        addTriangle(vertex, matrix, 0, 0, h, 0, -w, 0, -w, 0, 0, r, g, b, a);
+        // Верх
+        addTriangle(vertex, matrix, 0, h, 0,  m, 0, m,  -m, 0, m, rL, gL, bL, a);
+        addTriangle(vertex, matrix, 0, h, 0,  m, 0, -m,  m, 0, m, r, g, b, a);
+        addTriangle(vertex, matrix, 0, h, 0,  -m, 0, -m,  m, 0, -m, rD, gD, bD, a);
+        addTriangle(vertex, matrix, 0, h, 0,  -m, 0, m,  -m, 0, -m, r, g, b, a);
 
-        addTriangle(vertex, matrix, 0, 0, -h, 0, w, 0, -w, 0, 0, rD, gD, bD, a);
-        addTriangle(vertex, matrix, 0, 0, -h, w, 0, 0, 0, w, 0, rD, gD, bD, a);
-        addTriangle(vertex, matrix, 0, 0, -h, 0, -w, 0, w, 0, 0, rD, gD, bD, a);
-        addTriangle(vertex, matrix, 0, 0, -h, -w, 0, 0, 0, -w, 0, rD, gD, bD, a);
+        // Низ
+        addTriangle(vertex, matrix, 0, -h, 0,  -m, 0, m,  m, 0, m, rD, gD, bD, a);
+        addTriangle(vertex, matrix, 0, -h, 0,  m, 0, m,  m, 0, -m, r, g, b, a);
+        addTriangle(vertex, matrix, 0, -h, 0,  m, 0, -m,  -m, 0, -m, rL, gL, bL, a);
+        addTriangle(vertex, matrix, 0, -h, 0,  -m, 0, -m,  -m, 0, m, r, g, b, a);
 
         matrices.popPose();
     }
@@ -232,7 +229,7 @@ public class CrystalsMode extends TargetEspMode {
 
     private RenderType createTexturedRenderType(Identifier texture) {
         return RenderType.create(
-                texture + "_crystals",
+                texture + "_crystals_esp",
                 RenderSetup.builder(PIPELINE_ADDITIVE)
                         .bufferSize(4096)
                         .withTexture(RenderType.SAMPLER0, texture)
@@ -242,7 +239,7 @@ public class CrystalsMode extends TargetEspMode {
 
     private RenderType createCrystalRenderType() {
         return RenderType.create(
-                "arix_crystal_triangles",
+                "arix_crystal_mesh",
                 RenderSetup.builder(PIPELINE_CRYSTAL)
                         .bufferSize(8192)
                         .createRenderSetup()

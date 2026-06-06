@@ -9,6 +9,7 @@ import java.util.Comparator;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import de.maxhenkel.voicechat.intercompatibility.FabricClientCompatibilityManager;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Optionull;
 import net.minecraft.client.AttackIndicatorStatus;
@@ -220,6 +221,7 @@ public class Gui {
                 p_282884_.nextStratum();
                 this.renderHotbarAndDecorations(p_282884_, p_342095_);
                 this.renderEffects(p_282884_, p_342095_);
+                FabricClientCompatibilityManager.onRenderVoiceChatLayer(p_282884_, p_342095_);
                 this.renderBossOverlay(p_282884_, p_342095_);
             }
 

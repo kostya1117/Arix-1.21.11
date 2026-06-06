@@ -93,6 +93,12 @@
       <root url="jar://$PROJECT_DIR$/lib/encog-core-3.4.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/nether-pathfinder-1.4.1.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/xz-1.9.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/configbuilder-2.1.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/rnnoise4j-2.1.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/opus4j-2.1.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/lame4j-2.1.5.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/speex4j-1.0.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/Concentus-1.0.1.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

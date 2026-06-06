@@ -14,6 +14,7 @@ import de.florianmichael.vialoadingbase.netty.event.CompressionReorderEvent;
 import de.florianmichael.viamcp.MCPVLBPipeline;
 import de.florianmichael.viamcp.ViaMCP;
 import de.florianmichael.viamcp.ViaProtocolStripper;
+import de.maxhenkel.voicechat.mixin.ConnectionAccessor;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelException;
@@ -69,7 +70,7 @@ import org.slf4j.MarkerFactory;
 import ru.arixcompany.features.event.EventRepo;
 import ru.arixcompany.features.event.world.EventPacket;
 
-public class Connection extends SimpleChannelInboundHandler<Packet<?>> {
+public class Connection extends SimpleChannelInboundHandler<Packet<?>> implements ConnectionAccessor {
     private static final float AVERAGE_PACKETS_SMOOTHING = 0.75F;
     private static final Logger LOGGER = LogUtils.getLogger();
     public static final Marker ROOT_MARKER = MarkerFactory.getMarker("NETWORK");
@@ -108,6 +109,11 @@ public class Connection extends SimpleChannelInboundHandler<Packet<?>> {
         if (this.delayedDisconnect != null) {
             this.disconnect(this.delayedDisconnect);
         }
+    }
+
+    @Override
+    public Channel getChannel(){
+        return channel;
     }
 
     @Override

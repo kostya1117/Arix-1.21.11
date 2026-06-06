@@ -77,7 +77,7 @@ public final class TextColor {
     }
 
     public static DataResult<TextColor> parseColor(String p_131269_) {
-        if (p_131269_.startsWith("#")) {
+        if (p_131269_.startsWith(CUSTOM_COLOR_PREFIX)) {
             try {
                 int i = Integer.parseInt(p_131269_.substring(1), 16);
                 return i >= 0 && i <= 16777215

@@ -5,6 +5,7 @@ import lombok.experimental.UtilityClass;
 import net.minecraft.network.HashedStack;
 import net.minecraft.network.protocol.game.ServerboundContainerClickPacket;
 import net.minecraft.network.protocol.game.ServerboundContainerClosePacket;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Inventory;
@@ -12,7 +13,9 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.PlayerEnderChestContainer;
 import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.AxeItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import ru.arixcompany.features.repos.alerts.AlertRepo;
 import ru.arixcompany.utils.IMinecraft;
@@ -37,6 +40,47 @@ public class PlayerInventoryUtil implements IMinecraft {
                 Int2ObjectMaps.emptyMap(),
                 HashedStack.EMPTY
         ));
+    }
+    public static int findBestSlotInHotBar() {
+        int emptySlot = findEmptySlot();
+        return emptySlot != -1 ? emptySlot : findNonSwordSlot();
+    }
+    private static int findNonSwordSlot() {
+        for (int i = 0; i < 9; ++i) {
+            ItemStack stack = mc.player.getInventory().getItem(i);
+
+            if (!stack.is(ItemTags.SWORDS)
+                    && !stack.is(Items.ELYTRA)
+                    && mc.player.getInventory().selected != i) {
+
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    private static int findEmptySlot() {
+        for(int i = 0; i < 9; ++i) {
+            if (mc.player.getInventory().getItem(i).isEmpty() && mc.player.getInventory().selected != i) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+    public static int getAxeInInventoryOrHotbar(boolean inHotBar) {
+        int firstSlot = inHotBar ? 0 : 9;
+        int lastSlot = inHotBar ? 9 : 36;
+        int finalSlot = -1;
+
+        for(int i = firstSlot; i < lastSlot; ++i) {
+            if (mc.player.getInventory().getItem(i).getItem() instanceof AxeItem) {
+                finalSlot = i;
+            }
+        }
+
+        return finalSlot;
     }
 
     public void closeScreen(boolean packet) {

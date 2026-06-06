@@ -1,0 +1,35 @@
+{
+  "stats": {
+    "minecraft:killed": {
+      "minecraft:sheep": 1,
+      "minecraft:pig": 5,
+      "minecraft:spider": 1
+    },
+    "minecraft:custom": {
+      "minecraft:time_since_rest": 4665,
+      "minecraft:walk_one_cm": 5043,
+      "minecraft:leave_game": 1,
+      "minecraft:damage_taken": 290,
+      "minecraft:mob_kills": 7,
+      "minecraft:play_time": 4665,
+      "minecraft:damage_dealt": 950,
+      "minecraft:jump": 57,
+      "minecraft:time_since_death": 4665,
+      "minecraft:aviate_one_cm": 879,
+      "minecraft:sprint_one_cm": 5110,
+      "minecraft:fall_one_cm": 3540,
+      "minecraft:total_world_time": 4675,
+      "minecraft:fly_one_cm": 5085
+    },
+    "minecraft:picked_up": {
+      "minecraft:porkchop": 7,
+      "minecraft:leaf_litter": 1
+    },
+    "minecraft:used": {
+      "minecraft:netherite_sword": 11,
+      "minecraft:totem_of_undying": 1,
+      "minecraft:pig_spawn_egg": 5
+    }
+  },
+  "DataVersion": 4671
+}

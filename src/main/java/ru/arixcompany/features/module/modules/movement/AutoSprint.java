@@ -22,7 +22,7 @@ public class AutoSprint extends Module {
     }
     @EventHandler
     public void sprintHandler(EventSprint event) {
-        if ((event.getSource() == EventSprint.Source.INPUT) && mc.player.input.hasForwardImpulse() && sprint) {
+        if ((event.getSource() == EventSprint.Source.INPUT) && canStartSprinting() && sprint) {
             event.setSprinting(true);
         }
     }

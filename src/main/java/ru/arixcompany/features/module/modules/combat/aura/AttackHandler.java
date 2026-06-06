@@ -12,6 +12,9 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.ShieldItem;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
 import ru.arixcompany.Arix;
@@ -24,14 +27,14 @@ import ru.arixcompany.features.module.modules.combat.aura.utils.RayTraceUtil;
 import ru.arixcompany.utils.IMinecraft;
 import ru.arixcompany.utils.MessageSender;
 import ru.arixcompany.utils.math.MathUtils;
+import ru.arixcompany.utils.math.Randomizer;
 import ru.arixcompany.utils.math.TimerUtils;
 import ru.arixcompany.utils.player.FallingPlayer;
 
 @UtilityClass
 public final class AttackHandler implements IMinecraft {
 
-    public final TimerUtils cooldownTimer = new TimerUtils();
-
+    HitAura hitAura = Arix.getInstance().getModuleRepo().getModule(HitAura.class);
     public void performAttack(LivingEntity target, boolean rayCast, float ranges) {
         if (target == null || mc.player == null) return;
         if (AuraUtil.getStrictDistance(target) >= ranges) return;
@@ -97,14 +100,20 @@ public final class AttackHandler implements IMinecraft {
         if (player.isFallFlying()) {
             return false;
         }
-
-        if (!canCrit() || player.getDeltaMovement().y < -0.08) {
-            return false;
+        double fallVelocityThreshold;
+        if (hitAura.randomfalldist.isValue()) {
+            fallVelocityThreshold = MathUtils.randomValue(-0.3f,-0.1f);
+        } else {
+            fallVelocityThreshold = -0.08;
         }
 
+        if (!canCrit() || player.getDeltaMovement().y < fallVelocityThreshold) {
+            return false;
+        }
         float nextPossibleCrit = calculateTicksUntilNextCrit();
         double gravity = 0.08;
         float ticksTillFall = (float) (player.getDeltaMovement().y / gravity);
+
         float ticksTillCrit = Math.max(nextPossibleCrit, ticksTillFall);
         float hitProbability = 0.75f;
         float damageOnCrit = 0.5f * hitProbability;
@@ -114,18 +123,45 @@ public final class AttackHandler implements IMinecraft {
             return false;
         }
 
-        float targetFall = MathUtils.randomValue(0.1f, 0.3f);
-        double fallPerTick = Math.abs(player.getDeltaMovement().y);
-        double ticksToReachFall = fallPerTick > 0
-                ? Math.max(0, (targetFall - player.fallDistance) / fallPerTick)
-                : Float.MAX_VALUE;
-
-        if (player.fallDistance < targetFall && ticksToReachFall < ticksTillCrit) {
-            return true;
-        }
-
         return FallingPlayer.fromPlayer(player).findCollision((int) (ticksTillCrit * 1.3f)) == null;
     }
+//public boolean shouldWaitForCrit() {
+//    if (mc.player == null) {
+//        return false;
+//    }
+//
+//    LocalPlayer player = mc.player;
+//
+//    if (player.isFallFlying() || !canCrit()) {
+//        return false; // Не ждем, можно бить
+//    }
+//
+//    double targetFallDistance = new Randomizer().nextFloat(0.1f, 0.8f);
+//
+//    // Если УЖЕ достигли условий для крита - НЕ ждем, можно бить
+//    boolean alreadyHasCrit = player.fallDistance >= targetFallDistance &&
+//            player.getDeltaMovement().y <= -0.08;
+//
+//    if (alreadyHasCrit) {
+//        return false; // НЕ ждем, уже можно бить с критом
+//    }
+//
+//    // Теперь проверяем - СМОЖЕМ ЛИ мы набрать крит если подождем
+//    float nextPossibleCrit = calculateTicksUntilNextCrit();
+//    double gravity = 0.08;
+//    float ticksTillFall = (float) (Math.abs(player.getDeltaMovement().y) / gravity);
+//    float ticksTillCrit = Math.max(nextPossibleCrit, ticksTillFall);
+//    float hitProbability = 0.75f;
+//    float damageOnCrit = 0.5f * hitProbability;
+//    float damageLostWaiting = getCooldownDamageFactor(player, ticksTillCrit);
+//
+//    // Если есть предикт коллизии
+//    if (damageOnCrit <= damageLostWaiting) {
+//        return false;
+//    }
+//
+//    return FallingPlayer.fromPlayer(player).findCollision((ticksTillCrit * 1.3f)) == null;
+//}
 
 
     public boolean shouldWaitForJump() {
@@ -152,10 +188,10 @@ public final class AttackHandler implements IMinecraft {
                 player.getYRot()
         ).findCollision((int) (ticksTillFall * 3.0f));
 
-        Integer ticksTillNextOnGround = collision != null ? collision.getTick() : null;
+        Float ticksTillNextOnGround = collision != null ? collision.getTick() : null;
 
         if (ticksTillNextOnGround == null) {
-            ticksTillNextOnGround = (int) ticksTillFall * 2;
+            ticksTillNextOnGround = ticksTillFall * 2;
         }
 
         if (ticksTillNextOnGround + ticksTillFall < nextPossibleCrit) {
@@ -195,53 +231,33 @@ public final class AttackHandler implements IMinecraft {
         return Math.min(0.2f + base * base * 0.8f, 1.0f);
     }
 
-    private boolean canAttackNow() {
-        if (mc.player == null) return false;
-
-        boolean inWeb = mc.level != null && mc.level.getBlockState(mc.player.blockPosition()).is(Blocks.COBWEB);
-        boolean inLiquid = mc.player.isInWater() || mc.player.isInLava()
-                || mc.player.isEyeInFluid(FluidTags.WATER)
-                || mc.player.isEyeInFluid(FluidTags.LAVA);
-
-        return inWeb
-                || inLiquid
-                || mc.player.onClimbable()
-                || mc.player.isPassenger()
-                || mc.player.hasEffect(MobEffects.BLINDNESS)
-                || mc.player.hasEffect(MobEffects.LEVITATION)
-                || mc.player.hasEffect(MobEffects.SLOW_FALLING)
-                || mc.player.getAbilities().flying;
-    }
-
     public boolean useEntity(LivingEntity target, InteractionHand hand) {
         if (target == null || mc.gameMode == null || mc.player == null) return false;
 
         HitAura hitAura = Arix.getInstance().getModuleRepo().getModule(HitAura.class);
-        mc.gameMode.attack(mc.player, target);
-        mc.player.swing(hand);
-        MessageSender.sendOverlayMessage(Component.literal(mc.player.fallDistance + "")); //debug
+
+       // hitAura.stopBlocking();
+        if (!hitAura.stopBlocking()) {
+            mc.gameMode.attack(mc.player, target);
+            mc.player.swing(hand);
+        }
+
+        if (hitAura.misc.isSelected("Ломать щит")) {
+            if (target instanceof Player entity) {
+                AuraUtil.breakShield(entity);
+            }
+        }
+
         hitAura.count = (hitAura.count + 1) % 2;
-        cooldownTimer.reset();
+        hitAura.sprintTimer.setLastMs(200L);
 
         return true;
     }
-
-
 
     private void disableSprint() {
         mc.player.setSprinting(false);
         mc.options.keySprint.setDown(false);
         mc.getConnection().send(new ServerboundPlayerCommandPacket(mc.player, ServerboundPlayerCommandPacket.Action.STOP_SPRINTING));
-    }
-
-    public long getMsCooldown() {
-        if (mc.player == null) return 500L;
-        double attackSpeed = mc.player.getAttributeValue(Attributes.ATTACK_SPEED);
-        return (long) (1.0 / attackSpeed * 1000.0 * 0.8);
-    }
-
-    public boolean msCooldownReached() {
-        return cooldownTimer.finished(getMsCooldown());
     }
 
     public boolean anyEntityOnRay(LivingEntity target, float range) {

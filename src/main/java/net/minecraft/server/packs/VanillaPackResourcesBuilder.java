@@ -149,7 +149,8 @@ public class VanillaPackResourcesBuilder {
     }
 
     public VanillaPackResources build(PackLocationInfo p_332000_) {
-        this.namespaces.add("arix");
+//        this.namespaces.add("arix");
+//        this.namespaces.add("voicechat");
 
         return new VanillaPackResources(
                 p_332000_,

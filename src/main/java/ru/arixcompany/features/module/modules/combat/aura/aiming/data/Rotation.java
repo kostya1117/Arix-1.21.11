@@ -145,46 +145,23 @@ public record Rotation(float yaw, float pitch, boolean isNormalized) implements 
 //                Mth.clamp(this.pitch + Math.copySign(pitchStep, diff.deltaPitch()), -90f, 90f)
 //        );
 //    }
-//    public Rotation towardsLinear(Rotation other, float horizontalFactor, float verticalFactor) {
-//        RotationDelta diff = rotationDeltaTo(other);
-//
-//        float rotationDifference = diff.length();
-//
-//        float straightLineYaw =
-//                Math.abs(diff.deltaYaw() / rotationDifference) * horizontalFactor;
-//
-//        float straightLinePitch =
-//                Math.abs(diff.deltaPitch() / rotationDifference) * verticalFactor;
-//
-//        return new Rotation(
-//                this.yaw + clamp(diff.deltaYaw(), -straightLineYaw, straightLineYaw),
-//                this.pitch + clamp(diff.deltaPitch(), -straightLinePitch, straightLinePitch)
-//        );
-//    }
+    public Rotation towardsLinear(Rotation other, float horizontalFactor, float verticalFactor) {
+        RotationDelta diff = rotationDeltaTo(other);
 
-//    public Rotation towardsLinear(Rotation other, float horizontalFactor, float verticalFactor) {
-//        RotationDelta diff = rotationDeltaTo(other);
-//
-//        // Простая нормализация без лишних переменных
-//        float tYaw   = Math.abs(diff.deltaYaw())   / 180f;
-//        float tPitch = Math.abs(diff.deltaPitch()) / 90f;
-//
-//        // Лёгкая кривая — QUAD OUT быстрее BACK и без overshoot
-//        float yawMult   = (float) (1.0 - Math.pow(1.0 - tYaw,   2.0)); // QUAD OUT вручную
-//        float pitchMult = (float) (1.0 - Math.pow(1.0 - tPitch, 2.0));
-//
-//        float straightLineYaw   = yawMult   * horizontalFactor;
-//        float straightLinePitch = pitchMult * verticalFactor;
-//
-//        float targetYaw   = this.yaw   + clamp(diff.deltaYaw(),   -straightLineYaw,   straightLineYaw);
-//        float targetPitch = this.pitch + clamp(diff.deltaPitch(), -straightLinePitch, straightLinePitch);
-//
-//        // EMA сглаживание
-//        float smoothedYaw   = Mth.lerp(mc.gameRenderer.getMainCamera().getPartialTickTime(), targetYaw,   this.yaw);
-//        float smoothedPitch = Mth.lerp(mc.gameRenderer.getMainCamera().getPartialTickTime(), targetPitch, this.pitch);
-//
-//        return new Rotation(smoothedYaw, smoothedPitch);
-//    }
+        float rotationDifference = diff.length();
+
+        float straightLineYaw =
+                Math.abs(diff.deltaYaw() / rotationDifference) * horizontalFactor;
+
+        float straightLinePitch =
+                Math.abs(diff.deltaPitch() / rotationDifference) * verticalFactor;
+
+        return new Rotation(
+                this.yaw + clamp(diff.deltaYaw(), -straightLineYaw, straightLineYaw),
+                this.pitch + clamp(diff.deltaPitch(), -straightLinePitch, straightLinePitch)
+        );
+    }
+
 //    public Rotation towardsLinear(Rotation other, float horizontalFactor, float verticalFactor) {
 //        RotationDelta diff = rotationDeltaTo(other);
 //
@@ -236,21 +213,18 @@ public record Rotation(float yaw, float pitch, boolean isNormalized) implements 
 //
 //        return new Rotation(smoothedYaw, smoothedPitch);
 //    }
-    public Rotation towardsLinear(Rotation other, float horizontalFactor, float verticalFactor) {
-        RotationDelta diff = rotationDeltaTo(other);
-
-        float targetYaw   = this.yaw   + clamp(diff.deltaYaw(),   -horizontalFactor,   horizontalFactor);
-        float targetPitch = this.pitch + clamp(diff.deltaPitch(), -verticalFactor, verticalFactor);
-
-        float tickDelta = mc.getDeltaTracker().getGameTimeDeltaTicks();
-        float smoothedYaw   = Mth.rotLerp(tickDelta, this.yaw, targetYaw);
-        float smoothedPitch = Mth.rotLerp(tickDelta, this.pitch, targetPitch);
-
-        return new Rotation(smoothedYaw, smoothedPitch);
-    }
-
-
-
+//    public Rotation towardsLinear(Rotation other, float horizontalFactor, float verticalFactor) {
+//        RotationDelta diff = rotationDeltaTo(other);
+//
+//        float targetYaw   = this.yaw   + clamp(diff.deltaYaw(),   -horizontalFactor,   horizontalFactor);
+//        float targetPitch = this.pitch + clamp(diff.deltaPitch(), -verticalFactor, verticalFactor);
+//
+//        float tickDelta = mc.getDeltaTracker().getGameTimeDeltaTicks();
+////        float smoothedYaw   = Mth.rotLerp(tickDelta, this.yaw, targetYaw);
+////        float smoothedPitch = Mth.rotLerp(tickDelta, this.pitch, targetPitch);
+//
+//        return new Rotation(targetYaw, targetPitch);
+//    }
 
 
     private static float clamp(float value, float min, float max) {

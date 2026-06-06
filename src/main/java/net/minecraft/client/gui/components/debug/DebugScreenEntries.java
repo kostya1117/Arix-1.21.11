@@ -83,7 +83,7 @@ public class DebugScreenEntries {
         return register(Identifier.withDefaultNamespace(p_458601_), p_424237_);
     }
 
-    private static Identifier register(Identifier p_455443_, DebugScreenEntry p_424183_) {
+    public static Identifier register(Identifier p_455443_, DebugScreenEntry p_424183_) {
         ENTRIES_BY_ID.put(p_455443_, p_424183_);
         return p_455443_;
     }

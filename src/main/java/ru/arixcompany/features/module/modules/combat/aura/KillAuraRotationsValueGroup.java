@@ -22,7 +22,11 @@ public class KillAuraRotationsValueGroup implements IMinecraft {
         if (entity == null || mc.player == null) return false;
 
         Rotation targetRot = findRotation(entity);
-        AngleSmooth smoother = buildAngleSmooth();
+        AngleSmooth smoother;
+        if (mc.player.isFallFlying() && HitAura.elytraTarget.isValue())
+            smoother = new ElytraAngleSmooth();
+        else
+            smoother = buildAngleSmooth();
         MovementCorrection correction = getCorrectionMode();
 
         RotationManager.setRotationTarget(
@@ -35,8 +39,8 @@ public class KillAuraRotationsValueGroup implements IMinecraft {
 
     private MovementCorrection getCorrectionMode() {
         return switch (HitAura.motion.getSelected()) {
-            case "Сфокусированная" -> MovementCorrection.CHANGE_LOOK;
-            case "Свободная"       -> MovementCorrection.SILENT;
+            case "Изменять взгяд игрока" -> MovementCorrection.CHANGE_LOOK;
+            case "Направлять"       -> MovementCorrection.SILENT;
             default                -> MovementCorrection.OFF;
         };
     }
@@ -47,9 +51,7 @@ public class KillAuraRotationsValueGroup implements IMinecraft {
 
         Vec3 targetPos;
         if (mc.player.isFallFlying() && HitAura.elytraTarget.isValue()) {
-            Vec3 currentCenter = entity.getBoundingBox().getCenter();
-            Vec3 predicted = PredictUtils.predict(entity, currentCenter, 1f, 20f);
-            targetPos = predicted;
+            targetPos = PredictUtils.predict(entity,4);
         } else {
             targetPos = new Vec3(entity.getX(), entity.getY() + lengthY * 0.5, entity.getZ());
         }

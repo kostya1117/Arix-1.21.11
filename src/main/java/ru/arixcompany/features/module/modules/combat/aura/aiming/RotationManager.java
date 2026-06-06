@@ -5,8 +5,11 @@ import net.minecraft.network.protocol.game.ClientboundPlayerPositionPacket;
 import net.minecraft.network.protocol.game.ServerboundMovePlayerPacket;
 import net.minecraft.network.protocol.game.ServerboundUseItemPacket;
 import net.minecraft.util.Mth;
+import org.apache.logging.log4j.core.net.Priority;
 import org.jetbrains.annotations.Nullable;
 import ru.arixcompany.features.event.EventHandler;
+import ru.arixcompany.features.event.EventPriority;
+import ru.arixcompany.features.event.player.EventGameTicked;
 import ru.arixcompany.features.event.player.EventInput;
 import ru.arixcompany.features.event.player.EventLook;
 import ru.arixcompany.features.event.player.EventRotation;
@@ -17,6 +20,7 @@ import ru.arixcompany.features.module.modules.combat.aura.aiming.data.Rotation;
 import ru.arixcompany.features.module.modules.combat.aura.aiming.features.MovementCorrection;
 import ru.arixcompany.features.module.modules.combat.aura.rotation.Component;
 import ru.arixcompany.features.module.modules.combat.HitAura;
+import ru.arixcompany.utils.math.Timer;
 import ru.arixcompany.utils.player.MoveUtils;
 
 import static ru.arixcompany.features.module.modules.combat.aura.aiming.data.Rotation.angleDifference;
@@ -47,7 +51,6 @@ public class RotationManager extends Component implements RequestHandler.Request
     public static Rotation actualServerRotation = Rotation.ZERO;
     public static Rotation theoreticalServerRotation = Rotation.ZERO;
 
-    // Freelook
     public static float freeYaw = 0f;
     public static float freePitch = 0f;
 
@@ -104,8 +107,8 @@ public class RotationManager extends Component implements RequestHandler.Request
 
     // ── Tick handler ──────────────────────────────────────────────────────
 
-    @EventHandler
-    public void onTick(EventGameTick event) {
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onTick(EventGameTicked event) {
         if (mc.player == null) return;
 
         update();
@@ -161,10 +164,10 @@ public class RotationManager extends Component implements RequestHandler.Request
 
         if (active.movementCorrection == MovementCorrection.CHANGE_LOOK) {
             if (playerRotation == null || currentRotation == null) return;
-//            float timerSpeed = Timer.INSTANCE.getTimerSpeed();
-//            Rotation interpolated = playerRotation.interpolateTo(currentRotation, event.getTickDelta() * timerSpeed);
-            mc.player.setYRot(currentRotation.yaw());
-            mc.player.setXRot(currentRotation.pitch());
+            float timerSpeed = Timer.INSTANCE.getTimerSpeed();
+            Rotation interpolated = playerRotation.interpolateTo(currentRotation, event.getTickDelta() * timerSpeed);
+            mc.player.setYRot(interpolated.yaw());
+            mc.player.setXRot(interpolated.pitch());
         }
     }
 

@@ -5,25 +5,30 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import de.maxhenkel.voicechat.resourcepacks.IPackRepository;
 import net.minecraft.server.packs.PackResources;
 import net.minecraft.util.Util;
 import net.minecraft.world.flag.FeatureFlagSet;
 import org.jspecify.annotations.Nullable;
 
-public class PackRepository {
-    private final Set<RepositorySource> sources;
+public class PackRepository implements IPackRepository {
+    private Set<RepositorySource> sources;
     private Map<String, Pack> available = ImmutableMap.of();
     private List<Pack> selected = ImmutableList.of();
 
     public PackRepository(RepositorySource... p_251886_) {
         this.sources = ImmutableSet.copyOf(p_251886_);
+    }
+    @Override
+    public void voicechat$addSource(RepositorySource source) {
+        Set<RepositorySource> set = new HashSet<>(sources);
+        set.add(source);
+        sources = set;
     }
 
     public static String displayPackList(Collection<Pack> p_331712_) {

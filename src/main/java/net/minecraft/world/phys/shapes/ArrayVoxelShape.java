@@ -3,13 +3,15 @@ package net.minecraft.world.phys.shapes;
 import it.unimi.dsi.fastutil.doubles.DoubleArrayList;
 import it.unimi.dsi.fastutil.doubles.DoubleList;
 import java.util.Arrays;
+
+import malte0811.ferritecore.mixin.accessors.ArrayVSAccess;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Util;
 
-public class ArrayVoxelShape extends VoxelShape {
-    private final DoubleList xs;
-    private final DoubleList ys;
-    private final DoubleList zs;
+public class ArrayVoxelShape extends VoxelShape implements ArrayVSAccess {
+    private DoubleList xs;
+    private DoubleList ys;
+    private DoubleList zs;
 
     protected ArrayVoxelShape(DiscreteVoxelShape p_82572_, double[] p_82573_, double[] p_82574_, double[] p_82575_) {
         this(
@@ -18,6 +20,35 @@ public class ArrayVoxelShape extends VoxelShape {
             DoubleArrayList.wrap(Arrays.copyOf(p_82574_, p_82572_.getYSize() + 1)),
             DoubleArrayList.wrap(Arrays.copyOf(p_82575_, p_82572_.getZSize() + 1))
         );
+    }
+    @Override
+    public void setXPoints(DoubleList newPoints) {
+        xs = newPoints;
+    }
+
+    @Override
+    public void setYPoints(DoubleList newPoints) {
+        ys = newPoints;
+    }
+
+    @Override
+    public void setZPoints(DoubleList newPoints) {
+        zs = newPoints;
+    }
+
+    @Override
+    public DoubleList getXPoints() {
+        return xs;
+    }
+
+    @Override
+    public DoubleList getYPoints() {
+        return ys;
+    }
+
+    @Override
+    public DoubleList getZPoints() {
+        return zs;
     }
 
     ArrayVoxelShape(DiscreteVoxelShape p_82567_, DoubleList p_82568_, DoubleList p_82569_, DoubleList p_82570_) {

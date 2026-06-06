@@ -6,6 +6,8 @@ import it.unimi.dsi.fastutil.doubles.DoubleList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+
+import malte0811.ferritecore.mixin.accessors.VoxelShapeAccess;
 import net.minecraft.core.AxisCycle;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -18,8 +20,8 @@ import net.minecraft.world.phys.Vec3;
 import org.apache.commons.lang3.mutable.MutableObject;
 import org.jspecify.annotations.Nullable;
 
-public abstract class VoxelShape {
-    protected final DiscreteVoxelShape shape;
+public abstract class VoxelShape implements VoxelShapeAccess {
+    protected DiscreteVoxelShape shape;
     private  VoxelShape  [] faces;
 
     protected VoxelShape(DiscreteVoxelShape p_83214_) {
@@ -34,6 +36,23 @@ public abstract class VoxelShape {
     public double max(Direction.Axis p_83298_) {
         int i = this.shape.lastFull(p_83298_);
         return i <= 0 ? Double.NEGATIVE_INFINITY : this.get(p_83298_, i);
+    }
+    @Override
+    public DiscreteVoxelShape getShape() {
+        return shape;
+    }
+    @Override
+    public VoxelShape[] getFaces() {
+        return faces;
+    }
+
+    @Override
+    public void setShape(DiscreteVoxelShape newshape){
+       shape = newshape;
+    }
+    @Override
+    public void setFaces(VoxelShape[] newfaces) {
+        faces = newfaces;
     }
 
     public AABB bounds() {

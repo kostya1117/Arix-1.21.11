@@ -20,7 +20,8 @@ import ru.arixcompany.features.event.EventHandler;
 import ru.arixcompany.features.event.player.EventAttack;
 import ru.arixcompany.features.event.player.EventTotemPop;
 import ru.arixcompany.features.event.render.EventRender3D;
-import ru.arixcompany.features.event.world.EventUpdate;
+import ru.arixcompany.features.event.world.EventGameTick;
+import ru.arixcompany.features.event.world.EventParticleUpdate;
 import ru.arixcompany.features.module.Category;
 import ru.arixcompany.features.module.Module;
 import ru.arixcompany.features.module.setting.implement.*;
@@ -54,20 +55,17 @@ public class Particles extends Module {
             .range(1, 100).setValue(40).step(2)
             .visible(() -> triggers.isSelected("Тотем"));
 
+    private final ValueSetting lifeTime = new ValueSetting("Время жизни")
+            .range(20, 300).setValue(80).step(5);
+
     private final ValueSetting globalLimit = new ValueSetting("Общий лимит")
             .range(50, 2000).setValue(1000).step(50);
 
-    private final ValueSetting speed = new ValueSetting("Скорость").range(0.1f, 2.0f).setValue(0.4f);
-    private final ValueSetting gravity = new ValueSetting("Гравитация").range(-0.02f, 0.02f).setValue(0.005f);
-    private final ValueSetting friction = new ValueSetting("Трение").range(0.8f, 1.0f).setValue(0.97f);
-    private final ValueSetting bounce = new ValueSetting("Отскок").range(0.0f, 1.0f).setValue(0.6f);
-    private final ValueSetting lifeTime = new ValueSetting("Время жизни").range(20, 300).setValue(80).step(5);
-    private final BooleanSetting collision = new BooleanSetting("Коллизия").setValue(true);
-
     private final GroupSetting behaviorGroup = new GroupSetting("Поведение",
-            speed, gravity, friction, bounce, lifeTime, collision, globalLimit);
+            lifeTime, worldAmount, attackAmount, totemAmount, globalLimit);
 
     private final CopyOnWriteArrayList<Particle> particles = new CopyOnWriteArrayList<>();
+    private final CopyOnWriteArrayList<PendingBurst> bursts = new CopyOnWriteArrayList<>();
     private final Random random = new Random();
 
     private static final RenderPipeline PARTICLE_PIPELINE = RenderPipelines.register(
@@ -83,58 +81,78 @@ public class Particles extends Module {
 
     public Particles() {
         super("Particles", Category.Render);
-        setup(mode, size, triggers, worldAmount, attackAmount, totemAmount, behaviorGroup);
+        setup(mode, size, triggers, behaviorGroup);
     }
 
     @Override
     public void deactivate() {
         particles.clear();
+        bursts.clear();
         super.deactivate();
     }
 
     @EventHandler
-    public void onUpdate(EventUpdate e) {
+    public void onUpdate(EventGameTick e) {
         if (mc.player == null) return;
 
         particles.removeIf(p -> p.age >= p.maxAge);
 
         for (Particle p : particles) {
-            p.update(friction.getValue(), gravity.getValue(), bounce.getValue(), collision.isValue());
+            p.update();
         }
 
+        // Обработка постепенного появления
+        bursts.removeIf(b -> {
+            int toSpawn = Math.min(b.remaining, b.perTick);
+            spawnInternal(b.pos, toSpawn, b.totem);
+            b.remaining -= toSpawn;
+            return b.remaining <= 0;
+        });
+
         if (triggers.isSelected("Мир") && particles.size() < worldAmount.getValue()) {
-            spawn(mc.player.position().add(rand(-10, 10), rand(0, 5), rand(-10, 10)), 1, false);
+            spawnInternal(mc.player.position().add(rand(-10, 10), rand(0, 5), rand(-10, 10)), 1, false);
         }
     }
 
     @EventHandler
     public void onAttack(EventAttack e) {
         if (triggers.isSelected("Атака") && e.getTarget() != null) {
-            spawn(e.getTarget().position().add(0, e.getTarget().getBbHeight() / 1.5, 0), (int) attackAmount.getValue(), false);
+            spawnInternal(e.getTarget().position().add(0, e.getTarget().getBbHeight() / 1.5, 0), (int) attackAmount.getValue(), false);
         }
     }
 
     @EventHandler
     public void onTotem(EventTotemPop e) {
         if (triggers.isSelected("Тотем")) {
-            spawn(e.getEntity().position().add(0, 1.0, 0), (int) totemAmount.getValue(), true);
+            int total = (int) totemAmount.getValue();
+            bursts.add(new PendingBurst(e.getEntity().position().add(0, 1.0, 0), total, Math.max(1, total / 5), true));
         }
     }
 
-    private void spawn(Vec3 pos, int count, boolean totem) {
+    private void spawnInternal(Vec3 pos, int count, boolean totem) {
         for (int i = 0; i < count; i++) {
             if (particles.size() >= globalLimit.getValue()) return;
 
             Particle p = new Particle();
-            p.pos = pos;
+            p.pos = p.prevPos = pos;
+            p.isTotem = totem;
 
-            float s = speed.getValue();
-            p.velocity = new Vec3(rand(-0.2f, 0.2f) * s, rand(-0.1f, 0.3f) * s, rand(-0.2f, 0.2f) * s);
+            if (totem) {
+                double f = random.nextFloat() * 2.0F - 1.0F;
+                double g = random.nextFloat() * 2.0F - 1.0F;
+                double h = random.nextFloat() * 2.0F - 1.0F;
+                if (f * f + g * g + h * h <= 1.0D) {
+                    p.velocity = new Vec3(f * 0.2D, g * 0.2D + 0.1D, h * 0.2D);
+                } else {
+                    p.velocity = new Vec3(0, 0.1D, 0);
+                }
+            } else {
+                p.velocity = new Vec3(rand(-0.15f, 0.15f), rand(-0.05f, 0.2f), rand(-0.15f, 0.15f));
+            }
 
             p.maxAge = (int) (lifeTime.getValue() * rand(0.8f, 1.2f));
             p.rotation = random.nextInt(360);
-            p.rotSpeed = rand(-5f, 5f);
-            p.isTotem = totem;
+            p.rotSpeed = rand(-4f, 4f);
             particles.add(p);
         }
     }
@@ -146,6 +164,7 @@ public class Particles extends Module {
         Vec3 cam = mc.gameRenderer.getMainCamera().position();
         PoseStack matrices = e.getMatrixStack();
         ByteBufferBuilder allocator = new ByteBufferBuilder(4096);
+        float delta = mc.getDeltaTracker().getGameTimeDeltaTicks();
 
         try (allocator) {
             MultiBufferSource.BufferSource bufferSource = MultiBufferSource.immediate(allocator);
@@ -154,11 +173,15 @@ public class Particles extends Module {
                 float progress = (float) p.age / p.maxAge;
                 float lifeScale = 1.0f - progress;
 
-                float currentSize = size.getValue() * (0.4f + lifeScale * 0.6f);
+                float currentSize = size.getValue() * (0.5f + lifeScale * 0.5f);
                 int alpha = (int) (lifeScale * 255);
 
+                double renderX = net.minecraft.util.Mth.lerp(delta, p.prevPos.x, p.pos.x);
+                double renderY = net.minecraft.util.Mth.lerp(delta, p.prevPos.y, p.pos.y);
+                double renderZ = net.minecraft.util.Mth.lerp(delta, p.prevPos.z, p.pos.z);
+
                 matrices.pushPose();
-                matrices.translate(p.pos.x - cam.x, p.pos.y - cam.y, p.pos.z - cam.z);
+                matrices.translate(renderX - cam.x, renderY - cam.y, renderZ - cam.z);
 
                 matrices.mulPose(mc.gameRenderer.getMainCamera().rotation());
                 matrices.mulPose(Axis.ZP.rotationDegrees(p.rotation));
@@ -205,31 +228,56 @@ public class Particles extends Module {
     @Getter @Setter
     private class Particle {
         private Vec3 pos;
+        private Vec3 prevPos;
         private Vec3 velocity;
         private int age = 0;
         private int maxAge;
         private float rotation;
         private float rotSpeed;
         private boolean isTotem;
+        private boolean stuck = false;
 
-        public void update(float friction, float gravity, float bounce, boolean collision) {
+        public void update() {
+            prevPos = pos;
             age++;
+            if (stuck) return;
 
-            velocity = velocity.subtract(0, gravity, 0).scale(friction);
+            double friction = 0.98D;
+            double gravity = 0.04D;
 
+            if (isTotem) {
+                friction = 0.88D;
+            }
+
+            velocity = velocity.scale(friction).subtract(0, gravity, 0);
             Vec3 nextPos = pos.add(velocity);
 
-            if (collision && mc.level != null) {
+            if (mc.level != null) {
                 BlockPos bp = BlockPos.containing(nextPos);
                 if (!mc.level.getBlockState(bp).isAir()) {
-                    velocity = new Vec3(velocity.x * 0.6, -velocity.y * bounce, velocity.z * 0.6);
-                    rotSpeed *= 0.5f;
-                    nextPos = pos.add(velocity);
+                    stuck = true;
+                    velocity = Vec3.ZERO;
+                    rotSpeed = 0;
+                    return;
                 }
             }
 
             pos = nextPos;
             rotation += rotSpeed;
+        }
+    }
+
+    private static class PendingBurst {
+        protected Vec3 pos;
+        protected int remaining;
+        protected int perTick;
+        protected boolean totem;
+
+        public PendingBurst(Vec3 pos, int total, int perTick, boolean totem) {
+            this.pos = pos;
+            this.remaining = total;
+            this.perTick = perTick;
+            this.totem = totem;
         }
     }
 }

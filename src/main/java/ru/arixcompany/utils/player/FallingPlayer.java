@@ -1,3 +1,4 @@
+// FallingPlayer.java
 package ru.arixcompany.utils.player;
 
 import lombok.Getter;
@@ -29,6 +30,8 @@ public class FallingPlayer {
     private double motionZ;
     private final float yRot;
     private int simulatedTicks = 0;
+    @Getter
+    private double predictedFallDistance; // добавлено
 
     public FallingPlayer(LocalPlayer player, double x, double y, double z,
                          double motionX, double motionY, double motionZ, float yRot) {
@@ -40,6 +43,7 @@ public class FallingPlayer {
         this.motionY = motionY;
         this.motionZ = motionZ;
         this.yRot = yRot;
+        this.predictedFallDistance = player.fallDistance; // инициализация текущим значением
     }
 
     public static FallingPlayer fromPlayer(LocalPlayer player) {
@@ -56,6 +60,8 @@ public class FallingPlayer {
     }
 
     private void calculateForTick(Vec3 rotationVec) {
+        double prevY = this.y; // сохраняем предыдущую позицию для расчета fallDistance
+
         double d = 0.08;
         boolean bl = this.motionY <= 0.0;
 
@@ -71,7 +77,6 @@ public class FallingPlayer {
         double m = rotationVec.length();
         double n = Mth.cos((float) j);
 
-        // n = (n.toDouble() * n.toDouble() * 1.0.coerceAtMost(m / 0.4)).toFloat()
         n = (float) (n * n * Math.min(1.0, m / 0.4));
 
         Vec3 vec3d5 = new Vec3(this.motionX, this.motionY, this.motionZ)
@@ -114,6 +119,14 @@ public class FallingPlayer {
         this.y += this.motionY;
         this.z += this.motionZ;
 
+        // Обновляем предиктенный fallDistance
+        if (this.motionY < 0) {
+            double fallDistance = prevY - this.y;
+            this.predictedFallDistance += (float) fallDistance;
+        } else {
+            this.predictedFallDistance = 0.0f;
+        }
+
         this.simulatedTicks++;
     }
 
@@ -124,10 +137,10 @@ public class FallingPlayer {
         return instance.getDuration() >= this.simulatedTicks;
     }
 
-    public CollisionResult findCollision(int ticks) {
+    public CollisionResult findCollision(float ticks) {
         Vec3 rotationVec = player.getLookAngle();
 
-        for (int i = 0; i < ticks; i++) {
+        for (float i = 0; i < ticks; i++) {
             Vec3 start = new Vec3(x, y, z);
 
             calculateForTick(rotationVec);
@@ -141,7 +154,7 @@ public class FallingPlayer {
             Optional<BlockPos> supportBlock = player.level().findSupportingBlock(player, box);
 
             if (supportBlock.isPresent()) {
-                return new CollisionResult(supportBlock.get(), i);
+                return new CollisionResult(supportBlock.get(), i, this.predictedFallDistance);
             }
         }
         return null;
@@ -150,12 +163,13 @@ public class FallingPlayer {
     @Getter
     public static class CollisionResult {
         private final BlockPos pos;
-        private final int tick;
+        private final float tick;
+        private final double predictedFallDistance;
 
-        public CollisionResult(BlockPos pos, int tick) {
+        public CollisionResult(BlockPos pos, float tick, double predictedFallDistance) {
             this.pos = pos;
             this.tick = tick;
+            this.predictedFallDistance = predictedFallDistance;
         }
-
     }
 }

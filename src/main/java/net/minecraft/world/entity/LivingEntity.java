@@ -46,7 +46,6 @@ import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.NbtOps;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.network.protocol.game.ClientboundAnimatePacket;
 import net.minecraft.network.protocol.game.ClientboundEntityEventPacket;
@@ -2321,7 +2320,7 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
             this.setDeltaMovement(vec3.x, Math.max(f, vec3.y), vec3.z);
             if (this.isSprinting()) {
                 float yaw;
-                if (this instanceof LocalPlayer && BaritoneAPI.getProvider().getBaritoneForPlayer((LocalPlayer) (Object) this) != null) {
+                if (this instanceof LocalPlayer && BaritoneAPI.getProvider().getBaritoneForPlayer((LocalPlayer) this) != null) {
                     yaw = this.jumpRotationEvent.getYaw();
                 } else {
                     yaw = this.getYRot();
@@ -2522,7 +2521,7 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
         this.setSharedFlag(7, false);
     }
 
-    private Vec3 updateFallFlyingMovement(Vec3 p_366729_) {
+    public Vec3 updateFallFlyingMovement(Vec3 p_366729_) {
         this.getBaritone().ifPresent(baritone -> {
             this.elytraRotationEvent = new RotationMoveEvent(RotationMoveEvent.Type.MOTION_UPDATE, this.getYRot(), this.getXRot());
             baritone.getGameEventHandler().onPlayerRotationMove(this.elytraRotationEvent);
@@ -3480,7 +3479,7 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
         }
     }
 
-    protected void completeUsingItem() {
+    public void completeUsingItem() {
         if (!this.level().isClientSide() || this.isUsingItem()) {
             InteractionHand interactionhand = this.getUsedItemHand();
             if (!this.useItem.equals(this.getItemInHand(interactionhand))) {
@@ -3548,7 +3547,7 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
         return this.getItemBlockingWith() != null;
     }
 
-    public  ItemStack getItemBlockingWith() {
+    public @Nullable ItemStack getItemBlockingWith() {
         if (!this.isUsingItem()) {
             return null;
         }

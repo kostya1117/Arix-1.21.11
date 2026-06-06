@@ -238,7 +238,8 @@ public class Esp extends Module {
                 float textX = sx - rectW / 2f + padding + iconSize + iconPadding;
                 float textY = sy - rectH / 2f + (rectH - FontManager.get(fontSize).getHeight() - (hasShulker ? shulkerRowH + 2f : 0f)) / 2f;
 
-                FontManager.get(fontSize).drawComponent(g, name, textX, textY, 0xFFFFFFFF);
+                // FontManager.get(fontSize).drawComponent(g, name, textX, textY, 0xFFFFFFFF);
+                FontManager.get(fontSize).drawItemNameString(g,entry.stack, textX, textY);
 
                 if (entry.totalCount > 1) {
                     FontManager.get(fontSize).drawString(g, countStr, textX + nameWidth, textY, mainColor.getRGB());
@@ -296,7 +297,8 @@ public class Esp extends Module {
                     float textX = rectX + padding + 16 + 4;
                     float textY = currentY + 4;
 
-                    FontManager.get(fontSize).drawComponent(g, name, textX, textY, 0xFFFFFFFF);
+                   // FontManager.get(fontSize).drawComponent(g, name, textX, textY, 0xFFFFFFFF);
+                    FontManager.get(fontSize).drawItemNameString(g,entry.stack, textX, textY);
 
                     if (entry.totalCount > 1) {
                         float nameW = FontManager.get(fontSize).getComponentWidth(name);

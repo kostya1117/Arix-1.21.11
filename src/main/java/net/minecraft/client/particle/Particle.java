@@ -15,8 +15,9 @@ import net.minecraft.world.phys.Vec3;
 import net.optifine.BlockPosM;
 import net.optifine.Config;
 import net.optifine.CustomColors;
+import sp.mixin.SPAccessor;
 
-public abstract class Particle {
+public abstract class Particle implements SPAccessor {
     private static final AABB INITIAL_AABB = new AABB(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
     private static final double MAXIMUM_COLLISION_VELOCITY_SQUARED = Mth.square(100.0);
     protected final ClientLevel level;
@@ -268,5 +269,14 @@ public abstract class Particle {
             float f = Mth.inverseLerp((p_335935_ + p_335112_) / p_329593_, this.startAtNormalizedAge, this.endAtNormalizedAge);
             return Mth.clampedLerp(f, this.startAlpha, this.endAlpha);
         }
+    }
+    public double smartparticles$getX(){
+        return x;
+    }
+    public double smartparticles$getY(){
+        return y;
+    }
+    public double smartparticles$getZ(){
+        return z;
     }
 }

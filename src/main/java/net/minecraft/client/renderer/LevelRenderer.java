@@ -47,6 +47,8 @@ import java.util.Locale;
 import java.util.OptionalDouble;
 import java.util.Set;
 import java.util.SortedSet;
+
+import net.conczin.immersive_optimization.TickScheduler;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.Camera;
 import net.minecraft.client.CloudStatus;
@@ -548,43 +550,84 @@ public class LevelRenderer implements ResourceManagerReloadListener, AutoCloseab
         this.sectionOcclusionGraph.schedulePropagationFrom(p_301248_);
     }
 
-    private Frustum prepareCullFrustum(Matrix4f p_254341_, Matrix4f p_332544_, Vec3 p_253766_) {
+//    private Frustum prepareCullFrustum(Matrix4f p_254341_, Matrix4f p_332544_, Vec3 p_253766_) {
+//        Frustum frustum;
+//        if (this.capturedFrustum != null && !this.captureFrustum) {
+//            frustum = this.capturedFrustum;
+//        } else {
+//            frustum = new Frustum(p_254341_, p_332544_);
+//            frustum.prepare(p_253766_.x(), p_253766_.y(), p_253766_.z());
+//        }
+//
+//        if (this.captureFrustum) {
+//            this.capturedFrustum = frustum;
+//            this.captureFrustum = false;
+//            frustum = this.capturedFrustum;
+//            frustum.disabled = Config.isShaders() && !Shaders.isFrustumCulling();
+//            frustum.prepare(p_253766_.x, p_253766_.y, p_253766_.z);
+//            this.applyFrustum(frustum, false, -1);
+//            this.applyFrustumEntities(frustum, -1);
+//        }
+//
+//        if (this.debugFixTerrainFrustumShadow) {
+//            boolean flag = this.capturedFrustum != null;
+//            this.capturedFrustum = flag ? new Frustum(p_254341_, p_332544_) : frustum;
+//            this.capturedFrustum.prepare(p_253766_.x, p_253766_.y, p_253766_.z);
+//            this.debugFixTerrainFrustumShadow = false;
+//            frustum = this.capturedFrustum;
+//            frustum.prepare(p_253766_.x, p_253766_.y, p_253766_.z);
+//            ShadersRender.frustumTerrainShadowChanged = true;
+//            ShadersRender.frustumEntitiesShadowChanged = true;
+//            ShadersRender.applyFrustumShadow(this, frustum);
+//        }
+//
+//        if (Config.isShaders() && !Shaders.isFrustumCulling()) {
+//            frustum.disabled = true;
+//        }
+//
+//        return frustum;
+//    }
+private Frustum prepareCullFrustum(Matrix4f p_254341_, Matrix4f p_332544_, Vec3 p_253766_) {
+    var ref = new Object() {
         Frustum frustum;
-        if (this.capturedFrustum != null && !this.captureFrustum) {
-            frustum = this.capturedFrustum;
-        } else {
-            frustum = new Frustum(p_254341_, p_332544_);
-            frustum.prepare(p_253766_.x(), p_253766_.y(), p_253766_.z());
-        }
-
-        if (this.captureFrustum) {
-            this.capturedFrustum = frustum;
-            this.captureFrustum = false;
-            frustum = this.capturedFrustum;
-            frustum.disabled = Config.isShaders() && !Shaders.isFrustumCulling();
-            frustum.prepare(p_253766_.x, p_253766_.y, p_253766_.z);
-            this.applyFrustum(frustum, false, -1);
-            this.applyFrustumEntities(frustum, -1);
-        }
-
-        if (this.debugFixTerrainFrustumShadow) {
-            boolean flag = this.capturedFrustum != null;
-            this.capturedFrustum = flag ? new Frustum(p_254341_, p_332544_) : frustum;
-            this.capturedFrustum.prepare(p_253766_.x, p_253766_.y, p_253766_.z);
-            this.debugFixTerrainFrustumShadow = false;
-            frustum = this.capturedFrustum;
-            frustum.prepare(p_253766_.x, p_253766_.y, p_253766_.z);
-            ShadersRender.frustumTerrainShadowChanged = true;
-            ShadersRender.frustumEntitiesShadowChanged = true;
-            ShadersRender.applyFrustumShadow(this, frustum);
-        }
-
-        if (Config.isShaders() && !Shaders.isFrustumCulling()) {
-            frustum.disabled = true;
-        }
-
-        return frustum;
+    };
+    if (this.capturedFrustum != null && !this.captureFrustum) {
+        ref.frustum = this.capturedFrustum;
+    } else {
+        ref.frustum = new Frustum(p_254341_, p_332544_);
+        ref.frustum.prepare(p_253766_.x(), p_253766_.y(), p_253766_.z());
     }
+
+    if (this.captureFrustum) {
+        this.capturedFrustum = ref.frustum;
+        this.captureFrustum = false;
+        ref.frustum = this.capturedFrustum;
+        ref.frustum.disabled = Config.isShaders() && !Shaders.isFrustumCulling();
+        ref.frustum.prepare(p_253766_.x, p_253766_.y, p_253766_.z);
+        this.applyFrustum(ref.frustum, false, -1);
+        this.applyFrustumEntities(ref.frustum, -1);
+    }
+
+    if (this.debugFixTerrainFrustumShadow) {
+        boolean flag = this.capturedFrustum != null;
+        this.capturedFrustum = flag ? new Frustum(p_254341_, p_332544_) : ref.frustum;
+        this.capturedFrustum.prepare(p_253766_.x, p_253766_.y, p_253766_.z);
+        this.debugFixTerrainFrustumShadow = false;
+        ref.frustum = this.capturedFrustum;
+        ref.frustum.prepare(p_253766_.x, p_253766_.y, p_253766_.z);
+        ShadersRender.frustumTerrainShadowChanged = true;
+        ShadersRender.frustumEntitiesShadowChanged = true;
+        ShadersRender.applyFrustumShadow(this, ref.frustum);
+    }
+
+    if (Config.isShaders() && !Shaders.isFrustumCulling()) {
+        ref.frustum.disabled = true;
+    }
+
+    TickScheduler.INSTANCE.frustum = aabb -> ref.frustum.isVisible(aabb.inflate(1.0));
+
+    return ref.frustum;
+}
 
     public void renderLevel(
             GraphicsResourceAllocator p_367325_,

@@ -5,11 +5,15 @@ import com.google.common.annotations.VisibleForTesting;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import com.mojang.serialization.codecs.RecordCodecBuilder.Instance;
 import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 import it.unimi.dsi.fastutil.ints.IntArraySet;
 import it.unimi.dsi.fastutil.ints.IntSet;
-import it.unimi.dsi.fastutil.ints.Int2IntMap.Entry;
+import malte0811.ferritecore.ducks.SmallThreadDetectable;
+import malte0811.ferritecore.util.SmallThreadingDetector;
+import net.minecraft.core.IdMap;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.util.*;
+import org.jspecify.annotations.Nullable;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
@@ -22,27 +26,33 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.LongStream;
-import net.minecraft.core.IdMap;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.util.BitStorage;
-import net.minecraft.util.ExtraCodecs;
-import net.minecraft.util.SimpleBitStorage;
-import net.minecraft.util.ThreadingDetector;
-import net.minecraft.util.ZeroBitStorage;
-import org.jspecify.annotations.Nullable;
 
-public class PalettedContainer<T> implements PaletteResize<T>, PalettedContainerRO<T>, IPalettedContainer<T> {
+public class PalettedContainer<T> implements PaletteResize<T>, PalettedContainerRO<T>, IPalettedContainer<T>, SmallThreadDetectable {
     private static final int MIN_PALETTE_BITS = 0;
     private volatile PalettedContainer.Data<T> data;
     private final Strategy<T> strategy;
-    private final ThreadingDetector threadingDetector = new ThreadingDetector("PalettedContainer");
+    //private ThreadingDetector threadingDetector = new ThreadingDetector("PalettedContainer");
+
+    private byte ferritecore$threadingState = UNLOCKED;
 
     public void acquire() {
-        this.threadingDetector.checkAndLock();
+        //  this.threadingDetector.checkAndLock();
+        SmallThreadingDetector.acquire(this, "PalettedContainer");
     }
 
     public void release() {
-        this.threadingDetector.checkAndUnlock();
+     //  this.threadingDetector.checkAndUnlock();
+        SmallThreadingDetector.release(this);
+    }
+
+    @Override
+    public byte ferritecore$getState() {
+        return ferritecore$threadingState;
+    }
+
+    @Override
+    public void ferritecore$setState(byte newState) {
+        ferritecore$threadingState = newState;
     }
 
     public static <T> Codec<PalettedContainer<T>> codecRW(Codec<T> p_238373_, Strategy<T> p_424106_, T p_238375_) {
