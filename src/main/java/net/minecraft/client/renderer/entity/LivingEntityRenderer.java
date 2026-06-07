@@ -8,10 +8,12 @@ import java.util.Iterator;
 import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.EntityModel;
+import net.minecraft.client.model.player.PlayerModel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
+import net.minecraft.client.renderer.entity.state.AvatarRenderState;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.client.renderer.item.ItemModelResolver;
 import net.minecraft.client.renderer.rendertype.RenderType;
@@ -27,6 +29,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
@@ -36,7 +39,10 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.scores.Team;
 import net.optifine.Config;
 import net.optifine.reflect.Reflector;
-import org.jspecify.annotations.Nullable;
+import ru.arixcompany.Arix;
+import ru.arixcompany.features.module.modules.render.SeeInvisibles;
+import ru.arixcompany.features.module.modules.render.customModels.CustomPlayerModelRenderer;
+import ru.arixcompany.features.module.modules.render.customModels.ICustomPlayerModelState;
 
 public abstract class LivingEntityRenderer<T extends LivingEntity, S extends LivingEntityRenderState, M extends EntityModel<? super S>>
     extends EntityRenderer<T, S>
@@ -75,7 +81,7 @@ public abstract class LivingEntityRenderer<T extends LivingEntity, S extends Liv
 
     public void submit(S p_427824_, PoseStack p_423787_, SubmitNodeCollector p_424901_, CameraRenderState p_422963_) {
         if (!Reflector.ForgeEventFactoryClient_onRenderLivingPre.exists()
-            || !Reflector.ForgeEventFactoryClient_onRenderLivingPre.callBoolean(p_427824_, this, p_423787_, p_424901_, p_422963_)) {
+                || !Reflector.ForgeEventFactoryClient_onRenderLivingPre.callBoolean(p_427824_, this, p_423787_, p_424901_, p_422963_)) {
             if (animateModelLiving) {
                 p_427824_.walkAnimationSpeed = 1.5F;
             }
@@ -95,15 +101,42 @@ public abstract class LivingEntityRenderer<T extends LivingEntity, S extends Liv
             p_423787_.scale(-1.0F, -1.0F, 1.0F);
             this.scale(p_427824_, p_423787_);
             p_423787_.translate(0.0F, -1.501F, 0.0F);
+
+            boolean seeInvisiblesActive = false;
+            float alphaValue = 0.5F;
+            try {
+                SeeInvisibles seeInvisibles = Arix.getInstance().getModuleRepo().getModule(SeeInvisibles.class);
+                if (seeInvisibles != null && seeInvisibles.isState() && !p_427824_.isArmorStand) {
+                    seeInvisiblesActive = true;
+                    if (seeInvisibles instanceof SeeInvisibles) {
+                        alphaValue = ((SeeInvisibles) seeInvisibles).getAlpha();
+                    }
+                }
+            } catch (Exception ignored) {}
+
             boolean flag1 = this.isBodyVisible(p_427824_);
             boolean flag = !flag1 && !p_427824_.isInvisibleToPlayer;
+
+            if (seeInvisiblesActive && p_427824_.isInvisible) {
+                flag = false;
+                flag1 = true;
+            }
+
             RenderType rendertype = this.getRenderType(p_427824_, flag1, flag, p_427824_.appearsGlowing());
             if (rendertype != null) {
                 p_427824_.overlayProgress = this.getWhiteOverlayProgress(p_427824_);
                 int i = getOverlayCoords(p_427824_, p_427824_.overlayProgress);
                 int j = flag ? 654311423 : -1;
+
+                if (seeInvisiblesActive && p_427824_.isInvisible) {
+                    int alphaInt = (int)(alphaValue * 255);
+                    j = ARGB.color(alphaInt, 255, 255, 255);
+                }
+
                 int k = ARGB.multiply(j, this.getModelTint(p_427824_));
-                p_424901_.submitModel(this.model, p_427824_, p_423787_, rendertype, p_427824_.lightCoords, i, k, null, p_427824_.outlineColor, null);
+                if (!this.trySubmitCustomPlayerModel(p_427824_, p_423787_, p_424901_, rendertype, p_427824_.lightCoords, i, k)) {
+                    p_424901_.submitModel(this.model, p_427824_, p_423787_, rendertype, p_427824_.lightCoords, i, k, null, p_427824_.outlineColor, null);
+                }
             }
 
             if (this.shouldRenderLayers(p_427824_) && !this.layers.isEmpty()) {
@@ -331,7 +364,20 @@ public abstract class LivingEntityRenderer<T extends LivingEntity, S extends Liv
 
         p_363057_.deathTime = p_368665_.deathTime > 0 ? p_368665_.deathTime + p_364497_ : 0.0F;
         Minecraft minecraft = Minecraft.getInstance();
-        p_363057_.isInvisibleToPlayer = p_363057_.isInvisible && p_368665_.isInvisibleTo(minecraft.player);
+
+        p_363057_.isArmorStand = p_368665_ instanceof ArmorStand;
+
+        boolean seeInvisiblesEnabled = false;
+        try {
+            SeeInvisibles seeInvisibles = Arix.getInstance().getModuleRepo().getModule(SeeInvisibles.class);
+            if (seeInvisibles != null && seeInvisibles.isState() && !p_363057_.isArmorStand) {  // ДОБАВЛЕНА ПРОВЕРКА
+                seeInvisiblesEnabled = true;
+            }
+        } catch (Exception ignored) {}
+
+        p_363057_.isInvisibleToPlayer = p_363057_.isInvisible
+                && p_368665_.isInvisibleTo(minecraft.player)
+                && !seeInvisiblesEnabled;
     }
 
     private static float solveBodyRot(LivingEntity p_367822_, float p_362662_, float p_362007_) {
@@ -397,5 +443,46 @@ public abstract class LivingEntityRenderer<T extends LivingEntity, S extends Liv
         }
 
         return -1;
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    private boolean trySubmitCustomPlayerModel(
+            S state,
+            PoseStack matrices,
+            SubmitNodeCollector collector,
+            RenderType renderType,
+            int light,
+            int overlay,
+            int color
+    ) {
+        if (!(state instanceof ICustomPlayerModelState customState)) {
+            return false;
+        }
+
+        if (!customState.hasCustomModel()) {
+            return false;
+        }
+
+        if (!(state instanceof AvatarRenderState playerState)) {
+            return false;
+        }
+
+        if (!(this.model instanceof PlayerModel playerModel)) {
+            return false;
+        }
+
+        playerModel.setupAnim(playerState);
+
+        return CustomPlayerModelRenderer.render(
+                customState.getCustomModel(),
+                playerModel,
+                playerState,
+                matrices,
+                collector,
+                light,
+                overlay,
+                color,
+                state.outlineColor
+        );
     }
 }

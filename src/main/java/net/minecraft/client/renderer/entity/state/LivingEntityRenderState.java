@@ -27,6 +27,7 @@ public class LivingEntityRenderState extends EntityRenderState {
     public boolean isAutoSpinAttack;
     public boolean hasRedOverlay;
     public boolean isInvisibleToPlayer;
+    public boolean isArmorStand;
     public @Nullable Direction bedOrientation;
     public Pose pose = Pose.STANDING;
     public final ItemStackRenderState headItem = new ItemStackRenderState();

@@ -12,11 +12,6 @@ import net.optifine.shaders.MultiTexID;
 
 @DontObfuscate
 public abstract class GpuTexture implements AutoCloseable, IForgeGpuTexture {
-    public static final int USAGE_COPY_DST = 1;
-    public static final int USAGE_COPY_SRC = 2;
-    public static final int USAGE_TEXTURE_BINDING = 4;
-    public static final int USAGE_RENDER_ATTACHMENT = 8;
-    public static final int USAGE_CUBEMAP_COMPATIBLE = 16;
     private final TextureFormat format;
     private final int width;
     private final int height;
@@ -26,6 +21,9 @@ public abstract class GpuTexture implements AutoCloseable, IForgeGpuTexture {
     private int usage;
     private final String label;
     private AbstractTexture parentTexture;
+    protected FilterMode minFilter = FilterMode.NEAREST;
+    protected FilterMode magFilter = FilterMode.LINEAR;
+    protected boolean useMipmaps = true;
 
     public GpuTexture(@GpuTexture.Usage int p_393042_, String p_395679_, TextureFormat p_392008_, int p_394574_, int p_397229_, int p_406893_, int p_405806_) {
         this.usage = p_393042_;
@@ -35,6 +33,20 @@ public abstract class GpuTexture implements AutoCloseable, IForgeGpuTexture {
         this.height = p_397229_;
         this.depthOrLayers = p_406893_;
         this.mipLevels = p_405806_;
+    }
+
+    public void setTextureFilter(FilterMode p_393733_, boolean p_394281_) {
+        this.setTextureFilter(p_393733_, p_393733_, p_394281_);
+    }
+
+    public void setTextureFilter(FilterMode p_396700_, FilterMode p_393522_, boolean p_396120_) {
+        this.minFilter = p_396700_;
+        this.magFilter = p_393522_;
+        this.setUseMipmaps(p_396120_);
+    }
+
+    public void setUseMipmaps(boolean p_406752_) {
+        this.useMipmaps = p_406752_;
     }
 
     public int getWidth(int p_397572_) {

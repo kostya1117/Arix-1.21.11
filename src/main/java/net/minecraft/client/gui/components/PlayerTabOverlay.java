@@ -64,7 +64,8 @@ public class PlayerTabOverlay {
     private final Minecraft minecraft;
     private final Gui gui;
     private @Nullable Component footer;
-    private @Nullable Component header;
+    @Nullable
+    public Component header;
     private boolean visible;
     private final Map<UUID, PlayerTabOverlay.HealthState> healthStates = new Object2ObjectOpenHashMap<>();
 

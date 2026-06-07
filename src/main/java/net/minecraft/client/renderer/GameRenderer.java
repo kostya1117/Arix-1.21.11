@@ -199,21 +199,21 @@ public class GameRenderer implements TrackedWaypoint.Projector, AutoCloseable {
         AtlasManager atlasmanager = p_234219_.getAtlasManager();
         this.submitNodeStorage = new SubmitNodeStorage();
         this.featureRenderDispatcher = new FeatureRenderDispatcher(
-            this.submitNodeStorage, p_426284_, multibuffersource$buffersource, atlasmanager, p_234222_.outlineBufferSource(), p_234222_.crumblingBufferSource(), p_234219_.font
+                this.submitNodeStorage, p_426284_, multibuffersource$buffersource, atlasmanager, p_234222_.outlineBufferSource(), p_234222_.crumblingBufferSource(), p_234219_.font
         );
         this.guiRenderer = new GuiRenderer(
-            this.guiRenderState,
-            multibuffersource$buffersource,
-            this.submitNodeStorage,
-            this.featureRenderDispatcher,
-            List.of(
-                new GuiEntityRenderer(multibuffersource$buffersource, p_234219_.getEntityRenderDispatcher()),
-                new GuiSkinRenderer(multibuffersource$buffersource),
-                new GuiBookModelRenderer(multibuffersource$buffersource),
-                new GuiBannerResultRenderer(multibuffersource$buffersource, atlasmanager),
-                new GuiSignRenderer(multibuffersource$buffersource, atlasmanager),
-                new GuiProfilerChartRenderer(multibuffersource$buffersource)
-            )
+                this.guiRenderState,
+                multibuffersource$buffersource,
+                this.submitNodeStorage,
+                this.featureRenderDispatcher,
+                List.of(
+                        new GuiEntityRenderer(multibuffersource$buffersource, p_234219_.getEntityRenderDispatcher()),
+                        new GuiSkinRenderer(multibuffersource$buffersource),
+                        new GuiBookModelRenderer(multibuffersource$buffersource),
+                        new GuiBannerResultRenderer(multibuffersource$buffersource, atlasmanager),
+                        new GuiSignRenderer(multibuffersource$buffersource, atlasmanager),
+                        new GuiProfilerChartRenderer(multibuffersource$buffersource)
+                )
         );
         this.screenEffectRenderer = new ScreenEffectRenderer(p_234219_, atlasmanager, multibuffersource$buffersource);
     }
@@ -524,28 +524,28 @@ public class GameRenderer implements TrackedWaypoint.Projector, AutoCloseable {
             }
 
             if (this.minecraft.options.getCameraType().isFirstPerson()
-                && !sleepingIn
-                && !this.minecraft.options.hideGui
-                && this.minecraft.gameMode.getPlayerMode() != GameType.SPECTATOR) {
+                    && !sleepingIn
+                    && !this.minecraft.options.hideGui
+                    && this.minecraft.gameMode.getPlayerMode() != GameType.SPECTATOR) {
                 if (Config.isShaders()) {
                     ShadersRender.renderItemFP(
-                        this.itemInHandRenderer,
-                        partialTicks,
-                        posestack,
-                        this.minecraft.gameRenderer.getSubmitNodeStorage(),
-                        this.minecraft.player,
-                        this.minecraft.getEntityRenderDispatcher().getPackedLightCoords(this.minecraft.player, partialTicks),
-                        renderTranslucent
-                    );
-                } else {
-                    this.itemInHandRenderer
-                        .renderHandsWithItems(
+                            this.itemInHandRenderer,
                             partialTicks,
                             posestack,
                             this.minecraft.gameRenderer.getSubmitNodeStorage(),
                             this.minecraft.player,
-                            this.minecraft.getEntityRenderDispatcher().getPackedLightCoords(this.minecraft.player, partialTicks)
-                        );
+                            this.minecraft.getEntityRenderDispatcher().getPackedLightCoords(this.minecraft.player, partialTicks),
+                            renderTranslucent
+                    );
+                } else {
+                    this.itemInHandRenderer
+                            .renderHandsWithItems(
+                                    partialTicks,
+                                    posestack,
+                                    this.minecraft.gameRenderer.getSubmitNodeStorage(),
+                                    this.minecraft.player,
+                                    this.minecraft.getEntityRenderDispatcher().getPackedLightCoords(this.minecraft.player, partialTicks)
+                            );
                 }
             }
 
@@ -616,8 +616,8 @@ public class GameRenderer implements TrackedWaypoint.Projector, AutoCloseable {
     public void render(DeltaTracker p_343467_, boolean p_109096_) {
         this.frameInit();
         if (!this.minecraft.isWindowActive()
-            && this.minecraft.options.pauseOnLostFocus
-            && (!this.minecraft.options.touchscreen().get() || !this.minecraft.mouseHandler.isRightPressed())) {
+                && this.minecraft.options.pauseOnLostFocus
+                && (!this.minecraft.options.touchscreen().get() || !this.minecraft.mouseHandler.isRightPressed())) {
             if (Util.getMillis() - this.lastActiveTime > 500L) {
                 this.minecraft.pauseGame(false);
             }
@@ -631,16 +631,16 @@ public class GameRenderer implements TrackedWaypoint.Projector, AutoCloseable {
             this.updateCamera(p_343467_);
             profilerfiller.pop();
             this.globalSettingsUniform
-                .update(
-                    this.minecraft.getWindow().getWidth(),
-                    this.minecraft.getWindow().getHeight(),
-                    this.minecraft.options.glintStrength().get(),
-                    this.minecraft.level == null ? 0L : this.minecraft.level.getGameTime(),
-                    p_343467_,
-                    this.minecraft.options.getMenuBackgroundBlurriness(),
-                    this.mainCamera,
-                    this.minecraft.options.textureFiltering().get() == TextureFilteringMethod.RGSS
-                );
+                    .update(
+                            this.minecraft.getWindow().getWidth(),
+                            this.minecraft.getWindow().getHeight(),
+                            this.minecraft.options.glintStrength().get(),
+                            this.minecraft.level == null ? 0L : this.minecraft.level.getGameTime(),
+                            p_343467_,
+                            this.minecraft.options.getMenuBackgroundBlurriness(),
+                            this.mainCamera,
+                            this.minecraft.options.textureFiltering().get() == TextureFilteringMethod.RGSS
+                    );
             boolean flag = this.minecraft.isGameLoadFinished();
             int i = (int)this.minecraft.mouseHandler.getScaledXPos(this.minecraft.getWindow());
             int j = (int)this.minecraft.mouseHandler.getScaledYPos(this.minecraft.getWindow());
@@ -680,11 +680,11 @@ public class GameRenderer implements TrackedWaypoint.Projector, AutoCloseable {
 
             if (this.guiLoadingVisible != (this.minecraft.getOverlay() != null)) {
                 if (this.minecraft.getOverlay() != null) {
-                   // LoadingOverlay.registerTextures(this.minecraft.getTextureManager());
+                    // LoadingOverlay.registerTextures(this.minecraft.getTextureManager());
                     //if (this.minecraft.getOverlay() instanceof LoadingOverlay) {
-                        //LoadingOverlay loadingoverlay = (LoadingOverlay)this.minecraft.getOverlay();
-                        //loadingoverlay.update();
-                   // }
+                    //LoadingOverlay loadingoverlay = (LoadingOverlay)this.minecraft.getOverlay();
+                    //loadingoverlay.update();
+                    // }
                 }
 
                 this.guiLoadingVisible = this.minecraft.getOverlay() != null;
@@ -773,48 +773,48 @@ public class GameRenderer implements TrackedWaypoint.Projector, AutoCloseable {
     private void renderActiveTextDebug() {
         this.guiRenderState.nextStratum();
         this.guiRenderState
-            .forEachText(
-                state2In -> state2In.ensurePrepared()
-                    .visit(
-                        new Font.GlyphVisitor() {
-                            private int index;
+                .forEachText(
+                        state2In -> state2In.ensurePrepared()
+                                .visit(
+                                        new Font.GlyphVisitor() {
+                                            private int index;
 
-                            @Override
-                            public void acceptGlyph(TextRenderable.Styled p_457427_) {
-                                this.renderDebugMarkers(p_457427_, false);
-                            }
+                                            @Override
+                                            public void acceptGlyph(TextRenderable.Styled p_457427_) {
+                                                this.renderDebugMarkers(p_457427_, false);
+                                            }
 
-                            @Override
-                            public void acceptEmptyArea(EmptyArea p_456531_) {
-                                this.renderDebugMarkers(p_456531_, true);
-                            }
+                                            @Override
+                                            public void acceptEmptyArea(EmptyArea p_456531_) {
+                                                this.renderDebugMarkers(p_456531_, true);
+                                            }
 
-                            private void renderDebugMarkers(ActiveArea p_459717_, boolean p_457171_) {
-                                int i = (p_457171_ ? 128 : 255) - (this.index++ & 1) * 64;
-                                Style style = p_459717_.style();
-                                int j = style.getClickEvent() != null ? i : 0;
-                                int k = style.getHoverEvent() != null ? i : 0;
-                                int l = j != 0 && k != 0 ? 0 : i;
-                                int i1 = ARGB.color(128, j, k, l);
-                                GameRenderer.this.guiRenderState
-                                    .submitGuiElement(
-                                        new ColoredRectangleRenderState(
-                                            RenderPipelines.GUI,
-                                            TextureSetup.noTexture(),
-                                            state2In.pose,
-                                            (int)p_459717_.activeLeft(),
-                                            (int)p_459717_.activeTop(),
-                                            (int)p_459717_.activeRight(),
-                                            (int)p_459717_.activeBottom(),
-                                            i1,
-                                            i1,
-                                            state2In.scissor
-                                        )
-                                    );
-                            }
-                        }
-                    )
-            );
+                                            private void renderDebugMarkers(ActiveArea p_459717_, boolean p_457171_) {
+                                                int i = (p_457171_ ? 128 : 255) - (this.index++ & 1) * 64;
+                                                Style style = p_459717_.style();
+                                                int j = style.getClickEvent() != null ? i : 0;
+                                                int k = style.getHoverEvent() != null ? i : 0;
+                                                int l = j != 0 && k != 0 ? 0 : i;
+                                                int i1 = ARGB.color(128, j, k, l);
+                                                GameRenderer.this.guiRenderState
+                                                        .submitGuiElement(
+                                                                new ColoredRectangleRenderState(
+                                                                        RenderPipelines.GUI,
+                                                                        TextureSetup.noTexture(),
+                                                                        state2In.pose,
+                                                                        (int)p_459717_.activeLeft(),
+                                                                        (int)p_459717_.activeTop(),
+                                                                        (int)p_459717_.activeRight(),
+                                                                        (int)p_459717_.activeBottom(),
+                                                                        i1,
+                                                                        i1,
+                                                                        state2In.scissor
+                                                                )
+                                                        );
+                                            }
+                                        }
+                                )
+                );
     }
 
     private void tryTakeScreenshotIfNeeded() {
@@ -904,7 +904,7 @@ public class GameRenderer implements TrackedWaypoint.Projector, AutoCloseable {
             Entity entity = this.minecraft.getCameraEntity() == null ? localplayer : this.minecraft.getCameraEntity();
             float f1 = this.minecraft.level.tickRateManager().isEntityFrozen(entity) ? 1.0F : f;
             this.mainCamera
-                .setup(this.minecraft.level, entity, !this.minecraft.options.getCameraType().isFirstPerson(), this.minecraft.options.getCameraType().isMirrored(), f1);
+                    .setup(this.minecraft.level, entity, !this.minecraft.options.getCameraType().isFirstPerson(), this.minecraft.options.getCameraType().isMirrored(), f1);
         }
     }
 
@@ -960,11 +960,11 @@ public class GameRenderer implements TrackedWaypoint.Projector, AutoCloseable {
         RenderSystem.setProjectionMatrix(this.levelProjectionMatrixBuffer.getBuffer(matrix4f), ProjectionType.PERSPECTIVE);
         if (Reflector.ForgeEventFactoryClient_fireComputeCameraAngles.exists()) {
             ViewportEvent.ComputeCameraAngles viewportevent$computecameraangles = (ViewportEvent.ComputeCameraAngles)Reflector.ForgeEventFactoryClient_fireComputeCameraAngles
-                .call(this, this.mainCamera, f);
+                    .call(this, this.mainCamera, f);
             this.mainCamera
-                .setRotation(
-                    viewportevent$computecameraangles.getYaw(), viewportevent$computecameraangles.getPitch(), viewportevent$computecameraangles.getRoll()
-                );
+                    .setRotation(
+                            viewportevent$computecameraangles.getYaw(), viewportevent$computecameraangles.getPitch(), viewportevent$computecameraangles.getRoll()
+                    );
         }
 
         Quaternionf quaternionf = this.mainCamera.rotation().conjugate(new Quaternionf());
@@ -975,7 +975,7 @@ public class GameRenderer implements TrackedWaypoint.Projector, AutoCloseable {
 
         profilerfiller.popPush("fog");
         Vector4f vector4f = this.fogRenderer
-            .setupFog(this.mainCamera, this.minecraft.options.getEffectiveRenderDistance(), p_342230_, this.getDarkenWorldAmount(f), this.minecraft.level);
+                .setupFog(this.mainCamera, this.minecraft.options.getEffectiveRenderDistance(), p_342230_, this.getDarkenWorldAmount(f), this.minecraft.level);
         GpuBufferSlice gpubufferslice = this.fogRenderer.getBuffer(FogRenderer.FogMode.WORLD);
         profilerfiller.popPush("level");
         if (flag) {
@@ -985,16 +985,16 @@ public class GameRenderer implements TrackedWaypoint.Projector, AutoCloseable {
 
         boolean flag2 = this.minecraft.gui.getBossOverlay().shouldCreateWorldFog();
         this.minecraft
-            .levelRenderer
-            .renderLevel(this.resourcePool, p_342230_, flag1, this.mainCamera, matrix4f3, matrix4f, this.getProjectionMatrixForCulling(f2), gpubufferslice, vector4f, !flag2);
+                .levelRenderer
+                .renderLevel(this.resourcePool, p_342230_, flag1, this.mainCamera, matrix4f3, matrix4f, this.getProjectionMatrixForCulling(f2), gpubufferslice, vector4f, !flag2);
         profilerfiller.popPush("hand");
         boolean flag3 = this.minecraft.getCameraEntity() instanceof LivingEntity && ((LivingEntity)this.minecraft.getCameraEntity()).isSleeping();
         EventRepo.call(
                 new EventGameRender3D(new PoseStack(), this.mainCamera, p_342230_.getGameTimeDeltaPartialTick(false))
         );
         RenderSystem.setProjectionMatrix(
-            this.hud3dProjectionMatrixBuffer.getBuffer(this.minecraft.getWindow().getWidth(), this.minecraft.getWindow().getHeight(), this.getFov(this.mainCamera, f, false)),
-            ProjectionType.PERSPECTIVE
+                this.hud3dProjectionMatrixBuffer.getBuffer(this.minecraft.getWindow().getWidth(), this.minecraft.getWindow().getHeight(), this.getFov(this.mainCamera, f, false)),
+                ProjectionType.PERSPECTIVE
         );
         if (flag) {
             ShadersRender.renderHandTranslucent(this, matrix4f3, this.mainCamera, f1, flag3);
@@ -1033,8 +1033,8 @@ public class GameRenderer implements TrackedWaypoint.Projector, AutoCloseable {
 
         RenderSystem.setShaderFog(this.fogRenderer.getBuffer(FogRenderer.FogMode.NONE));
         if (this.minecraft.debugEntries.isCurrentlyEnabled(DebugScreenEntries.THREE_DIMENSIONAL_CROSSHAIR)
-            && this.minecraft.options.getCameraType().isFirstPerson()
-            && !this.minecraft.options.hideGui) {
+                && this.minecraft.options.getCameraType().isFirstPerson()
+                && !this.minecraft.options.hideGui) {
             this.minecraft.getDebugOverlay().render3dCrosshair(this.mainCamera);
         }
     }

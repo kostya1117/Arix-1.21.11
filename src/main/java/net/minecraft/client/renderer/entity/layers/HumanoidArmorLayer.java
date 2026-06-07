@@ -11,8 +11,7 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.equipment.Equippable;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import ru.arixcompany.features.module.modules.render.customModels.ICustomPlayerModelState;
 
 
 public class HumanoidArmorLayer<S extends HumanoidRenderState, M extends HumanoidModel<S>, A extends HumanoidModel<S>> extends RenderLayer<S, M> {
@@ -41,6 +40,10 @@ public class HumanoidArmorLayer<S extends HumanoidRenderState, M extends Humanoi
     }
 
     public void submit(PoseStack p_422800_, SubmitNodeCollector p_425810_, int p_424719_, S p_428929_, float p_423314_, float p_423050_) {
+        if (p_425810_ instanceof ICustomPlayerModelState customState && customState.hasCustomModel()) {
+           return;
+        }
+
         this.renderArmorPiece(p_422800_, p_425810_, p_428929_.chestEquipment, EquipmentSlot.CHEST, p_424719_, p_428929_);
         this.renderArmorPiece(p_422800_, p_425810_, p_428929_.legsEquipment, EquipmentSlot.LEGS, p_424719_, p_428929_);
         this.renderArmorPiece(p_422800_, p_425810_, p_428929_.feetEquipment, EquipmentSlot.FEET, p_424719_, p_428929_);

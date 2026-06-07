@@ -164,8 +164,10 @@ import org.joml.Matrix4fc;
 import org.joml.Vector4f;
 import org.jspecify.annotations.Nullable;
 import org.lwjgl.opengl.GL11;
+import ru.arixcompany.Arix;
 import ru.arixcompany.features.event.EventRepo;
 import ru.arixcompany.features.event.render.EventRender3D;
+import ru.arixcompany.features.module.modules.render.BlockHighLight;
 import ru.arixcompany.utils.math.ProjectUtils;
 
 public class LevelRenderer implements ResourceManagerReloadListener, AutoCloseable {
@@ -1812,6 +1814,14 @@ private Frustum prepareCullFrustum(Matrix4f p_254341_, Matrix4f p_332544_, Vec3 
         int p_362600_,
         float p_459634_
     ) {
+
+        if (Arix.getInstance() != null) {
+            BlockHighLight module = Arix.getInstance().getModuleRepo().getModule(BlockHighLight.class);
+            if (module != null && module.isState()) {
+                return;
+            }
+        }
+
         if (!Config.isCustomEntityModels() || !CustomEntityModels.isCustomModel(p_422577_.blockState())) {
             BlockPos blockpos = p_422577_.pos();
             if (SharedConstants.DEBUG_SHAPES) {

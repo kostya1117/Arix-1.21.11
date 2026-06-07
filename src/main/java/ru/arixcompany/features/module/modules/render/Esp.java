@@ -3,6 +3,8 @@ package ru.arixcompany.features.module.modules.render;
 import lombok.AllArgsConstructor;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.entity.state.AvatarRenderState;
+import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -491,6 +493,19 @@ public class Esp extends Module {
                 x - halfWidth, y, z - halfWidth,
                 x + halfWidth, y + height, z + halfWidth
         );
+    }
+
+    public boolean shouldApplyTo(LivingEntityRenderState state) {
+        if (state == null || mc.player == null) return false;
+        if (!mode.isSelected("Игроки")) return false;
+
+        if (!(state instanceof AvatarRenderState avatarState)) {
+            return false;
+        }
+
+        if (avatarState.id == mc.player.getId()) return false;
+
+        return true;
     }
 
     private static class ItemGroup {
