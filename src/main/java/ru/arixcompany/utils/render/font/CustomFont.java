@@ -27,7 +27,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class CustomFont implements AutoCloseable {
 
-    private static final int ATLAS_SIZE = 2048;
+    private static final int ATLAS_SIZE = 1024;
     private static final int OVERSAMPLE = 4;
     private static final float INV_OS = 1f / OVERSAMPLE;
     private static final int PAD = 4;

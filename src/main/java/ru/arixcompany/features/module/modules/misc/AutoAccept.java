@@ -58,7 +58,7 @@ public class AutoAccept extends Module {
     private String lastInviter = null;
 
     public BooleanSetting onlyFriends = new BooleanSetting("Только друзья");
-    public BooleanSetting clanAccept = new BooleanSetting("Принимать");
+    public BooleanSetting clanAccept = new BooleanSetting("Принимать в клан");
 
     public AutoAccept() {
         super("AutoAccept", Category.Misc);

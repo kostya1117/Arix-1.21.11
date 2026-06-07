@@ -311,6 +311,15 @@ public class RenderUtils implements IMinecraft {
         CircleShader.drawCircle(cx, cy, startDeg, endDeg, radius, thickness, color);
     }
 
+    public static void drawFullScreenQuad(BufferBuilder  builder) {
+        builder.addVertex(-1, -1, 0).setUv(0, 0);
+        builder.addVertex(-1, 1, 0).setUv(0, 1);
+        builder.addVertex(1, 1, 0).setUv(1, 1);
+        builder.addVertex(-1, -1, 0).setUv(0, 0);
+        builder.addVertex(1, 1, 0).setUv(1, 1);
+        builder.addVertex(1, -1, 0).setUv(1, 0);
+    }
+
     private static float[] identity() {
         return new float[]{
                 1, 0, 0,

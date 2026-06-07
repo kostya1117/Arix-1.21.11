@@ -26,6 +26,10 @@ public record BlendFunction(SourceFactor sourceColor, DestFactor destColor, Sour
         SourceFactor.ONE_MINUS_DST_COLOR, DestFactor.ONE_MINUS_SRC_COLOR, SourceFactor.ONE, DestFactor.ZERO
     );
 
+    public static final BlendFunction DEFAULT = new BlendFunction(
+            SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA, SourceFactor.ONE, DestFactor.ZERO
+    );
+
     public BlendFunction(SourceFactor p_392327_, DestFactor p_395593_) {
         this(p_392327_, p_395593_, p_392327_, p_395593_);
     }

@@ -64,7 +64,6 @@ public class CrystalsMode extends TargetEspMode {
                     .build()
     );
 
-    // [орбитальный радиус, Y высота, скорость орбиты, кол-во кристаллов, начальная фаза]
     private static final float[][] CRYSTAL_RINGS = {
             { 0.60f, 0.2f,  0.7f, 4, 0.0f },
             { 0.70f, 0.8f, -0.5f, 3, 1.0f },
@@ -123,7 +122,6 @@ public class CrystalsMode extends TargetEspMode {
         matrices.pushPose();
         matrices.translate(targetPos.x - cam.x, targetPos.y - cam.y, targetPos.z - cam.z);
 
-        // Свечение и Кристаллы
         try (ByteBufferBuilder glowAllocator = new ByteBufferBuilder(4096);
              ByteBufferBuilder crystalAllocator = new ByteBufferBuilder(8192)) {
             MultiBufferSource.BufferSource glowBuffer = MultiBufferSource.immediate(glowAllocator);
@@ -144,7 +142,6 @@ public class CrystalsMode extends TargetEspMode {
                     float cz = (float) (Math.sin(angle) * orbitRadius);
                     float cy = ringY;
 
-                    // Glow render
                     float pulse = 1.0f + (float) Math.sin(totalTime * 0.2f + (ring * count + j)) * 0.1f;
                     float glowSize = 0.25f * crystalAlphaValue * scaleSetting * 3.2f * pulse;
                     int glowAlpha = (int) (160 * crystalAlphaValue * (0.4f + pulse * 0.1f));
@@ -163,7 +160,6 @@ public class CrystalsMode extends TargetEspMode {
                     glowVertex.addVertex(matrix, -hs, hs, 0).setUv(0, 0).setColor(cr, cg, cb, glowAlpha);
                     matrices.popPose();
 
-                    // Crystal render
                     float crystalScale = 0.18f * crystalAlphaValue * scaleSetting;
                     drawAdvancedCrystal(matrices, crystalBuffer, cx, cy, cz, crystalScale, cr, cg, cb, (int)(220 * crystalAlphaValue), totalTime, ring * count + j);
                 }
@@ -181,7 +177,6 @@ public class CrystalsMode extends TargetEspMode {
         matrices.pushPose();
         matrices.translate(x, y, z);
 
-        // Вращение вокруг своей оси
         float selfRotation = time * 3.0f + index * 45f;
         matrices.mulPose(Axis.YP.rotationDegrees(selfRotation));
         matrices.mulPose(Axis.XP.rotationDegrees(selfRotation * 0.5f));
@@ -202,13 +197,11 @@ public class CrystalsMode extends TargetEspMode {
         float h = 1.0f;
         float m = 0.35f;
 
-        // Верх
         addTriangle(vertex, matrix, 0, h, 0,  m, 0, m,  -m, 0, m, rL, gL, bL, a);
         addTriangle(vertex, matrix, 0, h, 0,  m, 0, -m,  m, 0, m, r, g, b, a);
         addTriangle(vertex, matrix, 0, h, 0,  -m, 0, -m,  m, 0, -m, rD, gD, bD, a);
         addTriangle(vertex, matrix, 0, h, 0,  -m, 0, m,  -m, 0, -m, r, g, b, a);
 
-        // Низ
         addTriangle(vertex, matrix, 0, -h, 0,  -m, 0, m,  m, 0, m, rD, gD, bD, a);
         addTriangle(vertex, matrix, 0, -h, 0,  m, 0, m,  m, 0, -m, r, g, b, a);
         addTriangle(vertex, matrix, 0, -h, 0,  m, 0, -m,  -m, 0, -m, rL, gL, bL, a);

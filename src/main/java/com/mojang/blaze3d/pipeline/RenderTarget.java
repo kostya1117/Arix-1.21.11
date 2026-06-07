@@ -1,6 +1,7 @@
 package com.mojang.blaze3d.pipeline;
 
 import com.mojang.blaze3d.opengl.GlDevice;
+import com.mojang.blaze3d.opengl.GlStateManager;
 import com.mojang.blaze3d.opengl.GlTexture;
 import com.mojang.blaze3d.opengl.GlTextureView;
 import com.mojang.blaze3d.systems.GpuDevice;
@@ -13,6 +14,10 @@ import com.mojang.blaze3d.textures.TextureFormat;
 import java.util.OptionalInt;
 import net.minecraft.client.renderer.RenderPipelines;
 import org.jspecify.annotations.Nullable;
+import org.lwjgl.opengl.GL11;
+
+import static com.mojang.blaze3d.opengl.GlConst.GL_COLOR_BUFFER_BIT;
+import static com.mojang.blaze3d.opengl.GlConst.GL_DEPTH_BUFFER_BIT;
 
 public abstract class RenderTarget {
     private static int UNNAMED_RENDER_TARGETS = 0;
@@ -24,6 +29,7 @@ public abstract class RenderTarget {
     protected @Nullable GpuTextureView colorTextureView;
     protected @Nullable GpuTexture depthTexture;
     protected @Nullable GpuTextureView depthTextureView;
+    public FilterMode filterMode;
     private boolean stencilEnabled = false;
 
     public RenderTarget(@Nullable String p_392164_, boolean p_166199_) {
@@ -111,6 +117,44 @@ public abstract class RenderTarget {
             RenderSystem.bindDefaultUniforms(renderpass);
             renderpass.bindTexture("InSampler", this.colorTextureView, RenderSystem.getSamplerCache().getClampToEdge(FilterMode.NEAREST));
             renderpass.draw(0, 3);
+        }
+    }
+
+    public void bindWrite(boolean clear) {
+        RenderSystem.assertOnRenderThread();
+        RenderSystem.outputColorTextureOverride = this.getColorTextureView();
+        RenderSystem.outputDepthTextureOverride = this.useDepth ? this.getDepthTextureView() : null;
+        if (clear) {
+            GL11.glClearColor(0.0F, 0.0F, 0.0F, 0.0F);
+
+            int mask = GL_COLOR_BUFFER_BIT;
+
+            if (this.useDepth) {
+                GL11.glClearDepth(1.0);
+                mask |= GL_DEPTH_BUFFER_BIT;
+            }
+            GlStateManager._clear(mask);
+        }
+    }
+
+    public void unbindWrite() {
+        RenderSystem.assertOnRenderThread();
+        RenderSystem.outputColorTextureOverride = null;
+        RenderSystem.outputDepthTextureOverride = null;
+    }
+
+    public void setFilterMode(FilterMode p_397955_) {
+        this.setFilterMode(p_397955_, false);
+    }
+
+    private void setFilterMode(FilterMode p_397959_, boolean p_333030_) {
+        if (this.colorTexture == null) {
+            throw new IllegalStateException("Can't change filter mode, color texture doesn't exist yet");
+        } else {
+            if (p_333030_ || p_397959_ != this.filterMode) {
+                this.filterMode = p_397959_;
+                this.colorTexture.setTextureFilter(p_397959_, false);
+            }
         }
     }
 

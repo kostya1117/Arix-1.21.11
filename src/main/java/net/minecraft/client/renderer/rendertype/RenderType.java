@@ -30,6 +30,9 @@ import org.joml.Matrix4fStack;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
+import static net.minecraft.client.renderer.rendertype.LayeringTransform.VIEW_OFFSET_Z_LAYERING;
+import static net.minecraft.client.renderer.rendertype.OutputTarget.ITEM_ENTITY_TARGET;
+
 public class RenderType implements IRenderType {
     private static final int MEGABYTE = 1048576;
     public static final int BIG_BUFFER_SIZE = 4194304;

@@ -63,6 +63,7 @@ public class ModuleRepo implements IMinecraft {
        modules.add(new AutoSwap());
        modules.add(new ServerAssist());
        modules.add(new AspectRatio());
+       modules.add(new SeeInvisibles());
    }
 
    public void init() {

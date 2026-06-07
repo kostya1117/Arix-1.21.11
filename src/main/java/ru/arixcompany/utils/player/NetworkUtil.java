@@ -1,24 +1,18 @@
 package ru.arixcompany.utils.player;
 
-import lombok.Getter;
-import lombok.Setter;
 import lombok.experimental.UtilityClass;
+import net.minecraft.client.gui.components.LerpingBossEvent;
+import net.minecraft.client.gui.components.PlayerTabOverlay;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.scores.*;
 import org.apache.commons.lang3.StringUtils;
 import ru.arixcompany.utils.IMinecraft;
 
 import java.net.SocketAddress;
+import java.util.Locale;
 
 @UtilityClass
 public class NetworkUtil implements IMinecraft {
-    @Setter
-    public static boolean hasCT;
-    @Setter
-    @Getter
-    public static int ctTime;
-
-    public void tick() {
-    }
 
     public static boolean isServerContains(String searchString) {
         if (searchString == null || searchString.isEmpty()) {
@@ -56,25 +50,34 @@ public class NetworkUtil implements IMinecraft {
     public static boolean isHolyWorld() {return isServerContains("HolyWorld");}
     public static boolean isVanilla() {return isServerContains("Vanilla");}
 
-    public static int getAnarchyMode() {
-        Scoreboard scoreboard = mc.level.getScoreboard();
-        Objective objective = scoreboard.getDisplayObjective(DisplaySlot.SIDEBAR);
-        if (isFunTime()) {
-            if (objective != null) {
-                String[] string = objective.getDisplayName().getString().split("-");
-                if (string.length > 1) return Integer.parseInt(string[1]);
+    public static boolean isOnPvP() {
+        for (LerpingBossEvent event : mc.gui.getBossOverlay().events.values()) {
+            String name = event.getName().getString().toLowerCase(Locale.ROOT);
+            if (name.contains("pvp") || name.contains("пвп")) {
+                return true;
             }
         }
-        if (isHolyWorld()) {
-            for (PlayerScoreEntry scoreboardEntry : scoreboard.listPlayerScores(objective)) {
-                String text = PlayerTeam.formatNameForTeam(scoreboard.getPlayersTeam(scoreboardEntry.owner()), scoreboardEntry.ownerName()).getString();
-                if (!text.isEmpty()) {
-                    String string = StringUtils.substringBetween(text, "#", " -◆-");
-                    if (string != null && !string.isEmpty()) return Integer.parseInt(string.replace(" (1.20)", ""));
-                }
+        return false;
+    }
+
+    public static String getAnarchyNumberFromTabOverlay() {
+        if (!isFunTime() && !isCopyTime()) return null;
+        String anarchy = "none";
+
+        PlayerTabOverlay tabOverlay = mc.gui.getTabList();
+        Component header = tabOverlay.header;
+        if (header == null) return anarchy;
+
+        for (String line : header.getString().split("\n")) {
+            String normalized = line.toLowerCase(Locale.ROOT)
+                    .replaceAll("§.", "")
+                    .trim();
+            if (normalized.contains("режим: анархия-")) {
+                anarchy = normalized.replace("режим: анархия-", "").trim();
+                break;
             }
         }
-        return -1;
+        return anarchy;
     }
 
     public static String getWorldType() {

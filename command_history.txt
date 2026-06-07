@@ -1,16 +1,3 @@
-//wand
-/warp pvp
-//wand
-/spawn
-/reg RaynNEW1117 RaynNEW1117
-/kit rabbit
-/ac
-/kit
-/kit claim
-/kit
-/give shield
-/reg RaynNEW1117
-/reg RaynNEW1117 RaynNEW1117
 /register RaynNEW1117 RaynNEW1117
 /register RaynNEW11171 RaynNEW11171
 /hub
@@ -48,3 +35,16 @@
 /рги
 /duel KRUTASKA3
 /duel Shaftila
+/reg 123qwe111a 123qwe111a
+/kit pvp
+/spawn
+/kit pvp
+/reg 123qwe111a
+/hub
+/reg 1
+/an236
+/ah search золотой слиток
+/ah sell 140000
+/ah sell 14000
+/kit pvp
+/an236
