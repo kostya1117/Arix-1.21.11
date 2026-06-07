@@ -1,34 +1,34 @@
-[15:20:05] [main/WARN]: Invalid registry value type detected for PerfOS counters. Should be REG_DWORD. Ignoring: HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\PerfOS\Performance\Disable Performance Counters.
-[15:20:06] [Datafixer Bootstrap/INFO]: 287 Datafixer optimizations took 1547 milliseconds
-[15:20:06] [main/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeEntity.canUpdate
-[15:20:06] [main/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.logging.CrashReportExtender
-[15:20:07] [main/INFO]: [OptiFine] (Reflector) Method not present: net.minecraft.tags.ItemTags.create
-[15:20:17] [main/INFO]: Completely ignored arguments: [--userProperties, {}]
-[15:20:17] [Render thread/INFO]: Environment: Environment[sessionHost=https://sessionserver.mojang.com, servicesHost=https://api.minecraftservices.com, profilesHost=https://api.mojang.com, name=PROD]
-[15:20:17] [Render thread/INFO]: Setting user: Player59
-[15:20:18] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.settings.KeyConflictContext
-[15:20:18] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraft.client.KeyMapping.getKeyModifier
-[15:20:18] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.settings.KeyModifier
-[15:20:18] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraft.launchwrapper.Launch
-[15:20:18] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.versions.forge.ForgeVersion
-[15:20:18] [Render thread/INFO]: [voicechat] Compatibility version 20
-[15:20:18] [Render thread/INFO]: [voicechat] Loading plugins
-[15:20:18] [Render thread/INFO]: [voicechat] Loaded 0 plugin(s)
-[15:20:18] [Render thread/INFO]: [voicechat] Initializing plugins
-[15:20:18] [Render thread/INFO]: [voicechat] Initialized 0 plugin(s)
-[15:20:18] [Render thread/INFO]: [voicechat] Initializing Opus
-[15:20:18] [Render thread/INFO]: [voicechat] Successfully initialized Opus
-[15:20:18] [Render thread/INFO]: [voicechat] Initializing RNNoise
-[15:20:18] [Render thread/INFO]: [voicechat] Successfully initialized RNNoise
-[15:20:18] [Render thread/INFO]: [voicechat] Initializing Speex
-[15:20:18] [Render thread/INFO]: [voicechat] Successfully initialized Speex
-[15:20:18] [Render thread/INFO]: [voicechat] Initializing LAME
-[15:20:18] [Render thread/INFO]: [voicechat] Successfully initialized LAME
-[15:20:18] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.loading.ClientModLoader
-[15:20:18] [Render thread/INFO]: Backend library: LWJGL version 3.3.3+5
-[15:20:18] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.internal.BrandingControl
-[15:20:18] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.fml.loading.ImmediateWindowHandler
-[15:20:19] [Download-2/ERROR]: Failed to fetch user properties
+[15:30:10] [main/WARN]: Invalid registry value type detected for PerfOS counters. Should be REG_DWORD. Ignoring: HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\PerfOS\Performance\Disable Performance Counters.
+[15:30:10] [Datafixer Bootstrap/INFO]: 287 Datafixer optimizations took 1402 milliseconds
+[15:30:11] [main/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeEntity.canUpdate
+[15:30:11] [main/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.logging.CrashReportExtender
+[15:30:12] [main/INFO]: [OptiFine] (Reflector) Method not present: net.minecraft.tags.ItemTags.create
+[15:30:20] [main/INFO]: Completely ignored arguments: [--userProperties, {}]
+[15:30:21] [Render thread/INFO]: Environment: Environment[sessionHost=https://sessionserver.mojang.com, servicesHost=https://api.minecraftservices.com, profilesHost=https://api.mojang.com, name=PROD]
+[15:30:21] [Render thread/INFO]: Setting user: Player725
+[15:30:21] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.settings.KeyConflictContext
+[15:30:21] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraft.client.KeyMapping.getKeyModifier
+[15:30:21] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.settings.KeyModifier
+[15:30:21] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraft.launchwrapper.Launch
+[15:30:21] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.versions.forge.ForgeVersion
+[15:30:21] [Render thread/INFO]: [voicechat] Compatibility version 20
+[15:30:21] [Render thread/INFO]: [voicechat] Loading plugins
+[15:30:21] [Render thread/INFO]: [voicechat] Loaded 0 plugin(s)
+[15:30:21] [Render thread/INFO]: [voicechat] Initializing plugins
+[15:30:21] [Render thread/INFO]: [voicechat] Initialized 0 plugin(s)
+[15:30:21] [Render thread/INFO]: [voicechat] Initializing Opus
+[15:30:21] [Render thread/INFO]: [voicechat] Successfully initialized Opus
+[15:30:21] [Render thread/INFO]: [voicechat] Initializing RNNoise
+[15:30:22] [Render thread/INFO]: [voicechat] Successfully initialized RNNoise
+[15:30:22] [Render thread/INFO]: [voicechat] Initializing Speex
+[15:30:22] [Render thread/INFO]: [voicechat] Successfully initialized Speex
+[15:30:22] [Render thread/INFO]: [voicechat] Initializing LAME
+[15:30:22] [Render thread/INFO]: [voicechat] Successfully initialized LAME
+[15:30:22] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.loading.ClientModLoader
+[15:30:22] [Render thread/INFO]: Backend library: LWJGL version 3.3.3+5
+[15:30:22] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.internal.BrandingControl
+[15:30:22] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.fml.loading.ImmediateWindowHandler
+[15:30:22] [Download-2/ERROR]: Failed to fetch user properties
 com.mojang.authlib.exceptions.InvalidCredentialsException: Status: 401
 	at com.mojang.authlib.exceptions.MinecraftClientHttpException.toAuthenticationException(MinecraftClientHttpException.java:59)
 	at com.mojang.authlib.yggdrasil.YggdrasilUserApiService.fetchProperties(YggdrasilUserApiService.java:150)
@@ -42,257 +42,258 @@ Caused by: com.mojang.authlib.exceptions.MinecraftClientHttpException: Status: 4
 	at com.mojang.authlib.minecraft.client.MinecraftClient.get(MinecraftClient.java:56)
 	at com.mojang.authlib.yggdrasil.YggdrasilUserApiService.fetchProperties(YggdrasilUserApiService.java:121)
 	... 5 more
-[15:20:19] [Render thread/WARN]: [OptiFine] (Reflector) java.lang.ClassNotFoundException: sun.misc.SharedSecrets
-[15:20:19] [Render thread/WARN]: [OptiFine] (Reflector) java.lang.ClassNotFoundException: jdk.internal.misc.SharedSecrets
-[15:20:19] [Render thread/WARN]: [OptiFine] (Reflector) java.lang.ClassNotFoundException: sun.misc.VM
-[15:20:19] [Render thread/WARN]: [OptiFine] (Reflector) java.lang.reflect.InaccessibleObjectException: Unable to make public static long jdk.internal.misc.VM.maxDirectMemory() accessible: module java.base does not "exports jdk.internal.misc" to unnamed module @3c9d0b9d
-[15:20:20] [Render thread/INFO]: [OptiFine] 
-[15:20:20] [Render thread/INFO]: [OptiFine] OptiFine_1.21.11_HD_U_J9
-[15:20:20] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: optifine.OptiFineResourceLocator
-[15:20:20] [Render thread/INFO]: [OptiFine] Build: null
-[15:20:20] [Render thread/INFO]: [OptiFine] OS: Windows 10 (amd64) version 10.0
-[15:20:20] [Render thread/INFO]: [OptiFine] Java: 21.0.10, Microsoft
-[15:20:20] [Render thread/INFO]: [OptiFine] VM: OpenJDK 64-Bit Server VM (mixed mode, sharing), Microsoft
-[15:20:20] [Render thread/INFO]: [OptiFine] LWJGL: 3.4.0 Win32 WGL Null EGL OSMesa VisualC DLL
-[15:20:20] [Render thread/INFO]: [OptiFine] OpenGL: AMD Radeon(TM) Vega 3 Graphics , version 3.3.0 Core Profile Context 23.9.1.230821, ATI Technologies Inc.
-[15:20:20] [Render thread/INFO]: [OptiFine] OpenGL Version: 3.3.0
-[15:20:20] [Render thread/INFO]: [OptiFine] Maximum texture size: 16384x16384
-[15:20:20] [Render thread/INFO]: [Shaders] OpenGL Version: 3.3.0 Core Profile Context 23.9.1.230821
-[15:20:20] [Render thread/INFO]: [Shaders] Vendor:  ATI Technologies Inc.
-[15:20:20] [Render thread/INFO]: [Shaders] Renderer: AMD Radeon(TM) Vega 3 Graphics 
-[15:20:20] [VersionCheck/INFO]: [OptiFine] Checking for new version
-[15:20:20] [Render thread/INFO]: [Shaders] Capabilities:  2.0  2.1  3.0  3.2  - 
-[15:20:20] [Render thread/INFO]: [Shaders] GL_MAX_DRAW_BUFFERS: 8
-[15:20:20] [Render thread/INFO]: [Shaders] GL_MAX_COLOR_ATTACHMENTS: 8
-[15:20:20] [Render thread/INFO]: [Shaders] GL_MAX_TEXTURE_IMAGE_UNITS: 32
-[15:20:20] [Render thread/INFO]: [Shaders] Load shaders configuration.
-[15:20:20] [Render thread/INFO]: [Shaders] No shaderpack loaded.
-[15:20:20] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.fml.ModList
-[15:20:20] [Render thread/INFO]: Using optional rendering extensions: GL_ARB_buffer_storage, GL_KHR_debug, GL_ARB_vertex_attrib_binding, GL_ARB_direct_state_access, GL_EXT_texture_filter_anisotropic
-[15:20:20] [Render thread/ERROR]: Couldn't load file/fullbright-ub-1.21.zip pack metadata: Pack declares support for version newer than 64, but is missing mandatory fields min_format and max_format
-[15:20:20] [Render thread/ERROR]: Couldn't load file/fullbright-ub-1.21.zip overlays metadata: Overlay "fixes" declares support for version newer than 64, but is missing mandatory fields min_format and max_format
-[15:20:20] [VersionCheck/INFO]: [OptiFine] java.io.FileNotFoundException: http://optifine.net/version/1.21.11/HD_U.txt
-[15:20:20] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.ForgeHooksClient
-[15:20:21] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.event.ForgeEventFactoryClient
-[15:20:21] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.gui.overlay.ForgeLayeredDraw
-[15:20:21] [Render thread/INFO]: Reloading ResourceManager: vanilla
-[15:20:21] [Render thread/INFO]: [OptiFine] *** Reloading resources ***
-[15:20:21] [Render thread/INFO]: [OptiFine] *** Reloading textures ***
-[15:20:21] [Worker-Main-3/WARN]: [OptiFine] Resource not found: minecraft:shaders/post/fxaa_of_2x.json
-[15:20:21] [Worker-Main-3/WARN]: [OptiFine] Resource not found: minecraft:shaders/post/fxaa_of_4x.json
-[15:20:21] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.model.geometry.GeometryLoaderManager
-[15:20:21] [Render thread/INFO]: [CHAT] [Baritone] Baritone settings file not found, resetting.
-[15:20:22] [Worker-Main-2/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/particles.png
-[15:20:22] [Worker-Main-2/INFO]: [OptiFine] Multitexture: false
-[15:20:22] [Worker-Main-3/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/decorated_pot.png
-[15:20:22] [Worker-Main-3/INFO]: [OptiFine] Multitexture: false
-[15:20:22] [Worker-Main-3/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/armor_trims.png
-[15:20:22] [Worker-Main-3/INFO]: [OptiFine] Multitexture: false
-[15:20:22] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_2, 3 -> 9
-[15:20:22] [Worker-Main-1/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/paintings.png
-[15:20:22] [Worker-Main-1/INFO]: [OptiFine] Multitexture: false
-[15:20:22] [Worker-Main-1/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/shield_patterns.png
-[15:20:22] [Worker-Main-1/INFO]: [OptiFine] Multitexture: false
-[15:20:22] [Worker-Main-1/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/chest.png
-[15:20:22] [Worker-Main-1/INFO]: [OptiFine] Multitexture: false
-[15:20:22] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_1, 3 -> 9
-[15:20:22] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_0, 3 -> 9
-[15:20:22] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_11, 3 -> 9
-[15:20:22] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_10, 3 -> 9
-[15:20:22] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_9, 5 -> 10
-[15:20:22] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_8, 5 -> 10
-[15:20:22] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_3, 5 -> 10
-[15:20:22] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_2, 5 -> 10
-[15:20:22] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_1, 5 -> 10
-[15:20:22] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_0, 5 -> 10
-[15:20:22] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_7, 5 -> 10
-[15:20:22] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_6, 5 -> 10
-[15:20:22] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_5, 5 -> 10
-[15:20:22] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_4, 5 -> 10
-[15:20:22] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_11, 5 -> 10
-[15:20:22] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_10, 5 -> 10
-[15:20:22] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:trial_omen, 5 -> 10
-[15:20:22] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:raid_omen, 5 -> 10
-[15:20:22] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_6, 3 -> 9
-[15:20:22] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_5, 3 -> 9
-[15:20:22] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_10, 5 -> 10
-[15:20:22] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_4, 3 -> 9
-[15:20:22] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_3, 3 -> 9
-[15:20:22] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_9, 3 -> 9
-[15:20:22] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_8, 3 -> 9
-[15:20:22] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_11, 5 -> 10
-[15:20:22] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_7, 3 -> 9
-[15:20:22] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_7, 5 -> 10
-[15:20:22] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_6, 5 -> 10
-[15:20:22] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_9, 5 -> 10
-[15:20:22] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_8, 5 -> 10
-[15:20:22] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_1, 5 -> 10
-[15:20:22] [Worker-Main-1/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/celestials.png
-[15:20:22] [Worker-Main-1/INFO]: [OptiFine] Multitexture: false
-[15:20:22] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_0, 5 -> 10
-[15:20:22] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_3, 5 -> 10
-[15:20:22] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_2, 5 -> 10
-[15:20:22] [Worker-Main-1/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/banner_patterns.png
-[15:20:22] [Worker-Main-1/INFO]: [OptiFine] Multitexture: false
-[15:20:22] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_5, 5 -> 10
-[15:20:22] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_4, 5 -> 10
-[15:20:22] [Worker-Main-2/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/beds.png
-[15:20:22] [Worker-Main-2/INFO]: [OptiFine] Multitexture: false
-[15:20:22] [Render thread/INFO]: [STDOUT]: [nether-pathfinder] Created temp file at C:\Users\User\AppData\Local\Temp\nether_pathfinder-x86_6414129491828611686255.dll
-[15:20:22] [Worker-Main-3/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/blocks.png
-[15:20:22] [Worker-Main-3/INFO]: [OptiFine] Multitexture: false
-[15:20:22] [Worker-Main-3/INFO]: [OptiFine] Register block sprites
-[15:20:22] [Worker-Main-3/INFO]: [OptiFine] BetterGrass: Parsing default configuration optifine/bettergrass.properties
-[15:20:22] [Worker-Main-2/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/gui.png
-[15:20:22] [Worker-Main-2/INFO]: [OptiFine] Multitexture: false
-[15:20:22] [Worker-Main-1/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/items.png
-[15:20:22] [Worker-Main-1/INFO]: [OptiFine] Multitexture: false
-[15:20:22] [Worker-Main-1/INFO]: [OptiFine] Register item sprites
-[15:20:22] [Render thread/INFO]: [STDERR]: [nether-pathfinder] Failed to delete temp file
-[15:20:22] [Render thread/INFO]: [STDOUT]: [nether-pathfinder] Loaded shared library
-[15:20:22] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:container/bundle/bundle_progressbar_fill, 6 -> 12
-[15:20:22] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:widget/scroller_background, 6 -> 12
-[15:20:22] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:container/bundle/bundle_progressbar_full, 6 -> 12
-[15:20:22] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:hud/locator_bar_arrow_up, 7 -> 14
-[15:20:22] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:container/villager/scroller, 6 -> 12
-[15:20:22] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:widget/scroller, 6 -> 12
-[15:20:22] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:container/villager/scroller_disabled, 6 -> 12
-[15:20:22] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:hud/locator_bar_arrow_down, 7 -> 14
-[15:20:22] [Worker-Main-2/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/map_decorations.png
-[15:20:22] [Worker-Main-2/INFO]: [OptiFine] Multitexture: false
-[15:20:22] [Worker-Main-2/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/signs.png
-[15:20:22] [Worker-Main-2/INFO]: [OptiFine] Multitexture: false
-[15:20:23] [Worker-Main-2/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/shulker_boxes.png
-[15:20:23] [Worker-Main-2/INFO]: [OptiFine] Multitexture: false
-[15:20:23] [Worker-Main-2/INFO]: Found unifont_all_no_pua-17.0.01.hex, loading
-[15:20:23] [Worker-Main-3/INFO]: Found unifont_pua-17.0.01.hex, loading
-[15:20:23] [Worker-Main-2/INFO]: Found unifont_jp_patch-17.0.01.hex, loading
-[15:20:24] [Via-Mappingloader-1/INFO]: Loading block connection mappings ...
-[15:20:24] [Via-Mappingloader-1/INFO]: Using FastUtil Long2ObjectOpenHashMap for block connections
-[15:20:24] [Render thread/INFO]: Loaded Platform ViaVersion
-[15:20:24] [Render thread/INFO]: Loading translations...
-[15:20:24] [Render thread/INFO]: Registering protocols...
-[15:20:25] [Render thread/INFO]: Loaded Platform ViaBackwards
-[15:20:25] [Render thread/INFO]: Registering protocols...
-[15:20:25] [Render thread/INFO]: Loaded Platform ViaRewind
-[15:20:25] [Render thread/INFO]: ViaVersion detected lowest supported version by the proxy: 1.7.2-1.7.5 (4)
-[15:20:25] [Render thread/INFO]: Highest supported version by the proxy: 26.1-26.1.2 (775)
-[15:20:25] [Render thread/INFO]: ViaLoadingBase has loaded 3/3 platforms
-[15:20:25] [Render thread/INFO]: [voicechat] Successfully registered ViaVersion mappings
-[15:20:25] [Via Async Scheduler 0/INFO]: Finished mapping loading, shutting down loader executor.
-[15:20:27] [Worker-Main-2/INFO]: [OptiFine] CustomItems: Collecting model sprites
-[15:20:27] [Worker-Main-1/INFO]: [OptiFine] CustomItems: Registering sprites
-[15:20:27] [Worker-Main-3/INFO]: [OptiFine] (Reflector) Method not present: net.minecraft.client.renderer.block.model.BlockElementFace.data
-[15:20:29] [Via Async Task 1/WARN]: There is a newer plugin version available: 5.9.1, you're on: 5.9.0
-[15:20:39] [Render thread/INFO]: [STDOUT]: Logged as: ReyClutch17
-[15:20:40] [Render thread/WARN]: arix:pipeline/round_rect_outline shader program does not use sampler Sampler0 defined in the pipeline. This might be a bug.
-[15:20:40] [Render thread/WARN]: arix:pipeline/round_rect_corners shader program does not use sampler Sampler0 defined in the pipeline. This might be a bug.
-[15:20:40] [Render thread/WARN]: arix:pipeline/circle shader program does not use sampler Sampler0 defined in the pipeline. This might be a bug.
-[15:20:40] [Render thread/WARN]: arix:pipeline/fractal_flame shader program does not use sampler Sampler0 defined in the pipeline. This might be a bug.
-[15:20:40] [Render thread/WARN]: arix:pipeline/round_rect shader program does not use sampler Sampler0 defined in the pipeline. This might be a bug.
-[15:20:40] [Render thread/INFO]: OpenAL initialized on device OpenAL Soft on Наушники (Устройство с поддержкой High Definition Audio)
-[15:20:40] [Render thread/INFO]: Sound engine started
-[15:20:40] [Render thread/INFO]: Created: 512x256x0 minecraft:textures/atlas/particles.png-atlas
-[15:20:40] [Render thread/INFO]: [OptiFine] Animated sprites: 1
-[15:20:40] [Render thread/INFO]: Created: 128x128x0 minecraft:textures/atlas/decorated_pot.png-atlas
-[15:20:40] [Render thread/INFO]: [OptiFine] Animated sprites: 0
-[15:20:40] [Render thread/INFO]: Created: 2048x1024x0 minecraft:textures/atlas/armor_trims.png-atlas
-[15:20:41] [Render thread/INFO]: [OptiFine] Animated sprites: 0
-[15:20:41] [Render thread/INFO]: Created: 512x256x0 minecraft:textures/atlas/paintings.png-atlas
-[15:20:41] [Render thread/INFO]: [OptiFine] Animated sprites: 0
-[15:20:41] [Render thread/INFO]: Created: 1024x512x0 minecraft:textures/atlas/shield_patterns.png-atlas
-[15:20:41] [Render thread/INFO]: [OptiFine] Animated sprites: 0
-[15:20:41] [Render thread/INFO]: Created: 1024x1024x2 minecraft:textures/atlas/blocks.png-atlas
-[15:20:41] [Render thread/INFO]: [OptiFine] Update block sprites
-[15:20:41] [Render thread/INFO]: [OptiFine] Animated sprites: 56
-[15:20:41] [Render thread/INFO]: Created: 512x512x0 minecraft:textures/atlas/chest.png-atlas
-[15:20:41] [Render thread/INFO]: [OptiFine] Animated sprites: 0
-[15:20:41] [Render thread/INFO]: Created: 256x128x0 minecraft:textures/atlas/celestials.png-atlas
-[15:20:41] [Render thread/INFO]: [OptiFine] Animated sprites: 0
-[15:20:41] [Render thread/INFO]: Created: 1024x512x0 minecraft:textures/atlas/banner_patterns.png-atlas
-[15:20:41] [Render thread/INFO]: [OptiFine] Animated sprites: 0
-[15:20:41] [Render thread/INFO]: Created: 512x512x0 minecraft:textures/atlas/beds.png-atlas
-[15:20:41] [Render thread/INFO]: [OptiFine] Animated sprites: 0
-[15:20:41] [Render thread/INFO]: Created: 1024x512x0 minecraft:textures/atlas/items.png-atlas
-[15:20:41] [Render thread/INFO]: [OptiFine] Update item sprites
-[15:20:41] [Render thread/INFO]: [OptiFine] Animated sprites: 0
-[15:20:41] [Render thread/INFO]: Created: 1024x1024x0 minecraft:textures/atlas/gui.png-atlas
-[15:20:41] [Render thread/INFO]: [OptiFine] Animated sprites: 5
-[15:20:41] [Render thread/INFO]: Created: 128x64x0 minecraft:textures/atlas/map_decorations.png-atlas
-[15:20:41] [Render thread/INFO]: [OptiFine] Animated sprites: 0
-[15:20:41] [Render thread/INFO]: Created: 512x256x0 minecraft:textures/atlas/signs.png-atlas
-[15:20:41] [Render thread/INFO]: [OptiFine] Animated sprites: 0
-[15:20:41] [Render thread/INFO]: Created: 512x512x0 minecraft:textures/atlas/shulker_boxes.png-atlas
-[15:20:41] [Render thread/INFO]: [OptiFine] Animated sprites: 0
-[15:20:41] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/gui.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
-[15:20:41] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/beds.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
-[15:20:41] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/paintings.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
-[15:20:41] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/shulker_boxes.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
-[15:20:41] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/signs.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
-[15:20:41] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/chest.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
-[15:20:41] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/particles.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
-[15:20:41] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/celestials.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
-[15:20:41] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/shield_patterns.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
-[15:20:41] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/decorated_pot.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
-[15:20:41] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/map_decorations.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
-[15:20:41] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/blocks.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
-[15:20:41] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/banner_patterns.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
-[15:20:41] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/armor_trims.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
-[15:20:42] [Render thread/INFO]: [OptiFine] *** Reloading custom textures ***
-[15:20:46] [Render thread/INFO]: [OptiFine] Disable Forge light pipeline
-[15:20:46] [Render thread/INFO]: [OptiFine] *** Reflector Forge ***
-[15:20:46] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.event.level.ChunkEvent$Load
-[15:20:46] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.event.level.ChunkEvent$Unload
-[15:20:46] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.ColorResolverManager
-[15:20:46] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.logging.CrashReportAnalyser
-[15:20:46] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.EntitySpectatorShaderManager
-[15:20:46] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.eventbus.api.bus.EventBus
-[15:20:46] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraft.world.entity.Entity.isInWaterOrSwimmable
-[15:20:46] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraft.world.entity.boss.enderdragon.EnderDragon.getParts
-[15:20:46] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeBlockState.getSoundType
-[15:20:46] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeBlockState.getStateAtViewpoint
-[15:20:46] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeBlockState.shouldDisplayFluidOverlay
-[15:20:46] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeEntity.getEyeInFluidType
-[15:20:46] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeEntity.getParts
-[15:20:46] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeEntity.hasCustomOutlineRendering
-[15:20:46] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeEntity.isMultipartEntity
-[15:20:46] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeEntity.onAddedToWorld
-[15:20:46] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeEntity.onRemovedFromWorld
-[15:20:46] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeEntity.shouldRiderSit
-[15:20:46] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.event.ForgeEventFactory
-[15:20:46] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.client.model.ForgeFaceData.calculateNormals
-[15:20:46] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.common.ForgeHooks
-[15:20:46] [Render thread/INFO]: [OptiFine] (Reflector) Field not present: net.minecraftforge.common.ForgeConfigSpec.childConfig
-[15:20:46] [Render thread/INFO]: [OptiFine] (Reflector) Field not present: net.minecraftforge.common.ForgeConfigSpec$ConfigValue.defaultSupplier
-[15:20:46] [Render thread/INFO]: [OptiFine] (Reflector) Field not present: net.minecraftforge.common.ForgeConfigSpec$ConfigValue.spec
-[15:20:46] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.ForgeConfigSpec$ConfigValue.get
-[15:20:46] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraft.world.level.chunk.ChunkAccess.getWorldForge
-[15:20:46] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.common.extensions.IForgeItemStack
-[15:20:46] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraft.client.renderer.ItemBlockRenderTypes.isFancy
-[15:20:46] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraft.client.KeyMapping.setKeyConflictContext
-[15:20:46] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraft.client.KeyMapping.setKeyModifierAndCode
-[15:20:46] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraft.client.particle.ParticleResources.getProvider
-[15:20:46] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeBlockEntity.getRenderBoundingBox
-[15:20:46] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.FramePassManager
-[15:20:46] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.ItemDecoratorHandler
-[15:20:46] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.common.MinecraftForge
-[15:20:46] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.fml.ModContainer
-[15:20:46] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.gui.ModListScreen
-[15:20:46] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.fml.ModLoader
-[15:20:46] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.gui.TitleScreenModUpdateIndicator
-[15:20:46] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.event.PlayLevelSoundEvent
-[15:20:46] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.event.RenderBlockScreenEffectEvent$OverlayType
-[15:20:46] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.event.CustomizeGuiOverlayEvent$BossEventProgress
-[15:20:46] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.event.RenderNameTagEvent
-[15:20:46] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.event.RenderTooltipEvent
-[15:20:46] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.event.RenderTooltipEvent$Pre
-[15:20:46] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.event.ScreenshotEvent
-[15:20:46] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.server.ServerLifecycleHooks
-[15:20:46] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraft.client.particle.TerrainParticle.updateSprite
-[15:20:46] [Render thread/INFO]: [OptiFine] *** Reflector Vanilla ***
-[15:20:46] [Render thread/INFO]: Resizing Dynamic Transforms UBO, capacity limit of 2 reached during a single frame. New capacity will be 4.
-[15:20:53] [Render thread/INFO]: Connecting to mc.spookytime.net, 25565
-[15:20:54] [Download-1/ERROR]: Failed to retrieve profile key pair
+[15:30:22] [Render thread/WARN]: [OptiFine] (Reflector) java.lang.ClassNotFoundException: sun.misc.SharedSecrets
+[15:30:22] [Render thread/WARN]: [OptiFine] (Reflector) java.lang.ClassNotFoundException: jdk.internal.misc.SharedSecrets
+[15:30:22] [Render thread/WARN]: [OptiFine] (Reflector) java.lang.ClassNotFoundException: sun.misc.VM
+[15:30:22] [Render thread/WARN]: [OptiFine] (Reflector) java.lang.reflect.InaccessibleObjectException: Unable to make public static long jdk.internal.misc.VM.maxDirectMemory() accessible: module java.base does not "exports jdk.internal.misc" to unnamed module @3c9d0b9d
+[15:30:23] [Render thread/INFO]: [OptiFine] 
+[15:30:23] [Render thread/INFO]: [OptiFine] OptiFine_1.21.11_HD_U_J9
+[15:30:23] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: optifine.OptiFineResourceLocator
+[15:30:23] [Render thread/INFO]: [OptiFine] Build: null
+[15:30:23] [Render thread/INFO]: [OptiFine] OS: Windows 10 (amd64) version 10.0
+[15:30:23] [Render thread/INFO]: [OptiFine] Java: 21.0.10, Microsoft
+[15:30:23] [Render thread/INFO]: [OptiFine] VM: OpenJDK 64-Bit Server VM (mixed mode, sharing), Microsoft
+[15:30:23] [Render thread/INFO]: [OptiFine] LWJGL: 3.4.0 Win32 WGL Null EGL OSMesa VisualC DLL
+[15:30:23] [Render thread/INFO]: [OptiFine] OpenGL: AMD Radeon(TM) Vega 3 Graphics , version 3.3.0 Core Profile Context 23.9.1.230821, ATI Technologies Inc.
+[15:30:23] [Render thread/INFO]: [OptiFine] OpenGL Version: 3.3.0
+[15:30:23] [Render thread/INFO]: [OptiFine] Maximum texture size: 16384x16384
+[15:30:23] [VersionCheck/INFO]: [OptiFine] Checking for new version
+[15:30:23] [Render thread/INFO]: [Shaders] OpenGL Version: 3.3.0 Core Profile Context 23.9.1.230821
+[15:30:23] [Render thread/INFO]: [Shaders] Vendor:  ATI Technologies Inc.
+[15:30:23] [Render thread/INFO]: [Shaders] Renderer: AMD Radeon(TM) Vega 3 Graphics 
+[15:30:23] [Render thread/INFO]: [Shaders] Capabilities:  2.0  2.1  3.0  3.2  - 
+[15:30:23] [Render thread/INFO]: [Shaders] GL_MAX_DRAW_BUFFERS: 8
+[15:30:23] [Render thread/INFO]: [Shaders] GL_MAX_COLOR_ATTACHMENTS: 8
+[15:30:23] [Render thread/INFO]: [Shaders] GL_MAX_TEXTURE_IMAGE_UNITS: 32
+[15:30:23] [Render thread/INFO]: [Shaders] Load shaders configuration.
+[15:30:23] [Render thread/INFO]: [Shaders] No shaderpack loaded.
+[15:30:23] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.fml.ModList
+[15:30:23] [Render thread/INFO]: Using optional rendering extensions: GL_ARB_buffer_storage, GL_KHR_debug, GL_ARB_vertex_attrib_binding, GL_ARB_direct_state_access, GL_EXT_texture_filter_anisotropic
+[15:30:23] [Render thread/ERROR]: Couldn't load file/fullbright-ub-1.21.zip pack metadata: Pack declares support for version newer than 64, but is missing mandatory fields min_format and max_format
+[15:30:23] [Render thread/ERROR]: Couldn't load file/fullbright-ub-1.21.zip overlays metadata: Overlay "fixes" declares support for version newer than 64, but is missing mandatory fields min_format and max_format
+[15:30:23] [VersionCheck/INFO]: [OptiFine] java.io.IOException: Server returned HTTP response code: 403 for URL: http://optifine.net/version/1.21.11/HD_U.txt
+[15:30:23] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.ForgeHooksClient
+[15:30:24] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.event.ForgeEventFactoryClient
+[15:30:24] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.gui.overlay.ForgeLayeredDraw
+[15:30:24] [Render thread/INFO]: Reloading ResourceManager: vanilla
+[15:30:24] [Render thread/INFO]: [OptiFine] *** Reloading resources ***
+[15:30:24] [Render thread/INFO]: [OptiFine] *** Reloading textures ***
+[15:30:24] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.model.geometry.GeometryLoaderManager
+[15:30:25] [Worker-Main-2/WARN]: [OptiFine] Resource not found: minecraft:shaders/post/fxaa_of_2x.json
+[15:30:25] [Worker-Main-2/WARN]: [OptiFine] Resource not found: minecraft:shaders/post/fxaa_of_4x.json
+[15:30:25] [Render thread/INFO]: [CHAT] [Baritone] Baritone settings file not found, resetting.
+[15:30:25] [Worker-Main-3/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/particles.png
+[15:30:25] [Worker-Main-3/INFO]: [OptiFine] Multitexture: false
+[15:30:25] [Worker-Main-2/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/decorated_pot.png
+[15:30:25] [Worker-Main-2/INFO]: [OptiFine] Multitexture: false
+[15:30:25] [Worker-Main-2/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/armor_trims.png
+[15:30:25] [Worker-Main-2/INFO]: [OptiFine] Multitexture: false
+[15:30:25] [Render thread/INFO]: [STDOUT]: [nether-pathfinder] Created temp file at C:\Users\User\AppData\Local\Temp\nether_pathfinder-x86_642882993878918020979.dll
+[15:30:25] [Render thread/INFO]: [STDERR]: [nether-pathfinder] Failed to delete temp file
+[15:30:25] [Render thread/INFO]: [STDOUT]: [nether-pathfinder] Loaded shared library
+[15:30:25] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_2, 3 -> 9
+[15:30:25] [Worker-Main-2/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/paintings.png
+[15:30:25] [Worker-Main-2/INFO]: [OptiFine] Multitexture: false
+[15:30:25] [Worker-Main-1/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/shield_patterns.png
+[15:30:25] [Worker-Main-1/INFO]: [OptiFine] Multitexture: false
+[15:30:25] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_1, 3 -> 9
+[15:30:25] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_0, 3 -> 9
+[15:30:25] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_11, 3 -> 9
+[15:30:25] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_10, 3 -> 9
+[15:30:25] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_9, 5 -> 10
+[15:30:25] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_8, 5 -> 10
+[15:30:25] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_3, 5 -> 10
+[15:30:25] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_2, 5 -> 10
+[15:30:25] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_1, 5 -> 10
+[15:30:25] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_0, 5 -> 10
+[15:30:25] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_7, 5 -> 10
+[15:30:25] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_6, 5 -> 10
+[15:30:25] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_5, 5 -> 10
+[15:30:25] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_4, 5 -> 10
+[15:30:25] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_11, 5 -> 10
+[15:30:25] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_10, 5 -> 10
+[15:30:25] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:trial_omen, 5 -> 10
+[15:30:25] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:raid_omen, 5 -> 10
+[15:30:25] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_6, 3 -> 9
+[15:30:25] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_5, 3 -> 9
+[15:30:25] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_10, 5 -> 10
+[15:30:25] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_4, 3 -> 9
+[15:30:25] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_3, 3 -> 9
+[15:30:25] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_9, 3 -> 9
+[15:30:25] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_8, 3 -> 9
+[15:30:25] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_11, 5 -> 10
+[15:30:25] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_7, 3 -> 9
+[15:30:25] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_7, 5 -> 10
+[15:30:25] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_6, 5 -> 10
+[15:30:25] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_9, 5 -> 10
+[15:30:25] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_8, 5 -> 10
+[15:30:25] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_1, 5 -> 10
+[15:30:25] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_0, 5 -> 10
+[15:30:25] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_3, 5 -> 10
+[15:30:25] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_2, 5 -> 10
+[15:30:25] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_5, 5 -> 10
+[15:30:25] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_4, 5 -> 10
+[15:30:25] [Worker-Main-2/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/chest.png
+[15:30:25] [Worker-Main-2/INFO]: [OptiFine] Multitexture: false
+[15:30:25] [Worker-Main-3/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/celestials.png
+[15:30:25] [Worker-Main-3/INFO]: [OptiFine] Multitexture: false
+[15:30:25] [Worker-Main-3/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/banner_patterns.png
+[15:30:25] [Worker-Main-3/INFO]: [OptiFine] Multitexture: false
+[15:30:25] [Worker-Main-2/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/beds.png
+[15:30:25] [Worker-Main-2/INFO]: [OptiFine] Multitexture: false
+[15:30:26] [Worker-Main-2/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/gui.png
+[15:30:26] [Worker-Main-2/INFO]: [OptiFine] Multitexture: false
+[15:30:26] [Worker-Main-1/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/blocks.png
+[15:30:26] [Worker-Main-1/INFO]: [OptiFine] Multitexture: false
+[15:30:26] [Worker-Main-1/INFO]: [OptiFine] Register block sprites
+[15:30:26] [Worker-Main-1/INFO]: [OptiFine] BetterGrass: Parsing default configuration optifine/bettergrass.properties
+[15:30:26] [Worker-Main-3/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/items.png
+[15:30:26] [Worker-Main-3/INFO]: [OptiFine] Multitexture: false
+[15:30:26] [Worker-Main-3/INFO]: [OptiFine] Register item sprites
+[15:30:26] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:container/bundle/bundle_progressbar_fill, 6 -> 12
+[15:30:26] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:widget/scroller_background, 6 -> 12
+[15:30:26] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:container/bundle/bundle_progressbar_full, 6 -> 12
+[15:30:26] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:hud/locator_bar_arrow_up, 7 -> 14
+[15:30:26] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:container/villager/scroller, 6 -> 12
+[15:30:26] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:widget/scroller, 6 -> 12
+[15:30:26] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:container/villager/scroller_disabled, 6 -> 12
+[15:30:26] [Worker-Main-2/INFO]: [OptiFine] Scaled non power of 2: minecraft:hud/locator_bar_arrow_down, 7 -> 14
+[15:30:26] [Worker-Main-2/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/map_decorations.png
+[15:30:26] [Worker-Main-2/INFO]: [OptiFine] Multitexture: false
+[15:30:26] [Worker-Main-2/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/signs.png
+[15:30:26] [Worker-Main-2/INFO]: [OptiFine] Multitexture: false
+[15:30:26] [Worker-Main-2/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/shulker_boxes.png
+[15:30:26] [Worker-Main-2/INFO]: [OptiFine] Multitexture: false
+[15:30:26] [Worker-Main-2/INFO]: Found unifont_all_no_pua-17.0.01.hex, loading
+[15:30:27] [Worker-Main-1/INFO]: Found unifont_pua-17.0.01.hex, loading
+[15:30:27] [Worker-Main-2/INFO]: Found unifont_jp_patch-17.0.01.hex, loading
+[15:30:27] [Render thread/INFO]: Loaded Platform ViaVersion
+[15:30:27] [Render thread/INFO]: Loading translations...
+[15:30:27] [Render thread/INFO]: Registering protocols...
+[15:30:27] [Via-Mappingloader-1/INFO]: Loading block connection mappings ...
+[15:30:28] [Render thread/INFO]: Loaded Platform ViaBackwards
+[15:30:28] [Render thread/INFO]: Registering protocols...
+[15:30:29] [Render thread/INFO]: Loaded Platform ViaRewind
+[15:30:29] [Render thread/INFO]: ViaVersion detected lowest supported version by the proxy: 1.7.2-1.7.5 (4)
+[15:30:29] [Render thread/INFO]: Highest supported version by the proxy: 26.1-26.1.2 (775)
+[15:30:29] [Via-Mappingloader-1/INFO]: Using FastUtil Long2ObjectOpenHashMap for block connections
+[15:30:29] [Render thread/INFO]: ViaLoadingBase has loaded 3/3 platforms
+[15:30:29] [Render thread/INFO]: [voicechat] Successfully registered ViaVersion mappings
+[15:30:31] [Via Async Scheduler 0/INFO]: Finished mapping loading, shutting down loader executor.
+[15:30:31] [Worker-Main-3/INFO]: [OptiFine] Waiting for model sprites
+[15:30:32] [Worker-Main-1/INFO]: [OptiFine] CustomItems: Collecting model sprites
+[15:30:32] [Worker-Main-3/INFO]: [OptiFine] CustomItems: Registering sprites
+[15:30:32] [Worker-Main-1/INFO]: [OptiFine] (Reflector) Method not present: net.minecraft.client.renderer.block.model.BlockElementFace.data
+[15:30:32] [Via Async Task 1/WARN]: There is a newer plugin version available: 5.9.1, you're on: 5.9.0
+[15:30:38] [Render thread/INFO]: [STDOUT]: Logged as: ReyClutch17
+[15:30:41] [Render thread/WARN]: arix:pipeline/fractal_flame shader program does not use sampler Sampler0 defined in the pipeline. This might be a bug.
+[15:30:41] [Render thread/WARN]: arix:pipeline/circle shader program does not use sampler Sampler0 defined in the pipeline. This might be a bug.
+[15:30:41] [Render thread/WARN]: arix:pipeline/round_rect shader program does not use sampler Sampler0 defined in the pipeline. This might be a bug.
+[15:30:41] [Render thread/WARN]: arix:pipeline/round_rect_outline shader program does not use sampler Sampler0 defined in the pipeline. This might be a bug.
+[15:30:41] [Render thread/WARN]: arix:pipeline/round_rect_corners shader program does not use sampler Sampler0 defined in the pipeline. This might be a bug.
+[15:30:41] [Render thread/INFO]: OpenAL initialized on device OpenAL Soft on Наушники (Устройство с поддержкой High Definition Audio)
+[15:30:41] [Render thread/INFO]: Sound engine started
+[15:30:41] [Render thread/INFO]: Created: 512x256x0 minecraft:textures/atlas/particles.png-atlas
+[15:30:41] [Render thread/INFO]: [OptiFine] Animated sprites: 1
+[15:30:41] [Render thread/INFO]: Created: 128x128x0 minecraft:textures/atlas/decorated_pot.png-atlas
+[15:30:41] [Render thread/INFO]: [OptiFine] Animated sprites: 0
+[15:30:41] [Render thread/INFO]: Created: 2048x1024x0 minecraft:textures/atlas/armor_trims.png-atlas
+[15:30:42] [Render thread/INFO]: [OptiFine] Animated sprites: 0
+[15:30:42] [Render thread/INFO]: Created: 512x256x0 minecraft:textures/atlas/paintings.png-atlas
+[15:30:42] [Render thread/INFO]: [OptiFine] Animated sprites: 0
+[15:30:42] [Render thread/INFO]: Created: 1024x512x0 minecraft:textures/atlas/shield_patterns.png-atlas
+[15:30:42] [Render thread/INFO]: [OptiFine] Animated sprites: 0
+[15:30:42] [Render thread/INFO]: Created: 1024x1024x2 minecraft:textures/atlas/blocks.png-atlas
+[15:30:42] [Render thread/INFO]: [OptiFine] Update block sprites
+[15:30:42] [Render thread/INFO]: [OptiFine] Animated sprites: 56
+[15:30:42] [Render thread/INFO]: Created: 512x512x0 minecraft:textures/atlas/chest.png-atlas
+[15:30:42] [Render thread/INFO]: [OptiFine] Animated sprites: 0
+[15:30:42] [Render thread/INFO]: Created: 256x128x0 minecraft:textures/atlas/celestials.png-atlas
+[15:30:42] [Render thread/INFO]: [OptiFine] Animated sprites: 0
+[15:30:42] [Render thread/INFO]: Created: 1024x512x0 minecraft:textures/atlas/banner_patterns.png-atlas
+[15:30:42] [Render thread/INFO]: [OptiFine] Animated sprites: 0
+[15:30:42] [Render thread/INFO]: Created: 512x512x0 minecraft:textures/atlas/beds.png-atlas
+[15:30:42] [Render thread/INFO]: [OptiFine] Animated sprites: 0
+[15:30:42] [Render thread/INFO]: Created: 1024x512x0 minecraft:textures/atlas/items.png-atlas
+[15:30:42] [Render thread/INFO]: [OptiFine] Update item sprites
+[15:30:42] [Render thread/INFO]: [OptiFine] Animated sprites: 0
+[15:30:42] [Render thread/INFO]: Created: 1024x1024x0 minecraft:textures/atlas/gui.png-atlas
+[15:30:42] [Render thread/INFO]: [OptiFine] Animated sprites: 5
+[15:30:42] [Render thread/INFO]: Created: 128x64x0 minecraft:textures/atlas/map_decorations.png-atlas
+[15:30:42] [Render thread/INFO]: [OptiFine] Animated sprites: 0
+[15:30:42] [Render thread/INFO]: Created: 512x256x0 minecraft:textures/atlas/signs.png-atlas
+[15:30:42] [Render thread/INFO]: [OptiFine] Animated sprites: 0
+[15:30:42] [Render thread/INFO]: Created: 512x512x0 minecraft:textures/atlas/shulker_boxes.png-atlas
+[15:30:42] [Render thread/INFO]: [OptiFine] Animated sprites: 0
+[15:30:42] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/gui.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
+[15:30:42] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/beds.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
+[15:30:42] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/paintings.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
+[15:30:42] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/shulker_boxes.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
+[15:30:42] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/signs.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
+[15:30:42] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/chest.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
+[15:30:42] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/particles.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
+[15:30:42] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/celestials.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
+[15:30:42] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/shield_patterns.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
+[15:30:42] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/decorated_pot.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
+[15:30:42] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/map_decorations.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
+[15:30:42] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/blocks.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
+[15:30:42] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/banner_patterns.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
+[15:30:42] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/armor_trims.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
+[15:30:44] [Render thread/INFO]: [OptiFine] *** Reloading custom textures ***
+[15:30:47] [Render thread/INFO]: [OptiFine] Disable Forge light pipeline
+[15:30:47] [Render thread/INFO]: [OptiFine] *** Reflector Forge ***
+[15:30:47] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.event.level.ChunkEvent$Load
+[15:30:47] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.event.level.ChunkEvent$Unload
+[15:30:47] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.ColorResolverManager
+[15:30:47] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.logging.CrashReportAnalyser
+[15:30:47] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.EntitySpectatorShaderManager
+[15:30:47] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.eventbus.api.bus.EventBus
+[15:30:47] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraft.world.entity.Entity.isInWaterOrSwimmable
+[15:30:47] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraft.world.entity.boss.enderdragon.EnderDragon.getParts
+[15:30:47] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeBlockState.getSoundType
+[15:30:47] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeBlockState.getStateAtViewpoint
+[15:30:47] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeBlockState.shouldDisplayFluidOverlay
+[15:30:47] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeEntity.getEyeInFluidType
+[15:30:47] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeEntity.getParts
+[15:30:47] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeEntity.hasCustomOutlineRendering
+[15:30:47] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeEntity.isMultipartEntity
+[15:30:47] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeEntity.onAddedToWorld
+[15:30:47] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeEntity.onRemovedFromWorld
+[15:30:47] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeEntity.shouldRiderSit
+[15:30:47] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.event.ForgeEventFactory
+[15:30:47] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.client.model.ForgeFaceData.calculateNormals
+[15:30:47] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.common.ForgeHooks
+[15:30:47] [Render thread/INFO]: [OptiFine] (Reflector) Field not present: net.minecraftforge.common.ForgeConfigSpec.childConfig
+[15:30:47] [Render thread/INFO]: [OptiFine] (Reflector) Field not present: net.minecraftforge.common.ForgeConfigSpec$ConfigValue.defaultSupplier
+[15:30:47] [Render thread/INFO]: [OptiFine] (Reflector) Field not present: net.minecraftforge.common.ForgeConfigSpec$ConfigValue.spec
+[15:30:47] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.ForgeConfigSpec$ConfigValue.get
+[15:30:47] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraft.world.level.chunk.ChunkAccess.getWorldForge
+[15:30:47] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.common.extensions.IForgeItemStack
+[15:30:47] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraft.client.renderer.ItemBlockRenderTypes.isFancy
+[15:30:47] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraft.client.KeyMapping.setKeyConflictContext
+[15:30:47] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraft.client.KeyMapping.setKeyModifierAndCode
+[15:30:47] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraft.client.particle.ParticleResources.getProvider
+[15:30:47] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeBlockEntity.getRenderBoundingBox
+[15:30:47] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.FramePassManager
+[15:30:47] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.ItemDecoratorHandler
+[15:30:47] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.common.MinecraftForge
+[15:30:47] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.fml.ModContainer
+[15:30:47] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.gui.ModListScreen
+[15:30:47] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.fml.ModLoader
+[15:30:47] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.gui.TitleScreenModUpdateIndicator
+[15:30:47] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.event.PlayLevelSoundEvent
+[15:30:47] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.event.RenderBlockScreenEffectEvent$OverlayType
+[15:30:47] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.event.CustomizeGuiOverlayEvent$BossEventProgress
+[15:30:47] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.event.RenderNameTagEvent
+[15:30:47] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.event.RenderTooltipEvent
+[15:30:47] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.event.RenderTooltipEvent$Pre
+[15:30:47] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.event.ScreenshotEvent
+[15:30:47] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.server.ServerLifecycleHooks
+[15:30:47] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraft.client.particle.TerrainParticle.updateSprite
+[15:30:47] [Render thread/INFO]: [OptiFine] *** Reflector Vanilla ***
+[15:30:47] [Render thread/INFO]: Resizing Dynamic Transforms UBO, capacity limit of 2 reached during a single frame. New capacity will be 4.
+[15:30:56] [Render thread/INFO]: Connecting to mc.spookytime.net, 25565
+[15:30:56] [Download-2/ERROR]: Failed to retrieve profile key pair
 com.mojang.authlib.exceptions.MinecraftClientHttpException: Status: 401
 	at com.mojang.authlib.minecraft.client.MinecraftClient.readInputStream(MinecraftClient.java:103)
 	at com.mojang.authlib.minecraft.client.MinecraftClient.post(MinecraftClient.java:64)
@@ -303,487 +304,232 @@ com.mojang.authlib.exceptions.MinecraftClientHttpException: Status: 401
 	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
 	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
 	at java.base/java.lang.Thread.run(Thread.java:1583)
-[15:20:55] [Render thread/INFO]: [System] [CHAT] [✾] Успешная авторизация! Приятной игры!
-[15:20:55] [Render thread/INFO]: [System] [CHAT] ╔════ ★ SpookyTime.net ★ ════╗\n║ \n║  Добро пожаловать на SpookyTime\n║  Наши социальные сети — /links\n║  Приятной игры и новых побед!\n║ \n╚══════════════════════╝
-[15:20:55] [Render thread/INFO]: [STDOUT]: World seems to be a replay. Not loading Baritone cache.
-[15:20:55] [Render thread/INFO]: [voicechat] Sending secret request to the server
-[15:20:55] [Render thread/WARN]: [voicechat] Failed to open audio device 'OpenAL Soft on Динамики (High Definition Audio Device)', falling back to default
-[15:20:56] [Render thread/WARN]: Ignoring player info update for unknown player 93b5e6d1-d613-3b00-a7e6-ff2a1952fb49 ([UPDATE_GAME_MODE])
-[15:20:56] [Render thread/WARN]: Ignoring player info update for unknown player 93b5e6d1-d613-3b00-a7e6-ff2a1952fb49 ([UPDATE_GAME_MODE])
-[15:20:56] [Render thread/WARN]: Ignoring player info update for unknown player 93b5e6d1-d613-3b00-a7e6-ff2a1952fb49 ([UPDATE_GAME_MODE])
-[15:20:56] [Render thread/WARN]: Ignoring player info update for unknown player 93b5e6d1-d613-3b00-a7e6-ff2a1952fb49 ([UPDATE_GAME_MODE])
-[15:20:56] [Render thread/INFO]: [STDOUT]: Retrying to load Baritone cache
-[15:20:56] [Render thread/INFO]: [STDOUT]: Baritone world data dir: .\baritone\mc.spookytime.net\minecraft\overworld_256
-[15:20:56] [Render thread/INFO]: [STDOUT]: Cached world directory: .\baritone\mc.spookytime.net\minecraft\overworld_256\cache
-[15:20:56] [Render thread/INFO]: [STDOUT]: Would save waypoints to .\baritone\mc.spookytime.net\minecraft\overworld_256\waypoints
-[15:20:56] [pool-4-thread-1/INFO]: [STDOUT]: Loading region -1,-1 from disk .\baritone\mc.spookytime.net\minecraft\overworld_256\cache
-[15:20:56] [pool-4-thread-1/INFO]: [STDOUT]: Loaded region successfully in 228ms
-[15:20:56] [Render thread/INFO]: Loaded 0 advancements
-[15:20:56] [pool-4-thread-1/INFO]: [STDOUT]: Loading region -1,0 from disk .\baritone\mc.spookytime.net\minecraft\overworld_256\cache
-[15:20:56] [Render thread/WARN]: Ignoring player info update for unknown player 4cafe4d1-acbb-31f4-b565-2cfa3e42d810 ([UPDATE_GAME_MODE])
-[15:20:56] [Render thread/WARN]: Ignoring player info update for unknown player 4cafe4d1-acbb-31f4-b565-2cfa3e42d810 ([UPDATE_GAME_MODE])
-[15:20:56] [Render thread/WARN]: Ignoring player info update for unknown player 4cafe4d1-acbb-31f4-b565-2cfa3e42d810 ([UPDATE_GAME_MODE])
-[15:20:56] [Render thread/WARN]: Ignoring player info update for unknown player 4cafe4d1-acbb-31f4-b565-2cfa3e42d810 ([UPDATE_GAME_MODE])
-[15:20:56] [Render thread/WARN]: Ignoring player info update for unknown player 4cafe4d1-acbb-31f4-b565-2cfa3e42d810 ([UPDATE_GAME_MODE])
-[15:20:56] [Render thread/WARN]: Ignoring player info update for unknown player 4cafe4d1-acbb-31f4-b565-2cfa3e42d810 ([UPDATE_GAME_MODE])
-[15:20:56] [Render thread/WARN]: Ignoring player info update for unknown player 4cafe4d1-acbb-31f4-b565-2cfa3e42d810 ([UPDATE_GAME_MODE])
-[15:20:56] [Render thread/WARN]: Ignoring player info update for unknown player 4cafe4d1-acbb-31f4-b565-2cfa3e42d810 ([UPDATE_GAME_MODE])
-[15:20:56] [Render thread/INFO]: Resizing Dynamic Transforms UBO, capacity limit of 4 reached during a single frame. New capacity will be 8.
-[15:20:56] [pool-4-thread-1/INFO]: [STDOUT]: Loaded region successfully in 228ms
-[15:20:57] [Render thread/INFO]: Resizing Dynamic Transforms UBO, capacity limit of 8 reached during a single frame. New capacity will be 16.
-[15:20:57] [Render thread/WARN]: Ignoring player info update for unknown player d477849a-9095-35f5-98e0-f9e09ee20ccd ([UPDATE_GAME_MODE])
-[15:20:57] [Render thread/WARN]: Ignoring player info update for unknown player d477849a-9095-35f5-98e0-f9e09ee20ccd ([UPDATE_GAME_MODE])
-[15:20:57] [Render thread/WARN]: Ignoring player info update for unknown player d477849a-9095-35f5-98e0-f9e09ee20ccd ([UPDATE_GAME_MODE])
-[15:20:57] [Render thread/WARN]: Ignoring player info update for unknown player d477849a-9095-35f5-98e0-f9e09ee20ccd ([UPDATE_GAME_MODE])
-[15:20:57] [Render thread/WARN]: Ignoring player info update for unknown player d477849a-9095-35f5-98e0-f9e09ee20ccd ([UPDATE_GAME_MODE])
-[15:20:57] [Render thread/WARN]: Ignoring player info update for unknown player d477849a-9095-35f5-98e0-f9e09ee20ccd ([UPDATE_GAME_MODE])
-[15:20:57] [Render thread/WARN]: Ignoring player info update for unknown player d477849a-9095-35f5-98e0-f9e09ee20ccd ([UPDATE_GAME_MODE])
-[15:20:57] [Render thread/WARN]: Ignoring player info update for unknown player d477849a-9095-35f5-98e0-f9e09ee20ccd ([UPDATE_GAME_MODE])
-[15:20:57] [Render thread/INFO]: [System] [CHAT] ** ! Внимание !\n** Чтобы ваш Аккаунт был в БЕЗОПАСНОСТИ!\n** Привяжите его к ВК: /vk\n** Или к Телеграм: /tg\n\n** ! Внимание !\n** Чтобы ваш Аккаунт был в БЕЗОПАСНОСТИ!\n** Привяжите его к ВК: /vk\n** Или к Телеграм: /tg
-[15:20:58] [pool-4-thread-1/INFO]: [STDOUT]: Loading region 0,-1 from disk .\baritone\mc.spookytime.net\minecraft\overworld_256\cache
-[15:20:58] [Render thread/INFO]: Resizing Dynamic Transforms UBO, capacity limit of 16 reached during a single frame. New capacity will be 32.
-[15:20:58] [pool-4-thread-1/INFO]: [STDOUT]: Loaded region successfully in 111ms
-[15:20:58] [pool-4-thread-1/INFO]: [STDOUT]: Loading region 0,0 from disk .\baritone\mc.spookytime.net\minecraft\overworld_256\cache
-[15:20:58] [pool-4-thread-1/INFO]: [STDOUT]: Loaded region successfully in 187ms
-[15:20:58] [Render thread/INFO]: [System] [CHAT] 
-[15:20:58] [Render thread/INFO]: [System] [CHAT]  ⚡ Проблема/Вопрос? vk.com/kol_kola
-[15:20:58] [Render thread/INFO]: [System] [CHAT] 
-[15:20:58] [Render thread/INFO]: Resizing Chunk Sections UBO, capacity limit of 2 reached during a single frame. New capacity will be 4.
-[15:20:59] [Render thread/INFO]: Resizing Chunk Sections UBO, capacity limit of 4 reached during a single frame. New capacity will be 8.
-[15:20:59] [Render thread/INFO]: Resizing Chunk Sections UBO, capacity limit of 8 reached during a single frame. New capacity will be 16.
-[15:21:01] [Render thread/INFO]: Resizing Dynamic Transforms UBO, capacity limit of 32 reached during a single frame. New capacity will be 64.
-[15:21:01] [Render thread/WARN]: Ignoring player info update for unknown player 0c8bbe30-5013-3c9b-b0fe-7fb9197da0fc ([UPDATE_GAME_MODE])
-[15:21:01] [Render thread/WARN]: Ignoring player info update for unknown player 0c8bbe30-5013-3c9b-b0fe-7fb9197da0fc ([UPDATE_GAME_MODE])
-[15:21:01] [Render thread/WARN]: Ignoring player info update for unknown player 0c8bbe30-5013-3c9b-b0fe-7fb9197da0fc ([UPDATE_GAME_MODE])
-[15:21:01] [Render thread/WARN]: Ignoring player info update for unknown player 0c8bbe30-5013-3c9b-b0fe-7fb9197da0fc ([UPDATE_GAME_MODE])
-[15:21:01] [Render thread/WARN]: Ignoring player info update for unknown player 0c8bbe30-5013-3c9b-b0fe-7fb9197da0fc ([UPDATE_GAME_MODE])
-[15:21:01] [Render thread/WARN]: Ignoring player info update for unknown player 0c8bbe30-5013-3c9b-b0fe-7fb9197da0fc ([UPDATE_GAME_MODE])
-[15:21:01] [Render thread/WARN]: Ignoring player info update for unknown player 0c8bbe30-5013-3c9b-b0fe-7fb9197da0fc ([UPDATE_GAME_MODE])
-[15:21:01] [Render thread/WARN]: Ignoring player info update for unknown player 0c8bbe30-5013-3c9b-b0fe-7fb9197da0fc ([UPDATE_GAME_MODE])
-[15:21:02] [Render thread/WARN]: Ignoring player info update for unknown player 8ec434e4-9426-3cdf-a59e-5655ff623699 ([UPDATE_GAME_MODE])
-[15:21:02] [Render thread/WARN]: Ignoring player info update for unknown player 8ec434e4-9426-3cdf-a59e-5655ff623699 ([UPDATE_GAME_MODE])
-[15:21:02] [Render thread/WARN]: Ignoring player info update for unknown player 8ec434e4-9426-3cdf-a59e-5655ff623699 ([UPDATE_GAME_MODE])
-[15:21:02] [Render thread/WARN]: Ignoring player info update for unknown player 8ec434e4-9426-3cdf-a59e-5655ff623699 ([UPDATE_GAME_MODE])
-[15:21:02] [Render thread/WARN]: Ignoring player info update for unknown player 8ec434e4-9426-3cdf-a59e-5655ff623699 ([UPDATE_GAME_MODE])
-[15:21:02] [Render thread/WARN]: Ignoring player info update for unknown player 8ec434e4-9426-3cdf-a59e-5655ff623699 ([UPDATE_GAME_MODE])
-[15:21:02] [Render thread/WARN]: Ignoring player info update for unknown player 8ec434e4-9426-3cdf-a59e-5655ff623699 ([UPDATE_GAME_MODE])
-[15:21:02] [Render thread/WARN]: Ignoring player info update for unknown player 8ec434e4-9426-3cdf-a59e-5655ff623699 ([UPDATE_GAME_MODE])
-[15:21:03] [Render thread/WARN]: Ignoring player info update for unknown player 0c1d10fa-cbfa-3156-8984-5678f16da4e8 ([UPDATE_GAME_MODE])
-[15:21:03] [Render thread/WARN]: Ignoring player info update for unknown player 0c1d10fa-cbfa-3156-8984-5678f16da4e8 ([UPDATE_GAME_MODE])
-[15:21:03] [Render thread/WARN]: Ignoring player info update for unknown player 0c1d10fa-cbfa-3156-8984-5678f16da4e8 ([UPDATE_GAME_MODE])
-[15:21:03] [Render thread/WARN]: Ignoring player info update for unknown player 0c1d10fa-cbfa-3156-8984-5678f16da4e8 ([UPDATE_GAME_MODE])
-[15:21:03] [Render thread/WARN]: Ignoring player info update for unknown player 0c1d10fa-cbfa-3156-8984-5678f16da4e8 ([UPDATE_GAME_MODE])
-[15:21:03] [Render thread/WARN]: Ignoring player info update for unknown player 0c1d10fa-cbfa-3156-8984-5678f16da4e8 ([UPDATE_GAME_MODE])
-[15:21:03] [Render thread/WARN]: Ignoring player info update for unknown player 0c1d10fa-cbfa-3156-8984-5678f16da4e8 ([UPDATE_GAME_MODE])
-[15:21:03] [Render thread/WARN]: Ignoring player info update for unknown player 0c1d10fa-cbfa-3156-8984-5678f16da4e8 ([UPDATE_GAME_MODE])
-[15:21:05] [Render thread/WARN]: Ignoring player info update for unknown player e2669ee5-89fd-34f9-8d7e-61d9f181e026 ([UPDATE_GAME_MODE])
-[15:21:05] [Render thread/WARN]: Ignoring player info update for unknown player e2669ee5-89fd-34f9-8d7e-61d9f181e026 ([UPDATE_GAME_MODE])
-[15:21:05] [Render thread/WARN]: Ignoring player info update for unknown player e2669ee5-89fd-34f9-8d7e-61d9f181e026 ([UPDATE_GAME_MODE])
-[15:21:05] [Render thread/WARN]: Ignoring player info update for unknown player e2669ee5-89fd-34f9-8d7e-61d9f181e026 ([UPDATE_GAME_MODE])
-[15:21:05] [Render thread/WARN]: Ignoring player info update for unknown player e2669ee5-89fd-34f9-8d7e-61d9f181e026 ([UPDATE_GAME_MODE])
-[15:21:05] [Render thread/WARN]: Ignoring player info update for unknown player e2669ee5-89fd-34f9-8d7e-61d9f181e026 ([UPDATE_GAME_MODE])
-[15:21:05] [Render thread/WARN]: Ignoring player info update for unknown player e2669ee5-89fd-34f9-8d7e-61d9f181e026 ([UPDATE_GAME_MODE])
-[15:21:05] [Render thread/WARN]: Ignoring player info update for unknown player e2669ee5-89fd-34f9-8d7e-61d9f181e026 ([UPDATE_GAME_MODE])
-[15:21:05] [Render thread/WARN]: Ignoring player info update for unknown player 23456124-78cf-3706-ada8-e2d88fcab5d7 ([UPDATE_GAME_MODE])
-[15:21:05] [Render thread/WARN]: Ignoring player info update for unknown player 23456124-78cf-3706-ada8-e2d88fcab5d7 ([UPDATE_GAME_MODE])
-[15:21:05] [Render thread/WARN]: Ignoring player info update for unknown player 23456124-78cf-3706-ada8-e2d88fcab5d7 ([UPDATE_GAME_MODE])
-[15:21:05] [Render thread/WARN]: Ignoring player info update for unknown player 23456124-78cf-3706-ada8-e2d88fcab5d7 ([UPDATE_GAME_MODE])
-[15:21:05] [Render thread/WARN]: Ignoring player info update for unknown player 23456124-78cf-3706-ada8-e2d88fcab5d7 ([UPDATE_GAME_MODE])
-[15:21:05] [Render thread/WARN]: Ignoring player info update for unknown player 23456124-78cf-3706-ada8-e2d88fcab5d7 ([UPDATE_GAME_MODE])
-[15:21:05] [Render thread/WARN]: Ignoring player info update for unknown player 23456124-78cf-3706-ada8-e2d88fcab5d7 ([UPDATE_GAME_MODE])
-[15:21:05] [Render thread/WARN]: Ignoring player info update for unknown player 23456124-78cf-3706-ada8-e2d88fcab5d7 ([UPDATE_GAME_MODE])
-[15:21:05] [Render thread/WARN]: Ignoring player info update for unknown player 317e8c24-87ac-319d-83fa-63fea7dceacf ([UPDATE_GAME_MODE])
-[15:21:05] [Render thread/WARN]: Ignoring player info update for unknown player 317e8c24-87ac-319d-83fa-63fea7dceacf ([UPDATE_GAME_MODE])
-[15:21:05] [Render thread/WARN]: Ignoring player info update for unknown player 317e8c24-87ac-319d-83fa-63fea7dceacf ([UPDATE_GAME_MODE])
-[15:21:05] [Render thread/WARN]: Ignoring player info update for unknown player 317e8c24-87ac-319d-83fa-63fea7dceacf ([UPDATE_GAME_MODE])
-[15:21:05] [Render thread/WARN]: Ignoring player info update for unknown player 317e8c24-87ac-319d-83fa-63fea7dceacf ([UPDATE_GAME_MODE])
-[15:21:05] [Render thread/WARN]: Ignoring player info update for unknown player 317e8c24-87ac-319d-83fa-63fea7dceacf ([UPDATE_GAME_MODE])
-[15:21:05] [Render thread/WARN]: Ignoring player info update for unknown player 317e8c24-87ac-319d-83fa-63fea7dceacf ([UPDATE_GAME_MODE])
-[15:21:05] [Render thread/WARN]: Ignoring player info update for unknown player 317e8c24-87ac-319d-83fa-63fea7dceacf ([UPDATE_GAME_MODE])
-[15:21:10] [Render thread/WARN]: Ignoring player info update for unknown player c37d7c93-347b-35fa-9059-3019963802db ([UPDATE_GAME_MODE])
-[15:21:10] [Render thread/WARN]: Ignoring player info update for unknown player c37d7c93-347b-35fa-9059-3019963802db ([UPDATE_GAME_MODE])
-[15:21:10] [Render thread/WARN]: Ignoring player info update for unknown player c37d7c93-347b-35fa-9059-3019963802db ([UPDATE_GAME_MODE])
-[15:21:10] [Render thread/WARN]: Ignoring player info update for unknown player c37d7c93-347b-35fa-9059-3019963802db ([UPDATE_GAME_MODE])
-[15:21:10] [Render thread/WARN]: Ignoring player info update for unknown player c37d7c93-347b-35fa-9059-3019963802db ([UPDATE_GAME_MODE])
-[15:21:10] [Render thread/WARN]: Ignoring player info update for unknown player c37d7c93-347b-35fa-9059-3019963802db ([UPDATE_GAME_MODE])
-[15:21:10] [Render thread/WARN]: Ignoring player info update for unknown player c37d7c93-347b-35fa-9059-3019963802db ([UPDATE_GAME_MODE])
-[15:21:10] [Render thread/WARN]: Ignoring player info update for unknown player c37d7c93-347b-35fa-9059-3019963802db ([UPDATE_GAME_MODE])
-[15:21:12] [Render thread/WARN]: Ignoring player info update for unknown player 0442aea4-fe2d-3e69-b8eb-ce580339f580 ([UPDATE_GAME_MODE])
-[15:21:12] [Render thread/WARN]: Ignoring player info update for unknown player 0442aea4-fe2d-3e69-b8eb-ce580339f580 ([UPDATE_GAME_MODE])
-[15:21:12] [Render thread/WARN]: Ignoring player info update for unknown player 0442aea4-fe2d-3e69-b8eb-ce580339f580 ([UPDATE_GAME_MODE])
-[15:21:12] [Render thread/WARN]: Ignoring player info update for unknown player 0442aea4-fe2d-3e69-b8eb-ce580339f580 ([UPDATE_GAME_MODE])
-[15:21:12] [Render thread/WARN]: Ignoring player info update for unknown player 0442aea4-fe2d-3e69-b8eb-ce580339f580 ([UPDATE_GAME_MODE])
-[15:21:12] [Render thread/WARN]: Ignoring player info update for unknown player 0442aea4-fe2d-3e69-b8eb-ce580339f580 ([UPDATE_GAME_MODE])
-[15:21:12] [Render thread/WARN]: Ignoring player info update for unknown player 0442aea4-fe2d-3e69-b8eb-ce580339f580 ([UPDATE_GAME_MODE])
-[15:21:12] [Render thread/WARN]: Ignoring player info update for unknown player 0442aea4-fe2d-3e69-b8eb-ce580339f580 ([UPDATE_GAME_MODE])
-[15:21:13] [Render thread/INFO]: [System] [CHAT] 
-[15:21:13] [Render thread/INFO]: [System] [CHAT]  ⚡ Наш Сайт shop.Spookytime.net
-[15:21:13] [Render thread/INFO]: [System] [CHAT] 
-[15:21:15] [Render thread/WARN]: Ignoring player info update for unknown player f9d80a0d-9b70-3b7c-9f4a-086ed9c80433 ([UPDATE_GAME_MODE])
-[15:21:15] [Render thread/WARN]: Ignoring player info update for unknown player f9d80a0d-9b70-3b7c-9f4a-086ed9c80433 ([UPDATE_GAME_MODE])
-[15:21:15] [Render thread/WARN]: Ignoring player info update for unknown player f9d80a0d-9b70-3b7c-9f4a-086ed9c80433 ([UPDATE_GAME_MODE])
-[15:21:15] [Render thread/WARN]: Ignoring player info update for unknown player f9d80a0d-9b70-3b7c-9f4a-086ed9c80433 ([UPDATE_GAME_MODE])
-[15:21:15] [Render thread/WARN]: Ignoring player info update for unknown player f9d80a0d-9b70-3b7c-9f4a-086ed9c80433 ([UPDATE_GAME_MODE])
-[15:21:15] [Render thread/WARN]: Ignoring player info update for unknown player f9d80a0d-9b70-3b7c-9f4a-086ed9c80433 ([UPDATE_GAME_MODE])
-[15:21:15] [Render thread/WARN]: Ignoring player info update for unknown player f9d80a0d-9b70-3b7c-9f4a-086ed9c80433 ([UPDATE_GAME_MODE])
-[15:21:15] [Render thread/WARN]: Ignoring player info update for unknown player f9d80a0d-9b70-3b7c-9f4a-086ed9c80433 ([UPDATE_GAME_MODE])
-[15:21:15] [Render thread/WARN]: Ignoring player info update for unknown player 90cb862b-6094-3080-805b-efab738bb447 ([UPDATE_GAME_MODE])
-[15:21:15] [Render thread/WARN]: Ignoring player info update for unknown player 90cb862b-6094-3080-805b-efab738bb447 ([UPDATE_GAME_MODE])
-[15:21:15] [Render thread/WARN]: Ignoring player info update for unknown player 90cb862b-6094-3080-805b-efab738bb447 ([UPDATE_GAME_MODE])
-[15:21:15] [Render thread/WARN]: Ignoring player info update for unknown player 90cb862b-6094-3080-805b-efab738bb447 ([UPDATE_GAME_MODE])
-[15:21:15] [Render thread/WARN]: Ignoring player info update for unknown player 085e79c3-3a8e-3fc5-94f6-46a2b5a1923a ([UPDATE_GAME_MODE])
-[15:21:15] [Render thread/WARN]: Ignoring player info update for unknown player 085e79c3-3a8e-3fc5-94f6-46a2b5a1923a ([UPDATE_GAME_MODE])
-[15:21:15] [Render thread/WARN]: Ignoring player info update for unknown player 085e79c3-3a8e-3fc5-94f6-46a2b5a1923a ([UPDATE_GAME_MODE])
-[15:21:15] [Render thread/WARN]: Ignoring player info update for unknown player 085e79c3-3a8e-3fc5-94f6-46a2b5a1923a ([UPDATE_GAME_MODE])
-[15:21:15] [Render thread/WARN]: Ignoring player info update for unknown player 085e79c3-3a8e-3fc5-94f6-46a2b5a1923a ([UPDATE_GAME_MODE])
-[15:21:15] [Render thread/WARN]: Ignoring player info update for unknown player 085e79c3-3a8e-3fc5-94f6-46a2b5a1923a ([UPDATE_GAME_MODE])
-[15:21:15] [Render thread/WARN]: Ignoring player info update for unknown player 085e79c3-3a8e-3fc5-94f6-46a2b5a1923a ([UPDATE_GAME_MODE])
-[15:21:15] [Render thread/WARN]: Ignoring player info update for unknown player 085e79c3-3a8e-3fc5-94f6-46a2b5a1923a ([UPDATE_GAME_MODE])
-[15:21:16] [Render thread/WARN]: Ignoring player info update for unknown player a2fd4594-43dd-3261-a7fc-ee00087511dc ([UPDATE_GAME_MODE])
-[15:21:16] [Render thread/WARN]: Ignoring player info update for unknown player a2fd4594-43dd-3261-a7fc-ee00087511dc ([UPDATE_GAME_MODE])
-[15:21:16] [Render thread/WARN]: Ignoring player info update for unknown player a2fd4594-43dd-3261-a7fc-ee00087511dc ([UPDATE_GAME_MODE])
-[15:21:16] [Render thread/WARN]: Ignoring player info update for unknown player a2fd4594-43dd-3261-a7fc-ee00087511dc ([UPDATE_GAME_MODE])
-[15:21:16] [Render thread/WARN]: Ignoring player info update for unknown player a2fd4594-43dd-3261-a7fc-ee00087511dc ([UPDATE_GAME_MODE])
-[15:21:16] [Render thread/WARN]: Ignoring player info update for unknown player a2fd4594-43dd-3261-a7fc-ee00087511dc ([UPDATE_GAME_MODE])
-[15:21:16] [Render thread/WARN]: Ignoring player info update for unknown player a2fd4594-43dd-3261-a7fc-ee00087511dc ([UPDATE_GAME_MODE])
-[15:21:16] [Render thread/WARN]: Ignoring player info update for unknown player a2fd4594-43dd-3261-a7fc-ee00087511dc ([UPDATE_GAME_MODE])
-[15:21:22] [Render thread/WARN]: Ignoring player info update for unknown player e1aaf9ed-1e81-307b-ad9c-9c34f2e2e188 ([UPDATE_GAME_MODE])
-[15:21:22] [Render thread/WARN]: Ignoring player info update for unknown player e1aaf9ed-1e81-307b-ad9c-9c34f2e2e188 ([UPDATE_GAME_MODE])
-[15:21:22] [Render thread/WARN]: Ignoring player info update for unknown player e1aaf9ed-1e81-307b-ad9c-9c34f2e2e188 ([UPDATE_GAME_MODE])
-[15:21:22] [Render thread/WARN]: Ignoring player info update for unknown player e1aaf9ed-1e81-307b-ad9c-9c34f2e2e188 ([UPDATE_GAME_MODE])
-[15:21:22] [Render thread/WARN]: Ignoring player info update for unknown player e1aaf9ed-1e81-307b-ad9c-9c34f2e2e188 ([UPDATE_GAME_MODE])
-[15:21:22] [Render thread/WARN]: Ignoring player info update for unknown player e1aaf9ed-1e81-307b-ad9c-9c34f2e2e188 ([UPDATE_GAME_MODE])
-[15:21:22] [Render thread/WARN]: Ignoring player info update for unknown player e1aaf9ed-1e81-307b-ad9c-9c34f2e2e188 ([UPDATE_GAME_MODE])
-[15:21:22] [Render thread/WARN]: Ignoring player info update for unknown player e1aaf9ed-1e81-307b-ad9c-9c34f2e2e188 ([UPDATE_GAME_MODE])
-[15:21:22] [Render thread/WARN]: Ignoring player info update for unknown player a3e1843e-5dee-3214-b24e-e7627102fd97 ([UPDATE_GAME_MODE])
-[15:21:22] [Render thread/WARN]: Ignoring player info update for unknown player a3e1843e-5dee-3214-b24e-e7627102fd97 ([UPDATE_GAME_MODE])
-[15:21:22] [Render thread/WARN]: Ignoring player info update for unknown player a3e1843e-5dee-3214-b24e-e7627102fd97 ([UPDATE_GAME_MODE])
-[15:21:22] [Render thread/WARN]: Ignoring player info update for unknown player a3e1843e-5dee-3214-b24e-e7627102fd97 ([UPDATE_GAME_MODE])
-[15:21:22] [Render thread/WARN]: Ignoring player info update for unknown player a3e1843e-5dee-3214-b24e-e7627102fd97 ([UPDATE_GAME_MODE])
-[15:21:22] [Render thread/WARN]: Ignoring player info update for unknown player a3e1843e-5dee-3214-b24e-e7627102fd97 ([UPDATE_GAME_MODE])
-[15:21:22] [Render thread/WARN]: Ignoring player info update for unknown player a3e1843e-5dee-3214-b24e-e7627102fd97 ([UPDATE_GAME_MODE])
-[15:21:22] [Render thread/WARN]: Ignoring player info update for unknown player a3e1843e-5dee-3214-b24e-e7627102fd97 ([UPDATE_GAME_MODE])
-[15:21:23] [Render thread/WARN]: Ignoring player info update for unknown player ab644eaa-3d31-30b8-a576-c80959f627aa ([UPDATE_GAME_MODE])
-[15:21:23] [Render thread/WARN]: Ignoring player info update for unknown player ab644eaa-3d31-30b8-a576-c80959f627aa ([UPDATE_GAME_MODE])
-[15:21:23] [Render thread/WARN]: Ignoring player info update for unknown player ab644eaa-3d31-30b8-a576-c80959f627aa ([UPDATE_GAME_MODE])
-[15:21:23] [Render thread/WARN]: Ignoring player info update for unknown player ab644eaa-3d31-30b8-a576-c80959f627aa ([UPDATE_GAME_MODE])
-[15:21:23] [Render thread/WARN]: Ignoring player info update for unknown player ab644eaa-3d31-30b8-a576-c80959f627aa ([UPDATE_GAME_MODE])
-[15:21:23] [Render thread/WARN]: Ignoring player info update for unknown player ab644eaa-3d31-30b8-a576-c80959f627aa ([UPDATE_GAME_MODE])
-[15:21:23] [Render thread/WARN]: Ignoring player info update for unknown player ab644eaa-3d31-30b8-a576-c80959f627aa ([UPDATE_GAME_MODE])
-[15:21:23] [Render thread/WARN]: Ignoring player info update for unknown player ab644eaa-3d31-30b8-a576-c80959f627aa ([UPDATE_GAME_MODE])
-[15:21:24] [Render thread/WARN]: Ignoring player info update for unknown player abc7195b-ee79-33c0-923b-c41cbdeda449 ([UPDATE_GAME_MODE])
-[15:21:24] [Render thread/WARN]: Ignoring player info update for unknown player abc7195b-ee79-33c0-923b-c41cbdeda449 ([UPDATE_GAME_MODE])
-[15:21:24] [Render thread/WARN]: Ignoring player info update for unknown player abc7195b-ee79-33c0-923b-c41cbdeda449 ([UPDATE_GAME_MODE])
-[15:21:24] [Render thread/WARN]: Ignoring player info update for unknown player abc7195b-ee79-33c0-923b-c41cbdeda449 ([UPDATE_GAME_MODE])
-[15:21:24] [Render thread/WARN]: Ignoring player info update for unknown player abc7195b-ee79-33c0-923b-c41cbdeda449 ([UPDATE_GAME_MODE])
-[15:21:24] [Render thread/WARN]: Ignoring player info update for unknown player abc7195b-ee79-33c0-923b-c41cbdeda449 ([UPDATE_GAME_MODE])
-[15:21:24] [Render thread/WARN]: Ignoring player info update for unknown player abc7195b-ee79-33c0-923b-c41cbdeda449 ([UPDATE_GAME_MODE])
-[15:21:24] [Render thread/WARN]: Ignoring player info update for unknown player abc7195b-ee79-33c0-923b-c41cbdeda449 ([UPDATE_GAME_MODE])
-[15:21:24] [Render thread/WARN]: Ignoring player info update for unknown player 82b0acdf-c66e-344b-8b62-0e88e2823cee ([UPDATE_GAME_MODE])
-[15:21:24] [Render thread/WARN]: Ignoring player info update for unknown player 82b0acdf-c66e-344b-8b62-0e88e2823cee ([UPDATE_GAME_MODE])
-[15:21:24] [Render thread/WARN]: Ignoring player info update for unknown player 82b0acdf-c66e-344b-8b62-0e88e2823cee ([UPDATE_GAME_MODE])
-[15:21:24] [Render thread/WARN]: Ignoring player info update for unknown player 82b0acdf-c66e-344b-8b62-0e88e2823cee ([UPDATE_GAME_MODE])
-[15:21:24] [Render thread/WARN]: Ignoring player info update for unknown player 82b0acdf-c66e-344b-8b62-0e88e2823cee ([UPDATE_GAME_MODE])
-[15:21:24] [Render thread/WARN]: Ignoring player info update for unknown player 82b0acdf-c66e-344b-8b62-0e88e2823cee ([UPDATE_GAME_MODE])
-[15:21:24] [Render thread/WARN]: Ignoring player info update for unknown player 82b0acdf-c66e-344b-8b62-0e88e2823cee ([UPDATE_GAME_MODE])
-[15:21:24] [Render thread/WARN]: Ignoring player info update for unknown player 82b0acdf-c66e-344b-8b62-0e88e2823cee ([UPDATE_GAME_MODE])
-[15:21:26] [pool-4-thread-2/INFO]: [STDOUT]: Saving region -1,0 to disk .\baritone\mc.spookytime.net\minecraft\overworld_256\cache
-[15:21:26] [ForkJoinPool.commonPool-worker-1/INFO]: [STDOUT]: Saving region 0,-1 to disk .\baritone\mc.spookytime.net\minecraft\overworld_256\cache
-[15:21:26] [Render thread/WARN]: Ignoring player info update for unknown player 9cdd8236-274b-3fd2-8a07-407e73f63378 ([UPDATE_GAME_MODE])
-[15:21:26] [Render thread/WARN]: Ignoring player info update for unknown player 9cdd8236-274b-3fd2-8a07-407e73f63378 ([UPDATE_GAME_MODE])
-[15:21:26] [Render thread/WARN]: Ignoring player info update for unknown player 9cdd8236-274b-3fd2-8a07-407e73f63378 ([UPDATE_GAME_MODE])
-[15:21:26] [Render thread/WARN]: Ignoring player info update for unknown player 9cdd8236-274b-3fd2-8a07-407e73f63378 ([UPDATE_GAME_MODE])
-[15:21:26] [pool-4-thread-2/INFO]: [STDOUT]: Saved region successfully
-[15:21:26] [pool-4-thread-2/INFO]: [STDOUT]: Saving region -1,-1 to disk .\baritone\mc.spookytime.net\minecraft\overworld_256\cache
-[15:21:26] [ForkJoinPool.commonPool-worker-1/INFO]: [STDOUT]: Saved region successfully
-[15:21:26] [ForkJoinPool.commonPool-worker-1/INFO]: [STDOUT]: Saving region 0,0 to disk .\baritone\mc.spookytime.net\minecraft\overworld_256\cache
-[15:21:26] [pool-4-thread-2/INFO]: [STDOUT]: Saved region successfully
-[15:21:26] [Render thread/WARN]: Ignoring player info update for unknown player 9cdd8236-274b-3fd2-8a07-407e73f63378 ([UPDATE_GAME_MODE])
-[15:21:26] [Render thread/WARN]: Ignoring player info update for unknown player 9cdd8236-274b-3fd2-8a07-407e73f63378 ([UPDATE_GAME_MODE])
-[15:21:26] [Render thread/WARN]: Ignoring player info update for unknown player 9cdd8236-274b-3fd2-8a07-407e73f63378 ([UPDATE_GAME_MODE])
-[15:21:26] [Render thread/WARN]: Ignoring player info update for unknown player 9cdd8236-274b-3fd2-8a07-407e73f63378 ([UPDATE_GAME_MODE])
-[15:21:26] [ForkJoinPool.commonPool-worker-1/INFO]: [STDOUT]: Saved region successfully
-[15:21:26] [pool-4-thread-2/INFO]: [STDOUT]: World save took 322ms
-[15:21:27] [Render thread/WARN]: Ignoring player info update for unknown player e73aa080-6cdb-3498-b184-3d6505d19806 ([UPDATE_GAME_MODE])
-[15:21:27] [Render thread/WARN]: Ignoring player info update for unknown player e73aa080-6cdb-3498-b184-3d6505d19806 ([UPDATE_GAME_MODE])
-[15:21:27] [Render thread/WARN]: Ignoring player info update for unknown player e73aa080-6cdb-3498-b184-3d6505d19806 ([UPDATE_GAME_MODE])
-[15:21:27] [Render thread/WARN]: Ignoring player info update for unknown player e73aa080-6cdb-3498-b184-3d6505d19806 ([UPDATE_GAME_MODE])
-[15:21:27] [Render thread/WARN]: Ignoring player info update for unknown player e73aa080-6cdb-3498-b184-3d6505d19806 ([UPDATE_GAME_MODE])
-[15:21:27] [Render thread/WARN]: Ignoring player info update for unknown player e73aa080-6cdb-3498-b184-3d6505d19806 ([UPDATE_GAME_MODE])
-[15:21:27] [Render thread/WARN]: Ignoring player info update for unknown player e73aa080-6cdb-3498-b184-3d6505d19806 ([UPDATE_GAME_MODE])
-[15:21:27] [Render thread/WARN]: Ignoring player info update for unknown player e73aa080-6cdb-3498-b184-3d6505d19806 ([UPDATE_GAME_MODE])
-[15:21:28] [Render thread/INFO]: [System] [CHAT] 
-[15:21:28] [Render thread/INFO]: [System] [CHAT]  ⚡ Наша группа ВК vk.com/spookytimenet
-[15:21:28] [Render thread/INFO]: [System] [CHAT] 
-[15:21:33] [Render thread/WARN]: Ignoring player info update for unknown player e627dc8b-69be-355b-bd03-4499a23914a2 ([UPDATE_GAME_MODE])
-[15:21:33] [Render thread/WARN]: Ignoring player info update for unknown player e627dc8b-69be-355b-bd03-4499a23914a2 ([UPDATE_GAME_MODE])
-[15:21:33] [Render thread/WARN]: Ignoring player info update for unknown player e627dc8b-69be-355b-bd03-4499a23914a2 ([UPDATE_GAME_MODE])
-[15:21:33] [Render thread/WARN]: Ignoring player info update for unknown player e627dc8b-69be-355b-bd03-4499a23914a2 ([UPDATE_GAME_MODE])
-[15:21:33] [Render thread/WARN]: Ignoring player info update for unknown player e627dc8b-69be-355b-bd03-4499a23914a2 ([UPDATE_GAME_MODE])
-[15:21:33] [Render thread/WARN]: Ignoring player info update for unknown player e627dc8b-69be-355b-bd03-4499a23914a2 ([UPDATE_GAME_MODE])
-[15:21:33] [Render thread/WARN]: Ignoring player info update for unknown player e627dc8b-69be-355b-bd03-4499a23914a2 ([UPDATE_GAME_MODE])
-[15:21:33] [Render thread/WARN]: Ignoring player info update for unknown player e627dc8b-69be-355b-bd03-4499a23914a2 ([UPDATE_GAME_MODE])
-[15:21:37] [Render thread/WARN]: Ignoring player info update for unknown player 08e40b40-2eac-356a-87e1-8ec4bfdb2653 ([UPDATE_GAME_MODE])
-[15:21:37] [Render thread/WARN]: Ignoring player info update for unknown player 08e40b40-2eac-356a-87e1-8ec4bfdb2653 ([UPDATE_GAME_MODE])
-[15:21:37] [Render thread/WARN]: Ignoring player info update for unknown player 08e40b40-2eac-356a-87e1-8ec4bfdb2653 ([UPDATE_GAME_MODE])
-[15:21:37] [Render thread/WARN]: Ignoring player info update for unknown player 08e40b40-2eac-356a-87e1-8ec4bfdb2653 ([UPDATE_GAME_MODE])
-[15:21:37] [Render thread/WARN]: Ignoring player info update for unknown player 08e40b40-2eac-356a-87e1-8ec4bfdb2653 ([UPDATE_GAME_MODE])
-[15:21:37] [Render thread/WARN]: Ignoring player info update for unknown player 08e40b40-2eac-356a-87e1-8ec4bfdb2653 ([UPDATE_GAME_MODE])
-[15:21:37] [Render thread/WARN]: Ignoring player info update for unknown player 08e40b40-2eac-356a-87e1-8ec4bfdb2653 ([UPDATE_GAME_MODE])
-[15:21:37] [Render thread/WARN]: Ignoring player info update for unknown player 08e40b40-2eac-356a-87e1-8ec4bfdb2653 ([UPDATE_GAME_MODE])
-[15:21:39] [Render thread/WARN]: Ignoring player info update for unknown player 1dff1b66-407b-3095-82ba-61a892cc731b ([UPDATE_GAME_MODE])
-[15:21:39] [Render thread/WARN]: Ignoring player info update for unknown player 1dff1b66-407b-3095-82ba-61a892cc731b ([UPDATE_GAME_MODE])
-[15:21:39] [Render thread/WARN]: Ignoring player info update for unknown player 1dff1b66-407b-3095-82ba-61a892cc731b ([UPDATE_GAME_MODE])
-[15:21:39] [Render thread/WARN]: Ignoring player info update for unknown player 1dff1b66-407b-3095-82ba-61a892cc731b ([UPDATE_GAME_MODE])
-[15:21:39] [Render thread/WARN]: Ignoring player info update for unknown player 1dff1b66-407b-3095-82ba-61a892cc731b ([UPDATE_GAME_MODE])
-[15:21:39] [Render thread/WARN]: Ignoring player info update for unknown player 1dff1b66-407b-3095-82ba-61a892cc731b ([UPDATE_GAME_MODE])
-[15:21:39] [Render thread/WARN]: Ignoring player info update for unknown player 1dff1b66-407b-3095-82ba-61a892cc731b ([UPDATE_GAME_MODE])
-[15:21:39] [Render thread/WARN]: Ignoring player info update for unknown player 1dff1b66-407b-3095-82ba-61a892cc731b ([UPDATE_GAME_MODE])
-[15:21:39] [Render thread/WARN]: Ignoring player info update for unknown player c0ef4375-114f-39f0-b36c-72d923ec49dd ([UPDATE_GAME_MODE])
-[15:21:39] [Render thread/WARN]: Ignoring player info update for unknown player c0ef4375-114f-39f0-b36c-72d923ec49dd ([UPDATE_GAME_MODE])
-[15:21:39] [Render thread/WARN]: Ignoring player info update for unknown player c0ef4375-114f-39f0-b36c-72d923ec49dd ([UPDATE_GAME_MODE])
-[15:21:39] [Render thread/WARN]: Ignoring player info update for unknown player c0ef4375-114f-39f0-b36c-72d923ec49dd ([UPDATE_GAME_MODE])
-[15:21:39] [Render thread/WARN]: Ignoring player info update for unknown player c0ef4375-114f-39f0-b36c-72d923ec49dd ([UPDATE_GAME_MODE])
-[15:21:39] [Render thread/WARN]: Ignoring player info update for unknown player c0ef4375-114f-39f0-b36c-72d923ec49dd ([UPDATE_GAME_MODE])
-[15:21:39] [Render thread/WARN]: Ignoring player info update for unknown player c0ef4375-114f-39f0-b36c-72d923ec49dd ([UPDATE_GAME_MODE])
-[15:21:39] [Render thread/WARN]: Ignoring player info update for unknown player c0ef4375-114f-39f0-b36c-72d923ec49dd ([UPDATE_GAME_MODE])
-[15:21:40] [Render thread/WARN]: Ignoring player info update for unknown player 205173d6-a837-30ef-a5fb-52ef02d0cff3 ([UPDATE_GAME_MODE])
-[15:21:40] [Render thread/WARN]: Ignoring player info update for unknown player 205173d6-a837-30ef-a5fb-52ef02d0cff3 ([UPDATE_GAME_MODE])
-[15:21:40] [Render thread/WARN]: Ignoring player info update for unknown player 205173d6-a837-30ef-a5fb-52ef02d0cff3 ([UPDATE_GAME_MODE])
-[15:21:40] [Render thread/WARN]: Ignoring player info update for unknown player 205173d6-a837-30ef-a5fb-52ef02d0cff3 ([UPDATE_GAME_MODE])
-[15:21:40] [Render thread/WARN]: Ignoring player info update for unknown player 205173d6-a837-30ef-a5fb-52ef02d0cff3 ([UPDATE_GAME_MODE])
-[15:21:40] [Render thread/WARN]: Ignoring player info update for unknown player 205173d6-a837-30ef-a5fb-52ef02d0cff3 ([UPDATE_GAME_MODE])
-[15:21:40] [Render thread/WARN]: Ignoring player info update for unknown player 205173d6-a837-30ef-a5fb-52ef02d0cff3 ([UPDATE_GAME_MODE])
-[15:21:40] [Render thread/WARN]: Ignoring player info update for unknown player 205173d6-a837-30ef-a5fb-52ef02d0cff3 ([UPDATE_GAME_MODE])
-[15:21:40] [Render thread/WARN]: Ignoring player info update for unknown player d3de1cc2-208f-36b6-b5f6-b2d7267525e7 ([UPDATE_GAME_MODE])
-[15:21:40] [Render thread/WARN]: Ignoring player info update for unknown player d3de1cc2-208f-36b6-b5f6-b2d7267525e7 ([UPDATE_GAME_MODE])
-[15:21:40] [Render thread/WARN]: Ignoring player info update for unknown player d3de1cc2-208f-36b6-b5f6-b2d7267525e7 ([UPDATE_GAME_MODE])
-[15:21:40] [Render thread/WARN]: Ignoring player info update for unknown player d3de1cc2-208f-36b6-b5f6-b2d7267525e7 ([UPDATE_GAME_MODE])
-[15:21:40] [Render thread/WARN]: Ignoring player info update for unknown player d3de1cc2-208f-36b6-b5f6-b2d7267525e7 ([UPDATE_GAME_MODE])
-[15:21:40] [Render thread/WARN]: Ignoring player info update for unknown player d3de1cc2-208f-36b6-b5f6-b2d7267525e7 ([UPDATE_GAME_MODE])
-[15:21:40] [Render thread/WARN]: Ignoring player info update for unknown player d3de1cc2-208f-36b6-b5f6-b2d7267525e7 ([UPDATE_GAME_MODE])
-[15:21:40] [Render thread/WARN]: Ignoring player info update for unknown player d3de1cc2-208f-36b6-b5f6-b2d7267525e7 ([UPDATE_GAME_MODE])
-[15:21:41] [Render thread/WARN]: Ignoring player info update for unknown player 08e40b40-2eac-356a-87e1-8ec4bfdb2653 ([UPDATE_GAME_MODE])
-[15:21:41] [Render thread/WARN]: Ignoring player info update for unknown player 08e40b40-2eac-356a-87e1-8ec4bfdb2653 ([UPDATE_GAME_MODE])
-[15:21:41] [Render thread/WARN]: Ignoring player info update for unknown player 08e40b40-2eac-356a-87e1-8ec4bfdb2653 ([UPDATE_GAME_MODE])
-[15:21:41] [Render thread/WARN]: Ignoring player info update for unknown player 08e40b40-2eac-356a-87e1-8ec4bfdb2653 ([UPDATE_GAME_MODE])
-[15:21:41] [Render thread/WARN]: Ignoring player info update for unknown player 08e40b40-2eac-356a-87e1-8ec4bfdb2653 ([UPDATE_GAME_MODE])
-[15:21:41] [Render thread/WARN]: Ignoring player info update for unknown player 08e40b40-2eac-356a-87e1-8ec4bfdb2653 ([UPDATE_GAME_MODE])
-[15:21:41] [Render thread/WARN]: Ignoring player info update for unknown player 08e40b40-2eac-356a-87e1-8ec4bfdb2653 ([UPDATE_GAME_MODE])
-[15:21:41] [Render thread/WARN]: Ignoring player info update for unknown player 08e40b40-2eac-356a-87e1-8ec4bfdb2653 ([UPDATE_GAME_MODE])
-[15:21:42] [Render thread/WARN]: Ignoring player info update for unknown player 57848d48-4812-3406-93ca-135ba469a81b ([UPDATE_GAME_MODE])
-[15:21:42] [Render thread/WARN]: Ignoring player info update for unknown player 57848d48-4812-3406-93ca-135ba469a81b ([UPDATE_GAME_MODE])
-[15:21:42] [Render thread/WARN]: Ignoring player info update for unknown player 57848d48-4812-3406-93ca-135ba469a81b ([UPDATE_GAME_MODE])
-[15:21:42] [Render thread/WARN]: Ignoring player info update for unknown player 57848d48-4812-3406-93ca-135ba469a81b ([UPDATE_GAME_MODE])
-[15:21:42] [Render thread/WARN]: Ignoring player info update for unknown player 57848d48-4812-3406-93ca-135ba469a81b ([UPDATE_GAME_MODE])
-[15:21:42] [Render thread/WARN]: Ignoring player info update for unknown player 57848d48-4812-3406-93ca-135ba469a81b ([UPDATE_GAME_MODE])
-[15:21:42] [Render thread/WARN]: Ignoring player info update for unknown player 57848d48-4812-3406-93ca-135ba469a81b ([UPDATE_GAME_MODE])
-[15:21:42] [Render thread/WARN]: Ignoring player info update for unknown player 57848d48-4812-3406-93ca-135ba469a81b ([UPDATE_GAME_MODE])
-[15:21:42] [Render thread/WARN]: Ignoring player info update for unknown player e99c1640-4eb3-3eac-9c8b-ebcf9cd37360 ([UPDATE_GAME_MODE])
-[15:21:42] [Render thread/WARN]: Ignoring player info update for unknown player e99c1640-4eb3-3eac-9c8b-ebcf9cd37360 ([UPDATE_GAME_MODE])
-[15:21:42] [Render thread/WARN]: Ignoring player info update for unknown player e99c1640-4eb3-3eac-9c8b-ebcf9cd37360 ([UPDATE_GAME_MODE])
-[15:21:42] [Render thread/WARN]: Ignoring player info update for unknown player e99c1640-4eb3-3eac-9c8b-ebcf9cd37360 ([UPDATE_GAME_MODE])
-[15:21:43] [Render thread/WARN]: Ignoring player info update for unknown player a512fff7-964d-34c9-a753-beefea89d122 ([UPDATE_GAME_MODE])
-[15:21:43] [Render thread/WARN]: Ignoring player info update for unknown player a512fff7-964d-34c9-a753-beefea89d122 ([UPDATE_GAME_MODE])
-[15:21:43] [Render thread/WARN]: Ignoring player info update for unknown player a512fff7-964d-34c9-a753-beefea89d122 ([UPDATE_GAME_MODE])
-[15:21:43] [Render thread/WARN]: Ignoring player info update for unknown player a512fff7-964d-34c9-a753-beefea89d122 ([UPDATE_GAME_MODE])
-[15:21:43] [Render thread/WARN]: Ignoring player info update for unknown player a512fff7-964d-34c9-a753-beefea89d122 ([UPDATE_GAME_MODE])
-[15:21:43] [Render thread/WARN]: Ignoring player info update for unknown player a512fff7-964d-34c9-a753-beefea89d122 ([UPDATE_GAME_MODE])
-[15:21:43] [Render thread/WARN]: Ignoring player info update for unknown player a512fff7-964d-34c9-a753-beefea89d122 ([UPDATE_GAME_MODE])
-[15:21:43] [Render thread/WARN]: Ignoring player info update for unknown player a512fff7-964d-34c9-a753-beefea89d122 ([UPDATE_GAME_MODE])
-[15:21:43] [Render thread/INFO]: [System] [CHAT] 
-[15:21:43] [Render thread/INFO]: [System] [CHAT]  ⚡ Наши сообщества и соц. сети /links
-[15:21:43] [Render thread/INFO]: [System] [CHAT] 
-[15:21:44] [Render thread/WARN]: Ignoring player info update for unknown player 7b6f567b-1554-31b2-9067-39ba6e4d1c86 ([UPDATE_GAME_MODE])
-[15:21:44] [Render thread/WARN]: Ignoring player info update for unknown player 7b6f567b-1554-31b2-9067-39ba6e4d1c86 ([UPDATE_GAME_MODE])
-[15:21:44] [Render thread/WARN]: Ignoring player info update for unknown player 7b6f567b-1554-31b2-9067-39ba6e4d1c86 ([UPDATE_GAME_MODE])
-[15:21:44] [Render thread/WARN]: Ignoring player info update for unknown player 7b6f567b-1554-31b2-9067-39ba6e4d1c86 ([UPDATE_GAME_MODE])
-[15:21:44] [Render thread/WARN]: Ignoring player info update for unknown player 7b6f567b-1554-31b2-9067-39ba6e4d1c86 ([UPDATE_GAME_MODE])
-[15:21:44] [Render thread/WARN]: Ignoring player info update for unknown player 7b6f567b-1554-31b2-9067-39ba6e4d1c86 ([UPDATE_GAME_MODE])
-[15:21:44] [Render thread/WARN]: Ignoring player info update for unknown player 7b6f567b-1554-31b2-9067-39ba6e4d1c86 ([UPDATE_GAME_MODE])
-[15:21:44] [Render thread/WARN]: Ignoring player info update for unknown player 7b6f567b-1554-31b2-9067-39ba6e4d1c86 ([UPDATE_GAME_MODE])
-[15:21:45] [Render thread/WARN]: Ignoring player info update for unknown player f7bb3b63-fd3b-33e8-8a39-b77bab5d2246 ([UPDATE_GAME_MODE])
-[15:21:45] [Render thread/WARN]: Ignoring player info update for unknown player f7bb3b63-fd3b-33e8-8a39-b77bab5d2246 ([UPDATE_GAME_MODE])
-[15:21:45] [Render thread/WARN]: Ignoring player info update for unknown player f7bb3b63-fd3b-33e8-8a39-b77bab5d2246 ([UPDATE_GAME_MODE])
-[15:21:45] [Render thread/WARN]: Ignoring player info update for unknown player f7bb3b63-fd3b-33e8-8a39-b77bab5d2246 ([UPDATE_GAME_MODE])
-[15:21:45] [Render thread/WARN]: Ignoring player info update for unknown player f7bb3b63-fd3b-33e8-8a39-b77bab5d2246 ([UPDATE_GAME_MODE])
-[15:21:45] [Render thread/WARN]: Ignoring player info update for unknown player f7bb3b63-fd3b-33e8-8a39-b77bab5d2246 ([UPDATE_GAME_MODE])
-[15:21:45] [Render thread/WARN]: Ignoring player info update for unknown player f7bb3b63-fd3b-33e8-8a39-b77bab5d2246 ([UPDATE_GAME_MODE])
-[15:21:45] [Render thread/WARN]: Ignoring player info update for unknown player f7bb3b63-fd3b-33e8-8a39-b77bab5d2246 ([UPDATE_GAME_MODE])
-[15:21:54] [Render thread/WARN]: Ignoring player info update for unknown player 1dff1b66-407b-3095-82ba-61a892cc731b ([UPDATE_GAME_MODE])
-[15:21:54] [Render thread/WARN]: Ignoring player info update for unknown player 1dff1b66-407b-3095-82ba-61a892cc731b ([UPDATE_GAME_MODE])
-[15:21:54] [Render thread/WARN]: Ignoring player info update for unknown player 1dff1b66-407b-3095-82ba-61a892cc731b ([UPDATE_GAME_MODE])
-[15:21:54] [Render thread/WARN]: Ignoring player info update for unknown player 1dff1b66-407b-3095-82ba-61a892cc731b ([UPDATE_GAME_MODE])
-[15:21:54] [Render thread/WARN]: Ignoring player info update for unknown player 1dff1b66-407b-3095-82ba-61a892cc731b ([UPDATE_GAME_MODE])
-[15:21:54] [Render thread/WARN]: Ignoring player info update for unknown player 1dff1b66-407b-3095-82ba-61a892cc731b ([UPDATE_GAME_MODE])
-[15:21:54] [Render thread/WARN]: Ignoring player info update for unknown player 1dff1b66-407b-3095-82ba-61a892cc731b ([UPDATE_GAME_MODE])
-[15:21:54] [Render thread/WARN]: Ignoring player info update for unknown player 1dff1b66-407b-3095-82ba-61a892cc731b ([UPDATE_GAME_MODE])
-[15:21:54] [Render thread/WARN]: Ignoring player info update for unknown player 4b907014-301e-3602-8073-fe8fa762286b ([UPDATE_GAME_MODE])
-[15:21:54] [Render thread/WARN]: Ignoring player info update for unknown player 4b907014-301e-3602-8073-fe8fa762286b ([UPDATE_GAME_MODE])
-[15:21:54] [Render thread/WARN]: Ignoring player info update for unknown player 4b907014-301e-3602-8073-fe8fa762286b ([UPDATE_GAME_MODE])
-[15:21:54] [Render thread/WARN]: Ignoring player info update for unknown player 4b907014-301e-3602-8073-fe8fa762286b ([UPDATE_GAME_MODE])
-[15:21:54] [Render thread/WARN]: Ignoring player info update for unknown player 4b907014-301e-3602-8073-fe8fa762286b ([UPDATE_GAME_MODE])
-[15:21:54] [Render thread/WARN]: Ignoring player info update for unknown player 4b907014-301e-3602-8073-fe8fa762286b ([UPDATE_GAME_MODE])
-[15:21:54] [Render thread/WARN]: Ignoring player info update for unknown player 4b907014-301e-3602-8073-fe8fa762286b ([UPDATE_GAME_MODE])
-[15:21:54] [Render thread/WARN]: Ignoring player info update for unknown player 4b907014-301e-3602-8073-fe8fa762286b ([UPDATE_GAME_MODE])
-[15:21:54] [Render thread/WARN]: Ignoring player info update for unknown player e020463e-cf07-3a4c-a54d-274b159c8211 ([UPDATE_GAME_MODE])
-[15:21:54] [Render thread/WARN]: Ignoring player info update for unknown player e020463e-cf07-3a4c-a54d-274b159c8211 ([UPDATE_GAME_MODE])
-[15:21:54] [Render thread/WARN]: Ignoring player info update for unknown player e020463e-cf07-3a4c-a54d-274b159c8211 ([UPDATE_GAME_MODE])
-[15:21:54] [Render thread/WARN]: Ignoring player info update for unknown player e020463e-cf07-3a4c-a54d-274b159c8211 ([UPDATE_GAME_MODE])
-[15:21:54] [Render thread/WARN]: Ignoring player info update for unknown player e020463e-cf07-3a4c-a54d-274b159c8211 ([UPDATE_GAME_MODE])
-[15:21:54] [Render thread/WARN]: Ignoring player info update for unknown player e020463e-cf07-3a4c-a54d-274b159c8211 ([UPDATE_GAME_MODE])
-[15:21:54] [Render thread/WARN]: Ignoring player info update for unknown player e020463e-cf07-3a4c-a54d-274b159c8211 ([UPDATE_GAME_MODE])
-[15:21:54] [Render thread/WARN]: Ignoring player info update for unknown player e020463e-cf07-3a4c-a54d-274b159c8211 ([UPDATE_GAME_MODE])
-[15:21:54] [Render thread/WARN]: Ignoring player info update for unknown player cbbd3af3-97d1-39df-be5b-2e6a8340d13d ([UPDATE_GAME_MODE])
-[15:21:54] [Render thread/WARN]: Ignoring player info update for unknown player cbbd3af3-97d1-39df-be5b-2e6a8340d13d ([UPDATE_GAME_MODE])
-[15:21:54] [Render thread/WARN]: Ignoring player info update for unknown player cbbd3af3-97d1-39df-be5b-2e6a8340d13d ([UPDATE_GAME_MODE])
-[15:21:54] [Render thread/WARN]: Ignoring player info update for unknown player cbbd3af3-97d1-39df-be5b-2e6a8340d13d ([UPDATE_GAME_MODE])
-[15:21:54] [Render thread/WARN]: Ignoring player info update for unknown player cbbd3af3-97d1-39df-be5b-2e6a8340d13d ([UPDATE_GAME_MODE])
-[15:21:54] [Render thread/WARN]: Ignoring player info update for unknown player cbbd3af3-97d1-39df-be5b-2e6a8340d13d ([UPDATE_GAME_MODE])
-[15:21:54] [Render thread/WARN]: Ignoring player info update for unknown player cbbd3af3-97d1-39df-be5b-2e6a8340d13d ([UPDATE_GAME_MODE])
-[15:21:54] [Render thread/WARN]: Ignoring player info update for unknown player cbbd3af3-97d1-39df-be5b-2e6a8340d13d ([UPDATE_GAME_MODE])
-[15:21:57] [Render thread/WARN]: Ignoring player info update for unknown player f74ec4a8-5148-39b7-97da-d14a972b443d ([UPDATE_GAME_MODE])
-[15:21:57] [Render thread/WARN]: Ignoring player info update for unknown player f74ec4a8-5148-39b7-97da-d14a972b443d ([UPDATE_GAME_MODE])
-[15:21:57] [Render thread/WARN]: Ignoring player info update for unknown player f74ec4a8-5148-39b7-97da-d14a972b443d ([UPDATE_GAME_MODE])
-[15:21:57] [Render thread/WARN]: Ignoring player info update for unknown player f74ec4a8-5148-39b7-97da-d14a972b443d ([UPDATE_GAME_MODE])
-[15:21:57] [Render thread/WARN]: Ignoring player info update for unknown player f74ec4a8-5148-39b7-97da-d14a972b443d ([UPDATE_GAME_MODE])
-[15:21:57] [Render thread/WARN]: Ignoring player info update for unknown player f74ec4a8-5148-39b7-97da-d14a972b443d ([UPDATE_GAME_MODE])
-[15:21:57] [Render thread/WARN]: Ignoring player info update for unknown player f74ec4a8-5148-39b7-97da-d14a972b443d ([UPDATE_GAME_MODE])
-[15:21:57] [Render thread/WARN]: Ignoring player info update for unknown player f74ec4a8-5148-39b7-97da-d14a972b443d ([UPDATE_GAME_MODE])
-[15:21:57] [Render thread/WARN]: Ignoring player info update for unknown player 885e6ae1-d7f7-3a69-b33a-035fc0b49875 ([UPDATE_GAME_MODE])
-[15:21:57] [Render thread/WARN]: Ignoring player info update for unknown player 885e6ae1-d7f7-3a69-b33a-035fc0b49875 ([UPDATE_GAME_MODE])
-[15:21:57] [Render thread/WARN]: Ignoring player info update for unknown player 885e6ae1-d7f7-3a69-b33a-035fc0b49875 ([UPDATE_GAME_MODE])
-[15:21:57] [Render thread/WARN]: Ignoring player info update for unknown player 885e6ae1-d7f7-3a69-b33a-035fc0b49875 ([UPDATE_GAME_MODE])
-[15:21:57] [Render thread/WARN]: Ignoring player info update for unknown player 885e6ae1-d7f7-3a69-b33a-035fc0b49875 ([UPDATE_GAME_MODE])
-[15:21:57] [Render thread/WARN]: Ignoring player info update for unknown player 885e6ae1-d7f7-3a69-b33a-035fc0b49875 ([UPDATE_GAME_MODE])
-[15:21:57] [Render thread/WARN]: Ignoring player info update for unknown player 885e6ae1-d7f7-3a69-b33a-035fc0b49875 ([UPDATE_GAME_MODE])
-[15:21:57] [Render thread/WARN]: Ignoring player info update for unknown player 885e6ae1-d7f7-3a69-b33a-035fc0b49875 ([UPDATE_GAME_MODE])
-[15:21:57] [Render thread/WARN]: Ignoring player info update for unknown player 8eabfb74-f594-33f6-9eb3-b9bda9ae031b ([UPDATE_GAME_MODE])
-[15:21:57] [Render thread/WARN]: Ignoring player info update for unknown player 8eabfb74-f594-33f6-9eb3-b9bda9ae031b ([UPDATE_GAME_MODE])
-[15:21:57] [Render thread/WARN]: Ignoring player info update for unknown player 8eabfb74-f594-33f6-9eb3-b9bda9ae031b ([UPDATE_GAME_MODE])
-[15:21:57] [Render thread/WARN]: Ignoring player info update for unknown player 8eabfb74-f594-33f6-9eb3-b9bda9ae031b ([UPDATE_GAME_MODE])
-[15:21:57] [Render thread/WARN]: Ignoring player info update for unknown player 8eabfb74-f594-33f6-9eb3-b9bda9ae031b ([UPDATE_GAME_MODE])
-[15:21:57] [Render thread/WARN]: Ignoring player info update for unknown player 8eabfb74-f594-33f6-9eb3-b9bda9ae031b ([UPDATE_GAME_MODE])
-[15:21:57] [Render thread/WARN]: Ignoring player info update for unknown player 8eabfb74-f594-33f6-9eb3-b9bda9ae031b ([UPDATE_GAME_MODE])
-[15:21:57] [Render thread/WARN]: Ignoring player info update for unknown player 8eabfb74-f594-33f6-9eb3-b9bda9ae031b ([UPDATE_GAME_MODE])
-[15:21:57] [Render thread/WARN]: Ignoring player info update for unknown player 9d619aa8-f602-364e-816f-080653addd49 ([UPDATE_GAME_MODE])
-[15:21:57] [Render thread/WARN]: Ignoring player info update for unknown player 9d619aa8-f602-364e-816f-080653addd49 ([UPDATE_GAME_MODE])
-[15:21:57] [Render thread/WARN]: Ignoring player info update for unknown player 9d619aa8-f602-364e-816f-080653addd49 ([UPDATE_GAME_MODE])
-[15:21:57] [Render thread/WARN]: Ignoring player info update for unknown player 9d619aa8-f602-364e-816f-080653addd49 ([UPDATE_GAME_MODE])
-[15:21:58] [Render thread/WARN]: Ignoring player info update for unknown player 57848d48-4812-3406-93ca-135ba469a81b ([UPDATE_GAME_MODE])
-[15:21:58] [Render thread/WARN]: Ignoring player info update for unknown player 57848d48-4812-3406-93ca-135ba469a81b ([UPDATE_GAME_MODE])
-[15:21:58] [Render thread/WARN]: Ignoring player info update for unknown player 57848d48-4812-3406-93ca-135ba469a81b ([UPDATE_GAME_MODE])
-[15:21:58] [Render thread/WARN]: Ignoring player info update for unknown player 57848d48-4812-3406-93ca-135ba469a81b ([UPDATE_GAME_MODE])
-[15:21:58] [Render thread/WARN]: Ignoring player info update for unknown player 57848d48-4812-3406-93ca-135ba469a81b ([UPDATE_GAME_MODE])
-[15:21:58] [Render thread/WARN]: Ignoring player info update for unknown player 57848d48-4812-3406-93ca-135ba469a81b ([UPDATE_GAME_MODE])
-[15:21:58] [Render thread/WARN]: Ignoring player info update for unknown player 57848d48-4812-3406-93ca-135ba469a81b ([UPDATE_GAME_MODE])
-[15:21:58] [Render thread/WARN]: Ignoring player info update for unknown player 57848d48-4812-3406-93ca-135ba469a81b ([UPDATE_GAME_MODE])
-[15:21:58] [Render thread/INFO]: [System] [CHAT] 
-[15:21:58] [Render thread/INFO]: [System] [CHAT]  ⚡ Вы играете на SpookyTime!
-[15:21:58] [Render thread/INFO]: [System] [CHAT] 
-[15:21:58] [Render thread/WARN]: Ignoring player info update for unknown player 99728854-a983-3a40-aafc-1ff71e00f867 ([UPDATE_GAME_MODE])
-[15:21:58] [Render thread/WARN]: Ignoring player info update for unknown player 99728854-a983-3a40-aafc-1ff71e00f867 ([UPDATE_GAME_MODE])
-[15:21:59] [Render thread/WARN]: Ignoring player info update for unknown player 99728854-a983-3a40-aafc-1ff71e00f867 ([UPDATE_GAME_MODE])
-[15:21:59] [Render thread/WARN]: Ignoring player info update for unknown player 99728854-a983-3a40-aafc-1ff71e00f867 ([UPDATE_GAME_MODE])
-[15:21:59] [Render thread/WARN]: Ignoring player info update for unknown player 99728854-a983-3a40-aafc-1ff71e00f867 ([UPDATE_GAME_MODE])
-[15:21:59] [Render thread/WARN]: Ignoring player info update for unknown player 99728854-a983-3a40-aafc-1ff71e00f867 ([UPDATE_GAME_MODE])
-[15:21:59] [Render thread/WARN]: Ignoring player info update for unknown player 99728854-a983-3a40-aafc-1ff71e00f867 ([UPDATE_GAME_MODE])
-[15:21:59] [Render thread/WARN]: Ignoring player info update for unknown player 99728854-a983-3a40-aafc-1ff71e00f867 ([UPDATE_GAME_MODE])
-[15:21:59] [Render thread/WARN]: Ignoring player info update for unknown player 085e79c3-3a8e-3fc5-94f6-46a2b5a1923a ([UPDATE_GAME_MODE])
-[15:21:59] [Render thread/WARN]: Ignoring player info update for unknown player 085e79c3-3a8e-3fc5-94f6-46a2b5a1923a ([UPDATE_GAME_MODE])
-[15:21:59] [Render thread/WARN]: Ignoring player info update for unknown player 085e79c3-3a8e-3fc5-94f6-46a2b5a1923a ([UPDATE_GAME_MODE])
-[15:21:59] [Render thread/WARN]: Ignoring player info update for unknown player 085e79c3-3a8e-3fc5-94f6-46a2b5a1923a ([UPDATE_GAME_MODE])
-[15:21:59] [Render thread/WARN]: Ignoring player info update for unknown player 085e79c3-3a8e-3fc5-94f6-46a2b5a1923a ([UPDATE_GAME_MODE])
-[15:21:59] [Render thread/WARN]: Ignoring player info update for unknown player 085e79c3-3a8e-3fc5-94f6-46a2b5a1923a ([UPDATE_GAME_MODE])
-[15:21:59] [Render thread/WARN]: Ignoring player info update for unknown player 085e79c3-3a8e-3fc5-94f6-46a2b5a1923a ([UPDATE_GAME_MODE])
-[15:21:59] [Render thread/WARN]: Ignoring player info update for unknown player 085e79c3-3a8e-3fc5-94f6-46a2b5a1923a ([UPDATE_GAME_MODE])
-[15:22:00] [Render thread/WARN]: Ignoring player info update for unknown player 73a7eeb7-e38e-399b-bccb-72d8b62abcde ([UPDATE_GAME_MODE])
-[15:22:00] [Render thread/WARN]: Ignoring player info update for unknown player 73a7eeb7-e38e-399b-bccb-72d8b62abcde ([UPDATE_GAME_MODE])
-[15:22:00] [Render thread/WARN]: Ignoring player info update for unknown player 73a7eeb7-e38e-399b-bccb-72d8b62abcde ([UPDATE_GAME_MODE])
-[15:22:00] [Render thread/WARN]: Ignoring player info update for unknown player 73a7eeb7-e38e-399b-bccb-72d8b62abcde ([UPDATE_GAME_MODE])
-[15:22:00] [Render thread/WARN]: Ignoring player info update for unknown player 73a7eeb7-e38e-399b-bccb-72d8b62abcde ([UPDATE_GAME_MODE])
-[15:22:00] [Render thread/WARN]: Ignoring player info update for unknown player 73a7eeb7-e38e-399b-bccb-72d8b62abcde ([UPDATE_GAME_MODE])
-[15:22:00] [Render thread/WARN]: Ignoring player info update for unknown player 73a7eeb7-e38e-399b-bccb-72d8b62abcde ([UPDATE_GAME_MODE])
-[15:22:00] [Render thread/WARN]: Ignoring player info update for unknown player 73a7eeb7-e38e-399b-bccb-72d8b62abcde ([UPDATE_GAME_MODE])
-[15:22:01] [Render thread/WARN]: Ignoring player info update for unknown player 67e9e1a1-2343-3ab8-8480-a1d1ca6d663f ([UPDATE_GAME_MODE])
-[15:22:01] [Render thread/WARN]: Ignoring player info update for unknown player 67e9e1a1-2343-3ab8-8480-a1d1ca6d663f ([UPDATE_GAME_MODE])
-[15:22:01] [Render thread/WARN]: Ignoring player info update for unknown player 67e9e1a1-2343-3ab8-8480-a1d1ca6d663f ([UPDATE_GAME_MODE])
-[15:22:01] [Render thread/WARN]: Ignoring player info update for unknown player 67e9e1a1-2343-3ab8-8480-a1d1ca6d663f ([UPDATE_GAME_MODE])
-[15:22:01] [Render thread/WARN]: Ignoring player info update for unknown player 67e9e1a1-2343-3ab8-8480-a1d1ca6d663f ([UPDATE_GAME_MODE])
-[15:22:01] [Render thread/WARN]: Ignoring player info update for unknown player 67e9e1a1-2343-3ab8-8480-a1d1ca6d663f ([UPDATE_GAME_MODE])
-[15:22:01] [Render thread/WARN]: Ignoring player info update for unknown player 67e9e1a1-2343-3ab8-8480-a1d1ca6d663f ([UPDATE_GAME_MODE])
-[15:22:01] [Render thread/WARN]: Ignoring player info update for unknown player 67e9e1a1-2343-3ab8-8480-a1d1ca6d663f ([UPDATE_GAME_MODE])
-[15:22:01] [Render thread/WARN]: Ignoring player info update for unknown player 36b943b1-498c-31c3-8295-749c7699c696 ([UPDATE_GAME_MODE])
-[15:22:01] [Render thread/WARN]: Ignoring player info update for unknown player 36b943b1-498c-31c3-8295-749c7699c696 ([UPDATE_GAME_MODE])
-[15:22:01] [Render thread/WARN]: Ignoring player info update for unknown player 36b943b1-498c-31c3-8295-749c7699c696 ([UPDATE_GAME_MODE])
-[15:22:01] [Render thread/WARN]: Ignoring player info update for unknown player 36b943b1-498c-31c3-8295-749c7699c696 ([UPDATE_GAME_MODE])
-[15:22:01] [Render thread/WARN]: Ignoring player info update for unknown player 36b943b1-498c-31c3-8295-749c7699c696 ([UPDATE_GAME_MODE])
-[15:22:01] [Render thread/WARN]: Ignoring player info update for unknown player 36b943b1-498c-31c3-8295-749c7699c696 ([UPDATE_GAME_MODE])
-[15:22:01] [Render thread/WARN]: Ignoring player info update for unknown player 36b943b1-498c-31c3-8295-749c7699c696 ([UPDATE_GAME_MODE])
-[15:22:01] [Render thread/WARN]: Ignoring player info update for unknown player 36b943b1-498c-31c3-8295-749c7699c696 ([UPDATE_GAME_MODE])
-[15:22:05] [Render thread/WARN]: Ignoring player info update for unknown player 36b943b1-498c-31c3-8295-749c7699c696 ([UPDATE_GAME_MODE])
-[15:22:05] [Render thread/WARN]: Ignoring player info update for unknown player 36b943b1-498c-31c3-8295-749c7699c696 ([UPDATE_GAME_MODE])
-[15:22:05] [Render thread/WARN]: Ignoring player info update for unknown player 36b943b1-498c-31c3-8295-749c7699c696 ([UPDATE_GAME_MODE])
-[15:22:05] [Render thread/WARN]: Ignoring player info update for unknown player 36b943b1-498c-31c3-8295-749c7699c696 ([UPDATE_GAME_MODE])
-[15:22:05] [Render thread/WARN]: Ignoring player info update for unknown player 36b943b1-498c-31c3-8295-749c7699c696 ([UPDATE_GAME_MODE])
-[15:22:05] [Render thread/WARN]: Ignoring player info update for unknown player 36b943b1-498c-31c3-8295-749c7699c696 ([UPDATE_GAME_MODE])
-[15:22:05] [Render thread/WARN]: Ignoring player info update for unknown player 36b943b1-498c-31c3-8295-749c7699c696 ([UPDATE_GAME_MODE])
-[15:22:05] [Render thread/WARN]: Ignoring player info update for unknown player 36b943b1-498c-31c3-8295-749c7699c696 ([UPDATE_GAME_MODE])
-[15:22:06] [Render thread/WARN]: Ignoring player info update for unknown player eee4ba2d-0cc0-3c48-a452-4c4b336d33db ([UPDATE_GAME_MODE])
-[15:22:06] [Render thread/WARN]: Ignoring player info update for unknown player eee4ba2d-0cc0-3c48-a452-4c4b336d33db ([UPDATE_GAME_MODE])
-[15:22:09] [Render thread/WARN]: Ignoring player info update for unknown player e223f1cb-eb52-399e-b1be-bb8a93cf240a ([UPDATE_GAME_MODE])
-[15:22:09] [Render thread/WARN]: Ignoring player info update for unknown player e223f1cb-eb52-399e-b1be-bb8a93cf240a ([UPDATE_GAME_MODE])
-[15:22:09] [Render thread/WARN]: Ignoring player info update for unknown player e223f1cb-eb52-399e-b1be-bb8a93cf240a ([UPDATE_GAME_MODE])
-[15:22:09] [Render thread/WARN]: Ignoring player info update for unknown player e223f1cb-eb52-399e-b1be-bb8a93cf240a ([UPDATE_GAME_MODE])
-[15:22:09] [Render thread/WARN]: Ignoring player info update for unknown player e223f1cb-eb52-399e-b1be-bb8a93cf240a ([UPDATE_GAME_MODE])
-[15:22:09] [Render thread/WARN]: Ignoring player info update for unknown player e223f1cb-eb52-399e-b1be-bb8a93cf240a ([UPDATE_GAME_MODE])
-[15:22:09] [Render thread/WARN]: Ignoring player info update for unknown player e223f1cb-eb52-399e-b1be-bb8a93cf240a ([UPDATE_GAME_MODE])
-[15:22:09] [Render thread/WARN]: Ignoring player info update for unknown player e223f1cb-eb52-399e-b1be-bb8a93cf240a ([UPDATE_GAME_MODE])
-[15:22:09] [Render thread/WARN]: Ignoring player info update for unknown player c2f81065-5033-343e-b09f-822d0ac72c64 ([UPDATE_GAME_MODE])
-[15:22:09] [Render thread/WARN]: Ignoring player info update for unknown player c2f81065-5033-343e-b09f-822d0ac72c64 ([UPDATE_GAME_MODE])
-[15:22:09] [Render thread/WARN]: Ignoring player info update for unknown player c2f81065-5033-343e-b09f-822d0ac72c64 ([UPDATE_GAME_MODE])
-[15:22:09] [Render thread/WARN]: Ignoring player info update for unknown player c2f81065-5033-343e-b09f-822d0ac72c64 ([UPDATE_GAME_MODE])
-[15:22:09] [Render thread/WARN]: Ignoring player info update for unknown player c2f81065-5033-343e-b09f-822d0ac72c64 ([UPDATE_GAME_MODE])
-[15:22:09] [Render thread/WARN]: Ignoring player info update for unknown player c2f81065-5033-343e-b09f-822d0ac72c64 ([UPDATE_GAME_MODE])
-[15:22:09] [Render thread/WARN]: Ignoring player info update for unknown player c2f81065-5033-343e-b09f-822d0ac72c64 ([UPDATE_GAME_MODE])
-[15:22:09] [Render thread/WARN]: Ignoring player info update for unknown player c2f81065-5033-343e-b09f-822d0ac72c64 ([UPDATE_GAME_MODE])
-[15:22:09] [Render thread/WARN]: Ignoring player info update for unknown player 335334a3-3e67-3555-b622-13d38b43782f ([UPDATE_GAME_MODE])
-[15:22:09] [Render thread/WARN]: Ignoring player info update for unknown player 335334a3-3e67-3555-b622-13d38b43782f ([UPDATE_GAME_MODE])
-[15:22:09] [Render thread/WARN]: Ignoring player info update for unknown player 335334a3-3e67-3555-b622-13d38b43782f ([UPDATE_GAME_MODE])
-[15:22:09] [Render thread/WARN]: Ignoring player info update for unknown player 335334a3-3e67-3555-b622-13d38b43782f ([UPDATE_GAME_MODE])
-[15:22:09] [Render thread/WARN]: Ignoring player info update for unknown player 335334a3-3e67-3555-b622-13d38b43782f ([UPDATE_GAME_MODE])
-[15:22:09] [Render thread/WARN]: Ignoring player info update for unknown player 335334a3-3e67-3555-b622-13d38b43782f ([UPDATE_GAME_MODE])
-[15:22:09] [Render thread/WARN]: Ignoring player info update for unknown player 335334a3-3e67-3555-b622-13d38b43782f ([UPDATE_GAME_MODE])
-[15:22:09] [Render thread/WARN]: Ignoring player info update for unknown player 335334a3-3e67-3555-b622-13d38b43782f ([UPDATE_GAME_MODE])
-[15:22:09] [Render thread/WARN]: Ignoring player info update for unknown player c08fd9b7-4751-372c-8948-5cace1bb92cb ([UPDATE_GAME_MODE])
-[15:22:09] [Render thread/WARN]: Ignoring player info update for unknown player c08fd9b7-4751-372c-8948-5cace1bb92cb ([UPDATE_GAME_MODE])
-[15:22:09] [Render thread/WARN]: Ignoring player info update for unknown player c08fd9b7-4751-372c-8948-5cace1bb92cb ([UPDATE_GAME_MODE])
-[15:22:09] [Render thread/WARN]: Ignoring player info update for unknown player c08fd9b7-4751-372c-8948-5cace1bb92cb ([UPDATE_GAME_MODE])
-[15:22:09] [Render thread/WARN]: Ignoring player info update for unknown player c08fd9b7-4751-372c-8948-5cace1bb92cb ([UPDATE_GAME_MODE])
-[15:22:09] [Render thread/WARN]: Ignoring player info update for unknown player c08fd9b7-4751-372c-8948-5cace1bb92cb ([UPDATE_GAME_MODE])
-[15:22:09] [Render thread/WARN]: Ignoring player info update for unknown player c08fd9b7-4751-372c-8948-5cace1bb92cb ([UPDATE_GAME_MODE])
-[15:22:10] [Render thread/WARN]: Ignoring player info update for unknown player c08fd9b7-4751-372c-8948-5cace1bb92cb ([UPDATE_GAME_MODE])
-[15:22:10] [Render thread/WARN]: Ignoring player info update for unknown player e1aaf9ed-1e81-307b-ad9c-9c34f2e2e188 ([UPDATE_GAME_MODE])
-[15:22:10] [Render thread/WARN]: Ignoring player info update for unknown player e1aaf9ed-1e81-307b-ad9c-9c34f2e2e188 ([UPDATE_GAME_MODE])
-[15:22:10] [Render thread/WARN]: Ignoring player info update for unknown player e1aaf9ed-1e81-307b-ad9c-9c34f2e2e188 ([UPDATE_GAME_MODE])
-[15:22:10] [Render thread/WARN]: Ignoring player info update for unknown player e1aaf9ed-1e81-307b-ad9c-9c34f2e2e188 ([UPDATE_GAME_MODE])
-[15:22:10] [Render thread/WARN]: Ignoring player info update for unknown player e1aaf9ed-1e81-307b-ad9c-9c34f2e2e188 ([UPDATE_GAME_MODE])
-[15:22:10] [Render thread/WARN]: Ignoring player info update for unknown player e1aaf9ed-1e81-307b-ad9c-9c34f2e2e188 ([UPDATE_GAME_MODE])
-[15:22:10] [Render thread/WARN]: Ignoring player info update for unknown player e1aaf9ed-1e81-307b-ad9c-9c34f2e2e188 ([UPDATE_GAME_MODE])
-[15:22:10] [Render thread/WARN]: Ignoring player info update for unknown player e1aaf9ed-1e81-307b-ad9c-9c34f2e2e188 ([UPDATE_GAME_MODE])
-[15:22:11] [Render thread/WARN]: Ignoring player info update for unknown player 4c084e0b-729a-3a71-b307-ecaa46cdc128 ([UPDATE_GAME_MODE])
-[15:22:11] [Render thread/WARN]: Ignoring player info update for unknown player 4c084e0b-729a-3a71-b307-ecaa46cdc128 ([UPDATE_GAME_MODE])
-[15:22:11] [Render thread/WARN]: Ignoring player info update for unknown player 4c084e0b-729a-3a71-b307-ecaa46cdc128 ([UPDATE_GAME_MODE])
-[15:22:11] [Render thread/WARN]: Ignoring player info update for unknown player 4c084e0b-729a-3a71-b307-ecaa46cdc128 ([UPDATE_GAME_MODE])
-[15:22:11] [Render thread/WARN]: Ignoring player info update for unknown player 4c084e0b-729a-3a71-b307-ecaa46cdc128 ([UPDATE_GAME_MODE])
-[15:22:11] [Render thread/WARN]: Ignoring player info update for unknown player 4c084e0b-729a-3a71-b307-ecaa46cdc128 ([UPDATE_GAME_MODE])
-[15:22:11] [Render thread/WARN]: Ignoring player info update for unknown player 4c084e0b-729a-3a71-b307-ecaa46cdc128 ([UPDATE_GAME_MODE])
-[15:22:11] [Render thread/WARN]: Ignoring player info update for unknown player 4c084e0b-729a-3a71-b307-ecaa46cdc128 ([UPDATE_GAME_MODE])
-[15:22:11] [Render thread/WARN]: Ignoring player info update for unknown player eb26ae1a-e130-379e-8404-44c3f8ef5898 ([UPDATE_GAME_MODE])
-[15:22:11] [Render thread/WARN]: Ignoring player info update for unknown player eb26ae1a-e130-379e-8404-44c3f8ef5898 ([UPDATE_GAME_MODE])
-[15:22:11] [Render thread/WARN]: Ignoring player info update for unknown player eb26ae1a-e130-379e-8404-44c3f8ef5898 ([UPDATE_GAME_MODE])
-[15:22:11] [Render thread/WARN]: Ignoring player info update for unknown player eb26ae1a-e130-379e-8404-44c3f8ef5898 ([UPDATE_GAME_MODE])
-[15:22:11] [Render thread/WARN]: Ignoring player info update for unknown player eb26ae1a-e130-379e-8404-44c3f8ef5898 ([UPDATE_GAME_MODE])
-[15:22:11] [Render thread/WARN]: Ignoring player info update for unknown player eb26ae1a-e130-379e-8404-44c3f8ef5898 ([UPDATE_GAME_MODE])
-[15:22:11] [Render thread/WARN]: Ignoring player info update for unknown player eb26ae1a-e130-379e-8404-44c3f8ef5898 ([UPDATE_GAME_MODE])
-[15:22:11] [Render thread/WARN]: Ignoring player info update for unknown player eb26ae1a-e130-379e-8404-44c3f8ef5898 ([UPDATE_GAME_MODE])
+[15:30:58] [Render thread/INFO]: [System] [CHAT] [✾] Успешная авторизация! Приятной игры!
+[15:30:58] [Render thread/INFO]: [System] [CHAT] ╔════ ★ SpookyTime.net ★ ════╗\n║ \n║  Добро пожаловать на SpookyTime\n║  Наши социальные сети — /links\n║  Приятной игры и новых побед!\n║ \n╚══════════════════════╝
+[15:30:58] [Render thread/INFO]: [STDOUT]: World seems to be a replay. Not loading Baritone cache.
+[15:30:59] [Render thread/INFO]: [voicechat] Sending secret request to the server
+[15:30:59] [Render thread/WARN]: [voicechat] Failed to open audio device 'OpenAL Soft on Динамики (High Definition Audio Device)', falling back to default
+[15:30:59] [Render thread/WARN]: Ignoring player info update for unknown player 93b5e6d1-d613-3b00-a7e6-ff2a1952fb49 ([UPDATE_GAME_MODE])
+[15:30:59] [Render thread/WARN]: Ignoring player info update for unknown player 93b5e6d1-d613-3b00-a7e6-ff2a1952fb49 ([UPDATE_GAME_MODE])
+[15:30:59] [Render thread/WARN]: Ignoring player info update for unknown player 93b5e6d1-d613-3b00-a7e6-ff2a1952fb49 ([UPDATE_GAME_MODE])
+[15:30:59] [Render thread/WARN]: Ignoring player info update for unknown player 93b5e6d1-d613-3b00-a7e6-ff2a1952fb49 ([UPDATE_GAME_MODE])
+[15:30:59] [Render thread/INFO]: [STDOUT]: Retrying to load Baritone cache
+[15:30:59] [Render thread/INFO]: [STDOUT]: Baritone world data dir: .\baritone\mc.spookytime.net\minecraft\overworld_256
+[15:30:59] [Render thread/INFO]: [STDOUT]: Cached world directory: .\baritone\mc.spookytime.net\minecraft\overworld_256\cache
+[15:30:59] [Render thread/INFO]: [STDOUT]: Would save waypoints to .\baritone\mc.spookytime.net\minecraft\overworld_256\waypoints
+[15:30:59] [pool-4-thread-1/INFO]: [STDOUT]: Loading region -1,-1 from disk .\baritone\mc.spookytime.net\minecraft\overworld_256\cache
+[15:30:59] [pool-4-thread-1/INFO]: [STDOUT]: Loaded region successfully in 196ms
+[15:30:59] [pool-4-thread-1/INFO]: [STDOUT]: Loading region -1,0 from disk .\baritone\mc.spookytime.net\minecraft\overworld_256\cache
+[15:30:59] [Render thread/INFO]: Loaded 0 advancements
+[15:30:59] [Render thread/WARN]: Ignoring player info update for unknown player 978ac68e-48e4-30a7-876d-1ba21947b656 ([UPDATE_GAME_MODE])
+[15:30:59] [Render thread/WARN]: Ignoring player info update for unknown player 978ac68e-48e4-30a7-876d-1ba21947b656 ([UPDATE_GAME_MODE])
+[15:30:59] [Render thread/WARN]: Ignoring player info update for unknown player 978ac68e-48e4-30a7-876d-1ba21947b656 ([UPDATE_GAME_MODE])
+[15:30:59] [Render thread/WARN]: Ignoring player info update for unknown player 978ac68e-48e4-30a7-876d-1ba21947b656 ([UPDATE_GAME_MODE])
+[15:30:59] [Render thread/WARN]: Ignoring player info update for unknown player 978ac68e-48e4-30a7-876d-1ba21947b656 ([UPDATE_GAME_MODE])
+[15:30:59] [Render thread/WARN]: Ignoring player info update for unknown player 978ac68e-48e4-30a7-876d-1ba21947b656 ([UPDATE_GAME_MODE])
+[15:30:59] [Render thread/WARN]: Ignoring player info update for unknown player 978ac68e-48e4-30a7-876d-1ba21947b656 ([UPDATE_GAME_MODE])
+[15:30:59] [Render thread/WARN]: Ignoring player info update for unknown player 978ac68e-48e4-30a7-876d-1ba21947b656 ([UPDATE_GAME_MODE])
+[15:30:59] [Render thread/INFO]: [System] [CHAT] 
+[15:30:59] [Render thread/INFO]: [System] [CHAT]  ⚡ Проблема/Вопрос? vk.com/kol_kola
+[15:30:59] [Render thread/INFO]: [System] [CHAT] 
+[15:31:00] [pool-4-thread-1/INFO]: [STDOUT]: Loaded region successfully in 272ms
+[15:31:00] [Render thread/INFO]: Resizing Dynamic Transforms UBO, capacity limit of 4 reached during a single frame. New capacity will be 8.
+[15:31:01] [Render thread/INFO]: Resizing Dynamic Transforms UBO, capacity limit of 8 reached during a single frame. New capacity will be 16.
+[15:31:01] [Render thread/WARN]: Ignoring player info update for unknown player 1c78b116-ce29-323f-bc8c-44e9c00d4e64 ([UPDATE_GAME_MODE])
+[15:31:01] [Render thread/WARN]: Ignoring player info update for unknown player 1c78b116-ce29-323f-bc8c-44e9c00d4e64 ([UPDATE_GAME_MODE])
+[15:31:01] [Render thread/WARN]: Ignoring player info update for unknown player 1c78b116-ce29-323f-bc8c-44e9c00d4e64 ([UPDATE_GAME_MODE])
+[15:31:01] [Render thread/WARN]: Ignoring player info update for unknown player 1c78b116-ce29-323f-bc8c-44e9c00d4e64 ([UPDATE_GAME_MODE])
+[15:31:01] [Render thread/WARN]: Ignoring player info update for unknown player 1c78b116-ce29-323f-bc8c-44e9c00d4e64 ([UPDATE_GAME_MODE])
+[15:31:01] [Render thread/WARN]: Ignoring player info update for unknown player 1c78b116-ce29-323f-bc8c-44e9c00d4e64 ([UPDATE_GAME_MODE])
+[15:31:01] [Render thread/WARN]: Ignoring player info update for unknown player 1c78b116-ce29-323f-bc8c-44e9c00d4e64 ([UPDATE_GAME_MODE])
+[15:31:01] [Render thread/WARN]: Ignoring player info update for unknown player 1c78b116-ce29-323f-bc8c-44e9c00d4e64 ([UPDATE_GAME_MODE])
+[15:31:01] [Render thread/INFO]: [System] [CHAT] ** ! Внимание !\n** Чтобы ваш Аккаунт был в БЕЗОПАСНОСТИ!\n** Привяжите его к ВК: /vk\n** Или к Телеграм: /tg\n\n** ! Внимание !\n** Чтобы ваш Аккаунт был в БЕЗОПАСНОСТИ!\n** Привяжите его к ВК: /vk\n** Или к Телеграм: /tg
+[15:31:01] [Render thread/INFO]: Resizing Dynamic Transforms UBO, capacity limit of 16 reached during a single frame. New capacity will be 32.
+[15:31:01] [pool-4-thread-1/INFO]: [STDOUT]: Loading region 0,-1 from disk .\baritone\mc.spookytime.net\minecraft\overworld_256\cache
+[15:31:01] [pool-4-thread-1/INFO]: [STDOUT]: Loaded region successfully in 82ms
+[15:31:01] [pool-4-thread-1/INFO]: [STDOUT]: Loading region 0,0 from disk .\baritone\mc.spookytime.net\minecraft\overworld_256\cache
+[15:31:01] [pool-4-thread-1/INFO]: [STDOUT]: Loaded region successfully in 126ms
+[15:31:02] [Render thread/INFO]: Resizing Chunk Sections UBO, capacity limit of 2 reached during a single frame. New capacity will be 4.
+[15:31:02] [Render thread/WARN]: Ignoring player info update for unknown player 37040d80-ffa4-3c78-922a-e0d6541be47c ([UPDATE_GAME_MODE])
+[15:31:02] [Render thread/WARN]: Ignoring player info update for unknown player 37040d80-ffa4-3c78-922a-e0d6541be47c ([UPDATE_GAME_MODE])
+[15:31:02] [Render thread/WARN]: Ignoring player info update for unknown player 37040d80-ffa4-3c78-922a-e0d6541be47c ([UPDATE_GAME_MODE])
+[15:31:02] [Render thread/WARN]: Ignoring player info update for unknown player 37040d80-ffa4-3c78-922a-e0d6541be47c ([UPDATE_GAME_MODE])
+[15:31:02] [Render thread/WARN]: Ignoring player info update for unknown player 37040d80-ffa4-3c78-922a-e0d6541be47c ([UPDATE_GAME_MODE])
+[15:31:02] [Render thread/WARN]: Ignoring player info update for unknown player 37040d80-ffa4-3c78-922a-e0d6541be47c ([UPDATE_GAME_MODE])
+[15:31:02] [Render thread/WARN]: Ignoring player info update for unknown player 37040d80-ffa4-3c78-922a-e0d6541be47c ([UPDATE_GAME_MODE])
+[15:31:02] [Render thread/WARN]: Ignoring player info update for unknown player 37040d80-ffa4-3c78-922a-e0d6541be47c ([UPDATE_GAME_MODE])
+[15:31:02] [Render thread/INFO]: Resizing Chunk Sections UBO, capacity limit of 4 reached during a single frame. New capacity will be 8.
+[15:31:03] [Render thread/INFO]: Resizing Chunk Sections UBO, capacity limit of 8 reached during a single frame. New capacity will be 16.
+[15:31:05] [Render thread/WARN]: Ignoring player info update for unknown player 4d7b2d97-7b87-326b-b6f8-993c54e8aa74 ([UPDATE_GAME_MODE])
+[15:31:05] [Render thread/WARN]: Ignoring player info update for unknown player 4d7b2d97-7b87-326b-b6f8-993c54e8aa74 ([UPDATE_GAME_MODE])
+[15:31:05] [Render thread/WARN]: Ignoring player info update for unknown player 4d7b2d97-7b87-326b-b6f8-993c54e8aa74 ([UPDATE_GAME_MODE])
+[15:31:05] [Render thread/WARN]: Ignoring player info update for unknown player 4d7b2d97-7b87-326b-b6f8-993c54e8aa74 ([UPDATE_GAME_MODE])
+[15:31:05] [Render thread/WARN]: Ignoring player info update for unknown player 4d7b2d97-7b87-326b-b6f8-993c54e8aa74 ([UPDATE_GAME_MODE])
+[15:31:05] [Render thread/WARN]: Ignoring player info update for unknown player 4d7b2d97-7b87-326b-b6f8-993c54e8aa74 ([UPDATE_GAME_MODE])
+[15:31:05] [Render thread/WARN]: Ignoring player info update for unknown player 4d7b2d97-7b87-326b-b6f8-993c54e8aa74 ([UPDATE_GAME_MODE])
+[15:31:05] [Render thread/WARN]: Ignoring player info update for unknown player 4d7b2d97-7b87-326b-b6f8-993c54e8aa74 ([UPDATE_GAME_MODE])
+[15:31:05] [Render thread/WARN]: Ignoring player info update for unknown player 29cbf161-d7cc-3bb5-985f-4c0b15dcba70 ([UPDATE_GAME_MODE])
+[15:31:05] [Render thread/WARN]: Ignoring player info update for unknown player 29cbf161-d7cc-3bb5-985f-4c0b15dcba70 ([UPDATE_GAME_MODE])
+[15:31:05] [Render thread/WARN]: Ignoring player info update for unknown player 29cbf161-d7cc-3bb5-985f-4c0b15dcba70 ([UPDATE_GAME_MODE])
+[15:31:05] [Render thread/WARN]: Ignoring player info update for unknown player 29cbf161-d7cc-3bb5-985f-4c0b15dcba70 ([UPDATE_GAME_MODE])
+[15:31:05] [Render thread/WARN]: Ignoring player info update for unknown player 29cbf161-d7cc-3bb5-985f-4c0b15dcba70 ([UPDATE_GAME_MODE])
+[15:31:05] [Render thread/WARN]: Ignoring player info update for unknown player 29cbf161-d7cc-3bb5-985f-4c0b15dcba70 ([UPDATE_GAME_MODE])
+[15:31:05] [Render thread/WARN]: Ignoring player info update for unknown player 29cbf161-d7cc-3bb5-985f-4c0b15dcba70 ([UPDATE_GAME_MODE])
+[15:31:05] [Render thread/WARN]: Ignoring player info update for unknown player 29cbf161-d7cc-3bb5-985f-4c0b15dcba70 ([UPDATE_GAME_MODE])
+[15:31:05] [Render thread/WARN]: Ignoring player info update for unknown player d6854ae6-15e0-31d4-b576-b406bf8cf13c ([UPDATE_GAME_MODE])
+[15:31:05] [Render thread/WARN]: Ignoring player info update for unknown player d6854ae6-15e0-31d4-b576-b406bf8cf13c ([UPDATE_GAME_MODE])
+[15:31:06] [Render thread/WARN]: Ignoring player info update for unknown player d6854ae6-15e0-31d4-b576-b406bf8cf13c ([UPDATE_GAME_MODE])
+[15:31:06] [Render thread/WARN]: Ignoring player info update for unknown player d6854ae6-15e0-31d4-b576-b406bf8cf13c ([UPDATE_GAME_MODE])
+[15:31:06] [Render thread/WARN]: Ignoring player info update for unknown player d6854ae6-15e0-31d4-b576-b406bf8cf13c ([UPDATE_GAME_MODE])
+[15:31:06] [Render thread/WARN]: Ignoring player info update for unknown player d6854ae6-15e0-31d4-b576-b406bf8cf13c ([UPDATE_GAME_MODE])
+[15:31:06] [Render thread/WARN]: Ignoring player info update for unknown player d6854ae6-15e0-31d4-b576-b406bf8cf13c ([UPDATE_GAME_MODE])
+[15:31:06] [Render thread/WARN]: Ignoring player info update for unknown player d6854ae6-15e0-31d4-b576-b406bf8cf13c ([UPDATE_GAME_MODE])
+[15:31:06] [Render thread/WARN]: Ignoring player info update for unknown player a26c234c-d295-376a-bc7d-7e50dcd6de37 ([UPDATE_GAME_MODE])
+[15:31:06] [Render thread/WARN]: Ignoring player info update for unknown player a26c234c-d295-376a-bc7d-7e50dcd6de37 ([UPDATE_GAME_MODE])
+[15:31:06] [Render thread/WARN]: Ignoring player info update for unknown player a26c234c-d295-376a-bc7d-7e50dcd6de37 ([UPDATE_GAME_MODE])
+[15:31:06] [Render thread/WARN]: Ignoring player info update for unknown player a26c234c-d295-376a-bc7d-7e50dcd6de37 ([UPDATE_GAME_MODE])
+[15:31:06] [Render thread/WARN]: Ignoring player info update for unknown player a26c234c-d295-376a-bc7d-7e50dcd6de37 ([UPDATE_GAME_MODE])
+[15:31:06] [Render thread/WARN]: Ignoring player info update for unknown player a26c234c-d295-376a-bc7d-7e50dcd6de37 ([UPDATE_GAME_MODE])
+[15:31:06] [Render thread/WARN]: Ignoring player info update for unknown player a26c234c-d295-376a-bc7d-7e50dcd6de37 ([UPDATE_GAME_MODE])
+[15:31:06] [Render thread/WARN]: Ignoring player info update for unknown player a26c234c-d295-376a-bc7d-7e50dcd6de37 ([UPDATE_GAME_MODE])
+[15:31:07] [Render thread/WARN]: Ignoring player info update for unknown player 11523256-8441-3546-8144-aaa03a755b1a ([UPDATE_GAME_MODE])
+[15:31:07] [Render thread/WARN]: Ignoring player info update for unknown player 11523256-8441-3546-8144-aaa03a755b1a ([UPDATE_GAME_MODE])
+[15:31:07] [Render thread/WARN]: Ignoring player info update for unknown player a36d7b6d-b4b2-32a9-bc40-04e126712fe6 ([UPDATE_GAME_MODE])
+[15:31:07] [Render thread/WARN]: Ignoring player info update for unknown player a36d7b6d-b4b2-32a9-bc40-04e126712fe6 ([UPDATE_GAME_MODE])
+[15:31:07] [Render thread/WARN]: Ignoring player info update for unknown player 11523256-8441-3546-8144-aaa03a755b1a ([UPDATE_GAME_MODE])
+[15:31:07] [Render thread/WARN]: Ignoring player info update for unknown player 11523256-8441-3546-8144-aaa03a755b1a ([UPDATE_GAME_MODE])
+[15:31:07] [Render thread/WARN]: Ignoring player info update for unknown player 11523256-8441-3546-8144-aaa03a755b1a ([UPDATE_GAME_MODE])
+[15:31:07] [Render thread/WARN]: Ignoring player info update for unknown player 11523256-8441-3546-8144-aaa03a755b1a ([UPDATE_GAME_MODE])
+[15:31:07] [Render thread/WARN]: Ignoring player info update for unknown player 11523256-8441-3546-8144-aaa03a755b1a ([UPDATE_GAME_MODE])
+[15:31:07] [Render thread/WARN]: Ignoring player info update for unknown player 11523256-8441-3546-8144-aaa03a755b1a ([UPDATE_GAME_MODE])
+[15:31:07] [Render thread/WARN]: Ignoring player info update for unknown player a36d7b6d-b4b2-32a9-bc40-04e126712fe6 ([UPDATE_GAME_MODE])
+[15:31:07] [Render thread/WARN]: Ignoring player info update for unknown player a36d7b6d-b4b2-32a9-bc40-04e126712fe6 ([UPDATE_GAME_MODE])
+[15:31:07] [Render thread/WARN]: Ignoring player info update for unknown player a36d7b6d-b4b2-32a9-bc40-04e126712fe6 ([UPDATE_GAME_MODE])
+[15:31:07] [Render thread/WARN]: Ignoring player info update for unknown player a36d7b6d-b4b2-32a9-bc40-04e126712fe6 ([UPDATE_GAME_MODE])
+[15:31:07] [Render thread/WARN]: Ignoring player info update for unknown player a36d7b6d-b4b2-32a9-bc40-04e126712fe6 ([UPDATE_GAME_MODE])
+[15:31:07] [Render thread/WARN]: Ignoring player info update for unknown player a36d7b6d-b4b2-32a9-bc40-04e126712fe6 ([UPDATE_GAME_MODE])
+[15:31:07] [Render thread/WARN]: Ignoring player info update for unknown player ec9bef08-b551-3f65-bc1d-c6c0639991f5 ([UPDATE_GAME_MODE])
+[15:31:07] [Render thread/WARN]: Ignoring player info update for unknown player ec9bef08-b551-3f65-bc1d-c6c0639991f5 ([UPDATE_GAME_MODE])
+[15:31:07] [Render thread/WARN]: Ignoring player info update for unknown player ec9bef08-b551-3f65-bc1d-c6c0639991f5 ([UPDATE_GAME_MODE])
+[15:31:07] [Render thread/WARN]: Ignoring player info update for unknown player ec9bef08-b551-3f65-bc1d-c6c0639991f5 ([UPDATE_GAME_MODE])
+[15:31:07] [Render thread/WARN]: Ignoring player info update for unknown player e17c693b-20c3-3307-8c3f-3778abd2ca38 ([UPDATE_GAME_MODE])
+[15:31:07] [Render thread/WARN]: Ignoring player info update for unknown player e17c693b-20c3-3307-8c3f-3778abd2ca38 ([UPDATE_GAME_MODE])
+[15:31:07] [Render thread/WARN]: Ignoring player info update for unknown player e17c693b-20c3-3307-8c3f-3778abd2ca38 ([UPDATE_GAME_MODE])
+[15:31:07] [Render thread/WARN]: Ignoring player info update for unknown player e17c693b-20c3-3307-8c3f-3778abd2ca38 ([UPDATE_GAME_MODE])
+[15:31:07] [Render thread/WARN]: Ignoring player info update for unknown player e17c693b-20c3-3307-8c3f-3778abd2ca38 ([UPDATE_GAME_MODE])
+[15:31:07] [Render thread/WARN]: Ignoring player info update for unknown player e17c693b-20c3-3307-8c3f-3778abd2ca38 ([UPDATE_GAME_MODE])
+[15:31:07] [Render thread/WARN]: Ignoring player info update for unknown player e17c693b-20c3-3307-8c3f-3778abd2ca38 ([UPDATE_GAME_MODE])
+[15:31:07] [Render thread/WARN]: Ignoring player info update for unknown player e17c693b-20c3-3307-8c3f-3778abd2ca38 ([UPDATE_GAME_MODE])
+[15:31:09] [Render thread/WARN]: Ignoring player info update for unknown player 486d032b-4599-360d-aef1-457565ebcdf5 ([UPDATE_GAME_MODE])
+[15:31:09] [Render thread/WARN]: Ignoring player info update for unknown player 486d032b-4599-360d-aef1-457565ebcdf5 ([UPDATE_GAME_MODE])
+[15:31:09] [Render thread/WARN]: Ignoring player info update for unknown player 486d032b-4599-360d-aef1-457565ebcdf5 ([UPDATE_GAME_MODE])
+[15:31:09] [Render thread/WARN]: Ignoring player info update for unknown player 486d032b-4599-360d-aef1-457565ebcdf5 ([UPDATE_GAME_MODE])
+[15:31:09] [Render thread/WARN]: Ignoring player info update for unknown player 486d032b-4599-360d-aef1-457565ebcdf5 ([UPDATE_GAME_MODE])
+[15:31:09] [Render thread/WARN]: Ignoring player info update for unknown player 486d032b-4599-360d-aef1-457565ebcdf5 ([UPDATE_GAME_MODE])
+[15:31:09] [Render thread/WARN]: Ignoring player info update for unknown player 486d032b-4599-360d-aef1-457565ebcdf5 ([UPDATE_GAME_MODE])
+[15:31:09] [Render thread/WARN]: Ignoring player info update for unknown player 486d032b-4599-360d-aef1-457565ebcdf5 ([UPDATE_GAME_MODE])
+[15:31:09] [Render thread/WARN]: Ignoring player info update for unknown player 7cb75f3e-8f30-372a-a63c-a989dd37e652 ([UPDATE_GAME_MODE])
+[15:31:09] [Render thread/WARN]: Ignoring player info update for unknown player 7cb75f3e-8f30-372a-a63c-a989dd37e652 ([UPDATE_GAME_MODE])
+[15:31:09] [Render thread/WARN]: Ignoring player info update for unknown player 7cb75f3e-8f30-372a-a63c-a989dd37e652 ([UPDATE_GAME_MODE])
+[15:31:09] [Render thread/WARN]: Ignoring player info update for unknown player 7cb75f3e-8f30-372a-a63c-a989dd37e652 ([UPDATE_GAME_MODE])
+[15:31:09] [Render thread/WARN]: Ignoring player info update for unknown player 6aee5d15-92dd-38dd-8ac1-e7c8e407ca35 ([UPDATE_GAME_MODE])
+[15:31:09] [Render thread/WARN]: Ignoring player info update for unknown player 6aee5d15-92dd-38dd-8ac1-e7c8e407ca35 ([UPDATE_GAME_MODE])
+[15:31:09] [Render thread/WARN]: Ignoring player info update for unknown player 6aee5d15-92dd-38dd-8ac1-e7c8e407ca35 ([UPDATE_GAME_MODE])
+[15:31:09] [Render thread/WARN]: Ignoring player info update for unknown player 6aee5d15-92dd-38dd-8ac1-e7c8e407ca35 ([UPDATE_GAME_MODE])
+[15:31:09] [Render thread/WARN]: Ignoring player info update for unknown player 7cb75f3e-8f30-372a-a63c-a989dd37e652 ([UPDATE_GAME_MODE])
+[15:31:09] [Render thread/WARN]: Ignoring player info update for unknown player 7cb75f3e-8f30-372a-a63c-a989dd37e652 ([UPDATE_GAME_MODE])
+[15:31:09] [Render thread/WARN]: Ignoring player info update for unknown player 7cb75f3e-8f30-372a-a63c-a989dd37e652 ([UPDATE_GAME_MODE])
+[15:31:09] [Render thread/WARN]: Ignoring player info update for unknown player 7cb75f3e-8f30-372a-a63c-a989dd37e652 ([UPDATE_GAME_MODE])
+[15:31:09] [Render thread/WARN]: Ignoring player info update for unknown player 6aee5d15-92dd-38dd-8ac1-e7c8e407ca35 ([UPDATE_GAME_MODE])
+[15:31:09] [Render thread/WARN]: Ignoring player info update for unknown player 6aee5d15-92dd-38dd-8ac1-e7c8e407ca35 ([UPDATE_GAME_MODE])
+[15:31:09] [Render thread/WARN]: Ignoring player info update for unknown player 6aee5d15-92dd-38dd-8ac1-e7c8e407ca35 ([UPDATE_GAME_MODE])
+[15:31:09] [Render thread/WARN]: Ignoring player info update for unknown player 6aee5d15-92dd-38dd-8ac1-e7c8e407ca35 ([UPDATE_GAME_MODE])
+[15:31:10] [Render thread/WARN]: Ignoring player info update for unknown player e9973f08-2ff4-3ba6-bbef-c067126f611c ([UPDATE_GAME_MODE])
+[15:31:10] [Render thread/WARN]: Ignoring player info update for unknown player e9973f08-2ff4-3ba6-bbef-c067126f611c ([UPDATE_GAME_MODE])
+[15:31:10] [Render thread/WARN]: Ignoring player info update for unknown player e9973f08-2ff4-3ba6-bbef-c067126f611c ([UPDATE_GAME_MODE])
+[15:31:10] [Render thread/WARN]: Ignoring player info update for unknown player e9973f08-2ff4-3ba6-bbef-c067126f611c ([UPDATE_GAME_MODE])
+[15:31:10] [Render thread/WARN]: Ignoring player info update for unknown player e9973f08-2ff4-3ba6-bbef-c067126f611c ([UPDATE_GAME_MODE])
+[15:31:10] [Render thread/WARN]: Ignoring player info update for unknown player e9973f08-2ff4-3ba6-bbef-c067126f611c ([UPDATE_GAME_MODE])
+[15:31:10] [Render thread/WARN]: Ignoring player info update for unknown player e9973f08-2ff4-3ba6-bbef-c067126f611c ([UPDATE_GAME_MODE])
+[15:31:10] [Render thread/WARN]: Ignoring player info update for unknown player e9973f08-2ff4-3ba6-bbef-c067126f611c ([UPDATE_GAME_MODE])
+[15:31:11] [Render thread/WARN]: Ignoring player info update for unknown player 06a1808d-ea72-359e-ad6a-34679aa5610b ([UPDATE_GAME_MODE])
+[15:31:11] [Render thread/WARN]: Ignoring player info update for unknown player 06a1808d-ea72-359e-ad6a-34679aa5610b ([UPDATE_GAME_MODE])
+[15:31:11] [Render thread/WARN]: Ignoring player info update for unknown player 06a1808d-ea72-359e-ad6a-34679aa5610b ([UPDATE_GAME_MODE])
+[15:31:11] [Render thread/WARN]: Ignoring player info update for unknown player 06a1808d-ea72-359e-ad6a-34679aa5610b ([UPDATE_GAME_MODE])
+[15:31:11] [Render thread/WARN]: Ignoring player info update for unknown player 06a1808d-ea72-359e-ad6a-34679aa5610b ([UPDATE_GAME_MODE])
+[15:31:11] [Render thread/WARN]: Ignoring player info update for unknown player 06a1808d-ea72-359e-ad6a-34679aa5610b ([UPDATE_GAME_MODE])
+[15:31:11] [Render thread/WARN]: Ignoring player info update for unknown player 06a1808d-ea72-359e-ad6a-34679aa5610b ([UPDATE_GAME_MODE])
+[15:31:11] [Render thread/WARN]: Ignoring player info update for unknown player 06a1808d-ea72-359e-ad6a-34679aa5610b ([UPDATE_GAME_MODE])
+[15:31:11] [Render thread/WARN]: Ignoring player info update for unknown player 29cbf161-d7cc-3bb5-985f-4c0b15dcba70 ([UPDATE_GAME_MODE])
+[15:31:11] [Render thread/WARN]: Ignoring player info update for unknown player 29cbf161-d7cc-3bb5-985f-4c0b15dcba70 ([UPDATE_GAME_MODE])
+[15:31:11] [Render thread/WARN]: Ignoring player info update for unknown player 29cbf161-d7cc-3bb5-985f-4c0b15dcba70 ([UPDATE_GAME_MODE])
+[15:31:11] [Render thread/WARN]: Ignoring player info update for unknown player 29cbf161-d7cc-3bb5-985f-4c0b15dcba70 ([UPDATE_GAME_MODE])
+[15:31:11] [Render thread/WARN]: Ignoring player info update for unknown player 29cbf161-d7cc-3bb5-985f-4c0b15dcba70 ([UPDATE_GAME_MODE])
+[15:31:11] [Render thread/WARN]: Ignoring player info update for unknown player 29cbf161-d7cc-3bb5-985f-4c0b15dcba70 ([UPDATE_GAME_MODE])
+[15:31:11] [Render thread/WARN]: Ignoring player info update for unknown player 29cbf161-d7cc-3bb5-985f-4c0b15dcba70 ([UPDATE_GAME_MODE])
+[15:31:11] [Render thread/WARN]: Ignoring player info update for unknown player 29cbf161-d7cc-3bb5-985f-4c0b15dcba70 ([UPDATE_GAME_MODE])
+[15:31:11] [Render thread/WARN]: Ignoring player info update for unknown player eda2cae2-3f5f-3667-bfb2-04106baa9c5e ([UPDATE_GAME_MODE])
+[15:31:11] [Render thread/WARN]: Ignoring player info update for unknown player eda2cae2-3f5f-3667-bfb2-04106baa9c5e ([UPDATE_GAME_MODE])
+[15:31:11] [Render thread/WARN]: Ignoring player info update for unknown player eda2cae2-3f5f-3667-bfb2-04106baa9c5e ([UPDATE_GAME_MODE])
+[15:31:11] [Render thread/WARN]: Ignoring player info update for unknown player eda2cae2-3f5f-3667-bfb2-04106baa9c5e ([UPDATE_GAME_MODE])
+[15:31:11] [Render thread/WARN]: Ignoring player info update for unknown player eda2cae2-3f5f-3667-bfb2-04106baa9c5e ([UPDATE_GAME_MODE])
+[15:31:11] [Render thread/WARN]: Ignoring player info update for unknown player eda2cae2-3f5f-3667-bfb2-04106baa9c5e ([UPDATE_GAME_MODE])
+[15:31:11] [Render thread/WARN]: Ignoring player info update for unknown player eda2cae2-3f5f-3667-bfb2-04106baa9c5e ([UPDATE_GAME_MODE])
+[15:31:11] [Render thread/WARN]: Ignoring player info update for unknown player eda2cae2-3f5f-3667-bfb2-04106baa9c5e ([UPDATE_GAME_MODE])
+[15:31:13] [Render thread/WARN]: Ignoring player info update for unknown player f7bfcaab-1653-3a9c-8e27-c5f5ab5b08d5 ([UPDATE_GAME_MODE])
+[15:31:13] [Render thread/WARN]: Ignoring player info update for unknown player f7bfcaab-1653-3a9c-8e27-c5f5ab5b08d5 ([UPDATE_GAME_MODE])
+[15:31:13] [Render thread/WARN]: Ignoring player info update for unknown player f7bfcaab-1653-3a9c-8e27-c5f5ab5b08d5 ([UPDATE_GAME_MODE])
+[15:31:13] [Render thread/WARN]: Ignoring player info update for unknown player f7bfcaab-1653-3a9c-8e27-c5f5ab5b08d5 ([UPDATE_GAME_MODE])
+[15:31:13] [Render thread/WARN]: Ignoring player info update for unknown player f7bfcaab-1653-3a9c-8e27-c5f5ab5b08d5 ([UPDATE_GAME_MODE])
+[15:31:13] [Render thread/WARN]: Ignoring player info update for unknown player f7bfcaab-1653-3a9c-8e27-c5f5ab5b08d5 ([UPDATE_GAME_MODE])
+[15:31:13] [Render thread/WARN]: Ignoring player info update for unknown player f7bfcaab-1653-3a9c-8e27-c5f5ab5b08d5 ([UPDATE_GAME_MODE])
+[15:31:13] [Render thread/WARN]: Ignoring player info update for unknown player f7bfcaab-1653-3a9c-8e27-c5f5ab5b08d5 ([UPDATE_GAME_MODE])
+[15:31:13] [Render thread/INFO]: [System] [CHAT] 
+[15:31:13] [Render thread/INFO]: [System] [CHAT]  ⚡ Наш Сайт shop.Spookytime.net
+[15:31:13] [Render thread/INFO]: [System] [CHAT] 
+[15:31:14] [Render thread/WARN]: Ignoring player info update for unknown player 47cb8357-d50d-3d47-92f5-431855f17c18 ([UPDATE_GAME_MODE])
+[15:31:14] [Render thread/WARN]: Ignoring player info update for unknown player 47cb8357-d50d-3d47-92f5-431855f17c18 ([UPDATE_GAME_MODE])
+[15:31:14] [Render thread/WARN]: Ignoring player info update for unknown player 47cb8357-d50d-3d47-92f5-431855f17c18 ([UPDATE_GAME_MODE])
+[15:31:14] [Render thread/WARN]: Ignoring player info update for unknown player 47cb8357-d50d-3d47-92f5-431855f17c18 ([UPDATE_GAME_MODE])
+[15:31:14] [Render thread/WARN]: Ignoring player info update for unknown player 47cb8357-d50d-3d47-92f5-431855f17c18 ([UPDATE_GAME_MODE])
+[15:31:14] [Render thread/WARN]: Ignoring player info update for unknown player 47cb8357-d50d-3d47-92f5-431855f17c18 ([UPDATE_GAME_MODE])
+[15:31:14] [Render thread/WARN]: Ignoring player info update for unknown player 47cb8357-d50d-3d47-92f5-431855f17c18 ([UPDATE_GAME_MODE])
+[15:31:14] [Render thread/WARN]: Ignoring player info update for unknown player 47cb8357-d50d-3d47-92f5-431855f17c18 ([UPDATE_GAME_MODE])
+[15:31:15] [Render thread/WARN]: Ignoring player info update for unknown player f2eae27d-dc11-309b-9add-ff7c61755c42 ([UPDATE_GAME_MODE])
+[15:31:15] [Render thread/WARN]: Ignoring player info update for unknown player f2eae27d-dc11-309b-9add-ff7c61755c42 ([UPDATE_GAME_MODE])
+[15:31:15] [Render thread/WARN]: Ignoring player info update for unknown player 96530794-1f6b-32e0-88f3-0e6190bee314 ([UPDATE_GAME_MODE])
+[15:31:15] [Render thread/WARN]: Ignoring player info update for unknown player 96530794-1f6b-32e0-88f3-0e6190bee314 ([UPDATE_GAME_MODE])
+[15:31:15] [Render thread/WARN]: Ignoring player info update for unknown player cbb900ae-26e3-31e6-873d-0b12b04d90ec ([UPDATE_GAME_MODE])
+[15:31:15] [Render thread/WARN]: Ignoring player info update for unknown player cbb900ae-26e3-31e6-873d-0b12b04d90ec ([UPDATE_GAME_MODE])
+[15:31:15] [Render thread/WARN]: Ignoring player info update for unknown player cbb900ae-26e3-31e6-873d-0b12b04d90ec ([UPDATE_GAME_MODE])
+[15:31:15] [Render thread/WARN]: Ignoring player info update for unknown player cbb900ae-26e3-31e6-873d-0b12b04d90ec ([UPDATE_GAME_MODE])
+[15:31:15] [Render thread/WARN]: Ignoring player info update for unknown player cbb900ae-26e3-31e6-873d-0b12b04d90ec ([UPDATE_GAME_MODE])
+[15:31:15] [Render thread/WARN]: Ignoring player info update for unknown player cbb900ae-26e3-31e6-873d-0b12b04d90ec ([UPDATE_GAME_MODE])
+[15:31:15] [Render thread/WARN]: Ignoring player info update for unknown player cbb900ae-26e3-31e6-873d-0b12b04d90ec ([UPDATE_GAME_MODE])
+[15:31:15] [Render thread/WARN]: Ignoring player info update for unknown player cbb900ae-26e3-31e6-873d-0b12b04d90ec ([UPDATE_GAME_MODE])
+[15:31:17] [Render thread/WARN]: Ignoring player info update for unknown player 29cbf161-d7cc-3bb5-985f-4c0b15dcba70 ([UPDATE_GAME_MODE])
+[15:31:17] [Render thread/WARN]: Ignoring player info update for unknown player 29cbf161-d7cc-3bb5-985f-4c0b15dcba70 ([UPDATE_GAME_MODE])
+[15:31:17] [Render thread/WARN]: Ignoring player info update for unknown player 29cbf161-d7cc-3bb5-985f-4c0b15dcba70 ([UPDATE_GAME_MODE])
+[15:31:17] [Render thread/WARN]: Ignoring player info update for unknown player 29cbf161-d7cc-3bb5-985f-4c0b15dcba70 ([UPDATE_GAME_MODE])
+[15:31:17] [Render thread/WARN]: Ignoring player info update for unknown player 29cbf161-d7cc-3bb5-985f-4c0b15dcba70 ([UPDATE_GAME_MODE])
+[15:31:17] [Render thread/WARN]: Ignoring player info update for unknown player 29cbf161-d7cc-3bb5-985f-4c0b15dcba70 ([UPDATE_GAME_MODE])
+[15:31:17] [Render thread/WARN]: Ignoring player info update for unknown player 29cbf161-d7cc-3bb5-985f-4c0b15dcba70 ([UPDATE_GAME_MODE])
+[15:31:17] [Render thread/WARN]: Ignoring player info update for unknown player 29cbf161-d7cc-3bb5-985f-4c0b15dcba70 ([UPDATE_GAME_MODE])
+[15:31:17] [Render thread/WARN]: Ignoring player info update for unknown player f7bfcaab-1653-3a9c-8e27-c5f5ab5b08d5 ([UPDATE_GAME_MODE])
+[15:31:17] [Render thread/WARN]: Ignoring player info update for unknown player f7bfcaab-1653-3a9c-8e27-c5f5ab5b08d5 ([UPDATE_GAME_MODE])
+[15:31:17] [Render thread/WARN]: Ignoring player info update for unknown player f7bfcaab-1653-3a9c-8e27-c5f5ab5b08d5 ([UPDATE_GAME_MODE])
+[15:31:17] [Render thread/WARN]: Ignoring player info update for unknown player f7bfcaab-1653-3a9c-8e27-c5f5ab5b08d5 ([UPDATE_GAME_MODE])
+[15:31:17] [Render thread/WARN]: Ignoring player info update for unknown player f7bfcaab-1653-3a9c-8e27-c5f5ab5b08d5 ([UPDATE_GAME_MODE])
+[15:31:17] [Render thread/WARN]: Ignoring player info update for unknown player f7bfcaab-1653-3a9c-8e27-c5f5ab5b08d5 ([UPDATE_GAME_MODE])
+[15:31:17] [Render thread/WARN]: Ignoring player info update for unknown player f7bfcaab-1653-3a9c-8e27-c5f5ab5b08d5 ([UPDATE_GAME_MODE])
+[15:31:17] [Render thread/WARN]: Ignoring player info update for unknown player f7bfcaab-1653-3a9c-8e27-c5f5ab5b08d5 ([UPDATE_GAME_MODE])
+[15:31:17] [Render thread/WARN]: Ignoring player info update for unknown player ed2aba90-8316-3da6-9667-f1a9b2cf7f51 ([UPDATE_GAME_MODE])
+[15:31:17] [Render thread/WARN]: Ignoring player info update for unknown player ed2aba90-8316-3da6-9667-f1a9b2cf7f51 ([UPDATE_GAME_MODE])
+[15:31:17] [Render thread/WARN]: Ignoring player info update for unknown player ed2aba90-8316-3da6-9667-f1a9b2cf7f51 ([UPDATE_GAME_MODE])
+[15:31:17] [Render thread/WARN]: Ignoring player info update for unknown player ed2aba90-8316-3da6-9667-f1a9b2cf7f51 ([UPDATE_GAME_MODE])
+[15:31:17] [Render thread/WARN]: Ignoring player info update for unknown player ed2aba90-8316-3da6-9667-f1a9b2cf7f51 ([UPDATE_GAME_MODE])
+[15:31:17] [Render thread/WARN]: Ignoring player info update for unknown player ed2aba90-8316-3da6-9667-f1a9b2cf7f51 ([UPDATE_GAME_MODE])
+[15:31:17] [Render thread/WARN]: Ignoring player info update for unknown player ed2aba90-8316-3da6-9667-f1a9b2cf7f51 ([UPDATE_GAME_MODE])
+[15:31:17] [Render thread/WARN]: Ignoring player info update for unknown player ed2aba90-8316-3da6-9667-f1a9b2cf7f51 ([UPDATE_GAME_MODE])
+[15:31:18] [Render thread/INFO]: Stopping!
+[15:31:18] [Render thread/INFO]: [voicechat] Clearing audio channels

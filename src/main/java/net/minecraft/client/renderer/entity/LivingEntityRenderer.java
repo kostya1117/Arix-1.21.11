@@ -40,7 +40,6 @@ import net.minecraft.world.scores.Team;
 import net.optifine.Config;
 import net.optifine.reflect.Reflector;
 import ru.arixcompany.Arix;
-import ru.arixcompany.features.module.modules.render.Esp;
 import ru.arixcompany.features.module.modules.render.SeeInvisibles;
 import ru.arixcompany.features.module.modules.render.customModels.CustomPlayerModelRenderer;
 import ru.arixcompany.features.module.modules.render.customModels.ICustomPlayerModelState;
@@ -109,7 +108,9 @@ public abstract class LivingEntityRenderer<T extends LivingEntity, S extends Liv
                 SeeInvisibles seeInvisibles = Arix.getInstance().getModuleRepo().getModule(SeeInvisibles.class);
                 if (seeInvisibles != null && seeInvisibles.isState() && !p_427824_.isArmorStand) {
                     seeInvisiblesActive = true;
-                    alphaValue = seeInvisibles.getAlpha();
+                    if (seeInvisibles instanceof SeeInvisibles) {
+                        alphaValue = ((SeeInvisibles) seeInvisibles).getAlpha();
+                    }
                 }
             } catch (Exception ignored) {}
 
@@ -121,21 +122,7 @@ public abstract class LivingEntityRenderer<T extends LivingEntity, S extends Liv
                 flag1 = true;
             }
 
-            boolean espGlow = false;
-            int espColor = p_427824_.outlineColor;
-
-            try {
-                Esp esp = Arix.getInstance().getModuleRepo().getModule(Esp.class);
-                if (esp != null && esp.isState() && esp.glowEsp.isValue() && esp.shouldApplyTo(p_427824_)) {
-                    espGlow = true;
-                    java.awt.Color theme = Arix.getInstance().getCurrentTheme().getMain();
-                    espColor = ARGB.color(255, theme.getRed(), theme.getGreen(), theme.getBlue());
-                }
-            } catch (Exception ignored) {}
-
-            boolean glowing = p_427824_.appearsGlowing() || espGlow;
-
-            RenderType rendertype = this.getRenderType(p_427824_, flag1, flag, glowing);
+            RenderType rendertype = this.getRenderType(p_427824_, flag1, flag, p_427824_.appearsGlowing());
             if (rendertype != null) {
                 p_427824_.overlayProgress = this.getWhiteOverlayProgress(p_427824_);
                 int i = getOverlayCoords(p_427824_, p_427824_.overlayProgress);
@@ -148,7 +135,7 @@ public abstract class LivingEntityRenderer<T extends LivingEntity, S extends Liv
 
                 int k = ARGB.multiply(j, this.getModelTint(p_427824_));
                 if (!this.trySubmitCustomPlayerModel(p_427824_, p_423787_, p_424901_, rendertype, p_427824_.lightCoords, i, k)) {
-                    p_424901_.submitModel(this.model, p_427824_, p_423787_, rendertype, p_427824_.lightCoords, i, k, null, espColor, null);
+                    p_424901_.submitModel(this.model, p_427824_, p_423787_, rendertype, p_427824_.lightCoords, i, k, null, p_427824_.outlineColor, null);
                 }
             }
 

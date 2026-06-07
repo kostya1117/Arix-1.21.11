@@ -67,8 +67,6 @@ public class Esp extends Module {
             .setValue(true)
             .visible(() -> mode.isSelected("Предметы"));
 
-    public final BooleanSetting glowEsp = new BooleanSetting("Глов");
-
     private final Map<Player, double[]> entityPositions = new HashMap<>();
     private final List<ItemGroup> itemGroups = new ArrayList<>();
 
@@ -76,7 +74,7 @@ public class Esp extends Module {
 
     public Esp() {
         super("Esp", Category.Render);
-        setup(mode, boxes, boxDimension, boxStyle3D, boxStyle2D, stackItems, shulkerContents,glowEsp);
+        setup(mode, boxes, boxDimension, boxStyle3D, boxStyle2D, stackItems, shulkerContents);
     }
 
     @EventHandler
