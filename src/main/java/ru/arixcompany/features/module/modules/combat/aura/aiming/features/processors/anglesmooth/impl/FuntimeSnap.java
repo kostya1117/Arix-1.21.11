@@ -100,8 +100,8 @@ public class FuntimeSnap extends FactorAngleSmooth implements IMinecraft {
             basePitchSpeed = MathUtils.randomValue(idlePitchSpeedMin, idlePitchSpeedMax);
         }
 
-        float hCurve = calculateFactorWithCurve(yawDiff, baseYawSpeed);
-        float vCurve = calculateFactorWithCurve(pitchDiff, basePitchSpeed);
+        float hCurve = calculateFactorWithCurve(yawDiff);
+        float vCurve = calculateFactorWithCurve2(pitchDiff);
 
         float maxYawStep = hCurve * baseYawSpeed;
         float maxPitchStep = vCurve * basePitchSpeed;
@@ -109,13 +109,24 @@ public class FuntimeSnap extends FactorAngleSmooth implements IMinecraft {
         return new float[]{ maxYawStep, maxPitchStep };
     }
 
-    private float calculateFactorWithCurve(float rotationDifference, float speed) {
+    private float calculateFactorWithCurve(float rotationDifference) {
         float t = Math.min(rotationDifference / 180, 1.0f);
+        float exponent = 1;
+        float adjustedT = (float) Math.pow(t, exponent);
 
-        float speedInfluence = Mth.clamp(speed, -1, 1);
+        float curve = (float) Interpolation.interpolate(
+                0.0, 1.0, adjustedT,
+                Interpolation.Type.CUBIC,
+                Interpolation.Ease.OUT
+        );
 
-        float adjustedT = (float) Math.pow(t, 1.0 / speedInfluence);
-        adjustedT = Math.min(adjustedT, 1.0f);
+        return Math.min(curve, 1.0f);
+    }
+
+    private float calculateFactorWithCurve2(float rotationDifference) {
+        float t = Math.min(rotationDifference / 90, 1.0f);
+        float exponent = 1;
+        float adjustedT = (float) Math.pow(t, exponent);
 
         float curve = (float) Interpolation.interpolate(
                 0.0, 1.0, adjustedT,

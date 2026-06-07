@@ -13,6 +13,7 @@ import net.minecraft.network.chat.Style;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.ARGB;
 import net.minecraft.ChatFormatting;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
 import org.lwjgl.stb.*;
 import org.lwjgl.system.MemoryStack;
@@ -27,7 +28,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class CustomFont implements AutoCloseable {
 
-    private static final int ATLAS_SIZE = 2048;
+    private static final int ATLAS_SIZE = 1024;
     private static final int OVERSAMPLE = 4;
     private static final float INV_OS = 1f / OVERSAMPLE;
     private static final int PAD = 4;
@@ -40,6 +41,9 @@ public class CustomFont implements AutoCloseable {
 
     private static final Map<String, FallbackData> fallbackPool = new ConcurrentHashMap<>();
     private final Map<Integer, String> cpFontMap = new ConcurrentHashMap<>();
+
+    private final RandomSource random = RandomSource.create();
+    private final Map<Integer, char[]> obfByAdvance = new HashMap<>();
 
     private static class FallbackData {
         final STBTTFontinfo info;
@@ -59,6 +63,8 @@ public class CustomFont implements AutoCloseable {
     private Identifier atlasId;
     private boolean atlasDirty = false;
     private int packX = 0, packY = 0, packRowH = 0;
+
+    private int dirtyX0 = ATLAS_SIZE, dirtyY0 = ATLAS_SIZE, dirtyX1 = 0, dirtyY1 = 0;
 
     public CustomFont(String path, float sz) throws IOException {
         fontSize = sz;
@@ -96,6 +102,32 @@ public class CustomFont implements AutoCloseable {
         atlasTexture.setSampler(RenderSystem.getSamplerCache().getClampToEdge(FilterMode.LINEAR));
         atlasId = Identifier.withDefaultNamespace("dynamic/" + texId);
         Minecraft.getInstance().getTextureManager().register(atlasId, atlasTexture);
+
+        for (int cp = 0x0020; cp <= 0xFFFF; cp++) {
+            if (widthCache.containsKey(cp)) {
+                getOrBakeGlyph(cp);
+            }
+        }
+        buildObfMap();
+        flushAtlas();
+    }
+
+    /** Как в ваниле: ceil(advance) → char[] — только из уже запечённых ASCII */
+    private void buildObfMap() {
+        Map<Integer, List<Character>> tmp = new HashMap<>();
+        for (int cp = 0x0020; cp <= 0xFFFF; cp++) {
+            float[] ge = glyphCache.get(cp);
+            if (ge != null && ge[2] > 0 && ge[6] > 0) {
+                int advanceKey = (int) Math.ceil(ge[6]);
+                tmp.computeIfAbsent(advanceKey, k -> new ArrayList<>()).add((char) cp);
+            }
+        }
+        for (Map.Entry<Integer, List<Character>> e : tmp.entrySet()) {
+            List<Character> list = e.getValue();
+            char[] arr = new char[list.size()];
+            for (int i = 0; i < list.size(); i++) arr[i] = list.get(i);
+            obfByAdvance.put(e.getKey(), arr);
+        }
     }
 
     private String findFontForCodepoint(int cp) {
@@ -279,7 +311,12 @@ public class CustomFont implements AutoCloseable {
                 for (int gx = 0; gx < aw; gx++)
                     atlasBitmap.put((py + gy) * ATLAS_SIZE + (px + gx), gb.get(gy * aw + gx));
             STBTruetype.stbtt_FreeBitmap(gb);
+
             atlasDirty = true;
+            dirtyX0 = Math.min(dirtyX0, px);
+            dirtyY0 = Math.min(dirtyY0, py);
+            dirtyX1 = Math.max(dirtyX1, px + aw);
+            dirtyY1 = Math.max(dirtyY1, py + ah);
 
             return new float[]{px, py, aw, ah, offX, offY, advance};
         }
@@ -288,9 +325,16 @@ public class CustomFont implements AutoCloseable {
     private void flushAtlas() {
         if (!atlasDirty) return;
         atlasDirty = false;
-        for (int y = 0; y < ATLAS_SIZE; y++) {
+
+        int x0 = Math.max(0, dirtyX0 - 1);
+        int y0 = Math.max(0, dirtyY0 - 1);
+        int x1 = Math.min(ATLAS_SIZE, dirtyX1 + 1);
+        int y1 = Math.min(ATLAS_SIZE, dirtyY1 + 1);
+        dirtyX0 = ATLAS_SIZE; dirtyY0 = ATLAS_SIZE; dirtyX1 = 0; dirtyY1 = 0;
+
+        for (int y = y0; y < y1; y++) {
             int row = y * ATLAS_SIZE;
-            for (int x = 0; x < ATLAS_SIZE; x++) {
+            for (int x = x0; x < x1; x++) {
                 int c = atlasBitmap.get(row + x) & 255;
                 int l = x > 0 ? atlasBitmap.get(row + x - 1) & 255 : c;
                 int r = x + 1 < ATLAS_SIZE ? atlasBitmap.get(row + x + 1) & 255 : c;
@@ -336,36 +380,17 @@ public class CustomFont implements AutoCloseable {
     public void drawRightComponent(GuiGraphics g, Component comp, float x, float y, int col) { drawComponent(g, comp, x - getComponentWidth(comp), y, col); }
     public void drawRightComponent(GuiGraphics g, Component comp, float x, float y, int col, boolean sh) { drawComponent(g, comp, x - getComponentWidth(comp), y, col, sh); }
 
-    // ═══════════════════════════════════════════════
-    //  ItemStack — рендер названия с цветом редкости
-    // ═══════════════════════════════════════════════
 
-    /**
-     * Получает цвет редкости предмета (COMMON=белый, UNCOMMON=жёлтый, RARE=голубой, EPIC=розовый).
-     */
     public static int getRarityColor(ItemStack stack) {
         if (stack == null || stack.isEmpty()) return 0xFFFFFFFF;
-
-        // Сначала проверяем стиль компонента — кастомные имена могут иметь свой цвет
-        Style style = stack.getHoverName().getStyle();
-        if (style.getColor() != null) {
-            // style.getColor().getValue() возвращает RGB без альфы — добавляем альфу
-            return 0xFF000000 | (style.getColor().getValue() & 0x00FFFFFF);
-        }
-
-        // Стандартный цвет по редкости
         ChatFormatting rarityFormatting = stack.getRarity().color();
         Integer rarityRgb = rarityFormatting.getColor();
         if (rarityRgb != null) {
             return 0xFF000000 | (rarityRgb & 0x00FFFFFF);
         }
-
-        return 0xFFFFFFFF; // белый по умолчанию
+        return 0xFFFFFFFF;
     }
 
-    /**
-     * Рисует название предмета с цветом его редкости.
-     */
     public void drawItemName(GuiGraphics g, ItemStack stack, float x, float y) {
         drawItemName(g, stack, x, y, false);
     }
@@ -399,23 +424,16 @@ public class CustomFont implements AutoCloseable {
         drawRightComponent(g, name, x, y, col, shadow);
     }
 
-    /**
-     * Рисует название предмета как простую строку (без форматирования Component) с цветом редкости.
-     */
-    public void drawItemNameString(GuiGraphics g, ItemStack stack, float x, float y) {
-        drawItemNameString(g, stack, x, y, false);
+    public void drawItemNameString(GuiGraphics g,Component name, ItemStack stack, float x, float y) {
+        drawItemNameString(g,name, stack, x, y, false);
     }
 
-    public void drawItemNameString(GuiGraphics g, ItemStack stack, float x, float y, boolean shadow) {
+    public void drawItemNameString(GuiGraphics g,Component name,ItemStack stack, float x, float y, boolean shadow) {
         if (stack == null || stack.isEmpty()) return;
-        String name = stack.getHoverName().getString();
         int col = getRarityColor(stack);
-        drawString(g, name, x, y, col, shadow);
+        drawComponent(g, name, x, y, col, shadow);
     }
 
-    /**
-     * Получает ширину названия предмета.
-     */
     public float getItemNameWidth(ItemStack stack) {
         if (stack == null || stack.isEmpty()) return 0f;
         return getComponentWidth(stack.getHoverName());
@@ -441,11 +459,11 @@ public class CustomFont implements AutoCloseable {
             }
             if (ch == '\n') { if (und) drawEffect(g, bx, cx, by + 1, col); if (strk) drawEffect(g, bx, cx, by - asc * 0.35f, col); cx = bx; by += lineH; prev = -1; continue; }
 
-            int cp = obf && ch != ' ' ? randomChar(ch) : ch;
+            int cp = obf && ch != ' ' ? getRandomGlyph(ch) : ch;
             if (prev != -1 && !isFallback(cp) && !isFallback(prev)) cx += STBTruetype.stbtt_GetCodepointKernAdvance(fontInfo, prev, cp) * scale;
             prev = cp;
 
-            float[] ge = getOrBakeGlyph(cp); if (atlasDirty) flushAtlas();
+            float[] ge = getOrBakeGlyph(cp);
             float boldOff = bold ? getBoldOffset() : 0f;
             if (ge[2] > 0 && ge[3] > 0) { float gx = snap(cx + ge[4]), gy = snap(by + ge[5]); drawGlyph(g, gx, gy, ge, ital, col); if (bold) drawGlyph(g, gx + boldOff, gy, ge, ital, col); }
             cx += ge[6] + (bold ? boldOff : 0f);
@@ -477,11 +495,11 @@ public class CustomFont implements AutoCloseable {
             }
             if (ch == '\n') { if (und) drawEffect(g, lx, cx, by + 1, col); if (strk) drawEffect(g, lx, cx, by - asc * 0.35f, col); lx = cx; by += lineH; prev = -1; continue; }
 
-            int cp = obf && ch != ' ' ? randomChar(ch) : ch;
+            int cp = obf && ch != ' ' ? getRandomGlyph(ch) : ch;
             if (prev != -1 && !isFallback(cp) && !isFallback(prev)) cx += STBTruetype.stbtt_GetCodepointKernAdvance(fontInfo, prev, cp) * scale;
             prev = cp;
 
-            float[] ge = getOrBakeGlyph(cp); if (atlasDirty) flushAtlas();
+            float[] ge = getOrBakeGlyph(cp);
             float boldOff = bold ? getBoldOffset() : 0f;
             if (ge[2] > 0 && ge[3] > 0) { float gx = snap(cx + ge[4]), gy = snap(by + ge[5]); drawGlyph(g, gx, gy, ge, ital, col); if (bold) drawGlyph(g, gx + boldOff, gy, ge, ital, col); }
             cx += ge[6] + (bold ? boldOff : 0f);
@@ -594,9 +612,20 @@ public class CustomFont implements AutoCloseable {
         return sb.toString();
     }
 
-    private char randomChar(char orig) {
-        float tw = getCharWidth(orig); List<Integer> keys = new ArrayList<>(widthCache.keySet());
-        for (int a = 0; a < 5; a++) { int cp = keys.get((int)(Math.random() * keys.size())); if (Math.abs(getCharWidth((char) cp) - tw) < tw * 0.3f) return (char) cp; }
+    // ── Как в ваниле: getGlyph → ceil(advance) → getRandomGlyph(random, advance) ──
+    private char getRandomGlyph(char orig) {
+        float[] ge = glyphCache.get((int) orig);
+        if (ge == null) {
+            Float w = widthCache.get((int) orig);
+            if (w == null) return orig;
+            int adv = (int) Math.ceil(w);
+            char[] pool = obfByAdvance.get(adv);
+            if (pool != null && pool.length > 0) return pool[random.nextInt(pool.length)];
+            return orig;
+        }
+        int adv = (int) Math.ceil(ge[6]);
+        char[] pool = obfByAdvance.get(adv);
+        if (pool != null && pool.length > 0) return pool[random.nextInt(pool.length)];
         return orig;
     }
 

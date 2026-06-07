@@ -1,0 +1,38 @@
+{
+  "stats": {
+    "minecraft:custom": {
+      "minecraft:damage_resisted": 71,
+      "minecraft:time_since_rest": 2256,
+      "minecraft:walk_one_cm": 3912,
+      "minecraft:leave_game": 1,
+      "minecraft:mob_kills": 10,
+      "minecraft:walk_under_water_one_cm": 176,
+      "minecraft:damage_taken": 18,
+      "minecraft:damage_dealt": 1305,
+      "minecraft:play_time": 2256,
+      "minecraft:damage_absorbed": 268,
+      "minecraft:jump": 46,
+      "minecraft:time_since_death": 2256,
+      "minecraft:aviate_one_cm": 42890,
+      "minecraft:sprint_one_cm": 4113,
+      "minecraft:fall_one_cm": 1344,
+      "minecraft:swim_one_cm": 1412,
+      "minecraft:total_world_time": 2303,
+      "minecraft:fly_one_cm": 13325,
+      "minecraft:walk_on_water_one_cm": 394
+    },
+    "minecraft:used": {
+      "minecraft:netherite_sword": 27,
+      "minecraft:enchanted_golden_apple": 2,
+      "minecraft:firework_rocket": 57
+    },
+    "minecraft:picked_up": {
+      "minecraft:porkchop": 7
+    },
+    "minecraft:killed": {
+      "minecraft:skeleton": 1,
+      "minecraft:pig": 9
+    }
+  },
+  "DataVersion": 4671
+}

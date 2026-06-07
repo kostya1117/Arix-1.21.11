@@ -207,7 +207,7 @@ public class HitAura extends Module {
     }
 
     @EventHandler
-    public void onEvent(EventGameTick e) {
+    public void onEvent(EventGameTicked e) {
         if (target != null && mc.player != null && mc.level != null) {
             rotations.processTarget(target);
         }

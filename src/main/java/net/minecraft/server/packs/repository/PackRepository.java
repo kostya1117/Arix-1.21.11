@@ -24,6 +24,7 @@ public class PackRepository implements IPackRepository {
     public PackRepository(RepositorySource... p_251886_) {
         this.sources = ImmutableSet.copyOf(p_251886_);
     }
+
     @Override
     public void voicechat$addSource(RepositorySource source) {
         Set<RepositorySource> set = new HashSet<>(sources);

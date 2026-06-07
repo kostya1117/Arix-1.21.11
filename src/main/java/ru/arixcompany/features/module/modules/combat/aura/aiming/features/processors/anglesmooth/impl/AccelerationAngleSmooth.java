@@ -163,7 +163,7 @@ public class AccelerationAngleSmooth extends AngleSmooth implements IMinecraft {
         RotationDelta diff = currentRotation.rotationDeltaTo(targetRotation);
 
         // Расчет дистанции и проверки наведения (как в оригинале)
-        double distance = mc.player.distanceTo(HitAura.target);
+        double distance = mc.player != null ? mc.player.distanceTo(HitAura.target) : 1;
         boolean crosshair = AttackHandler.anyEntityOnRay(currentRotation,HitAura.target, (float) distance);
 
         float decelerationFactor = sigmoidEnabled ? computeSigmoidDeceleration(diff.length()) : 1.0f;

@@ -40,9 +40,9 @@ public class FireworkRocketItem extends Item implements ProjectileItem {
                 new FireworkRocketEntity(
                     level,
                     p_41216_.getPlayer(),
-                    vec3.x + direction.getStepX() * 0.15,
-                    vec3.y + direction.getStepY() * 0.15,
-                    vec3.z + direction.getStepZ() * 0.15,
+                    vec3.x + direction.getStepX() * ROCKET_PLACEMENT_OFFSET,
+                    vec3.y + direction.getStepY() * ROCKET_PLACEMENT_OFFSET,
+                    vec3.z + direction.getStepZ() * ROCKET_PLACEMENT_OFFSET,
                     itemstack
                 ),
                 serverlevel,

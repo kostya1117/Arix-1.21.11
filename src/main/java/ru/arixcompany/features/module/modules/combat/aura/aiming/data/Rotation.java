@@ -161,6 +161,14 @@ public record Rotation(float yaw, float pitch, boolean isNormalized) implements 
                 this.pitch + clamp(diff.deltaPitch(), -straightLinePitch, straightLinePitch)
         );
     }
+    public Rotation towardsLinearElytra(Rotation other, float horizontalFactor, float verticalFactor) {
+        RotationDelta diff = rotationDeltaTo(other);
+
+        float targetYaw = this.yaw + clamp(diff.deltaYaw(), -horizontalFactor, horizontalFactor);
+        float targetPitch = this.pitch + clamp(diff.deltaPitch(), -verticalFactor, verticalFactor);
+
+        return new Rotation(targetYaw, targetPitch);
+    }
 
 //    public Rotation towardsLinear(Rotation other, float horizontalFactor, float verticalFactor) {
 //        RotationDelta diff = rotationDeltaTo(other);
@@ -219,13 +227,8 @@ public record Rotation(float yaw, float pitch, boolean isNormalized) implements 
 //        float targetYaw   = this.yaw   + clamp(diff.deltaYaw(),   -horizontalFactor,   horizontalFactor);
 //        float targetPitch = this.pitch + clamp(diff.deltaPitch(), -verticalFactor, verticalFactor);
 //
-//        float tickDelta = mc.getDeltaTracker().getGameTimeDeltaTicks();
-////        float smoothedYaw   = Mth.rotLerp(tickDelta, this.yaw, targetYaw);
-////        float smoothedPitch = Mth.rotLerp(tickDelta, this.pitch, targetPitch);
-//
 //        return new Rotation(targetYaw, targetPitch);
 //    }
-
 
     private static float clamp(float value, float min, float max) {
         return Math.max(min, Math.min(max, value));

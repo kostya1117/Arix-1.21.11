@@ -135,18 +135,13 @@ public class RotationManager extends Component implements RequestHandler.Request
                         float yawDiff = Mth.wrapDegrees(freeYaw - mc.player.yRot);
                         mc.player.setYRot(mc.player.yRot + yawDiff);
                         mc.player.setXRot(freePitch);
-                        playerRotation = new Rotation(mc.gameRenderer.getMainCamera().yRot(),mc.gameRenderer.getMainCamera().xRot());
+                        //playerRotation = new Rotation(mc.gameRenderer.getMainCamera().yRot(),mc.gameRenderer.getMainCamera().xRot());
                     }
                 }
                 setCurrentRotation(null);
                 previousRotationTarget = null;
             } else {
                 setCurrentRotation(rotation);
-
-                if (activeRotationTarget.movementCorrection == MovementCorrection.SILENT && currentRotation != null) {
-                    mc.player.setYRot(currentRotation.yaw());
-                    mc.player.setXRot(currentRotation.pitch());
-                }
 
                 previousRotationTarget = activeRotationTarget;
             }
@@ -162,10 +157,11 @@ public class RotationManager extends Component implements RequestHandler.Request
 
         if (!isRotatingAllowed(active)) return;
 
-        if (active.movementCorrection == MovementCorrection.CHANGE_LOOK) {
+        if (active.movementCorrection == MovementCorrection.CHANGE_LOOK || active.movementCorrection == MovementCorrection.SILENT) {
             if (playerRotation == null || currentRotation == null) return;
             float timerSpeed = Timer.INSTANCE.getTimerSpeed();
             Rotation interpolated = playerRotation.interpolateTo(currentRotation, event.getTickDelta() * timerSpeed);
+
             mc.player.setYRot(interpolated.yaw());
             mc.player.setXRot(interpolated.pitch());
         }

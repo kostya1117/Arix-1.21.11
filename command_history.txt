@@ -1,38 +1,3 @@
-//wand
-/warp pvp
-//wand
-/spawn
-/reg RaynNEW1117 RaynNEW1117
-/kit rabbit
-/ac
-/kit
-/kit claim
-/kit
-/give shield
-/reg RaynNEW1117
-/reg RaynNEW1117 RaynNEW1117
-/register RaynNEW1117 RaynNEW1117
-/register RaynNEW11171 RaynNEW11171
-/hub
-/kit pvp
-/fly
-/kit dragon
-/log
-/god
-/duel
-/duel Angre1598
-/duel ALEX555667
-/duel denisan67
-/kit start
-//wand
-/warp PVP
-/login RaynNEW
-/login zaneerxd
-/reg Arixxx Arixxx
-/reg HolyFake HolyFake
-/register RaynNEW1117 RaynNEW1117
-/hub
-/login RaynNEW1117
 /hub
 /login cakkkkkkkkkkkkkk
 /login 1
@@ -48,3 +13,38 @@
 /рги
 /duel KRUTASKA3
 /duel Shaftila
+/reg Arixxx Arixxx
+/kit pvp
+/login Arixxx
+/reg Arixxx Arixxx
+/kit pvp
+/warp pvp
+/warp zamok
+/reg zaneerxd
+/kit pvp
+/pvp
+/hub
+/spawn
+/warp pvp
+/hub
+/warp pvp
+/reg zaneerx zaneerxd
+/reg zaneerxd zaneerxd
+/reg zaneerxd1 zaneerxd1
+/login zaneerxd
+/login NOTBANNED404
+/kit pvp
+/warp pvp
+/warp zamok
+/give @s stone[lore=['[{"text":"Подпишись","color":"green","bold":true}]'],item_name='{"text":"KinoVersaK","color":"dark_blue","underlined":true,"italic":true}']
+/give @s stone[lore=['{"text":"Подпишись","color":"green","bold":true}'],custom_name='{"text":"KinoVersaK","color":"dark_blue","underlined":true,"italic":true}']
+/give @s stone[lore=['{"text":"Подпишись","color":"green","bold":true}'],item_name='{"text":"KinoVersaK","color":"dark_blue","underlined":true,"italic":true,"obfuscated":true}']
+/give @s stone[item_name='[{"text":"!!!","obfuscated":true},{"text":"KinoVersaK","obfuscated":false,"underlined":true,"italic":true},{"text":"!!!","obfuscated":true}]',lore=['{"text":"Подпишись","color":"green","bold":true}']]
+/give @s stone[item_name='{"text":"KinoVersaK","color":"dark_blue","underlined":true,"italic":true,"obfuscated":true}',lore=['{"text":"Подпишись","color":"green","bold":true}']]
+/give @s stone[item_name='{"text":"","extra":[{"text":"!!!","obfuscated":true},{"text":"KinoVersaK","obfuscated":false,"color":"dark_blue","underlined":true,"italic":true},{"text":"!!!","obfuscated":true}]}',lore=['{"text":"Подпишись","color":"green","bold
+/give @s stone[item_name='{"text":"","extra":[{"text":"!!!","obfuscated":true}
+/reg DIMAIS999
+/reg Arixxx Arixxx
+/kit pvp
+/kit ppv
+/kit pvp

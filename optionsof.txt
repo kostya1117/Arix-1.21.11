@@ -64,7 +64,7 @@ ofChatShadow:true
 ofTelemetry:0
 ofHeldItemTooltips:true
 key_of.key.zoom:key.keyboard.c
-ofQuickInfo:false
+ofQuickInfo:true
 ofQuickInfoFps:6
 ofQuickInfoChunks:true
 ofQuickInfoEntities:true

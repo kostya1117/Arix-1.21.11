@@ -1,6 +1,7 @@
 package ru.arixcompany.features.module.modules.combat.aura.aiming.features.processors.anglesmooth.impl;
 
 import net.minecraft.util.Mth;
+import net.minecraft.util.Util;
 import net.minecraft.world.entity.LivingEntity;
 import ru.arixcompany.features.module.modules.combat.HitAura;
 import ru.arixcompany.features.module.modules.combat.aura.AttackHandler;
@@ -27,7 +28,7 @@ public class ElytraAngleSmooth extends FactorAngleSmooth implements IMinecraft {
     }
 
     public ElytraAngleSmooth() {
-        this(150, 200,50,80);
+        this(999, 360,30,50);
     }
 
     @Override
@@ -35,48 +36,14 @@ public class ElytraAngleSmooth extends FactorAngleSmooth implements IMinecraft {
         float yawDiff = Mth.abs(Rotation.angleDifference(targetRotation.yaw(), currentRotation.yaw()));
         float pitchDiff = Mth.abs(targetRotation.pitch() - currentRotation.pitch());
 
-        float baseYawSpeed = randomizer.nextFloat(yawSpeedMin, yawSpeedMax);
-        float basePitchSpeed = randomizer.nextFloat(pitchSpeedMin, pitchSpeedMax);
-
-//        float hCurve = calculateFactorWithCurve(yawDiff, baseYawSpeed);
-//        float vCurve = calculateFactorWithCurvePitch(pitchDiff, basePitchSpeed);
-
-//        float maxYawStep = hCurve * baseYawSpeed;
-//        float maxPitchStep = vCurve * basePitchSpeed;
-
-        return new float[]{ baseYawSpeed, basePitchSpeed };
+        float baseYawSpeed = 350;
+        float basePitchSpeed = 120;
+        return new float[]{ baseYawSpeed, basePitchSpeed};
     }
 
-    private float calculateFactorWithCurve(float rotationDifference, float speed) {
-        float t = Math.min(rotationDifference / 180, 1.0f);
-
-        float speedInfluence = Mth.clampedLerp(speed, -1, 1);
-
-        float adjustedT = (float) Math.pow(t, 1.0 / speedInfluence);
-        adjustedT = Math.min(adjustedT, 1.0f);
-
-        float curve = (float) Interpolation.interpolate(
-                0.0, 1.0, adjustedT,
-                Interpolation.Type.LINEAR,
-                Interpolation.Ease.OUT
-        );
-
-        return Math.min(curve, 1.0f);
-    }
-    private float calculateFactorWithCurvePitch(float rotationDifference, float speed) {
-        float t = Math.min(rotationDifference / 90, 1.0f);
-
-        float speedInfluence = Mth.clampedLerp(speed, -1, 1);
-
-        float adjustedT = (float) Math.pow(t, 1.0 / speedInfluence);
-        adjustedT = Math.min(adjustedT, 1.0f);
-
-        float curve = (float) Interpolation.interpolate(
-                0.0, 1.0, adjustedT,
-                Interpolation.Type.LINEAR,
-                Interpolation.Ease.OUT
-        );
-
-        return Math.min(curve, 1.0f);
+    @Override
+    public Rotation process(RotationTarget rotationTarget, Rotation currentRotation, Rotation targetRotation) {
+        float[] factors = calculateFactors(rotationTarget, currentRotation, targetRotation);
+        return currentRotation.towardsLinearElytra(targetRotation, factors[0], factors[1]);
     }
 }

@@ -1,0 +1,24 @@
+{
+  "stats": {
+    "minecraft:used": {
+      "minecraft:anvil": 1
+    },
+    "minecraft:dropped": {
+      "minecraft:stone": 5,
+      "minecraft:enchanted_golden_apple": 1,
+      "minecraft:infested_stone": 1
+    },
+    "minecraft:custom": {
+      "minecraft:time_since_rest": 5785,
+      "minecraft:walk_one_cm": 64,
+      "minecraft:total_world_time": 6070,
+      "minecraft:leave_game": 1,
+      "minecraft:interact_with_anvil": 1,
+      "minecraft:play_time": 5785,
+      "minecraft:jump": 1,
+      "minecraft:time_since_death": 5785,
+      "minecraft:drop": 7
+    }
+  },
+  "DataVersion": 4671
+}
