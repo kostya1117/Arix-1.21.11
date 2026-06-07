@@ -9,9 +9,10 @@ import net.minecraft.world.entity.player.PlayerSkin;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jspecify.annotations.Nullable;
+import ru.arixcompany.features.module.modules.render.customModels.ICustomPlayerModelState;
 
 
-public class AvatarRenderState extends HumanoidRenderState {
+public class AvatarRenderState extends HumanoidRenderState implements ICustomPlayerModelState {
     public PlayerSkin skin = DefaultPlayerSkin.getDefaultSkin();
     public float capeFlap;
     public float capeLean;
@@ -36,7 +37,26 @@ public class AvatarRenderState extends HumanoidRenderState {
     public boolean showExtraEars = false;
     public final ItemStackRenderState heldOnHead = new ItemStackRenderState();
 
+    private boolean sunshine$hasCustomModel;
+    private String sunshine$customModel = "";
+
     public float fallFlyingScale() {
         return Mth.clamp(this.fallFlyingTimeInTicks * this.fallFlyingTimeInTicks / 100.0F, 0.0F, 1.0F);
+    }
+
+    @Override
+    public boolean hasCustomModel() {
+        return this.sunshine$hasCustomModel;
+    }
+
+    @Override
+    public String getCustomModel() {
+        return this.sunshine$customModel;
+    }
+
+    @Override
+    public void setCustomModel(boolean enabled, String model) {
+        this.sunshine$hasCustomModel = enabled;
+        this.sunshine$customModel = model == null ? "" : model;
     }
 }

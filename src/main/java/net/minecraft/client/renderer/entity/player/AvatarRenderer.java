@@ -45,8 +45,9 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.SwingAnimationType;
 import net.minecraft.world.item.component.SwingAnimation;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import ru.arixcompany.Arix;
+import ru.arixcompany.features.module.modules.render.CustomModels;
+import ru.arixcompany.features.module.modules.render.customModels.ICustomPlayerModelState;
 
 
 public class AvatarRenderer<AvatarlikeEntity extends Avatar & ClientAvatarEntity>
@@ -215,6 +216,22 @@ public class AvatarRenderer<AvatarlikeEntity extends Avatar & ClientAvatarEntity
                 this.itemModelResolver.updateForLiving(p_426303_.heldOnHead, itemstack, ItemDisplayContext.HEAD, p_431243_);
             }
         }
+
+        ICustomPlayerModelState customState = (ICustomPlayerModelState) p_426303_;
+
+        CustomModels customModels = null;
+        if (Arix.getInstance() != null) {
+            customModels = Arix.getInstance().getModuleRepo().getModule(CustomModels.class);
+        }
+
+        boolean enabled = customModels != null
+                && customModels.isState()
+                && customModels.shouldApplyTo(p_431243_);
+
+        customState.setCustomModel(
+                enabled,
+                enabled ? customModels.getModelName() : ""
+        );
     }
 
     protected boolean shouldShowName(AvatarlikeEntity p_429595_, double p_429961_) {

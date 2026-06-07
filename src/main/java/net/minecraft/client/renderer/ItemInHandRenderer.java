@@ -387,9 +387,9 @@ public class ItemInHandRenderer {
 //            p_109316_.mulPose(Axis.XP.rotationDegrees((minecraft.gameRenderer.getMainCamera().xRot() - f2) * 0.1F));
 //            p_109316_.mulPose(Axis.YP.rotationDegrees((minecraft.gameRenderer.getMainCamera().yRot() - f3) * 0.1F));
 //        } else {
-            p_109316_.mulPose(Axis.XP.rotationDegrees((p_109318_.getViewXRot(p_109315_) - f2) * 0.1F));
-            p_109316_.mulPose(Axis.YP.rotationDegrees((p_109318_.getViewYRot(p_109315_) - f3) * 0.1F));
-       // }
+        p_109316_.mulPose(Axis.XP.rotationDegrees((p_109318_.getViewXRot(p_109315_) - f2) * 0.1F));
+        p_109316_.mulPose(Axis.YP.rotationDegrees((p_109318_.getViewYRot(p_109315_) - f3) * 0.1F));
+        // }
 //        p_109316_.mulPose(Axis.XP.rotationDegrees((p_109318_.getViewXRot(p_109315_) - f2) * 0.1F));
 //        p_109316_.mulPose(Axis.YP.rotationDegrees((p_109318_.getViewYRot(p_109315_) - f3) * 0.1F));
         if (iteminhandrenderer$handrenderselection.renderMainHand) {

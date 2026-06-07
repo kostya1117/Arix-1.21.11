@@ -57,6 +57,10 @@
       "Содержимое шалкера": {
         "value": true,
         "key": -1
+      },
+      "Глов": {
+        "value": true,
+        "key": -1
       }
     },
     "handview": {
@@ -145,7 +149,7 @@
       "Радиус атаки": 3.0,
       "Радиус обнаружения": 1.0,
       "Элитра таргет": {
-        "value": false,
+        "value": true,
         "key": 84
       },
       "Радиус обнаружения на элитре": 30.0,
@@ -317,7 +321,7 @@
       "bind": -1,
       "state": true,
       "bindMode": "TOGGLE",
-      "Режим": "Шейдер"
+      "Режим": "Пунктир"
     },
     "jumpcircle": {
       "bind": -1,
@@ -437,6 +441,16 @@
       "state": true,
       "bindMode": "TOGGLE",
       "Прозрачность": 0.5
+    },
+    "custommodels": {
+      "bind": -1,
+      "state": true,
+      "bindMode": "TOGGLE",
+      "Моделька": "Miku",
+      "Друзья": {
+        "value": true,
+        "key": -1
+      }
     }
   },
   "misc": {

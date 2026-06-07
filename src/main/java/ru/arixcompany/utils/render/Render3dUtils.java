@@ -161,7 +161,6 @@ public class Render3dUtils implements IMinecraft {
                     .createRenderSetup()
     );
 
-
     public void renderOutline(PoseStack poseStack, AABB box, Color color, boolean depthTest) {
         renderOutline(poseStack, box, color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha(), depthTest);
     }
