@@ -22,262 +22,111 @@ import ru.arixcompany.features.event.player.EventTotemPop;
 import ru.arixcompany.features.event.render.EventRender3D;
 import ru.arixcompany.features.event.world.EventGameTick;
 import ru.arixcompany.features.event.world.EventParticleUpdate;
+import ru.arixcompany.features.event.world.EventUpdate;
 import ru.arixcompany.features.module.Category;
 import ru.arixcompany.features.module.Module;
 import ru.arixcompany.features.module.setting.implement.*;
 import ru.arixcompany.utils.Textures;
+import ru.arixcompany.utils.render.particle.Particle3D;
+import ru.arixcompany.utils.render.particle.ParticleSystem;
 
 import java.awt.*;
 import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Particles extends Module {
+    
+    public final BooleanSetting randomColor = new BooleanSetting("Случайный цвет").setValue( false);
 
-    private final SelectSetting mode = new SelectSetting("Вид")
-            .value("Снежинки", "Звезды", "Сердца", "Доллары", "Свет");
+    public final SelectSetting particleMode = new SelectSetting("Режим частиц")
+            .value("Кубы", "Корона", "Взрыв кубов", "Доллары", "Сердца",
+                    "Молния", "Линия", "Ромб", "Снежинки", "Звезды",
+                    "Звезды альт", "Треугольник", "Случайный");
 
-    private final ValueSetting size = new ValueSetting("Размер")
-            .range(0.05f, 1.0f).setValue(0.15f).step(0.05f);
+    public final SelectSetting glowMode = new SelectSetting("Режим свечения")
+            .value("Оба", "Блум", "Блум образец", "Нет");
 
-    private final ListSetting triggers = new ListSetting("Появление")
-            .value("Мир", "Атака", "Тотем")
-            .selected("Мир", "Атака", "Тотем");
+    public final BooleanSetting spinning = new BooleanSetting("Вращение").setValue(true);
 
-    private final ValueSetting worldAmount = new ValueSetting("Частиц в мире")
-            .range(1, 500).setValue(150).step(5)
-            .visible(() -> triggers.isSelected("Мир"));
+    public final BooleanSetting attackTrigger = new BooleanSetting("При атаке").setValue( true);
+    public final BooleanSetting totemTrigger = new BooleanSetting("При тотеме").setValue( true);
+    public final BooleanSetting walkTrigger = new BooleanSetting("При ходьбе").setValue( false);
+    public final BooleanSetting projectileTrigger = new BooleanSetting("При снарядах").setValue( false);
 
-    private final ValueSetting attackAmount = new ValueSetting("Частиц при атаке")
-            .range(1, 50).setValue(10).step(1)
-            .visible(() -> triggers.isSelected("Атака"));
+    public final ValueSetting attackAmount = new ValueSetting("Частиц при атаке")
+            .range(10, 80).setValue(30).step(1)
+            .visible(() -> attackTrigger.isValue());
+    public final ValueSetting walkAmount = new ValueSetting("Частиц при ходьбе")
+            .range(0, 60).setValue(15).step(1)
+            .visible(() -> walkTrigger.isValue());
+    public final ValueSetting totemAmount = new ValueSetting("Частиц при тотеме")
+            .range(10, 100).setValue(40).step(5)
+            .visible(() -> totemTrigger.isValue());
 
-    private final ValueSetting totemAmount = new ValueSetting("Частиц при тотеме")
-            .range(1, 100).setValue(40).step(2)
-            .visible(() -> triggers.isSelected("Тотем"));
+    public final ValueSetting spread = new ValueSetting("Разброс")
+            .range(0.2f, 3.0f).setValue(1.0f).step(0.1f);
+    public final ValueSetting speed = new ValueSetting("Скорость")
+            .range(0.1f, 4.0f).setValue(1.0f).step(0.1f);
+    public final ValueSetting lifeTime = new ValueSetting("Время жизни (события)")
+            .range(0.3f, 8.0f).setValue(2.0f).step(0.2f);
+    public final ValueSetting size = new ValueSetting("Размер (события)")
+            .range(0.2f, 2.0f).setValue(0.6f).step(0.1f);
 
-    private final ValueSetting lifeTime = new ValueSetting("Время жизни")
-            .range(20, 300).setValue(80).step(5);
+    public final BooleanSetting worldParticles = new BooleanSetting("Частицы в мире").setValue(true);
+    public final BooleanSetting worldPhysics = new BooleanSetting("Физика мира").setValue(false);
+    public final SelectSetting worldMode = new SelectSetting("Режим мировых частиц")
+            .value("Кубы", "Корона", "Взрыв кубов", "Доллары", "Сердца",
+                    "Молния", "Линия", "Ромб", "Снежинки", "Звезды",
+                    "Звезды альт", "Треугольник", "Случайный");
+    public final ValueSetting worldAmount = new ValueSetting("Кол-во мировых частиц")
+            .range(10, 500).setValue(150).step(10)
+            .visible(() -> worldParticles.isValue());
+    public final ValueSetting worldLifeTime = new ValueSetting("Время жизни (мир)")
+            .range(2.0f, 60.0f).setValue(15.0f).step(1.0f)
+            .visible(() -> worldParticles.isValue());
+    public final ValueSetting worldSize = new ValueSetting("Размер (мир)")
+            .range(0.1f, 1.5f).setValue(0.5f).step(0.1f)
+            .visible(() -> worldParticles.isValue());
+    public final ValueSetting worldGlowSize = new ValueSetting("Свечение мировых")
+            .range(0.1f, 8.0f).setValue(2.0f).step(0.2f)
+            .visible(() -> worldParticles.isValue() && !glowMode.isSelected("Нет"));
+    public final ValueSetting glowSize = new ValueSetting("Свечение размер")
+            .range(0.5f, 12.0f).setValue(3.0f).step(0.5f)
+            .visible(() -> !glowMode.isSelected("Нет"));
 
-    private final ValueSetting globalLimit = new ValueSetting("Общий лимит")
-            .range(50, 2000).setValue(1000).step(50);
-
-    private final GroupSetting behaviorGroup = new GroupSetting("Поведение",
-            lifeTime, worldAmount, attackAmount, totemAmount, globalLimit);
-
-    private final CopyOnWriteArrayList<Particle> particles = new CopyOnWriteArrayList<>();
-    private final CopyOnWriteArrayList<PendingBurst> bursts = new CopyOnWriteArrayList<>();
-    private final Random random = new Random();
-
-    private static final RenderPipeline PARTICLE_PIPELINE = RenderPipelines.register(
-            RenderPipeline.builder(RenderPipelines.GUI_TEXTURED_SNIPPET)
-                    .withLocation(Identifier.fromNamespaceAndPath("arix", "pipeline/world/particles"))
-                    .withVertexFormat(DefaultVertexFormat.POSITION_TEX_COLOR, VertexFormat.Mode.QUADS)
-                    .withCull(false)
-                    .withDepthTestFunction(DepthTestFunction.LEQUAL_DEPTH_TEST)
-                    .withDepthWrite(false)
-                    .withBlend(BlendFunction.LIGHTNING)
-                    .build()
-    );
+    private final GroupSetting eventGroup = new GroupSetting("При ударе частицы",spinning,
+            attackTrigger, walkTrigger, projectileTrigger,
+            attackAmount, walkAmount, spread, speed, lifeTime, size, glowSize);
+    private final GroupSetting totemGroup = new GroupSetting("При тотеме частицы",
+            totemTrigger, totemAmount);
+    private final GroupSetting worldGroup = new GroupSetting("В мире частицы",
+            worldParticles, worldPhysics, worldMode, worldAmount, worldLifeTime, worldSize, worldGlowSize);
 
     public Particles() {
         super("Particles", Category.Render);
-        setup(mode, size, triggers, behaviorGroup);
+        setup(randomColor, particleMode, glowMode,
+                eventGroup, totemGroup, worldGroup);
     }
 
     @Override
-    public void deactivate() {
-        particles.clear();
-        bursts.clear();
+    public void deactivate(){
+        ParticleSystem.Settings s = ParticleSystem.getInstance().getSettings();
+        s.setEnabled(false);
         super.deactivate();
     }
-
-    @EventHandler
-    public void onUpdate(EventGameTick e) {
-        if (mc.player == null) return;
-
-        particles.removeIf(p -> p.age >= p.maxAge);
-
-        for (Particle p : particles) {
-            p.update();
-        }
-
-        // Обработка постепенного появления
-        bursts.removeIf(b -> {
-            int toSpawn = Math.min(b.remaining, b.perTick);
-            spawnInternal(b.pos, toSpawn, b.totem);
-            b.remaining -= toSpawn;
-            return b.remaining <= 0;
-        });
-
-        if (triggers.isSelected("Мир") && particles.size() < worldAmount.getValue()) {
-            spawnInternal(mc.player.position().add(rand(-10, 10), rand(0, 5), rand(-10, 10)), 1, false);
-        }
+    @Override
+    public void activate(){
+        ParticleSystem.Settings s = ParticleSystem.getInstance().getSettings();
+        s.setEnabled(true);
+        super.activate();
     }
 
     @EventHandler
     public void onAttack(EventAttack e) {
-        if (triggers.isSelected("Атака") && e.getTarget() != null) {
-            spawnInternal(e.getTarget().position().add(0, e.getTarget().getBbHeight() / 1.5, 0), (int) attackAmount.getValue(), false);
-        }
+        ParticleSystem.getInstance().spawnAttackParticles(e.getTarget());
     }
-
     @EventHandler
-    public void onTotem(EventTotemPop e) {
-        if (triggers.isSelected("Тотем")) {
-            int total = (int) totemAmount.getValue();
-            bursts.add(new PendingBurst(e.getEntity().position().add(0, 1.0, 0), total, Math.max(1, total / 5), true));
-        }
-    }
-
-    private void spawnInternal(Vec3 pos, int count, boolean totem) {
-        for (int i = 0; i < count; i++) {
-            if (particles.size() >= globalLimit.getValue()) return;
-
-            Particle p = new Particle();
-            p.pos = p.prevPos = pos;
-            p.isTotem = totem;
-
-            if (totem) {
-                double f = random.nextFloat() * 2.0F - 1.0F;
-                double g = random.nextFloat() * 2.0F - 1.0F;
-                double h = random.nextFloat() * 2.0F - 1.0F;
-                if (f * f + g * g + h * h <= 1.0D) {
-                    p.velocity = new Vec3(f * 0.2D, g * 0.2D + 0.1D, h * 0.2D);
-                } else {
-                    p.velocity = new Vec3(0, 0.1D, 0);
-                }
-            } else {
-                p.velocity = new Vec3(rand(-0.15f, 0.15f), rand(-0.05f, 0.2f), rand(-0.15f, 0.15f));
-            }
-
-            p.maxAge = (int) (lifeTime.getValue() * rand(0.8f, 1.2f));
-            p.rotation = random.nextInt(360);
-            p.rotSpeed = rand(-4f, 4f);
-            particles.add(p);
-        }
-    }
-
-    @EventHandler
-    public void onRender3D(EventRender3D e) {
-        if (particles.isEmpty() || mc.level == null) return;
-
-        Vec3 cam = mc.gameRenderer.getMainCamera().position();
-        PoseStack matrices = e.getMatrixStack();
-        ByteBufferBuilder allocator = new ByteBufferBuilder(4096);
-        float delta = mc.getDeltaTracker().getGameTimeDeltaTicks();
-
-        try (allocator) {
-            MultiBufferSource.BufferSource bufferSource = MultiBufferSource.immediate(allocator);
-
-            for (Particle p : particles) {
-                float progress = (float) p.age / p.maxAge;
-                float lifeScale = 1.0f - progress;
-
-                float currentSize = size.getValue() * (0.5f + lifeScale * 0.5f);
-                int alpha = (int) (lifeScale * 255);
-
-                double renderX = net.minecraft.util.Mth.lerp(delta, p.prevPos.x, p.pos.x);
-                double renderY = net.minecraft.util.Mth.lerp(delta, p.prevPos.y, p.pos.y);
-                double renderZ = net.minecraft.util.Mth.lerp(delta, p.prevPos.z, p.pos.z);
-
-                matrices.pushPose();
-                matrices.translate(renderX - cam.x, renderY - cam.y, renderZ - cam.z);
-
-                matrices.mulPose(mc.gameRenderer.getMainCamera().rotation());
-                matrices.mulPose(Axis.ZP.rotationDegrees(p.rotation));
-                matrices.scale(currentSize, currentSize, currentSize);
-
-                Matrix4f matrix = matrices.last().pose();
-                VertexConsumer vertex = bufferSource.getBuffer(makeRenderType());
-
-                Color color = p.isTotem ? new Color(140, 252, 63) : Arix.getInstance().getCurrentTheme().getMain();
-
-                vertex.addVertex(matrix, -1, -1, 0).setUv(0, 1).setColor(color.getRed(), color.getGreen(), color.getBlue(), alpha);
-                vertex.addVertex(matrix, 1, -1, 0).setUv(1, 1).setColor(color.getRed(), color.getGreen(), color.getBlue(), alpha);
-                vertex.addVertex(matrix, 1, 1, 0).setUv(1, 0).setColor(color.getRed(), color.getGreen(), color.getBlue(), alpha);
-                vertex.addVertex(matrix, -1, 1, 0).setUv(0, 0).setColor(color.getRed(), color.getGreen(), color.getBlue(), alpha);
-
-                matrices.popPose();
-            }
-            bufferSource.endBatch();
-        }
-    }
-
-    private RenderType makeRenderType() {
-        Identifier tex = switch (mode.getSelected()) {
-            case "Снежинки" -> Textures.snowflake;
-            case "Звезды" -> Textures.star;
-            case "Сердца" -> Textures.heart;
-            case "Доллары" -> Textures.dollar;
-            case "Свет" -> Textures.firefly;
-            default -> Textures.glow;
-        };
-
-        return RenderType.create("arix_particles",
-                RenderSetup.builder(PARTICLE_PIPELINE)
-                        .bufferSize(4096)
-                        .withTexture(RenderType.SAMPLER0, tex)
-                        .createRenderSetup()
-        );
-    }
-
-    private float rand(float min, float max) {
-        return min + random.nextFloat() * (max - min);
-    }
-
-    @Getter @Setter
-    private class Particle {
-        private Vec3 pos;
-        private Vec3 prevPos;
-        private Vec3 velocity;
-        private int age = 0;
-        private int maxAge;
-        private float rotation;
-        private float rotSpeed;
-        private boolean isTotem;
-        private boolean stuck = false;
-
-        public void update() {
-            prevPos = pos;
-            age++;
-            if (stuck) return;
-
-            double friction = 0.98D;
-            double gravity = 0.04D;
-
-            if (isTotem) {
-                friction = 0.88D;
-            }
-
-            velocity = velocity.scale(friction).subtract(0, gravity, 0);
-            Vec3 nextPos = pos.add(velocity);
-
-            if (mc.level != null) {
-                BlockPos bp = BlockPos.containing(nextPos);
-                if (!mc.level.getBlockState(bp).isAir()) {
-                    stuck = true;
-                    velocity = Vec3.ZERO;
-                    rotSpeed = 0;
-                    return;
-                }
-            }
-
-            pos = nextPos;
-            rotation += rotSpeed;
-        }
-    }
-
-    private static class PendingBurst {
-        protected Vec3 pos;
-        protected int remaining;
-        protected int perTick;
-        protected boolean totem;
-
-        public PendingBurst(Vec3 pos, int total, int perTick, boolean totem) {
-            this.pos = pos;
-            this.remaining = total;
-            this.perTick = perTick;
-            this.totem = totem;
-        }
+    public void onAttack(EventTotemPop e) {
+        ParticleSystem.getInstance().spawnTotemParticles(e.getEntity());
     }
 }

@@ -1,6 +1,5 @@
 package ru.arixcompany.features.module.modules.misc.funtime.autobuy;
 
-import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.ContainerScreen;
@@ -8,7 +7,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import ru.arixcompany.features.module.modules.misc.funtime.autobuy.items.ItemTarget;
 import ru.arixcompany.features.module.modules.misc.funtime.utils.FuntimeUtil;
-import ru.arixcompany.utils.Colors;
 import ru.arixcompany.utils.IMinecraft;
 import ru.arixcompany.utils.render.RenderUtils;
 import ru.arixcompany.utils.render.font.FontManager;

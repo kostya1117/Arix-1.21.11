@@ -105,7 +105,7 @@ public class FrostedIceBlock extends IceBlock {
     }
 
     @Override
-    protected ItemStack getCloneItemStack(LevelReader p_310839_, BlockPos p_53571_, BlockState p_53572_, boolean p_376558_) {
+    public ItemStack getCloneItemStack(LevelReader p_310839_, BlockPos p_53571_, BlockState p_53572_, boolean p_376558_) {
         return ItemStack.EMPTY;
     }
 }

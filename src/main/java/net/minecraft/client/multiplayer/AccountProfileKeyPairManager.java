@@ -21,6 +21,8 @@ import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+
+import com.viaversion.viafabricplus.injection.access.networking.legacy_chat_signature.IProfilePublicKey_Data;
 import net.minecraft.SharedConstants;
 import net.minecraft.util.Crypt;
 import net.minecraft.util.CryptException;
@@ -131,16 +133,20 @@ public class AccountProfileKeyPairManager implements ProfileKeyPairManager {
     }
 
     private static ProfilePublicKey.Data parsePublicKey(KeyPairResponse p_253834_) throws CryptException {
-        KeyPair keypair = p_253834_.keyPair();
-        if (keypair != null
-            && !Strings.isNullOrEmpty(keypair.publicKey())
-            && p_253834_.publicKeySignature() != null
-            && p_253834_.publicKeySignature().array().length != 0) {
+        if (p_253834_.keyPair() != null
+                && !Strings.isNullOrEmpty(p_253834_.keyPair().publicKey())
+                && p_253834_.publicKeySignature() != null
+                && p_253834_.publicKeySignature().array().length != 0) {
             try {
                 Instant instant = Instant.parse(p_253834_.expiresAt());
-                PublicKey publickey = Crypt.stringToRsaPublicKey(keypair.publicKey());
+                PublicKey publickey = Crypt.stringToRsaPublicKey(p_253834_.keyPair().publicKey());
                 ByteBuffer bytebuffer = p_253834_.publicKeySignature();
-                return new ProfilePublicKey.Data(instant, publickey, bytebuffer.array());
+
+                ProfilePublicKey.Data data = new ProfilePublicKey.Data(instant, publickey, bytebuffer.array());
+                ((IProfilePublicKey_Data) (Object) data).viafabricplus$setLegacyPublicKeySignature(
+                        ((IProfilePublicKey_Data) (Object) p_253834_).viafabricplus$getLegacyPublicKeySignature()
+                );
+                return data;
             } catch (DateTimeException | IllegalArgumentException runtimeexception) {
                 throw new CryptException(runtimeexception);
             }

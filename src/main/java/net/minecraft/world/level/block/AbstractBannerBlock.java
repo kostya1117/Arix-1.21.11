@@ -32,7 +32,7 @@ public abstract class AbstractBannerBlock extends BaseEntityBlock {
     }
 
     @Override
-    protected ItemStack getCloneItemStack(LevelReader p_313098_, BlockPos p_48665_, BlockState p_48666_, boolean p_377125_) {
+    public ItemStack getCloneItemStack(LevelReader p_313098_, BlockPos p_48665_, BlockState p_48666_, boolean p_377125_) {
         return p_313098_.getBlockEntity(p_48665_) instanceof BannerBlockEntity bannerblockentity
             ? bannerblockentity.getItem()
             : super.getCloneItemStack(p_313098_, p_48665_, p_48666_, p_377125_);

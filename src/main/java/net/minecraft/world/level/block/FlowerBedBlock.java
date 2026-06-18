@@ -2,6 +2,9 @@ package net.minecraft.world.level.block;
 
 import com.mojang.serialization.MapCodec;
 import java.util.function.Function;
+
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -25,7 +28,7 @@ public class FlowerBedBlock extends VegetationBlock implements BonemealableBlock
     public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
     public static final IntegerProperty AMOUNT = BlockStateProperties.FLOWER_AMOUNT;
     private final Function<BlockState, VoxelShape> shapes;
-
+    private static final VoxelShape viaFabricPlus$shape_r1_20_1 = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 3.0D, 16.0D);
     @Override
     public MapCodec<FlowerBedBlock> codec() {
         return CODEC;
@@ -58,6 +61,9 @@ public class FlowerBedBlock extends VegetationBlock implements BonemealableBlock
 
     @Override
     public VoxelShape getShape(BlockState p_392309_, BlockGetter p_396575_, BlockPos p_394826_, CollisionContext p_394289_) {
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_20)) {
+            return (viaFabricPlus$shape_r1_20_1);
+        }
         return this.shapes.apply(p_392309_);
     }
 

@@ -1,5 +1,7 @@
 package net.minecraft.client.gui.screens.inventory;
 
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import net.minecraft.client.GameNarrator;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
@@ -61,28 +63,32 @@ public abstract class AbstractCommandBlockEditScreen extends Screen {
         this.previousEdit.setValue("-");
         this.addWidget(this.previousEdit);
         this.outputButton = this.addRenderableWidget(
-            CycleButton.booleanBuilder(Component.literal("O"), Component.literal("X"), flag)
-                .displayOnlyValue()
-                .create(this.width / 2 + 150 - 20, this.getPreviousY(), 20, 20, Component.translatable("advMode.trackOutput"), (p_169596_, p_169597_) -> {
-                    BaseCommandBlock basecommandblock = this.getCommandBlock();
-                    basecommandblock.setTrackOutput(p_169597_);
-                    this.updatePreviousOutput(p_169597_);
-                })
+                CycleButton.booleanBuilder(Component.literal("O"), Component.literal("X"), flag)
+                        .displayOnlyValue()
+                        .create(this.width / 2 + 150 - 20, this.getPreviousY(), 20, 20, Component.translatable("advMode.trackOutput"), (p_169596_, p_169597_) -> {
+                            BaseCommandBlock basecommandblock = this.getCommandBlock();
+                            basecommandblock.setTrackOutput(p_169597_);
+                            this.updatePreviousOutput(p_169597_);
+                        })
         );
         this.addExtraControls();
         this.doneButton = this.addRenderableWidget(
-            Button.builder(CommonComponents.GUI_DONE, p_97691_ -> this.onDone())
-                .bounds(this.width / 2 - 4 - 150, this.height / 4 + 120 + 12, 150, 20)
-                .build()
+                Button.builder(CommonComponents.GUI_DONE, p_97691_ -> this.onDone())
+                        .bounds(this.width / 2 - 4 - 150, this.height / 4 + 120 + 12, 150, 20)
+                        .build()
         );
         this.cancelButton = this.addRenderableWidget(
-            Button.builder(CommonComponents.GUI_CANCEL, p_420755_ -> this.onClose())
-                .bounds(this.width / 2 + 4, this.height / 4 + 120 + 12, 150, 20)
-                .build()
+                Button.builder(CommonComponents.GUI_CANCEL, p_420755_ -> this.onClose())
+                        .bounds(this.width / 2 + 4, this.height / 4 + 120 + 12, 150, 20)
+                        .build()
         );
         this.commandSuggestions = new CommandSuggestions(this.minecraft, this, this.commandEdit, this.font, true, true, 0, 7, false, Integer.MIN_VALUE);
         this.commandSuggestions.setAllowSuggestions(true);
-        this.commandSuggestions.updateCommandInfo();
+
+        if (ProtocolTranslator.getTargetVersion().newerThanOrEqualTo(ProtocolVersion.v1_13)) {
+            this.commandSuggestions.updateCommandInfo();
+        }
+
         this.updatePreviousOutput(flag);
     }
 
@@ -104,7 +110,10 @@ public abstract class AbstractCommandBlockEditScreen extends Screen {
         String s = this.commandEdit.getValue();
         this.init(p_97678_, p_97679_);
         this.commandEdit.setValue(s);
-        this.commandSuggestions.updateCommandInfo();
+
+        if (ProtocolTranslator.getTargetVersion().newerThanOrEqualTo(ProtocolVersion.v1_13)) {
+            this.commandSuggestions.updateCommandInfo();
+        }
     }
 
     protected void updatePreviousOutput(boolean p_169599_) {
@@ -124,7 +133,9 @@ public abstract class AbstractCommandBlockEditScreen extends Screen {
     protected abstract void populateAndSendPacket();
 
     private void onEdited(String p_97689_) {
-        this.commandSuggestions.updateCommandInfo();
+        if (ProtocolTranslator.getTargetVersion().newerThanOrEqualTo(ProtocolVersion.v1_13)) {
+            this.commandSuggestions.updateCommandInfo();
+        }
     }
 
     @Override

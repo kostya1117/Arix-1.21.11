@@ -5,6 +5,9 @@ import java.util.EnumSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -159,6 +162,10 @@ public class ZombieVillager extends Zombie implements VillagerDataHolder {
                 itemstack.consume(1, p_452967_);
                 if (!this.level().isClientSide()) {
                     this.startConverting(p_452967_.getUUID(), this.random.nextInt(2401) + 3600);
+                }
+
+                if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_21)) {
+                    return InteractionResult.SUCCESS;
                 }
 
                 return InteractionResult.SUCCESS_SERVER;

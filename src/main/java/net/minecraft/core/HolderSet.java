@@ -10,6 +10,9 @@ import java.util.Set;
 import java.util.Spliterator;
 import java.util.function.Function;
 import java.util.stream.Stream;
+
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.Util;
@@ -180,6 +183,12 @@ public interface HolderSet<T> extends Iterable<Holder<T>> {
 
         @Override
         protected List<Holder<T>> contents() {
+            if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_21)) {
+                // Previoulsy didn't had unbounded entries
+                if (this.contents == null) {
+                    this.bind(List.of());
+                }
+            }
             if (this.contents == null) {
                 throw new IllegalStateException("Trying to access unbound tag '" + this.key + "' from registry " + this.owner);
             } else {
@@ -189,6 +198,10 @@ public interface HolderSet<T> extends Iterable<Holder<T>> {
 
         @Override
         public boolean isBound() {
+            if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_21)) {
+                // Previously didn't exist
+                return (true);
+            }
             return this.contents != null;
         }
 

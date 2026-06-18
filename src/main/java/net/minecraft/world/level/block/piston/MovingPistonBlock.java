@@ -114,7 +114,7 @@ public class MovingPistonBlock extends BaseEntityBlock {
     }
 
     @Override
-    protected ItemStack getCloneItemStack(LevelReader p_309808_, BlockPos p_60058_, BlockState p_60059_, boolean p_376538_) {
+    public ItemStack getCloneItemStack(LevelReader p_309808_, BlockPos p_60058_, BlockState p_60059_, boolean p_376538_) {
         return ItemStack.EMPTY;
     }
 

@@ -6,6 +6,12 @@ import com.mojang.serialization.MapCodec;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Function;
+
+import com.viaversion.viafabricplus.features.block.interaction.Block1_14;
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.tags.BlockTags;
@@ -45,6 +51,39 @@ public class WallBlock extends Block implements SimpleWaterloggedBlock {
     private final Function<BlockState, VoxelShape> collisionShapes;
     private static final VoxelShape TEST_SHAPE_POST = Block.column(2.0, 0.0, 16.0);
     private static final Map<Direction, VoxelShape> TEST_SHAPES_WALL = Shapes.rotateHorizontal(Block.boxZ(2.0, 16.0, 0.0, 9.0));
+    private final Object2IntMap<BlockState> viaFabricPlus$shapeIndexCache_r1_12_2 = new Object2IntOpenHashMap<>();
+
+    private VoxelShape[] viaFabricPlus$collision_shape_r1_12_2;
+
+    private VoxelShape[] viaFabricPlus$outline_shape_r1_12_2;
+
+    private static BlockState viaFabricPlus$oldWallPlacementLogic(BlockState state) {
+        boolean addUp = false;
+        if (state.getValue(WallBlock.NORTH) == WallSide.TALL) {
+            state = state.setValue(WallBlock.NORTH, WallSide.LOW);
+            addUp = true;
+        }
+        if (state.getValue(WallBlock.EAST) == WallSide.TALL) {
+            state = state.setValue(WallBlock.EAST, WallSide.LOW);
+            addUp = true;
+        }
+        if (state.getValue(WallBlock.SOUTH) == WallSide.TALL) {
+            state = state.setValue(WallBlock.SOUTH, WallSide.LOW);
+            addUp = true;
+        }
+        if (state.getValue(WallBlock.WEST) == WallSide.TALL) {
+            state = state.setValue(WallBlock.WEST, WallSide.LOW);
+            addUp = true;
+        }
+        if (addUp) {
+            state = state.setValue(WallBlock.UP, true);
+        }
+        return state;
+    }
+
+    private static int viaFabricPlus$getDirectionMask(Direction dir) {
+        return 1 << dir.get2DDataValue();
+    }
 
     @Override
     public MapCodec<WallBlock> codec() {
@@ -65,6 +104,8 @@ public class WallBlock extends Block implements SimpleWaterloggedBlock {
         );
         this.shapes = this.makeShapes(16.0F, 14.0F);
         this.collisionShapes = this.makeShapes(24.0F, 24.0F);
+        this.viaFabricPlus$collision_shape_r1_12_2 = this.viaFabricPlus$createShapes1_12_2(24.0F, 24.0F);
+        this.viaFabricPlus$outline_shape_r1_12_2 = this.viaFabricPlus$createShapes1_12_2(16.0F, 14.0F);
     }
 
     private Function<BlockState, VoxelShape> makeShapes(float p_57966_, float p_57967_) {
@@ -86,14 +127,87 @@ public class WallBlock extends Block implements SimpleWaterloggedBlock {
             return voxelshape1;
         }, WATERLOGGED);
     }
+    private VoxelShape[] viaFabricPlus$createShapes1_12_2(final float height1, final float height2) {
+        final float f = 4.0F;
+        final float g = 12.0F;
+        final float h = 5.0F;
+        final float i = 11.0F;
+
+        final VoxelShape baseShape = Block.box(f, 0.0D, f, g, height1, g);
+        final VoxelShape northShape = Block.box(h, 0.0, 0.0D, i, height2, i);
+        final VoxelShape southShape = Block.box(h, 0.0, h, i, height2, 16.0D);
+        final VoxelShape westShape = Block.box(0.0D, 0.0, h, i, height2, i);
+        final VoxelShape eastShape = Block.box(h, 0.0, h, 16.0D, height2, i);
+        final VoxelShape[] voxelShapes = new VoxelShape[]{
+                Shapes.empty(),
+                Block.box(f, 0.0, h, g, height1, 16.0D),
+                Block.box(0.0D, 0.0, f, i, height1, g),
+                Block.box(f - 4, 0.0, h - 1, g, height1, 16.0D),
+                Block.box(f, 0.0, 0.0D, g, height1, i),
+                Shapes.or(southShape, northShape),
+                Block.box(f - 4, 0.0, 0.0D, g, height1, i + 1),
+                Block.box(f - 4, 0.0, h - 5, g, height1, 16.0D),
+                Block.box(h, 0.0, f, 16.0D, height1, g),
+                Block.box(h - 1, 0.0, f, 16.0D, height1, g + 4),
+                Shapes.or(westShape, eastShape),
+                Block.box(h - 5, 0.0, f, 16.0D, height1, g + 4),
+                Block.box(f, 0.0, 0.0D, g + 4, height1, i + 1),
+                Block.box(f, 0.0, 0.0D, g + 4, height1, i + 5),
+                Block.box(h - 5, 0.0, f - 4, 16.0D, height1, g),
+                Block.box(0, 0.0, 0, 16.0D, height1, 16.0D)
+        };
+
+        for (int j = 0; j < 16; ++j) {
+            voxelShapes[j] = Shapes.or(baseShape, voxelShapes[j]);
+        }
+
+        return voxelShapes;
+    }
+
+    private int viaFabricPlus$getShapeIndex(BlockState state) {
+        return this.viaFabricPlus$shapeIndexCache_r1_12_2.computeIntIfAbsent(state, statex -> {
+            int i = 0;
+            if (!WallSide.NONE.equals(statex.getValue(WallBlock.NORTH))) {
+                i |= viaFabricPlus$getDirectionMask(Direction.NORTH);
+            }
+
+            if (!WallSide.NONE.equals(statex.getValue(WallBlock.EAST))) {
+                i |= viaFabricPlus$getDirectionMask(Direction.EAST);
+            }
+
+            if (!WallSide.NONE.equals(statex.getValue(WallBlock.SOUTH))) {
+                i |= viaFabricPlus$getDirectionMask(Direction.SOUTH);
+            }
+
+            if (!WallSide.NONE.equals(statex.getValue(WallBlock.WEST))) {
+                i |= viaFabricPlus$getDirectionMask(Direction.WEST);
+            }
+
+            return i;
+        });
+    }
 
     @Override
     protected VoxelShape getShape(BlockState p_58050_, BlockGetter p_58051_, BlockPos p_58052_, CollisionContext p_58053_) {
+        if (p_58050_.getValue(WallBlock.UP) && ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_12_2)) {
+            return (this.viaFabricPlus$outline_shape_r1_12_2[this.viaFabricPlus$getShapeIndex(p_58050_)]);
+        }
         return this.shapes.apply(p_58050_);
+    }
+    @Override
+    public VoxelShape getOcclusionShape(BlockState state) {
+        if (state.getValue(WallBlock.UP) && ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_12_2)) {
+            return this.shapes.apply(state);
+        } else {
+            return super.getOcclusionShape(state);
+        }
     }
 
     @Override
     protected VoxelShape getCollisionShape(BlockState p_58055_, BlockGetter p_58056_, BlockPos p_58057_, CollisionContext p_58058_) {
+        if (p_58055_.getValue(WallBlock.UP) && ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_12_2)) {
+            return (this.viaFabricPlus$collision_shape_r1_12_2[this.viaFabricPlus$getShapeIndex(p_58055_)]);
+        }
         return this.collisionShapes.apply(p_58055_);
     }
 
@@ -105,7 +219,15 @@ public class WallBlock extends Block implements SimpleWaterloggedBlock {
     private boolean connectsTo(BlockState p_58021_, boolean p_58022_, Direction p_58023_) {
         Block block = p_58021_.getBlock();
         boolean flag = block instanceof FenceGateBlock && FenceGateBlock.connectsToDirection(p_58021_, p_58023_);
-        return p_58021_.is(BlockTags.WALLS) || !isExceptionForConnection(p_58021_) && p_58022_ || block instanceof IronBarsBlock || flag;
+        boolean result = p_58021_.is(BlockTags.WALLS) || !isExceptionForConnection(p_58021_) && p_58022_ || block instanceof IronBarsBlock || flag;
+
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_14)) {
+            if (!Block1_14.isExceptBlockForAttachWithPiston(p_58021_.getBlock())) {
+                result = false;
+            }
+        }
+
+        return result;
     }
 
     @Override
@@ -128,31 +250,45 @@ public class WallBlock extends Block implements SimpleWaterloggedBlock {
         boolean flag2 = this.connectsTo(blockstate2, blockstate2.isFaceSturdy(levelreader, blockpos3, Direction.NORTH), Direction.NORTH);
         boolean flag3 = this.connectsTo(blockstate3, blockstate3.isFaceSturdy(levelreader, blockpos4, Direction.EAST), Direction.EAST);
         BlockState blockstate5 = this.defaultBlockState().setValue(WATERLOGGED, fluidstate.getType() == Fluids.WATER);
-        return this.updateShape(levelreader, blockstate5, blockpos5, blockstate4, flag, flag1, flag2, flag3);
+
+        BlockState result = this.updateShape(levelreader, blockstate5, blockpos5, blockstate4, flag, flag1, flag2, flag3);
+
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_15_2)) {
+            result = viaFabricPlus$oldWallPlacementLogic(result);
+        }
+
+        return result;
     }
 
     @Override
     protected BlockState updateShape(
-        BlockState p_58014_,
-        LevelReader p_363038_,
-        ScheduledTickAccess p_368345_,
-        BlockPos p_58018_,
-        Direction p_58015_,
-        BlockPos p_58019_,
-        BlockState p_58016_,
-        RandomSource p_364621_
+            BlockState p_58014_,
+            LevelReader p_363038_,
+            ScheduledTickAccess p_368345_,
+            BlockPos p_58018_,
+            Direction p_58015_,
+            BlockPos p_58019_,
+            BlockState p_58016_,
+            RandomSource p_364621_
     ) {
         if (p_58014_.getValue(WATERLOGGED)) {
             p_368345_.scheduleTick(p_58018_, Fluids.WATER, Fluids.WATER.getTickDelay(p_363038_));
         }
 
+        BlockState result;
         if (p_58015_ == Direction.DOWN) {
-            return super.updateShape(p_58014_, p_363038_, p_368345_, p_58018_, p_58015_, p_58019_, p_58016_, p_364621_);
+            result = super.updateShape(p_58014_, p_363038_, p_368345_, p_58018_, p_58015_, p_58019_, p_58016_, p_364621_);
         } else {
-            return p_58015_ == Direction.UP
-                ? this.topUpdate(p_363038_, p_58014_, p_58019_, p_58016_)
-                : this.sideUpdate(p_363038_, p_58018_, p_58014_, p_58019_, p_58016_, p_58015_);
+            result = p_58015_ == Direction.UP
+                    ? this.topUpdate(p_363038_, p_58014_, p_58019_, p_58016_)
+                    : this.sideUpdate(p_363038_, p_58018_, p_58014_, p_58019_, p_58016_, p_58015_);
         }
+
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_15_2)) {
+            result = viaFabricPlus$oldWallPlacementLogic(result);
+        }
+
+        return result;
     }
 
     private static boolean isConnected(BlockState p_58011_, Property<WallSide> p_58012_) {

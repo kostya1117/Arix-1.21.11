@@ -10,7 +10,10 @@ import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 import com.mojang.authlib.minecraft.MinecraftProfileTextures;
 import com.mojang.authlib.minecraft.MinecraftProfileTexture.Type;
 import com.mojang.authlib.properties.Property;
+import com.mojang.authlib.yggdrasil.ProfileResult;
 import com.mojang.logging.LogUtils;
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import java.nio.file.Path;
 import java.time.Duration;
@@ -21,6 +24,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.Supplier;
 import net.minecraft.SharedConstants;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.SkinTextureDownloader;
 import net.minecraft.core.ClientAsset;
 import net.minecraft.resources.Identifier;
@@ -82,8 +86,21 @@ public class SkinManager {
     }
 
     public Supplier<PlayerSkin> createLookup(GameProfile p_426545_, boolean p_424649_) {
-        CompletableFuture<Optional<PlayerSkin>> completablefuture = this.get(p_426545_);
+        CompletableFuture<Optional<PlayerSkin>> completablefuture;
+
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_20) && !p_426545_.properties().containsKey("textures")) {
+            // Если версия старая и нет текстур — подгружаем профиль из сессии
+            completablefuture = CompletableFuture.supplyAsync(() -> {
+                final ProfileResult profileResult = Minecraft.getInstance().services().sessionService().fetchProfile(p_426545_.id(), true);
+                return profileResult == null ? p_426545_ : profileResult.profile();
+            }, Util.backgroundExecutor()).thenCompose(this::get);
+        } else {
+            // Стандартное поведение
+            completablefuture = this.get(p_426545_);
+        }
+
         PlayerSkin playerskin = DefaultPlayerSkin.get(p_426545_);
+
         if (SharedConstants.DEBUG_DEFAULT_SKIN_OVERRIDE) {
             return () -> playerskin;
         } else {
@@ -96,7 +113,6 @@ public class SkinManager {
             }
         }
     }
-
     public CompletableFuture<Optional<PlayerSkin>> get(GameProfile p_430689_) {
         if (SharedConstants.DEBUG_DEFAULT_SKIN_OVERRIDE) {
             PlayerSkin playerskin = DefaultPlayerSkin.get(p_430689_);

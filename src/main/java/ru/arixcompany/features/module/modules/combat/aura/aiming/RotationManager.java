@@ -5,10 +5,10 @@ import net.minecraft.network.protocol.game.ClientboundPlayerPositionPacket;
 import net.minecraft.network.protocol.game.ServerboundMovePlayerPacket;
 import net.minecraft.network.protocol.game.ServerboundUseItemPacket;
 import net.minecraft.util.Mth;
-import org.apache.logging.log4j.core.net.Priority;
 import org.jetbrains.annotations.Nullable;
 import ru.arixcompany.features.event.EventHandler;
 import ru.arixcompany.features.event.EventPriority;
+import ru.arixcompany.features.event.EventRepo;
 import ru.arixcompany.features.event.player.EventGameTicked;
 import ru.arixcompany.features.event.player.EventInput;
 import ru.arixcompany.features.event.player.EventLook;
@@ -16,14 +16,13 @@ import ru.arixcompany.features.event.player.EventRotation;
 import ru.arixcompany.features.event.render.EventGameRender3D;
 import ru.arixcompany.features.event.world.EventGameTick;
 import ru.arixcompany.features.event.world.EventPacket;
+import ru.arixcompany.features.event.world.EventRotationUpdate;
 import ru.arixcompany.features.module.modules.combat.aura.aiming.data.Rotation;
 import ru.arixcompany.features.module.modules.combat.aura.aiming.features.MovementCorrection;
 import ru.arixcompany.features.module.modules.combat.aura.rotation.Component;
 import ru.arixcompany.features.module.modules.combat.HitAura;
 import ru.arixcompany.utils.math.Timer;
 import ru.arixcompany.utils.player.MoveUtils;
-
-import static ru.arixcompany.features.module.modules.combat.aura.aiming.data.Rotation.angleDifference;
 
 public class RotationManager extends Component implements RequestHandler.RequestProvider {
 
@@ -40,6 +39,7 @@ public class RotationManager extends Component implements RequestHandler.Request
     }
 
     private static final RequestHandler<RotationTarget> rotationTargetHandler = new RequestHandler<>();
+
     private static RotationTarget getRotationTarget() {
         return rotationTargetHandler.getActiveRequestValue();
     }
@@ -86,7 +86,7 @@ public class RotationManager extends Component implements RequestHandler.Request
             previousRotation = null;
         } else {
             previousRotation = (currentRotation != null) ? currentRotation :
-                    (mc.player != null ? new Rotation(mc.player) : Rotation.ZERO);
+                    (mc.player != null ? new Rotation(mc.player.getYRot(), mc.player.getXRot(), true) : Rotation.ZERO);
         }
         currentRotation = value;
     }
@@ -105,17 +105,19 @@ public class RotationManager extends Component implements RequestHandler.Request
         return true;
     }
 
-    // ── Tick handler ──────────────────────────────────────────────────────
-
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onTick(EventGameTicked event) {
         if (mc.player == null) return;
-
+        EventRepo.call(new EventRotationUpdate());
         update();
     }
 
     public void update() {
-        playerRotation = new Rotation(mc.player);
+        if (getActiveRotationTarget() != null && getActiveRotationTarget().movementCorrection == MovementCorrection.SILENT) {
+            playerRotation = new Rotation(mc.gameRenderer.getMainCamera().yRot(), mc.gameRenderer.getMainCamera().xRot());
+        } else {
+            playerRotation = new Rotation(mc.player.getYRot(), mc.player.getXRot(), true);
+        }
 
         RotationTarget rotationTarget = getRotationTarget();
         RotationTarget activeRotationTarget = getActiveRotationTarget();
@@ -131,17 +133,29 @@ public class RotationManager extends Component implements RequestHandler.Request
                     || diff <= activeRotationTarget.resetThreshold)) {
 
                 if (currentRotation != null) {
+//                    if (activeRotationTarget.movementCorrection == MovementCorrection.SILENT) {
+//                        float yawDiff = Mth.wrapDegrees(freeYaw - mc.player.yRot);
+//                        mc.player.setYRot(mc.player.yRot + yawDiff);
+//                        mc.player.setXRot(freePitch);
+//                        // playerRotation = new Rotation(mc.gameRenderer.getMainCamera().yRot(),mc.gameRenderer.getMainCamera().xRot(),true);
+//                    }
                     if (activeRotationTarget.movementCorrection == MovementCorrection.SILENT) {
-                        float yawDiff = Mth.wrapDegrees(freeYaw - mc.player.yRot);
-                        mc.player.setYRot(mc.player.yRot + yawDiff);
-                        mc.player.setXRot(freePitch);
-                        //playerRotation = new Rotation(mc.gameRenderer.getMainCamera().yRot(),mc.gameRenderer.getMainCamera().xRot());
+                        float yawDiff = Mth.wrapDegrees(freeYaw - mc.player.getYRot());
+                        setPlayerRotation(mc.player.getYRot() + yawDiff, freePitch, true);
                     }
                 }
                 setCurrentRotation(null);
                 previousRotationTarget = null;
             } else {
                 setCurrentRotation(rotation);
+
+//                if (activeRotationTarget.movementCorrection == MovementCorrection.SILENT) {
+//                    mc.player.setYRot(currentRotation.yaw());
+//                    mc.player.setXRot(currentRotation.pitch());
+//                }
+                if (activeRotationTarget.movementCorrection == MovementCorrection.SILENT) {
+                    setPlayerRotation(currentRotation.yaw(), currentRotation.pitch(), true);
+                }
 
                 previousRotationTarget = activeRotationTarget;
             }
@@ -150,6 +164,35 @@ public class RotationManager extends Component implements RequestHandler.Request
         rotationTargetHandler.tick();
     }
 
+
+    public static void setPlayerRotation(float yaw, float pitch, boolean updatePrevious) {
+        if (mc.player == null) return;
+
+        mc.player.setYRot(yaw);
+        mc.player.setXRot(Mth.clamp(pitch, -90.0F, 90.0F));
+
+        if (updatePrevious) {
+            float deltaYaw = yaw - mc.player.getYRot();
+            float deltaPitch = pitch - mc.player.getXRot();
+
+            mc.player.yRotO += deltaYaw;
+            mc.player.xRotO += deltaPitch;
+            mc.player.xRotO = Mth.clamp(mc.player.xRotO, -90.0F, 90.0F);
+        }
+    }
+
+
+    public static void setPlayerRotation(Rotation rotation) {
+        Rotation normalizedRotation = rotation.normalize();
+
+        mc.player.xRotO = mc.player.xRot;
+        mc.player.yRotO = mc.player.yRot;
+
+        mc.player.yRot = normalizedRotation.yaw();
+        mc.player.xRot = normalizedRotation.pitch();
+    }
+
+
     @EventHandler
     private void onWorldRender(EventGameRender3D event) {
         RotationTarget active = getActiveRotationTarget();
@@ -157,14 +200,22 @@ public class RotationManager extends Component implements RequestHandler.Request
 
         if (!isRotatingAllowed(active)) return;
 
-        if (active.movementCorrection == MovementCorrection.CHANGE_LOOK || active.movementCorrection == MovementCorrection.SILENT) {
+        if (active.movementCorrection == MovementCorrection.CHANGE_LOOK) {
             if (playerRotation == null || currentRotation == null) return;
-            float timerSpeed = Timer.INSTANCE.getTimerSpeed();
-            Rotation interpolated = playerRotation.interpolateTo(currentRotation, event.getTickDelta() * timerSpeed);
+            var timerSpeed = Timer.INSTANCE.getTimerSpeed();
+            Rotation interpolated = playerRotation.interpolateTo(currentRotation, /*event.getTickDelta() * timerSpeed*/ timerSpeed * mc.gameRenderer.getMainCamera().getPartialTickTime());
 
-            mc.player.setYRot(interpolated.yaw());
-            mc.player.setXRot(interpolated.pitch());
+//            mc.player.setYRot(interpolated.yaw());
+//            mc.player.setXRot(interpolated.pitch());
+            setPlayerRotation(interpolated);
         }
+//        if (active.movementCorrection == MovementCorrection.SILENT) {
+//            if (playerRotation == null || currentRotation == null) return;
+//            Rotation interpolated = previousRotation.interpolateToNoYaw(currentRotation,mc.gameRenderer.getMainCamera().getPartialTickTime());
+//
+//            mc.player.setYRot(interpolated.yaw());
+//            mc.player.setXRot(interpolated.pitch());
+//        }
     }
 
     @EventHandler
@@ -213,12 +264,12 @@ public class RotationManager extends Component implements RequestHandler.Request
 
     @EventHandler
     public void onInput(EventInput event) {
-        if (isRotating()) {
-            MoveUtils.fixMovement(event, mc.gameRenderer.getMainCamera().yRot());
-        }
+//        if (isRotating()) {
+//            MoveUtils.fixMovement(event, mc.gameRenderer.getMainCamera().yRot());
+//        }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onPacket(EventPacket event) {
         Rotation r;
         switch (event.getPacket()) {
@@ -226,11 +277,11 @@ public class RotationManager extends Component implements RequestHandler.Request
                 if (!p.hasRotation()) return;
                 r = new Rotation(p.yRot, p.xRot, true);
             }
-            case ClientboundPlayerPositionPacket p ->
-                    r = new Rotation(p.change().yRot(), p.change().xRot(), true);
-            case ServerboundUseItemPacket p ->
-                    r = new Rotation(p.getYRot(), p.getXRot(), true);
-            case null, default -> { return; }
+            case ClientboundPlayerPositionPacket p -> r = new Rotation(p.change().yRot(), p.change().xRot(), true);
+            case ServerboundUseItemPacket p -> r = new Rotation(p.getYRot(), p.getXRot(), true);
+            case null, default -> {
+                return;
+            }
         }
         theoreticalServerRotation = r;
         if (!event.isCancelled()) {

@@ -1,0 +1,266 @@
+---- Minecraft Crash Report ----
+// Shall we play a game?
+
+Time: 2026-06-17 15:47:16
+Description: Initializing game
+
+java.lang.IllegalArgumentException: Packet EnvWeatherType in class net.raphimc.vialegacy.protocol.classic.c0_30cpetoc0_28_30.Protocolc0_30cpeToc0_28_30 has no mapping - it needs to be manually cancelled or remapped
+	at com.google.common.base.Preconditions.checkArgument(Preconditions.java:164)
+	at com.viaversion.viaversion.api.protocol.AbstractProtocol.registerPacketIdChanges(AbstractProtocol.java:198)
+	at com.viaversion.viaversion.api.protocol.AbstractProtocol.initialize(AbstractProtocol.java:122)
+	at com.viaversion.viaversion.protocol.ProtocolManagerImpl.registerProtocol(ProtocolManagerImpl.java:259)
+	at com.viaversion.viaversion.protocol.ProtocolManagerImpl.registerProtocol(ProtocolManagerImpl.java:226)
+	at net.raphimc.vialegacy.platform.ViaLegacyPlatform.init(ViaLegacyPlatform.java:115)
+	at net.raphimc.vialegacy.platform.ViaLegacyPlatform.init(ViaLegacyPlatform.java:72)
+	at net.raphimc.vialegacy.ViaLegacyPlatformImpl.<init>(ViaLegacyPlatformImpl.java:33)
+	at com.viaversion.viafabricplus.protocoltranslator.impl.platform.ViaFabricPlusViaLegacyPlatform.<init>(ViaFabricPlusViaLegacyPlatform.java:27)
+	at com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator.lambda$init$1(ProtocolTranslator.java:303)
+	at com.viaversion.viaversion.ViaManagerImpl.init(ViaManagerImpl.java:135)
+	at com.viaversion.viaversion.ViaManagerImpl.initAndLoad(ViaManagerImpl.java:96)
+	at com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator.lambda$init$2(ProtocolTranslator.java:296)
+	at java.base/java.util.concurrent.CompletableFuture$AsyncRun.run(CompletableFuture.java:1804)
+	at java.base/java.util.concurrent.CompletableFuture$AsyncRun.exec(CompletableFuture.java:1796)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:387)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1312)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1843)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1808)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:188)
+
+
+A detailed walkthrough of the error, its code path and all known details is as follows:
+---------------------------------------------------------------------------------------
+
+-- Head --
+Thread: Render thread
+Stacktrace:
+	at com.google.common.base.Preconditions.checkArgument(Preconditions.java:164)
+	at com.viaversion.viaversion.api.protocol.AbstractProtocol.registerPacketIdChanges(AbstractProtocol.java:198)
+	at com.viaversion.viaversion.api.protocol.AbstractProtocol.initialize(AbstractProtocol.java:122)
+	at com.viaversion.viaversion.protocol.ProtocolManagerImpl.registerProtocol(ProtocolManagerImpl.java:259)
+	at com.viaversion.viaversion.protocol.ProtocolManagerImpl.registerProtocol(ProtocolManagerImpl.java:226)
+	at net.raphimc.vialegacy.platform.ViaLegacyPlatform.init(ViaLegacyPlatform.java:115)
+	at net.raphimc.vialegacy.platform.ViaLegacyPlatform.init(ViaLegacyPlatform.java:72)
+	at net.raphimc.vialegacy.ViaLegacyPlatformImpl.<init>(ViaLegacyPlatformImpl.java:33)
+	at com.viaversion.viafabricplus.protocoltranslator.impl.platform.ViaFabricPlusViaLegacyPlatform.<init>(ViaFabricPlusViaLegacyPlatform.java:27)
+	at com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator.lambda$init$1(ProtocolTranslator.java:303)
+	at com.viaversion.viaversion.ViaManagerImpl.init(ViaManagerImpl.java:135)
+	at com.viaversion.viaversion.ViaManagerImpl.initAndLoad(ViaManagerImpl.java:96)
+	at com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator.lambda$init$2(ProtocolTranslator.java:296)
+	at java.base/java.util.concurrent.CompletableFuture$AsyncRun.run(CompletableFuture.java:1804)
+	at java.base/java.util.concurrent.CompletableFuture$AsyncRun.exec(CompletableFuture.java:1796)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:387)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1312)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1843)
+
+-- Initialization --
+Details:
+	Modules: 
+		ADVAPI32.dll:Расширенная библиотека API Windows 32:10.0.22621.963 (WinBuild.160101.0800):Microsoft Corporation
+		AUDIOSES.DLL:Сеанс обработки звука:10.0.22621.963 (WinBuild.160101.0800):Microsoft Corporation
+		AVRT.dll:Среда выполнения мультимедиа в реальном времени:10.0.22621.963 (WinBuild.160101.0800):Microsoft Corporation
+		COMCTL32.dll:Библиотека элементов управления взаимодействия с пользователем:6.10 (WinBuild.160101.0800):Microsoft Corporation
+		CRYPT32.dll:API32 криптографии:10.0.22621.963 (WinBuild.160101.0800):Microsoft Corporation
+		CRYPTBASE.dll:Base cryptographic API DLL:10.0.22621.1 (WinBuild.160101.0800):Microsoft Corporation
+		CRYPTSP.dll:Cryptographic Service Provider API:10.0.22621.3672 (WinBuild.160101.0800):Microsoft Corporation
+		CoreMessaging.dll:Microsoft CoreMessaging Dll:10.0.22621.3672 (WinBuild.160101.0800):Microsoft Corporation
+		DBGHELP.DLL:Windows Image Helper:10.0.22621.3593 (WinBuild.160101.0800):Microsoft Corporation
+		DEVOBJ.dll:Device Information Set DLL:10.0.22621.2506 (WinBuild.160101.0800):Microsoft Corporation
+		DNSAPI.dll:Динамическая библиотека API DNS-клиента:10.0.22621.963 (WinBuild.160101.0800):Microsoft Corporation
+		DSOUND.dll:DirectSound:10.0.22621.963 (WinBuild.160101.0800):Microsoft Corporation
+		GDI32.dll:GDI Client DLL:10.0.22621.4036 (WinBuild.160101.0800):Microsoft Corporation
+		GLU32.dll:Библиотека подпрограмм OpenGL:10.0.22621.963 (WinBuild.160101.0800):Microsoft Corporation
+		IMM32.DLL:Multi-User Windows IMM32 API Client DLL:10.0.22621.3374 (WinBuild.160101.0800):Microsoft Corporation
+		IPHLPAPI.DLL:API вспомогательного приложения IP:10.0.22621.963 (WinBuild.160101.0800):Microsoft Corporation
+		KERNEL32.DLL:Библиотека клиента Windows NT BASE API:10.0.22621.4036 (WinBuild.160101.0800):Microsoft Corporation
+		KERNELBASE.dll:Библиотека клиента Windows NT BASE API:10.0.22621.4249 (WinBuild.160101.0800):Microsoft Corporation
+		MMDevApi.dll:MMDevice API:10.0.22621.963 (WinBuild.160101.0800):Microsoft Corporation
+		MSACM32.dll:Фильтр диспетчера аудиосжатия Microsoft:10.0.22621.963 (WinBuild.160101.0800):Microsoft Corporation
+		MSCTF.dll:Серверная библиотека MSCTF:10.0.22621.963 (WinBuild.160101.0800):Microsoft Corporation
+		NSI.dll:NSI User-mode interface DLL:10.0.22621.1 (WinBuild.160101.0800):Microsoft Corporation
+		NTASN1.dll:Microsoft ASN.1 API:10.0.22621.1 (WinBuild.160101.0800):Microsoft Corporation
+		OLEAUT32.dll:OLEAUT32.DLL:10.0.22621.3672 (WinBuild.160101.0800):Microsoft Corporation
+		Ole32.dll:Microsoft OLE для Windows:10.0.22621.963 (WinBuild.160101.0800):Microsoft Corporation
+		OpenAL.dll:Main implementation library:1.23.1:
+		POWRPROF.dll:DLL модуля поддержки профиля управления питанием:10.0.22621.3374 (WinBuild.160101.0800):Microsoft Corporation
+		PSAPI.DLL:Process Status Helper:10.0.22621.1 (WinBuild.160101.0800):Microsoft Corporation
+		Pdh.dll:Модуль поддержки данных производительности Windows:10.0.22621.963 (WinBuild.160101.0800):Microsoft Corporation
+		RPCRT4.dll:Библиотека удаленного вызова процедур:10.0.22621.2506 (WinBuild.160101.0800):Microsoft Corporation
+		ResampleDmo.DLL:Windows Media Resampler:10.0.22621.2506 (WinBuild.160101.0800):Microsoft Corporation
+		SETUPAPI.dll:Windows Setup API:10.0.22621.963 (WinBuild.160101.0800):Microsoft Corporation
+		SHCORE.dll:SHCORE:10.0.22621.963 (WinBuild.160101.0800):Microsoft Corporation
+		SHELL32.dll:Общая библиотека оболочки Windows:10.0.22621.4249 (WinBuild.160101.0800):Microsoft Corporation
+		UMPDC.dll:User Mode Power Dependency Coordinator:10.0.22621.1 (WinBuild.160101.0800):Microsoft Corporation
+		USER32.dll:Многопользовательская библиотека клиента USER API Windows:10.0.22621.963 (WinBuild.160101.0800):Microsoft Corporation
+		USERENV.dll:Userenv:10.0.22621.963 (WinBuild.160101.0800):Microsoft Corporation
+		VCRUNTIME140.dll:Microsoft® C Runtime Library:14.44.35211.0:Microsoft Corporation
+		VERSION.dll:Version Checking and File Installation Libraries:10.0.22621.1 (WinBuild.160101.0800):Microsoft Corporation
+		WINHTTP.dll:Службы HTTP Windows:10.0.22621.963 (WinBuild.160101.0800):Microsoft Corporation
+		WINMM.dll:MCI API DLL:10.0.22621.963 (WinBuild.160101.0800):Microsoft Corporation
+		WINSTA.dll:Winstation Library:10.0.22621.3672 (WinBuild.160101.0800):Microsoft Corporation
+		WINTRUST.dll:Microsoft Trust Verification APIs:10.0.22621.4249 (WinBuild.160101.0800):Microsoft Corporation
+		WS2_32.dll:32-разрядная библиотека Windows Socket 2.0:10.0.22621.963 (WinBuild.160101.0800):Microsoft Corporation
+		WTSAPI32.dll:Windows Remote Desktop Session Host Server SDK APIs:10.0.22621.1 (WinBuild.160101.0800):Microsoft Corporation
+		Windows.UI.dll:Windows Runtime UI Foundation DLL:10.0.22621.1 (WinBuild.160101.0800):Microsoft Corporation
+		apphelp.dll:Клиентская библиотека совместимости приложений:10.0.22621.963 (WinBuild.160101.0800):Microsoft Corporation
+		awt.dll:OpenJDK Platform binary:21.0.11.0:Amazon.com Inc.
+		bcrypt.dll:Библиотека криптографических примитивов Windows:10.0.22621.963 (WinBuild.160101.0800):Microsoft Corporation
+		bcryptPrimitives.dll:Windows Cryptographic Primitives Library:10.0.22621.4317 (WinBuild.160101.0800):Microsoft Corporation
+		cfgmgr32.dll:Configuration Manager DLL:10.0.22621.2506 (WinBuild.160101.0800):Microsoft Corporation
+		clbcatq.dll:COM+ Configuration Catalog:2001.12.10941.16384 (WinBuild.160101.0800):Microsoft Corporation
+		combase.dll:Microsoft COM для Windows:10.0.22621.963 (WinBuild.160101.0800):Microsoft Corporation
+		cryptnet.dll:Crypto Network Related API:10.0.22621.1 (WinBuild.160101.0800):Microsoft Corporation
+		dbgcore.DLL:Windows Core Debugging Helpers:10.0.22621.1 (WinBuild.160101.0800):Microsoft Corporation
+		dinput8.dll:Microsoft DirectInput:10.0.22621.963 (WinBuild.160101.0800):Microsoft Corporation
+		drvstore.dll:Driver Store API:10.0.22621.3958 (WinBuild.160101.0800):Microsoft Corporation
+		dwmapi.dll:Интерфейс API диспетчера окон рабочего стола (Майкрософт):10.0.22621.963 (WinBuild.160101.0800):Microsoft Corporation
+		dxcore.dll:DXCore:10.0.22621.3958 (WinBuild.160101.0800):Microsoft Corporation
+		extnet.dll:OpenJDK Platform binary:21.0.11.0:Amazon.com Inc.
+		fastprox.dll:WMI Custom Marshaller:10.0.22621.3672 (WinBuild.160101.0800):Microsoft Corporation
+		fwpuclnt.dll:API пользовательского режима FWP/IPsec:10.0.22621.963 (WinBuild.160101.0800):Microsoft Corporation
+		gdi32full.dll:GDI Client DLL:10.0.22621.4317 (WinBuild.160101.0800):Microsoft Corporation
+		glfw.dll:GLFW 3.4.0 DLL:3.4.0:GLFW
+		icm32.dll:Microsoft Color Management Module (CMM):10.0.22621.3880 (WinBuild.160101.0800):Microsoft Corporation
+		iertutil.dll:Служебная программа времени выполнения для Internet Explorer:11.00.22621.963 (WinBuild.160101.0800):Microsoft Corporation
+		imagehlp.dll:Windows NT Image Helper:10.0.22621.1 (WinBuild.160101.0800):Microsoft Corporation
+		inputhost.dll:InputHost:10.0.22621.4249 (WinBuild.160101.0800):Microsoft Corporation
+		instrument.dll:OpenJDK Platform binary:21.0.11.0:Amazon.com Inc.
+		java.dll:OpenJDK Platform binary:21.0.11.0:Amazon.com Inc.
+		java.exe:OpenJDK Platform binary:21.0.11.0:Amazon.com Inc.
+		jemalloc.dll
+		jimage.dll:OpenJDK Platform binary:21.0.11.0:Amazon.com Inc.
+		jli.dll:OpenJDK Platform binary:21.0.11.0:Amazon.com Inc.
+		jna15219298087915909936.dll:JNA native library:7.0.2:Java(TM) Native Access (JNA)
+		jsound.dll:OpenJDK Platform binary:21.0.11.0:Amazon.com Inc.
+		jsvml.dll:OpenJDK Platform binary:21.0.11.0:Amazon.com Inc.
+		jvm.dll:OpenJDK 64-Bit server VM:21.0.11.0:Amazon.com Inc.
+		kernel.appcore.dll:AppModel API Host:10.0.22621.3958 (WinBuild.160101.0800):Microsoft Corporation
+		ksuser.dll:User CSA Library:10.0.22621.1 (WinBuild.160101.0800):Microsoft Corporation
+		liblame4j.dll
+		libopus4j.dll
+		librnnoise4j.dll
+		libspeex4j.dll
+		lwjgl.dll
+		lwjgl_opengl.dll
+		lwjgl_stb.dll
+		management.dll:OpenJDK Platform binary:21.0.11.0:Amazon.com Inc.
+		management_ext.dll:OpenJDK Platform binary:21.0.11.0:Amazon.com Inc.
+		midimap.dll:Microsoft MIDI Mapper:10.0.22621.2506 (WinBuild.160101.0800):Microsoft Corporation
+		msacm32.drv:Программа переназначения звуковых устройств:10.0.22621.963 (WinBuild.160101.0800):Microsoft Corporation
+		msasn1.dll:ASN.1 Runtime APIs:10.0.22621.2506 (WinBuild.160101.0800):Microsoft Corporation
+		mscms.dll:DLL-библиотека системы сопоставления цветов Майкрософт:10.0.22621.963 (WinBuild.160101.0800):Microsoft Corporation
+		msdmo.dll:DMO Runtime:10.0.22621.1 (WinBuild.160101.0800):Microsoft Corporation
+		msvcp140.dll:Microsoft® C Runtime Library:14.44.35211.0:Microsoft Corporation
+		msvcp_win.dll:Microsoft® C Runtime Library:10.0.22621.3374 (WinBuild.160101.0800):Microsoft Corporation
+		msvcrt.dll:Windows NT CRT DLL:7.0.22621.2506 (WinBuild.160101.0800):Microsoft Corporation
+		mswsock.dll:Расширение поставщика службы API Microsoft Windows Sockets 2.0:10.0.22621.963 (WinBuild.160101.0800):Microsoft Corporation
+		napinsp.dll:Поставщик оболочки совместимости для имен электронной почты:10.0.22621.963 (WinBuild.160101.0800):Microsoft Corporation
+		ncrypt.dll:Маршрутизатор Windows NCrypt:10.0.22621.963 (WinBuild.160101.0800):Microsoft Corporation
+		net.dll:OpenJDK Platform binary:21.0.11.0:Amazon.com Inc.
+		nether_pathfinder-x86_6416943998141752548390.dll
+		netutils.dll:Net Win32 API Helpers DLL:10.0.22621.2506 (WinBuild.160101.0800):Microsoft Corporation
+		nio.dll:OpenJDK Platform binary:21.0.11.0:Amazon.com Inc.
+		nlansp_c.dll:NLA Namespace Service Provider DLL:10.0.22621.4249 (WinBuild.160101.0800):Microsoft Corporation
+		ntdll.dll:Системная библиотека NT:10.0.22621.4249 (WinBuild.160101.0800):Microsoft Corporation
+		ntmarta.dll:Поставщик Windows NT MARTA:10.0.22621.963 (WinBuild.160101.0800):Microsoft Corporation
+		nvgpucomp64.dll:NVIDIA GPU Compiler Driver, Version 582.28 :32.0.15.8228:NVIDIA Corporation
+		nvoglv64.dll:NVIDIA Compatible OpenGL ICD:32.0.15.8228:NVIDIA Corporation
+		nvspcap64.dll:NVIDIA Game Proxy 8FileVersion  1:11.0.5.420  8Produc:NVIDIA Corporation  L$FileDescriptio
+		opengl32.dll:OpenGL Client DLL:10.0.22621.3672 (WinBuild.160101.0800):Microsoft Corporation
+		pnrpnsp.dll:Поставщик пространства имен PNRP:10.0.22621.963 (WinBuild.160101.0800):Microsoft Corporation
+		profapi.dll:User Profile Basic API:10.0.22621.4111 (WinBuild.160101.0800):Microsoft Corporation
+		rasadhlp.dll:Remote Access AutoDial Helper:10.0.22621.1 (WinBuild.160101.0800):Microsoft Corporation
+		resourcepolicyclient.dll:Resource Policy Client:10.0.22621.3527 (WinBuild.160101.0800):Microsoft Corporation
+		rsaenh.dll:Microsoft Enhanced Cryptographic Provider:10.0.22621.1 (WinBuild.160101.0800):Microsoft Corporation
+		sapi.dll:Speech API:5.3.26906.00 (WinBuild.160101.0800):Microsoft Corporation
+		sechost.dll:Host for SCM/SDDL/LSA Lookup APIs:10.0.22621.1 (WinBuild.160101.0800):Microsoft Corporation
+		shlwapi.dll:Библиотека небольших программ оболочки:10.0.22621.963 (WinBuild.160101.0800):Microsoft Corporation
+		srvcli.dll:Server Service Client DLL:10.0.22621.4249 (WinBuild.160101.0800):Microsoft Corporation
+		sunmscapi.dll:OpenJDK Platform binary:21.0.11.0:Amazon.com Inc.
+		textinputframework.dll:"TextInputFramework.DYNLINK":10.0.22621.4249 (WinBuild.160101.0800):Microsoft Corporation
+		ucrtbase.dll:Microsoft® C Runtime Library:10.0.22621.3593 (WinBuild.160101.0800):Microsoft Corporation
+		urlmon.dll:Расширения OLE32 для Win32:11.00.22621.963 (WinBuild.160101.0800):Microsoft Corporation
+		uxtheme.dll:Библиотека тем UxTheme (Microsoft):10.0.22621.963 (WinBuild.160101.0800):Microsoft Corporation
+		vcruntime140_1.dll:Microsoft® C Runtime Library:14.44.35211.0:Microsoft Corporation
+		verify.dll:OpenJDK Platform binary:21.0.11.0:Amazon.com Inc.
+		wbemcomn.dll:WMI:10.0.22621.2506 (WinBuild.160101.0800):Microsoft Corporation
+		wbemprox.dll:WMI:10.0.22621.3672 (WinBuild.160101.0800):Microsoft Corporation
+		wbemsvc.dll:WMI:10.0.22621.3672 (WinBuild.160101.0800):Microsoft Corporation
+		wdmaud.drv:Системный звуковой драйвер Winmm:10.0.22621.963 (WinBuild.160101.0800):Microsoft Corporation
+		win32u.dll:Win32u:10.0.22621.4317 (WinBuild.160101.0800):Microsoft Corporation
+		windows.storage.dll:API хранения Microsoft WinRT:10.0.22621.3527 (WinBuild.160101.0800):Microsoft Corporation
+		winmmbase.dll:Base Multimedia Extension API DLL:10.0.22621.1 (WinBuild.160101.0800):Microsoft Corporation
+		winrnr.dll:LDAP RnR Provider DLL:10.0.22621.1 (WinBuild.160101.0800):Microsoft Corporation
+		wintypes.dll:Библиотека DLL основных типов Windows:10.0.22621.963 (WinBuild.160101.0800):Microsoft Corporation
+		wldp.dll:Политика блокировки Windows:10.0.22621.2506 (WinBuild.160101.0800):Microsoft Corporation
+		wshbth.dll:Windows Sockets Helper DLL:10.0.22621.3958 (WinBuild.160101.0800):Microsoft Corporation
+		xinput1_4.dll:API общего контроллера (Майкрософт):10.0.22621.963 (WinBuild.160101.0800):Microsoft Corporation
+		zip.dll:OpenJDK Platform binary:21.0.11.0:Amazon.com Inc.
+Stacktrace:
+	at net.minecraft.client.main.Main.main(Main.java:218)
+	at mcp.client.Start.main(Start.java:15)
+
+-- System Details --
+Details:
+	Minecraft Version: 1.21.11
+	Minecraft Version ID: 1.21.11
+	Operating System: Windows 11 (amd64) version 10.0
+	Java Version: 21.0.11, Amazon.com Inc.
+	Java VM Version: OpenJDK 64-Bit Server VM (mixed mode, sharing), Amazon.com Inc.
+	Memory: 116878808 bytes (111 MiB) / 350224384 bytes (334 MiB) up to 4271898624 bytes (4074 MiB)
+	CPUs: 4
+	Processor Vendor: GenuineIntel
+	Processor Name: Intel(R) Core(TM) i5-4460  CPU @ 3.20GHz
+	Identifier: Intel64 Family 6 Model 60 Stepping 3
+	Microarchitecture: Haswell (Client)
+	Frequency (GHz): 3.19
+	Number of physical packages: 1
+	Number of physical CPUs: 4
+	Number of logical CPUs: 4
+	Graphics card #0 name: NVIDIA GeForce GTX 1080
+	Graphics card #0 vendor: NVIDIA
+	Graphics card #0 VRAM (MiB): 8192.00
+	Graphics card #0 deviceId: VideoController1
+	Graphics card #0 versionInfo: 32.0.15.8228
+	Memory slot #0 capacity (MiB): 8192.00
+	Memory slot #0 clockSpeed (GHz): 1.60
+	Memory slot #0 type: DDR3
+	Memory slot #1 capacity (MiB): 8192.00
+	Memory slot #1 clockSpeed (GHz): 1.60
+	Memory slot #1 type: DDR3
+	Virtual memory max (MiB): 31137.52
+	Virtual memory used (MiB): 21708.42
+	Swap memory total (MiB): 14848.00
+	Swap memory used (MiB): 0.00
+	Space in storage for jna.tmpdir (MiB): <path not set>
+	Space in storage for org.lwjgl.system.SharedLibraryExtractPath (MiB): <path not set>
+	Space in storage for io.netty.native.workdir (MiB): <path not set>
+	Space in storage for java.io.tmpdir (MiB): available: 3289.02, total: 476108.00
+	Space in storage for workdir (MiB): available: 3289.02, total: 476108.00
+	JVM Flags: 0 total; 
+	Debug Flags: 0 total; 
+	Launched Version: mcp
+	Backend library: LWJGL version 3.3.3+5
+	Backend API: NVIDIA GeForce GTX 1080/PCIe/SSE2 GL version 3.3.0 NVIDIA 582.28, NVIDIA Corporation
+	Window size: <not initialized>
+	GFLW Platform: win32
+	Render Extensions: GL_ARB_buffer_storage, GL_KHR_debug, GL_ARB_vertex_attrib_binding, GL_ARB_direct_state_access, GL_EXT_texture_filter_anisotropic
+	GL debug messages: 
+	Is Modded: Definitely; Client brand changed to 'optifine'
+	Universe: 404
+	Type: Client (map_client.txt)
+	Locale: ru_RU
+	System encoding: Cp1251
+	File encoding: UTF-8
+	CPU: 4x Intel(R) Core(TM) i5-4460 CPU @ 3.20GHz
+	OptiFine Version: OptiFine_1.21.11_HD_U_J9
+	OptiFine Build: null
+	Render Distance Chunks: 16
+	Mipmaps: 4
+	Anisotropic Filtering: 1
+	Antialiasing: 0
+	Multitexture: false
+	Shaders: null
+	OpenGlVersion: 3.3.0 NVIDIA 582.28
+	OpenGlRenderer: NVIDIA GeForce GTX 1080/PCIe/SSE2
+	OpenGlVendor: NVIDIA Corporation
+	CpuCount: 4

@@ -5,6 +5,8 @@ import com.google.common.collect.Maps;
 import com.google.common.math.DoubleMath;
 import com.google.common.math.IntMath;
 import com.mojang.math.OctahedralGroup;
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import it.unimi.dsi.fastutil.doubles.DoubleArrayList;
 import it.unimi.dsi.fastutil.doubles.DoubleList;
 import java.util.Arrays;
@@ -218,6 +220,18 @@ public final class Shapes {
     }
 
     public static double collide(Direction.Axis p_193136_, AABB p_193137_, Iterable<VoxelShape> p_193138_, double p_193139_) {
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_12_2)) {
+            for (final VoxelShape shape : p_193138_) {
+                for (final AABB shapeBox : shape.toAabbs()) {
+                    p_193139_ = switch (p_193136_) {
+                        case X -> viaFabricPlus$intersectX(p_193137_, shapeBox, p_193139_);
+                        case Y -> viaFabricPlus$intersectY(p_193137_, shapeBox, p_193139_);
+                        case Z -> viaFabricPlus$intersectZ(p_193137_, shapeBox, p_193139_);
+                    };
+                }
+            }
+          return (p_193139_);
+        }
         for (VoxelShape voxelshape : p_193138_) {
             if (Math.abs(p_193139_) < 1.0E-7) {
                 return 0.0;
@@ -227,6 +241,56 @@ public final class Shapes {
         }
 
         return p_193139_;
+    }
+    private static double viaFabricPlus$intersectX(final AABB box, final AABB shapeBox, double maxDist) {
+        if (box.maxY <= shapeBox.minY || box.minY >= shapeBox.maxY || box.maxZ <= shapeBox.minZ || box.minZ >= shapeBox.maxZ) {
+            return maxDist;
+        }
+
+        double e;
+        if (maxDist > 0.0 && box.maxX <= shapeBox.minX) {
+            double d = shapeBox.minX - box.maxX;
+            if (d < maxDist) {
+                maxDist = d;
+            }
+        } else if (maxDist < 0.0 && box.minX >= shapeBox.maxX && (e = shapeBox.maxX - box.minX) > maxDist) {
+            maxDist = e;
+        }
+        return maxDist;
+    }
+
+    private static double viaFabricPlus$intersectY(final AABB playerBox, final AABB shapeBox, double maxDist) {
+        if (playerBox.maxX <= shapeBox.minX || playerBox.minX >= shapeBox.maxX || playerBox.maxZ <= shapeBox.minZ || playerBox.minZ >= shapeBox.maxZ) {
+            return maxDist;
+        }
+
+        double e;
+        if (maxDist > 0.0 && playerBox.maxY <= shapeBox.minY) {
+            double d = shapeBox.minY - playerBox.maxY;
+            if (d < maxDist) {
+                maxDist = d;
+            }
+        } else if (maxDist < 0.0 && playerBox.minY >= shapeBox.maxY && (e = shapeBox.maxY - playerBox.minY) > maxDist) {
+            maxDist = e;
+        }
+        return maxDist;
+    }
+
+    private static double viaFabricPlus$intersectZ(final AABB playerBox, final AABB shapeBox, double maxDist) {
+        if (playerBox.maxX <= shapeBox.minX || playerBox.minX >= shapeBox.maxX || playerBox.maxY <= shapeBox.minY || playerBox.minY >= shapeBox.maxY) {
+            return maxDist;
+        }
+
+        double e;
+        if (maxDist > 0.0 && playerBox.maxZ <= shapeBox.minZ) {
+            double d = shapeBox.minZ - playerBox.maxZ;
+            if (d < maxDist) {
+                maxDist = d;
+            }
+        } else if (maxDist < 0.0 && playerBox.minZ >= shapeBox.maxZ && (e = shapeBox.maxZ - playerBox.minZ) > maxDist) {
+            maxDist = e;
+        }
+        return maxDist;
     }
 
     public static boolean blockOccludes(VoxelShape p_83118_, VoxelShape p_83119_, Direction p_83120_) {

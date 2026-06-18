@@ -66,7 +66,7 @@ public class ClientPackSource extends BuiltInPackSource {
     }
 
     private static VanillaPackResources createVanillaPackSource(Path p_250749_) {
-        VanillaPackResourcesBuilder vanillapackresourcesbuilder = new VanillaPackResourcesBuilder().setMetadata(BUILT_IN_METADATA).exposeNamespace("minecraft","voicechat","arix");
+        VanillaPackResourcesBuilder vanillapackresourcesbuilder = new VanillaPackResourcesBuilder().setMetadata(BUILT_IN_METADATA).exposeNamespace("minecraft","viafabricplus","voicechat","arix");
         return vanillapackresourcesbuilder.applyDevelopmentConfig().pushJarResources().pushAssetPath(PackType.CLIENT_RESOURCES, p_250749_).build(VANILLA_PACK_INFO);
     }
 

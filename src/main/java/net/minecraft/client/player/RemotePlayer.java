@@ -1,6 +1,8 @@
 package net.minecraft.client.player;
 
 import com.mojang.authlib.GameProfile;
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.util.profiling.Profiler;
@@ -80,6 +82,9 @@ public class RemotePlayer extends AbstractClientPlayer {
 
     @Override
     protected void updatePlayerPose() {
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_13_2)) {
+            super.updatePlayerPose();
+        }
     }
 
     @Override

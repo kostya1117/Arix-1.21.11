@@ -1,6 +1,8 @@
 package net.minecraft.world.level.block;
 
 import com.mojang.serialization.MapCodec;
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import java.util.Map;
@@ -104,6 +106,9 @@ public class FireBlock extends BaseFireBlock {
 
     @Override
     protected VoxelShape getShape(BlockState p_53474_, BlockGetter p_53475_, BlockPos p_53476_, CollisionContext p_53477_) {
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_15_2)) {
+           return (Shapes.empty());
+        }
         return this.shapes.apply(p_53474_);
     }
 
@@ -284,7 +289,7 @@ public class FireBlock extends BaseFireBlock {
     }
 
     @Override
-    protected boolean canBurn(BlockState p_53489_) {
+    public boolean canBurn(BlockState p_53489_) {
         return this.getIgniteOdds(p_53489_) > 0;
     }
 

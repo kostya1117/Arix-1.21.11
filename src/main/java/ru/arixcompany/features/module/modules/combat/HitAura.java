@@ -14,6 +14,7 @@ import ru.arixcompany.features.event.EventHandler;
 import ru.arixcompany.features.event.player.EventGameTicked;
 import ru.arixcompany.features.event.player.EventSprint;
 import ru.arixcompany.features.event.world.EventGameTick;
+import ru.arixcompany.features.event.world.EventRotationUpdate;
 import ru.arixcompany.features.event.world.EventTick;
 import ru.arixcompany.features.module.Category;
 import ru.arixcompany.features.module.Module;
@@ -33,8 +34,23 @@ public class HitAura extends Module {
 
 
     public static final SelectSetting angleSmooth =
-            new SelectSetting("Сглаживание")
-                    .value("Линейное", "Интерполяция", "Ускорение", "SpookyTime", "FuntimeSnap", "AI");
+            new SelectSetting("Ротация")
+                    .value("Линейное", "Интерполяция", "SpookyTime", "FuntimeSnap");
+
+    public static final SelectSetting interrot =
+            new SelectSetting("Сглаживание").value(
+                    "Линейное",
+                    "Синусоида (Вход)", "Синусоида (Выход)", "Синусоида (Вход/Выход)",
+                    "Квадратичное (Вход)", "Квадратичное (Выход)", "Квадратичное (Вход/Выход)",
+                    "Кубическое (Вход)", "Кубическое (Выход)", "Кубическое (Вход/Выход)",
+                    "Квартичное (Вход)", "Квартичное (Выход)", "Квартичное (Вход/Выход)",
+                    "Квинтичное (Вход)", "Квинтичное (Выход)", "Квинтичное (Вход/Выход)",
+                    "Экспонента (Вход)", "Экспонента (Выход)", "Экспонента (Вход/Выход)",
+                    "Круговое (Вход)", "Круговое (Выход)", "Круговое (Вход/Выход)",
+                    "Замах (Вход)", "Замах (Выход)", "Замах (Вход/Выход)",
+                    "Пружина (Вход)", "Пружина (Выход)", "Пружина (Вход/Выход)",
+                    "Отскок (Вход)", "Отскок (Выход)", "Отскок (Вход/Выход)"
+            );
 
     public static final SelectSetting motion =
             new SelectSetting("Режим ротация")
@@ -189,7 +205,7 @@ public class HitAura extends Module {
         super("HitAura", Category.Combat);
         setup(
                 // Range
-                angleSmooth,sprintReset,motion,
+                angleSmooth,interrot,sprintReset,motion,
                 attackRange, preRange,
                 // Elytra
                 elytraTarget, elytraRange,
@@ -207,7 +223,7 @@ public class HitAura extends Module {
     }
 
     @EventHandler
-    public void onEvent(EventGameTicked e) {
+    public void onEvent(EventRotationUpdate e) {
         if (target != null && mc.player != null && mc.level != null) {
             rotations.processTarget(target);
         }

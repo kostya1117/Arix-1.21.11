@@ -167,7 +167,7 @@ public abstract class BlockEntity extends CapabilityProvider.BlockEntities imple
         p_409334_.store("id", TYPE_CODEC, p_187470_);
     }
 
-    private void saveMetadata(ValueOutput p_410055_) {
+    public void saveMetadata(ValueOutput p_410055_) {
         this.saveId(p_410055_);
         p_410055_.putInt("x", this.worldPosition.getX());
         p_410055_.putInt("y", this.worldPosition.getY());

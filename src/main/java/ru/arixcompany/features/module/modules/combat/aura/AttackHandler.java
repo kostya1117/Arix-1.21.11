@@ -16,6 +16,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.ShieldItem;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import ru.arixcompany.Arix;
 import ru.arixcompany.features.module.modules.combat.HitAura;
@@ -31,9 +32,12 @@ import ru.arixcompany.utils.math.Randomizer;
 import ru.arixcompany.utils.math.TimerUtils;
 import ru.arixcompany.utils.player.FallingPlayer;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 @UtilityClass
 public final class AttackHandler implements IMinecraft {
-
+    private float currentCooldownThreshold = generateHumanCooldown();
+    Randomizer randomizer = new Randomizer();
     HitAura hitAura = Arix.getInstance().getModuleRepo().getModule(HitAura.class);
     public void performAttack(LivingEntity target, boolean rayCast, float ranges) {
         if (target == null || mc.player == null) return;
@@ -56,12 +60,12 @@ public final class AttackHandler implements IMinecraft {
 
     public boolean shouldAttack() {
         if (HitAura.target == null) return false;
-        if (!(mc.player.getAttackStrengthScale(0.5f) > 0.9f)) return false;
+        if (!(mc.player.getAttackStrengthScale(0.5f) >= 0.92)) return false;
         return isBestMomentToHit();
     }
     public boolean shouldAttackS() {
         if (HitAura.target == null) return false;
-        return mc.player.getAttackStrengthScale(0.5f) > 0.9f;
+        return mc.player.getAttackStrengthScale(0.5f) >= 0.92; // Тоже меняем здесь
     }
     public boolean hasMovementRestrictions() {
         if (mc.player == null) return false;
@@ -110,6 +114,7 @@ public final class AttackHandler implements IMinecraft {
         if (!canCrit() || player.getDeltaMovement().y < fallVelocityThreshold) {
             return false;
         }
+
         float nextPossibleCrit = calculateTicksUntilNextCrit();
         double gravity = 0.08;
         float ticksTillFall = (float) (player.getDeltaMovement().y / gravity);
@@ -220,10 +225,13 @@ public final class AttackHandler implements IMinecraft {
             return 0.0f;
         }
 
-        float durationToWait = player.getCurrentItemAttackStrengthDelay() * 0.9F - 0.5F;
+        float durationToWait = player.getCurrentItemAttackStrengthDelay() * 0.92F - 0.5F;
         float waitedDuration = (float) player.attackStrengthTicker;
 
         return Math.max(durationToWait - waitedDuration, 0.0f);
+    }
+    private float generateHumanCooldown() {
+        return randomizer != null ? randomizer.nextFloat(0.8f, 1f) : 0;
     }
 
     public float getCooldownDamageFactor(Player player, float tickDelta) {
@@ -237,10 +245,12 @@ public final class AttackHandler implements IMinecraft {
         HitAura hitAura = Arix.getInstance().getModuleRepo().getModule(HitAura.class);
 
        // hitAura.stopBlocking();
-        if (!hitAura.stopBlocking()) {
+       // if (!hitAura.stopBlocking()) {
             mc.gameMode.attack(mc.player, target);
             mc.player.swing(hand);
-        }
+       // }
+
+        //  currentCooldownThreshold = generateHumanCooldown();
 
         if (hitAura.misc.isSelected("Ломать щит")) {
             if (target instanceof Player entity) {
@@ -268,7 +278,7 @@ public final class AttackHandler implements IMinecraft {
                 RotationManager.currentRotation.pitch(),
                 e -> e == target,
                 range
-        ).getType() == net.minecraft.world.phys.HitResult.Type.ENTITY;
+        ).getType() == HitResult.Type.ENTITY;
     }
 
     public boolean anyEntityOnRay(Rotation rotation, LivingEntity target, float range) {
@@ -279,16 +289,16 @@ public final class AttackHandler implements IMinecraft {
                 rotation.pitch(),
                 e -> e == target,
                 range
-        ).getType() == net.minecraft.world.phys.HitResult.Type.ENTITY;
+        ).getType() == HitResult.Type.ENTITY;
     }
 
     public boolean shouldAttack(LivingEntity target, boolean rayCast, boolean distanceCheck, float ranges) {
         if (distanceCheck && target != null && !AuraUtil.validDistance(target, ranges)) return false;
-        if (!(mc.player.getAttackStrengthScale(0.5f) > 0.9f)) return false;
+        if (!(mc.player.getAttackStrengthScale(0.5f) >= 0.92)) return false;
 
         boolean valid = isBestMomentToHit();
         if (valid && rayCast) {
-            if (!anyEntityOnRay(new Rotation(mc.player), target, ranges)) {
+            if (!anyEntityOnRay(new Rotation(mc.player.getYRot(),mc.player.getXRot(),true), target, ranges)) {
                 valid = false;
             }
         }

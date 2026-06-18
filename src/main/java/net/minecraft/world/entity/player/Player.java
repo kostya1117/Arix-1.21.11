@@ -12,6 +12,8 @@ import java.util.Optional;
 import java.util.OptionalInt;
 import java.util.function.Predicate;
 
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -122,6 +124,8 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.scores.PlayerTeam;
 import net.minecraft.world.scores.Team;
+import net.raphimc.viabedrock.api.BedrockProtocolVersion;
+import net.raphimc.vialegacy.api.LegacyProtocolVersion;
 import org.jspecify.annotations.Nullable;
 import ru.arixcompany.features.event.EventRepo;
 import ru.arixcompany.features.event.player.EventMovementTick;
@@ -295,7 +299,8 @@ public abstract class Player extends Avatar implements ContainerUser {
 
     @Override
     protected float getMaxHeadRotationRelativeToBody() {
-        return this.isBlocking() ? 15.0F : super.getMaxHeadRotationRelativeToBody();
+        boolean isBlocking = ProtocolTranslator.getTargetVersion().newerThan(ProtocolVersion.v1_20_2) && this.isBlocking();
+        return isBlocking ? 15.0F : super.getMaxHeadRotationRelativeToBody();
     }
 
     public boolean isSecondaryUseActive() {
@@ -350,6 +355,25 @@ public abstract class Player extends Avatar implements ContainerUser {
     }
 
     protected void updatePlayerPose() {
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_13_2)) {
+            final Pose pose;
+            if (this.isFallFlying()) {
+                pose = Pose.FALL_FLYING;
+            } else if (this.isSleeping()) {
+                pose = Pose.SLEEPING;
+            } else if (this.isSwimming()) {
+                pose = Pose.SWIMMING;
+            } else if (this.isAutoSpinAttack()) {
+                pose = Pose.SPIN_ATTACK;
+            } else if (this.isShiftKeyDown()) {
+                pose = Pose.CROUCHING;
+            } else {
+                pose = Pose.STANDING;
+            }
+            this.setPose(pose);
+            return;
+        }
+
         if (this.canPlayerFitWithinBlocksAndEntitiesWhen(Pose.SWIMMING)) {
             Pose pose = this.getDesiredPose();
             Pose pose1;
@@ -380,7 +404,12 @@ public abstract class Player extends Avatar implements ContainerUser {
     }
 
     protected boolean canPlayerFitWithinBlocksAndEntitiesWhen(Pose p_297636_) {
-        return this.level().noCollision(this, this.getDimensions(p_297636_).makeBoundingBox(this.position()).deflate(1.0E-7));
+        AABB aabb = this.getDimensions(p_297636_).makeBoundingBox(this.position());
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_15_2)) {
+            return this.level().noCollision(this, aabb);
+        } else {
+            return this.level().noCollision(this, aabb.deflate(1.0E-7));
+        }
     }
 
     @Override
@@ -448,6 +477,8 @@ public abstract class Player extends Avatar implements ContainerUser {
         }
     }
 
+    public boolean viaFabricPlus$isSprinting;
+
     @Override
     public void aiStep() {
         if (this.jumpTriggerTime > 0) {
@@ -463,7 +494,10 @@ public abstract class Player extends Avatar implements ContainerUser {
         super.aiStep();
         this.updateSwingTime();
         this.yHeadRot = this.getYRot();
-        this.setSpeed((float)this.getAttributeValue(Attributes.MOVEMENT_SPEED));
+        this.setSpeed((float) this.getAttributeValue(Attributes.MOVEMENT_SPEED));
+
+        this.viaFabricPlus$isSprinting = this.isSprinting();
+
         if (this.getHealth() > 0.0F && !this.isSpectator()) {
             AABB aabb;
             if (this.isPassenger() && !this.getVehicle().isRemoved()) {
@@ -595,8 +629,28 @@ public abstract class Player extends Avatar implements ContainerUser {
 
     public float getDestroySpeed(BlockState p_36282_) {
         float f = this.inventory.getSelectedItem().getDestroySpeed(p_36282_);
+        final float speed = f;
+        final float efficiency = (float)this.getAttributeValue(Attributes.MINING_EFFICIENCY);
+
         if (f > 1.0F) {
-            f += (float)this.getAttributeValue(Attributes.MINING_EFFICIENCY);
+            f += efficiency;
+        }
+
+        // ViaFabricPlus - old efficiency calculation
+        if (efficiency > 0.0F) {
+            if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(LegacyProtocolVersion.r1_4_4tor1_4_5) && this.hasCorrectToolForDrops(p_36282_)) {
+                f = speed + efficiency;
+            } else if (speed > 1.0F || ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(LegacyProtocolVersion.r1_4_6tor1_4_7)) {
+                if (!this.getMainHandItem().isEmpty()) {
+                    if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_7_6)) {
+                        if (speed <= 1.0F && !this.hasCorrectToolForDrops(p_36282_)) {
+                            f = speed + efficiency * 0.08F;
+                        } else {
+                            f = speed + efficiency;
+                        }
+                    }
+                }
+            }
         }
 
         if (MobEffectUtil.hasDigSpeed(this)) {
@@ -604,13 +658,20 @@ public abstract class Player extends Avatar implements ContainerUser {
         }
 
         if (this.hasEffect(MobEffects.MINING_FATIGUE)) {
-            float f1 = switch (this.getEffect(MobEffects.MINING_FATIGUE).getAmplifier()) {
-                case 0 -> 0.3F;
-                case 1 -> 0.09F;
-                case 2 -> 0.0027F;
-                default -> 8.1E-4F;
-            };
-            f *= f1;
+            if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_7_6)) {
+                f *= 1.0F - (this.getEffect(MobEffects.MINING_FATIGUE).getAmplifier() + 1) * 0.2F;
+                if (f < 0.0F) {
+                    f = 0.0F;
+                }
+            } else {
+                float f1 = switch (this.getEffect(MobEffects.MINING_FATIGUE).getAmplifier()) {
+                    case 0 -> 0.3F;
+                    case 1 -> 0.09F;
+                    case 2 -> 0.0027F;
+                    default -> 8.1E-4F;
+                };
+                f *= f1;
+            }
         }
 
         f *= (float)this.getAttributeValue(Attributes.BLOCK_BREAK_SPEED);
@@ -887,12 +948,15 @@ public abstract class Player extends Avatar implements ContainerUser {
 
     @Override
     protected Vec3 maybeBackOffFromEdge(Vec3 p_36201_, MoverType p_36202_) {
-        float f = this.maxUpStep();
+        float f = ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_10)
+                ? 1.0F
+                : this.maxUpStep();
+
         if (!this.abilities.flying
-            && !(p_36201_.y > 0.0)
-            && (p_36202_ == MoverType.SELF || p_36202_ == MoverType.PLAYER)
-            && this.isStayingOnGroundSurface()
-            && this.isAboveGround(f)) {
+                && !(p_36201_.y > 0.0)
+                && (p_36202_ == MoverType.SELF || p_36202_ == MoverType.PLAYER)
+                && this.isStayingOnGroundSurface()
+                && this.isAboveGround(f)) {
             double d0 = p_36201_.x;
             double d1 = p_36201_.z;
             double d2 = 0.05;
@@ -942,19 +1006,37 @@ public abstract class Player extends Avatar implements ContainerUser {
     }
 
     private boolean canFallAtLeast(double p_333341_, double p_331138_, double p_396282_) {
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_21_4)) {
+            final double constant;
+            if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_20_3)) {
+                constant = 0.0;
+            } else {
+                constant = 1.0E-5F;
+            }
+            final AABB box = getBoundingBox();
+            return this.level().noCollision(this, new AABB(
+                    box.minX + p_333341_,
+                    box.minY - p_396282_ - constant,
+                    box.minZ + p_331138_,
+                    box.maxX + p_333341_,
+                    box.minY,
+                    box.maxZ + p_331138_
+            ));
+        }
+
         AABB aabb = this.getBoundingBox();
         return this.level()
-            .noCollision(
-                this,
-                new AABB(
-                    aabb.minX + 1.0E-7 + p_333341_,
-                    aabb.minY - p_396282_ - 1.0E-7,
-                    aabb.minZ + 1.0E-7 + p_331138_,
-                    aabb.maxX - 1.0E-7 + p_333341_,
-                    aabb.minY,
-                    aabb.maxZ - 1.0E-7 + p_331138_
-                )
-            );
+                .noCollision(
+                        this,
+                        new AABB(
+                                aabb.minX + 1.0E-7 + p_333341_,
+                                aabb.minY - p_396282_ - 1.0E-7,
+                                aabb.minZ + 1.0E-7 + p_331138_,
+                                aabb.maxX - 1.0E-7 + p_333341_,
+                                aabb.minY,
+                                aabb.maxZ - 1.0E-7 + p_331138_
+                        )
+                );
     }
 
     public void attack(Entity p_36347_) {
@@ -1376,26 +1458,72 @@ public abstract class Player extends Avatar implements ContainerUser {
         return 0;
     }
 
+    private int viaFabricPlus$ticksSinceSwimming;
+
     @Override
     public void travel(Vec3 p_36359_) {
         if (this.isPassenger()) {
             super.travel(p_36359_);
         } else {
             if (this.isSwimming()) {
-                double d0 = this.getLookAngle().y;
-                double d1 = d0 < -0.2 ? 0.085 : 0.06;
-                if (d0 <= 0.0
-                    || this.jumping
-                    || !this.level().getFluidState(BlockPos.containing(this.getX(), this.getY() + 1.0 - 0.1, this.getZ())).isEmpty()) {
-                    Vec3 vec3 = this.getDeltaMovement();
-                    this.setDeltaMovement(vec3.add(0.0, (d0 - vec3.y) * d1, 0.0));
+                // ViaFabricPlus - Bedrock prevent swimming resurface
+                boolean doSwimLogic;
+                if (ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.bedrockLatest)) {
+                    double d0look = this.getLookAngle().y;
+                    if (this.level().getFluidState(BlockPos.containing(this.getX(), this.getY() + 0.4, this.getZ())).isEmpty() && d0look > 0 && d0look < 0.55) {
+                        this.setDeltaMovement(this.getDeltaMovement().x, 0, this.getDeltaMovement().z);
+                        doSwimLogic = false;
+                    } else {
+                        doSwimLogic = true;
+                    }
+                } else {
+                    doSwimLogic = true;
+                }
+
+                if (doSwimLogic) {
+                    double d0 = this.getLookAngle().y;
+                    double d1 = d0 < -0.2 ? 0.085 : 0.06;
+                    if (d0 <= 0.0
+                            || this.jumping
+                            // ViaFabricPlus - Bedrock modify water above position
+                            || !this.level().getFluidState(BlockPos.containing(this.getX(),
+                            this.getY() + 1.0 - 0.1 - (ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.bedrockLatest) ? 0.9 : 0.0),
+                            this.getZ())).isEmpty()) {
+                        Vec3 vec3 = this.getDeltaMovement();
+                        // ViaFabricPlus - Bedrock prevent swimming motion when jumping
+                        if (ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.bedrockLatest) && this.jumping) {
+                            // don't set delta movement
+                        } else {
+                            this.setDeltaMovement(vec3.add(0.0, (d0 - vec3.y) * d1, 0.0));
+                        }
+                    }
+                }
+            }
+
+            // ViaFabricPlus - Bedrock prevent jumping when started swimming
+            if (ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.bedrockLatest)) {
+                if (this.isSwimming()) {
+                    this.viaFabricPlus$ticksSinceSwimming++;
+                } else {
+                    this.viaFabricPlus$ticksSinceSwimming = 0;
+                }
+
+                if (this.viaFabricPlus$ticksSinceSwimming > 0 && this.viaFabricPlus$ticksSinceSwimming < 10 && this.jumping) {
+                    this.setDeltaMovement(this.getDeltaMovement().x, 0, this.getDeltaMovement().z);
                 }
             }
 
             if (this.getAbilities().flying) {
                 double d2 = this.getDeltaMovement().y;
                 super.travel(p_36359_);
-                this.setDeltaMovement(this.getDeltaMovement().with(Direction.Axis.Y, d2 * 0.6));
+                Vec3 flyVel = this.getDeltaMovement().with(Direction.Axis.Y, d2 * 0.6);
+
+                // ViaFabricPlus - Bedrock remove fly slipperiness
+                if (ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.bedrockLatest) && p_36359_.horizontalDistanceSqr() == 0) {
+                    this.setDeltaMovement(new Vec3(0, flyVel.y, 0));
+                } else {
+                    this.setDeltaMovement(flyVel);
+                }
             } else {
                 super.travel(p_36359_);
             }
@@ -1459,6 +1587,15 @@ public abstract class Player extends Avatar implements ContainerUser {
     }
 
     public boolean tryToStartFallFlying() {
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_14_4)) {
+            if (!this.onGround() && this.getDeltaMovement().y < 0D && !this.isFallFlying()) {
+                final ItemStack itemStack = this.getItemBySlot(EquipmentSlot.CHEST);
+                if (itemStack.is(Items.ELYTRA) && canGlideUsing(itemStack, EquipmentSlot.CHEST)) {
+                    return (true);
+                }
+            }
+            return (false);
+        }
         if (!this.isFallFlying() && this.canGlide() && !this.isInWater()) {
             this.startFallFlying();
             return true;
@@ -1607,6 +1744,9 @@ public abstract class Player extends Avatar implements ContainerUser {
     }
 
     public boolean canEat(boolean p_36392_) {
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_14_4) && this.abilities.invulnerable) {
+            return (false);
+        }
         return this.abilities.invulnerable || p_36392_ || this.foodData.needsFood();
     }
 
@@ -1692,6 +1832,9 @@ public abstract class Player extends Avatar implements ContainerUser {
     }
 
     public boolean isCreative() {
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_8)) {
+           return (this.abilities.instabuild);
+        }
         return this.gameMode() == GameType.CREATIVE;
     }
 
@@ -1827,11 +1970,19 @@ public abstract class Player extends Avatar implements ContainerUser {
     }
 
     public float getAttackStrengthScale(float p_36404_) {
-        return Mth.clamp((this.attackStrengthTicker + p_36404_) / this.getCurrentItemAttackStrengthDelay(), 0.0F, 1.0F);
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_8)) {
+            return 1.0F;
+        } else {
+            return Mth.clamp((this.attackStrengthTicker + p_36404_) / this.getCurrentItemAttackStrengthDelay(), 0.0F, 1.0F);
+        }
     }
 
     public float getItemSwapScale(float p_459344_) {
-        return Mth.clamp((this.itemSwapTicker + p_459344_) / this.getCurrentItemAttackStrengthDelay(), 0.0F, 1.0F);
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_8)) {
+            return 1.0F;
+        } else {
+            return Mth.clamp((this.itemSwapTicker + p_459344_) / this.getCurrentItemAttackStrengthDelay(), 0.0F, 1.0F);
+        }
     }
 
     public void resetAttackStrengthTicker() {
@@ -1975,10 +2126,14 @@ public abstract class Player extends Avatar implements ContainerUser {
 
     @Override
     protected float getFlyingSpeed() {
+        boolean sprinting = ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_19_3)
+                ? this.viaFabricPlus$isSprinting
+                : this.isSprinting();
+
         if (this.abilities.flying && !this.isPassenger()) {
-            return this.isSprinting() ? this.abilities.getFlyingSpeed() * 2.0F : this.abilities.getFlyingSpeed();
+            return sprinting ? this.abilities.getFlyingSpeed() * 2.0F : this.abilities.getFlyingSpeed();
         } else {
-            return this.isSprinting() ? 0.025999999F : 0.02F;
+            return sprinting ? 0.025999999F : 0.02F;
         }
     }
 
@@ -2059,6 +2214,9 @@ public abstract class Player extends Avatar implements ContainerUser {
 
     @Override
     public boolean onClimbable() {
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_21_2)) {
+            return super.onClimbable();
+        }
         return this.abilities.flying ? false : super.onClimbable();
     }
 

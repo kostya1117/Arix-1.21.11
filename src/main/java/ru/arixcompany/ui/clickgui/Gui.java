@@ -24,7 +24,7 @@ import ru.arixcompany.features.module.setting.implement.ColorSetting;
 import ru.arixcompany.utils.IMinecraft;
 import ru.arixcompany.utils.animation.Animation;
 import ru.arixcompany.utils.animation.Direction;
-import ru.arixcompany.utils.animation.impl.EaseInOutQuad;
+import ru.arixcompany.utils.animation.impl.quad.EaseInOutQuad;
 import ru.arixcompany.utils.math.ScrollUtil;
 import ru.arixcompany.utils.render.ColorUtil;
 import ru.arixcompany.utils.render.RenderUtils;

@@ -20,7 +20,6 @@ package ru.arixcompany.features.module.modules.combat.aura.aiming.features;
 
 /**
  * Corrects movement when aiming away from client-side view direction.
- * Ported from LiquidBounce.
  */
 public enum MovementCorrection {
 

@@ -4,6 +4,9 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.logging.LogUtils;
 import java.util.List;
 import java.util.function.Function;
+
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.ChatComponent;
 import net.minecraft.client.gui.screens.Screen;
@@ -144,6 +147,9 @@ public class ClientConfigurationPacketListenerImpl extends ClientCommonPacketLis
 
     @Override
     public void handleConfigurationFinished(ClientboundFinishConfigurationPacket p_299280_) {
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_20_3)) {
+            this.connection.getChannel().config().setAutoRead(false);
+        }
         PacketUtils.ensureRunningOnSameThread(p_299280_, this, this.minecraft.packetProcessor());
         RegistryAccess.Frozen registryaccess$frozen = this.runWithResources(
             p_357775_ -> this.registryDataCollector.collectGameRegistries(p_357775_, this.receivedRegistries, this.connection.isMemoryConnection())
@@ -179,6 +185,9 @@ public class ClientConfigurationPacketListenerImpl extends ClientCommonPacketLis
                 return true;
             }
         }));
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_20_3)) {
+            this.connection.getChannel().config().setAutoRead(true);
+        }
     }
 
     @Override

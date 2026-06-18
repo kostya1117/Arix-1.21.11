@@ -69,7 +69,7 @@ public class BambooSaplingBlock extends Block implements BonemealableBlock {
     }
 
     @Override
-    protected ItemStack getCloneItemStack(LevelReader p_312659_, BlockPos p_48965_, BlockState p_48966_, boolean p_376584_) {
+    public ItemStack getCloneItemStack(LevelReader p_312659_, BlockPos p_48965_, BlockState p_48966_, boolean p_376584_) {
         return new ItemStack(Items.BAMBOO);
     }
 

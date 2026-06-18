@@ -1,6 +1,9 @@
 package net.minecraft.world.entity.animal;
 
 import java.util.Optional;
+
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -144,6 +147,10 @@ public abstract class Animal extends AgeableMob {
                 this.usePlayerItem(p_27584_, p_27585_, itemstack);
                 this.setInLove(serverplayer);
                 this.playEatingSound();
+                // ViaFabricPlus - swing hand on older versions
+                if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_21)) {
+                    return InteractionResult.SUCCESS;
+                }
                 return InteractionResult.SUCCESS_SERVER;
             }
 
@@ -154,7 +161,8 @@ public abstract class Animal extends AgeableMob {
                 return InteractionResult.SUCCESS;
             }
 
-            if (this.level().isClientSide()) {
+            // ViaFabricPlus - change isClientSide condition for older versions
+            if (this.level().isClientSide() && ProtocolTranslator.getTargetVersion().newerThanOrEqualTo(ProtocolVersion.v1_15)) {
                 return InteractionResult.CONSUME;
             }
         }

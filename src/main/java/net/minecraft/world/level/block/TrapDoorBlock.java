@@ -2,7 +2,7 @@ package net.minecraft.world.level.block;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import com.mojang.serialization.codecs.RecordCodecBuilder.Instance;
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
 import java.util.Map;
 import java.util.function.BiConsumer;
 import net.minecraft.core.BlockPos;
@@ -36,12 +36,13 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.raphimc.viabedrock.api.BedrockProtocolVersion;
 import org.jspecify.annotations.Nullable;
 
 public class TrapDoorBlock extends HorizontalDirectionalBlock implements SimpleWaterloggedBlock {
     public static final MapCodec<TrapDoorBlock> CODEC = RecordCodecBuilder.mapCodec(
-        p_422132_ -> p_422132_.group(BlockSetType.CODEC.fieldOf("block_set_type").forGetter(p_311609_ -> p_311609_.type), propertiesCodec())
-            .apply(p_422132_, TrapDoorBlock::new)
+            p_422132_ -> p_422132_.group(BlockSetType.CODEC.fieldOf("block_set_type").forGetter(p_311609_ -> p_311609_.type), propertiesCodec())
+                    .apply(p_422132_, TrapDoorBlock::new)
     );
     public static final BooleanProperty OPEN = BlockStateProperties.OPEN;
     public static final EnumProperty<Half> HALF = BlockStateProperties.HALF;
@@ -49,6 +50,16 @@ public class TrapDoorBlock extends HorizontalDirectionalBlock implements SimpleW
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
     private static final Map<Direction, VoxelShape> SHAPES = Shapes.rotateAll(Block.boxZ(16.0, 13.0, 16.0));
     private final BlockSetType type;
+
+    // ViaFabricPlus - Bedrock trapdoor shapes
+    private static final Map<Direction, VoxelShape> BEDROCK_SHAPES = Map.of(
+            Direction.NORTH, Shapes.box(0, 0, 0.8175, 1, 1, 1),
+            Direction.SOUTH, Shapes.box(0, 0, 0, 1, 1, 0.1825),
+            Direction.WEST, Shapes.box(0.8175, 0, 0, 1, 1, 1),
+            Direction.EAST, Shapes.box(0, 0, 0, 0.1825, 1, 1),
+            Direction.DOWN, Shapes.box(0, 0.8175, 0, 1, 1, 1),
+            Direction.UP, Shapes.box(0, 0, 0, 1, 0.1825, 1)
+    );
 
     @Override
     public MapCodec<? extends TrapDoorBlock> codec() {
@@ -59,21 +70,36 @@ public class TrapDoorBlock extends HorizontalDirectionalBlock implements SimpleW
         super(p_273079_.sound(p_272964_.soundType()));
         this.type = p_272964_;
         this.registerDefaultState(
-            this.stateDefinition
-                .any()
-                .setValue(FACING, Direction.NORTH)
-                .setValue(OPEN, false)
-                .setValue(HALF, Half.BOTTOM)
-                .setValue(POWERED, false)
-                .setValue(WATERLOGGED, false)
+                this.stateDefinition
+                        .any()
+                        .setValue(FACING, Direction.NORTH)
+                        .setValue(OPEN, false)
+                        .setValue(HALF, Half.BOTTOM)
+                        .setValue(POWERED, false)
+                        .setValue(WATERLOGGED, false)
         );
     }
 
     @Override
     protected VoxelShape getShape(BlockState p_57563_, BlockGetter p_57564_, BlockPos p_57565_, CollisionContext p_57566_) {
-        return SHAPES.get(
-            p_57563_.getValue(OPEN) ? p_57563_.getValue(FACING) : (p_57563_.getValue(HALF) == Half.TOP ? Direction.DOWN : Direction.UP)
-        );
+        Direction direction = p_57563_.getValue(OPEN)
+                ? p_57563_.getValue(FACING)
+                : (p_57563_.getValue(HALF) == Half.TOP ? Direction.DOWN : Direction.UP);
+
+        if (ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.bedrockLatest)) {
+            return BEDROCK_SHAPES.get(direction);
+        }
+
+        return SHAPES.get(direction);
+    }
+
+    @Override
+    public VoxelShape getOcclusionShape(BlockState state) {
+        if (ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.bedrockLatest)) {
+            return SHAPES.get(state.getValue(OPEN) ? state.getValue(FACING) : (state.getValue(HALF) == Half.TOP ? Direction.DOWN : Direction.UP));
+        }
+
+        return super.getOcclusionShape(state);
     }
 
     @Override
@@ -109,7 +135,7 @@ public class TrapDoorBlock extends HorizontalDirectionalBlock implements SimpleW
         super.onExplosionHit(p_312876_, p_365086_, p_312697_, p_312889_, p_312223_);
     }
 
-    private void toggle(BlockState p_311901_, Level p_312039_, BlockPos p_310194_,  Player p_312003_) {
+    private void toggle(BlockState p_311901_, Level p_312039_, BlockPos p_310194_, Player p_312003_) {
         BlockState blockstate = p_311901_.cycle(OPEN);
         p_312039_.setBlock(p_310194_, blockstate, 2);
         if (blockstate.getValue(WATERLOGGED)) {
@@ -119,20 +145,20 @@ public class TrapDoorBlock extends HorizontalDirectionalBlock implements SimpleW
         this.playSound(p_312003_, p_312039_, p_310194_, blockstate.getValue(OPEN));
     }
 
-    protected void playSound( Player p_57528_, Level p_57529_, BlockPos p_57530_, boolean p_57531_) {
+    protected void playSound(Player p_57528_, Level p_57529_, BlockPos p_57530_, boolean p_57531_) {
         p_57529_.playSound(
-            p_57528_,
-            p_57530_,
-            p_57531_ ? this.type.trapdoorOpen() : this.type.trapdoorClose(),
-            SoundSource.BLOCKS,
-            1.0F,
-            p_57529_.getRandom().nextFloat() * 0.1F + 0.9F
+                p_57528_,
+                p_57530_,
+                p_57531_ ? this.type.trapdoorOpen() : this.type.trapdoorClose(),
+                SoundSource.BLOCKS,
+                1.0F,
+                p_57529_.getRandom().nextFloat() * 0.1F + 0.9F
         );
         p_57529_.gameEvent(p_57528_, p_57531_ ? GameEvent.BLOCK_OPEN : GameEvent.BLOCK_CLOSE, p_57530_);
     }
 
     @Override
-    protected void neighborChanged(BlockState p_57547_, Level p_57548_, BlockPos p_57549_, Block p_57550_,  Orientation p_363180_, boolean p_57552_) {
+    protected void neighborChanged(BlockState p_57547_, Level p_57548_, BlockPos p_57549_, Block p_57550_, Orientation p_363180_, boolean p_57552_) {
         if (!p_57548_.isClientSide()) {
             boolean flag = p_57548_.hasNeighborSignal(p_57549_);
             if (flag != p_57547_.getValue(POWERED)) {
@@ -156,7 +182,7 @@ public class TrapDoorBlock extends HorizontalDirectionalBlock implements SimpleW
         Direction direction = p_57533_.getClickedFace();
         if (!p_57533_.replacingClickedOnBlock() && direction.getAxis().isHorizontal()) {
             blockstate = blockstate.setValue(FACING, direction)
-                .setValue(HALF, p_57533_.getClickLocation().y - p_57533_.getClickedPos().getY() > 0.5 ? Half.TOP : Half.BOTTOM);
+                    .setValue(HALF, p_57533_.getClickLocation().y - p_57533_.getClickedPos().getY() > 0.5 ? Half.TOP : Half.BOTTOM);
         } else {
             blockstate = blockstate.setValue(FACING, p_57533_.getHorizontalDirection().getOpposite()).setValue(HALF, direction == Direction.UP ? Half.BOTTOM : Half.TOP);
         }
@@ -180,14 +206,14 @@ public class TrapDoorBlock extends HorizontalDirectionalBlock implements SimpleW
 
     @Override
     protected BlockState updateShape(
-        BlockState p_57554_,
-        LevelReader p_365791_,
-        ScheduledTickAccess p_368436_,
-        BlockPos p_57558_,
-        Direction p_57555_,
-        BlockPos p_57559_,
-        BlockState p_57556_,
-        RandomSource p_367698_
+            BlockState p_57554_,
+            LevelReader p_365791_,
+            ScheduledTickAccess p_368436_,
+            BlockPos p_57558_,
+            Direction p_57555_,
+            BlockPos p_57559_,
+            BlockState p_57556_,
+            RandomSource p_367698_
     ) {
         if (p_57554_.getValue(WATERLOGGED)) {
             p_368436_.scheduleTick(p_57558_, Fluids.WATER, Fluids.WATER.getTickDelay(p_365791_));

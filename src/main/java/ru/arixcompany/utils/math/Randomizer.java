@@ -52,29 +52,6 @@ public class Randomizer {
         return (nextLong() >>> 11) * 0x1.0p-53;
     }
 
-    // Гауссово распределение (полезно для естественного джиттера)
-    private boolean hasSpare = false;
-    private double spare;
-
-    public double nextGaussian(double mean, double stddev) { // min/max
-        if (hasSpare) {
-            hasSpare = false;
-            return mean + stddev * spare;
-        }
-        // Marsaglia polar method
-        double u, v, s;
-        do {
-            u = nextDouble() * 2.0 - 1.0;
-            v = nextDouble() * 2.0 - 1.0;
-            s = u * u + v * v;
-        } while (s >= 1.0 || s == 0.0);
-
-        double mul = Math.sqrt(-2.0 * Math.log(s) / s);
-        spare = v * mul;
-        hasSpare = true;
-        return mean + stddev * u * mul;
-    }
-
     // SplitMix64
     private long nextLong() {
         long z = (state += 0x9e3779b97f4a7c15L);

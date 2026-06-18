@@ -47,7 +47,7 @@ public class ByteBufferBuilder implements AutoCloseable {
     }
 
     public ByteBufferBuilder(int p_344576_) {
-        this(p_344576_, 4294967295L);
+        this(p_344576_, DEFAULT_MAX_CAPACITY);
     }
 
     public static ByteBufferBuilder exactlySized(int p_406345_) {

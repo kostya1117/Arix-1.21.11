@@ -1,6 +1,7 @@
 package net.minecraft.world.level.block;
 
 import com.mojang.serialization.MapCodec;
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.util.Mth;
@@ -14,7 +15,9 @@ import net.minecraft.world.level.border.WorldBorder;
 import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.raphimc.viabedrock.api.BedrockProtocolVersion;
 
 public class DragonEggBlock extends FallingBlock {
     public static final MapCodec<DragonEggBlock> CODEC = simpleCodec(DragonEggBlock::new);
@@ -31,7 +34,22 @@ public class DragonEggBlock extends FallingBlock {
 
     @Override
     protected VoxelShape getShape(BlockState p_52930_, BlockGetter p_52931_, BlockPos p_52932_, CollisionContext p_52933_) {
+        // ViaFabricPlus - Bedrock dragon egg shape
+        if (ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.bedrockLatest)) {
+            return Shapes.block();
+        }
+
         return SHAPE;
+    }
+
+    @Override
+    public VoxelShape getOcclusionShape(BlockState state) {
+        // ViaFabricPlus - Bedrock dragon egg occlusion shape
+        if (ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.bedrockLatest)) {
+            return SHAPE;
+        }
+
+        return super.getOcclusionShape(state);
     }
 
     @Override
@@ -50,9 +68,9 @@ public class DragonEggBlock extends FallingBlock {
 
         for (int i = 0; i < 1000; i++) {
             BlockPos blockpos = p_52938_.offset(
-                p_52937_.random.nextInt(16) - p_52937_.random.nextInt(16),
-                p_52937_.random.nextInt(8) - p_52937_.random.nextInt(8),
-                p_52937_.random.nextInt(16) - p_52937_.random.nextInt(16)
+                    p_52937_.random.nextInt(16) - p_52937_.random.nextInt(16),
+                    p_52937_.random.nextInt(8) - p_52937_.random.nextInt(8),
+                    p_52937_.random.nextInt(16) - p_52937_.random.nextInt(16)
             );
             if (p_52937_.getBlockState(blockpos).isAir() && worldborder.isWithinBounds(blockpos) && !p_52937_.isOutsideBuildHeight(blockpos)) {
                 if (p_52937_.isClientSide()) {

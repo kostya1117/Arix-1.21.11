@@ -1,6 +1,8 @@
 package net.minecraft.world.level.block;
 
 import com.mojang.serialization.MapCodec;
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.cauldron.CauldronInteraction;
 import net.minecraft.server.level.ServerLevel;
@@ -22,10 +24,20 @@ import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.raphimc.viabedrock.api.BedrockProtocolVersion;
 
 public abstract class AbstractCauldronBlock extends Block {
     protected static final int FLOOR_LEVEL = 4;
     private static final VoxelShape SHAPE_INSIDE = Block.column(12.0, 4.0, 16.0);
+    private static final VoxelShape VIAFABRICPLUS_COLLISION_SHAPE_R1_12_2_BEDROCK = Shapes.or(
+            Shapes.box(0.0, 0.0, 0.0, 1.0, 0.3125, 1.0),
+            Shapes.box(0.0, 0.0, 0.0, 0.125, 1.0, 1.0),
+            Shapes.box(0.0, 0.0, 0.0, 1.0, 1.0, 0.125),
+            Shapes.box(0.875, 0.0, 0.0, 1.0, 1.0, 1.0),
+            Shapes.box(0.0, 0.0, 0.875, 1.0, 1.0, 1.0)
+    );
+
+    private boolean viaFabricPlus$requireOriginalShape;
     protected static final VoxelShape SHAPE = Util.make(
         () -> {
             int i = 4;
@@ -62,9 +74,31 @@ public abstract class AbstractCauldronBlock extends Block {
 
     @Override
     protected VoxelShape getShape(BlockState p_151964_, BlockGetter p_151965_, BlockPos p_151966_, CollisionContext p_151967_) {
+      /*  if (false && this.viaFabricPlus$requireOriginalShape) { //for culling
+            this.viaFabricPlus$requireOriginalShape = false;
+            return SHAPE;
+        }  else*/ if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_12_2)) {
+            return Shapes.block();
+        } else if (ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.bedrockLatest)) {
+            return VIAFABRICPLUS_COLLISION_SHAPE_R1_12_2_BEDROCK;
+        }
+
         return SHAPE;
     }
-
+    @Override
+    protected VoxelShape getCollisionShape(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos, CollisionContext collisionContext) {
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_12_2)
+                || ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.bedrockLatest)) {
+            return VIAFABRICPLUS_COLLISION_SHAPE_R1_12_2_BEDROCK;
+        } else {
+            return super.getCollisionShape(blockState, blockGetter, blockPos, collisionContext);
+        }
+    }
+    @Override
+    protected VoxelShape getOcclusionShape(BlockState state) {
+        this.viaFabricPlus$requireOriginalShape = true;
+        return super.getOcclusionShape(state);
+    }
     @Override
     protected VoxelShape getInteractionShape(BlockState p_151955_, BlockGetter p_151956_, BlockPos p_151957_) {
         return SHAPE_INSIDE;

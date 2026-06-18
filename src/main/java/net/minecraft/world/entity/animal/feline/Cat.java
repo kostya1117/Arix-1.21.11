@@ -1,6 +1,9 @@
 package net.minecraft.world.entity.animal.feline;
 
 import java.util.function.Predicate;
+
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
@@ -368,6 +371,14 @@ public class Cat extends TamableAnimal {
 
     @Override
     public InteractionResult mobInteract(Player p_460113_, InteractionHand p_450900_) {
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_20_3)) {
+            final ItemStack itemStack = p_460113_.getItemInHand(p_450900_);
+            if (this.isTame() && this.isOwnedBy(p_460113_)) {
+                return (InteractionResult.SUCCESS);
+            } else {
+                return (!this.isFood(itemStack) || !(this.getHealth() < this.getMaxHealth()) && this.isTame() ? InteractionResult.PASS : InteractionResult.SUCCESS);
+            }
+        }
         ItemStack itemstack = p_460113_.getItemInHand(p_450900_);
         Item item = itemstack.getItem();
         if (this.isTame()) {

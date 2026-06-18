@@ -14,7 +14,7 @@ import org.jspecify.annotations.Nullable;
 
 public class GlyphStitcher implements AutoCloseable {
     private final TextureManager textureManager;
-    private final Identifier texturePrefix;
+    final Identifier texturePrefix;
     private final List<FontTexture> textures = new ArrayList<>();
 
     public GlyphStitcher(TextureManager p_422485_, Identifier p_457908_) {

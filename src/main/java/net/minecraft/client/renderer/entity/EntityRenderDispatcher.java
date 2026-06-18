@@ -7,6 +7,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
+
+import com.viaversion.viafabricplus.features.entity.r1_8_boat.BoatRenderer1_8;
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import net.minecraft.CrashReport;
 import net.minecraft.CrashReportCategory;
 import net.minecraft.ReportedException;
@@ -26,6 +30,7 @@ import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.entity.player.AvatarRenderer;
 import net.minecraft.client.renderer.entity.state.AvatarRenderState;
+import net.minecraft.client.renderer.entity.state.BoatRenderState;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.client.renderer.item.ItemModelResolver;
 import net.minecraft.client.renderer.state.CameraRenderState;
@@ -66,6 +71,7 @@ public class EntityRenderDispatcher implements ResourceManagerReloadListener, IE
     private final EquipmentAssetManager equipmentAssets;
     private final PlayerSkinRenderCache playerSkinRenderCache;
     private EntityRendererProvider.Context context = null;
+    private BoatRenderer1_8 viaFabricPlus$boatRenderer;
 
     public <E extends Entity> int getPackedLightCoords(E p_114395_, float p_114396_) {
         return this.getRenderer(p_114395_).getPackedLightCoords(p_114395_, p_114396_);
@@ -115,10 +121,15 @@ public class EntityRenderDispatcher implements ResourceManagerReloadListener, IE
         return avatarrenderer != null ? avatarrenderer : p_426047_.get(PlayerModelType.WIDE);
     }
 
+    @SuppressWarnings("unchecked")
     public <S extends EntityRenderState> EntityRenderer<?, ? super S> getRenderer(S p_397828_) {
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_8) && p_397828_ instanceof BoatRenderState) {
+            return (EntityRenderer<?, ? super S>) this.viaFabricPlus$boatRenderer;
+        }
+
         if (p_397828_ instanceof AvatarRenderState avatarrenderstate) {
             PlayerModelType playermodeltype = avatarrenderstate.skin.model();
-            EntityRenderer<? extends Avatar, ?> entityrenderer = (EntityRenderer<? extends Avatar, ?>)this.playerRenderers.get(playermodeltype);
+            EntityRenderer<? extends Avatar, ?> entityrenderer = this.playerRenderers.get(playermodeltype);
             return (EntityRenderer<?, ? super S>)(entityrenderer != null ? entityrenderer : (EntityRenderer)this.playerRenderers.get(PlayerModelType.WIDE));
         } else {
             return (EntityRenderer<?, ? super S>)this.renderers.get(p_397828_.entityType);
@@ -252,6 +263,7 @@ public class EntityRenderDispatcher implements ResourceManagerReloadListener, IE
         if (Reflector.ForgeEventFactoryClient_onGatherLayers.exists()) {
             Reflector.ForgeEventFactoryClient_onGatherLayers.call(this.renderers, this.playerRenderers, this.mannequinRenderers, entityrendererprovider$context);
         }
+        this.viaFabricPlus$boatRenderer = new BoatRenderer1_8(entityrendererprovider$context);
     }
 
     private static void registerPlayerItems(Map<PlayerModelType, AvatarRenderer<AbstractClientPlayer>> renderPlayerMap) {

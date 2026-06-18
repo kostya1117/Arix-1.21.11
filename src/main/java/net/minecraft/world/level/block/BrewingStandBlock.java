@@ -1,6 +1,8 @@
 package net.minecraft.world.level.block;
 
 import com.mojang.serialization.MapCodec;
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -36,6 +38,11 @@ public class BrewingStandBlock extends BaseEntityBlock {
     };
     private static final VoxelShape SHAPE = Shapes.or(Block.column(2.0, 2.0, 14.0), Block.column(14.0, 0.0, 2.0));
 
+    private static final VoxelShape viaFabricPlus$shape_r1_12_2 = Shapes.or(
+            Block.box(0.0D, 0.0D, 0.0D, 16.0D, 2.0D, 16.0D) /* Base */,
+            Block.box(7.0D, 0.0D, 7.0D, 9.0D, 14.0D, 9.0D) /* Stick */
+    );
+
     @Override
     public MapCodec<BrewingStandBlock> codec() {
         return CODEC;
@@ -58,6 +65,10 @@ public class BrewingStandBlock extends BaseEntityBlock {
 
     @Override
     protected VoxelShape getShape(BlockState p_50952_, BlockGetter p_50953_, BlockPos p_50954_, CollisionContext p_50955_) {
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_12_2)) {
+            return viaFabricPlus$shape_r1_12_2;
+        }
+
         return SHAPE;
     }
 

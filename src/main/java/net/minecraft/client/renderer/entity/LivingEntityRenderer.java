@@ -11,6 +11,7 @@ import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.player.PlayerModel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.entity.layers.CustomHeadLayer;
 import net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.entity.state.AvatarRenderState;
@@ -26,6 +27,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
@@ -40,13 +42,17 @@ import net.minecraft.world.scores.Team;
 import net.optifine.Config;
 import net.optifine.reflect.Reflector;
 import ru.arixcompany.Arix;
+import ru.arixcompany.features.event.EventRepo;
+import ru.arixcompany.features.event.world.EventHeadLayerRender;
 import ru.arixcompany.features.module.modules.render.SeeInvisibles;
 import ru.arixcompany.features.module.modules.render.customModels.CustomPlayerModelRenderer;
 import ru.arixcompany.features.module.modules.render.customModels.ICustomPlayerModelState;
+import ru.arixcompany.features.repos.FriendRepo;
+import ru.arixcompany.utils.IMinecraft;
 
 public abstract class LivingEntityRenderer<T extends LivingEntity, S extends LivingEntityRenderState, M extends EntityModel<? super S>>
     extends EntityRenderer<T, S>
-    implements RenderLayerParent<S, M> {
+    implements RenderLayerParent<S, M>, IMinecraft {
     private static final float EYE_BED_OFFSET = 0.1F;
     public M model;
     protected final ItemModelResolver itemModelResolver;
@@ -73,12 +79,11 @@ public abstract class LivingEntityRenderer<T extends LivingEntity, S extends Liv
         AABB aabb = super.getBoundingBoxForCulling(p_361472_);
         if (p_361472_.getItemBySlot(EquipmentSlot.HEAD).is(Items.DRAGON_HEAD)) {
             float f = 0.5F;
-            return aabb.inflate(0.5, 0.5, 0.5);
+            return aabb.inflate(f, f, f);
         } else {
             return aabb;
         }
     }
-
     public void submit(S p_427824_, PoseStack p_423787_, SubmitNodeCollector p_424901_, CameraRenderState p_422963_) {
         if (!Reflector.ForgeEventFactoryClient_onRenderLivingPre.exists()
                 || !Reflector.ForgeEventFactoryClient_onRenderLivingPre.callBoolean(p_427824_, this, p_423787_, p_424901_, p_422963_)) {
@@ -106,11 +111,9 @@ public abstract class LivingEntityRenderer<T extends LivingEntity, S extends Liv
             float alphaValue = 0.5F;
             try {
                 SeeInvisibles seeInvisibles = Arix.getInstance().getModuleRepo().getModule(SeeInvisibles.class);
-                if (seeInvisibles != null && seeInvisibles.isState() && !p_427824_.isArmorStand) {
+                if (seeInvisibles.isState() && !p_427824_.isArmorStand) {
                     seeInvisiblesActive = true;
-                    if (seeInvisibles instanceof SeeInvisibles) {
-                        alphaValue = ((SeeInvisibles) seeInvisibles).getAlpha();
-                    }
+                    alphaValue = seeInvisibles.getAlpha();
                 }
             } catch (Exception ignored) {}
 
@@ -146,6 +149,21 @@ public abstract class LivingEntityRenderer<T extends LivingEntity, S extends Liv
                     p_427824_.renderLayer = renderlayer;
                     renderlayer.submit(p_423787_, p_424901_, p_427824_.lightCoords, p_427824_, p_427824_.yRot, p_427824_.xRot);
                     p_427824_.renderLayer = null;
+                }
+            }
+
+            if (p_427824_ instanceof AvatarRenderState avatarState) {
+                Entity entity = mc.level != null ? mc.level.getEntity(avatarState.id) : null;
+                if (entity != null) {
+                    boolean isSelf = entity == mc.player;
+                    boolean isFriend = FriendRepo.isFriend(entity.getName().getString());
+
+                    EventHeadLayerRender event = new EventHeadLayerRender(
+                            p_427824_, p_423787_, getModel(),
+                            p_424901_, isSelf, isFriend
+                    );
+
+                    EventRepo.call(event);
                 }
             }
 

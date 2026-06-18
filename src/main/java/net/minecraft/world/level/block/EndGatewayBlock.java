@@ -74,7 +74,7 @@ public class EndGatewayBlock extends BaseEntityBlock implements Portal {
     }
 
     @Override
-    protected ItemStack getCloneItemStack(LevelReader p_309482_, BlockPos p_53004_, BlockState p_53005_, boolean p_376210_) {
+    public ItemStack getCloneItemStack(LevelReader p_309482_, BlockPos p_53004_, BlockState p_53005_, boolean p_376210_) {
         return ItemStack.EMPTY;
     }
 

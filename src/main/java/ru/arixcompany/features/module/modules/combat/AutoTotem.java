@@ -5,10 +5,14 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
+import ru.arixcompany.Arix;
 import ru.arixcompany.features.event.EventHandler;
+import ru.arixcompany.features.event.player.EventGameTicked;
+import ru.arixcompany.features.event.player.EventSprint;
 import ru.arixcompany.features.event.world.EventUpdate;
 import ru.arixcompany.features.module.Category;
 import ru.arixcompany.features.module.Module;
+import ru.arixcompany.features.module.modules.movement.AutoSprint;
 import ru.arixcompany.features.module.setting.implement.ListSetting;
 import ru.arixcompany.features.module.setting.implement.SelectSetting;
 import ru.arixcompany.features.module.setting.implement.ValueSetting;
@@ -38,6 +42,31 @@ public class AutoTotem extends Module {
 
     private int cooldownTicks = 0;
     private Item previousItem = null;
+
+    @EventHandler
+    public void onPlayerTick(EventGameTicked event) {
+        PlayerInventoryComponent.onUpdate();
+    }
+    @EventHandler
+    public void onSprint(EventSprint e) {
+        if (mc.player == null || mc.level == null) return;
+
+        if (PlayerInventoryComponent.isSprintBlocked()
+                && (e.getSource() == EventSprint.Source.MOVEMENT_TICK
+                || e.getSource() == EventSprint.Source.INPUT)) {
+            e.setSprinting(false);
+            mc.player.setSprinting(false);
+            AutoSprint autoSprint = Arix.getInstance().getModuleRepo().getModule(AutoSprint.class);
+            if (autoSprint != null && autoSprint.isState()) {
+                autoSprint.sprint = false;
+            }
+        } else {
+            AutoSprint autoSprint = Arix.getInstance().getModuleRepo().getModule(AutoSprint.class);
+            if (autoSprint != null && autoSprint.isState() && !autoSprint.sprint) {
+                autoSprint.sprint = true;
+            }
+        }
+    }
 
     @EventHandler
     public void onPlayerTick(EventUpdate event) {
@@ -75,7 +104,7 @@ public class AutoTotem extends Module {
         PlayerInventoryComponent.addTask( ()-> {
             PlayerInventoryUtil.swapHand(slot, InteractionHand.OFF_HAND,false);
             PlayerInventoryUtil.closeScreen(true);
-        },1,1);
+        });
         cooldownTicks = 0;
     }
 

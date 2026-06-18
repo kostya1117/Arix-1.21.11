@@ -4,6 +4,9 @@ import com.google.common.collect.Maps;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
@@ -56,6 +59,9 @@ public class ItemCooldowns {
     }
 
     public void addCooldown(Identifier p_455409_, int p_41526_) {
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_8)) {
+            return;
+        }
         this.cooldowns.put(p_455409_, new ItemCooldowns.CooldownInstance(this.tickCount, this.tickCount + p_41526_));
         this.onCooldownStarted(p_455409_, p_41526_);
     }

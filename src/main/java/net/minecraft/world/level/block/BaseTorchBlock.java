@@ -1,6 +1,9 @@
 package net.minecraft.world.level.block;
 
 import com.mojang.serialization.MapCodec;
+import com.viaversion.viafabricplus.features.block.interaction.Block1_14;
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
@@ -45,6 +48,16 @@ public abstract class BaseTorchBlock extends Block {
 
     @Override
     protected boolean canSurvive(BlockState p_309766_, LevelReader p_313035_, BlockPos p_311995_) {
-        return canSupportCenter(p_313035_, p_311995_.below(), Direction.UP);
+        boolean result = canSupportCenter(p_313035_, p_311995_.below(), Direction.UP);
+
+        // ViaFabricPlus - block placement 1.14
+        if (result && ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_14)) {
+            final Block block = p_313035_.getBlockState(p_311995_).getBlock();
+            if (Block1_14.isExceptBlockForAttachWithPiston(block)) {
+                return false;
+            }
+        }
+
+        return result;
     }
 }

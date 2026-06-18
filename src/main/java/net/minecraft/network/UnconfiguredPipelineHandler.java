@@ -1,5 +1,7 @@
 package net.minecraft.network;
 
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -20,7 +22,9 @@ public class UnconfiguredPipelineHandler {
     private static UnconfiguredPipelineHandler.InboundConfigurationTask setupInboundHandler(ChannelInboundHandler p_333903_) {
         return p_331657_ -> {
             p_331657_.pipeline().replace(p_331657_.name(), "decoder", p_333903_);
-            p_331657_.channel().config().setAutoRead(true);
+            if (ProtocolTranslator.getTargetVersion().newerThan(ProtocolVersion.v1_20_3)) {
+                p_331657_.channel().config().setAutoRead(true);
+            }
         };
     }
 

@@ -56,7 +56,7 @@ public class CaveVinesBlock extends GrowingPlantHeadBlock implements CaveVines {
     }
 
     @Override
-    protected ItemStack getCloneItemStack(LevelReader p_310879_, BlockPos p_152967_, BlockState p_152968_, boolean p_377333_) {
+    public ItemStack getCloneItemStack(LevelReader p_310879_, BlockPos p_152967_, BlockState p_152968_, boolean p_377333_) {
         return new ItemStack(Items.GLOW_BERRIES);
     }
 

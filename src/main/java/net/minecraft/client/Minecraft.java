@@ -46,15 +46,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-import java.util.MissingResourceException;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.TimeUnit;
@@ -63,6 +55,17 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import com.viaversion.viafabricplus.api.events.LoadingCycleCallback;
+import com.viaversion.viafabricplus.base.Events;
+import com.viaversion.viafabricplus.features.world.item_picking.ItemPick1_21_3;
+import com.viaversion.viafabricplus.injection.access.execute_inputs_sync.IMouseKeyboardHandlers;
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viafabricplus.settings.impl.DebugSettings;
+import com.viaversion.viaversion.api.protocol.packet.PacketWrapper;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
+import com.viaversion.viaversion.api.type.Types;
+import com.viaversion.viaversion.protocols.v1_11_1to1_12.Protocol1_11_1To1_12;
+import com.viaversion.viaversion.protocols.v1_9_1to1_9_3.packet.ServerboundPackets1_9_3;
 import de.maxhenkel.voicechat.FabricVoicechatMod;
 import de.maxhenkel.voicechat.VoicechatClient;
 import de.maxhenkel.voicechat.events.ClientWorldEvents;
@@ -261,6 +264,7 @@ import net.minecraft.world.level.validation.DirectoryValidator;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 import org.apache.commons.io.FileUtils;
 import org.joml.Vector3f;
 import org.jspecify.annotations.Nullable;
@@ -271,6 +275,7 @@ import ru.arixcompany.features.event.EventRepo;
 import ru.arixcompany.features.event.player.EventGameTicked;
 import ru.arixcompany.features.event.player.EventShield;
 import ru.arixcompany.features.event.world.EventGameTick;
+import ru.arixcompany.features.event.world.EventPostTick;
 import ru.arixcompany.features.event.world.EventPreTick;
 import ru.arixcompany.features.event.world.EventTick;
 import ru.arixcompany.features.module.modules.combat.HitAura;
@@ -296,7 +301,7 @@ public class Minecraft extends ReentrantBlockableEventLoop<Runnable> implements 
     private final DataFixer fixerUpper;
     private final VirtualScreen virtualScreen;
     private final Window window;
-    private final DeltaTracker.Timer deltaTracker = new DeltaTracker.Timer(20.0F, 0L, this::getTickTargetMillis);
+    public final DeltaTracker.Timer deltaTracker = new DeltaTracker.Timer(20.0F, 0L, this::getTickTargetMillis);
     private final RenderBuffers renderBuffers;
     public final LevelRenderer levelRenderer;
     private final EntityRenderDispatcher entityRenderDispatcher;
@@ -335,7 +340,7 @@ public class Minecraft extends ReentrantBlockableEventLoop<Runnable> implements 
     private final @Nullable TracyFrameCapture tracyFrameCapture;
     private final SoundManager soundManager;
     private final MusicManager musicManager;
-    private final FontManager fontManager;
+    public final FontManager fontManager;
     private final SplashManager splashManager;
     private final GpuWarnlistManager gpuWarnlistManager;
     private final PeriodicNotificationManager regionalCompliancies = new PeriodicNotificationManager(REGIONAL_COMPLIANCIES, Minecraft::countryEqualsISO3);
@@ -684,6 +689,7 @@ public class Minecraft extends ReentrantBlockableEventLoop<Runnable> implements 
         this.packetProcessor = new PacketProcessor(this.gameThread);
         BaritoneAPI.getProvider().getPrimaryBaritone();
         new Arix();
+        Events.LOADING_CYCLE.invoker().onLoadCycle(LoadingCycleCallback.LoadingCycle.POST_GAME_LOAD);
     }
 
     public boolean hasShiftDown() {
@@ -1581,7 +1587,7 @@ public class Minecraft extends ReentrantBlockableEventLoop<Runnable> implements 
             this.missTime = 0;
         }
 
-        if (this.missTime <= 0 && !this.player.isUsingItem()) {
+        if (this.missTime <= 0 && !(ProtocolTranslator.getTargetVersion().newerThan(ProtocolVersion.v1_7_6) && this.player.isUsingItem())) {
             ItemStack itemstack = this.player.getItemInHand(InteractionHand.MAIN_HAND);
             if (!itemstack.has(DataComponents.PIERCING_WEAPON)) {
                 if (p_91387_ && this.hitResult != null && this.hitResult.getType() == HitResult.Type.BLOCK) {
@@ -1604,6 +1610,10 @@ public class Minecraft extends ReentrantBlockableEventLoop<Runnable> implements 
     private boolean startAttack() {
         if (this.missTime > 0) {
             return false;
+        }
+
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_8)) {
+            this.player.swing(InteractionHand.MAIN_HAND);
         }
 
         if (this.hitResult == null) {
@@ -1631,7 +1641,9 @@ public class Minecraft extends ReentrantBlockableEventLoop<Runnable> implements 
             PiercingWeapon piercingweapon = itemstack.get(DataComponents.PIERCING_WEAPON);
             if (piercingweapon != null && !this.gameMode.isSpectator()) {
                 this.gameMode.piercingAttack(piercingweapon);
-                this.player.swing(InteractionHand.MAIN_HAND);
+                if (ProtocolTranslator.getTargetVersion().newerThan(ProtocolVersion.v1_8)) {
+                    this.player.swing(InteractionHand.MAIN_HAND);
+                }
                 return true;
             }
 
@@ -1653,7 +1665,8 @@ public class Minecraft extends ReentrantBlockableEventLoop<Runnable> implements 
                         break;
                     }
                 case MISS:
-                    if (this.gameMode.hasMissTime()) {
+                    if (ProtocolTranslator.getTargetVersion().newerThan(ProtocolVersion.v1_7_6)
+                            && this.gameMode.hasMissTime()) {
                         this.missTime = 10;
                     }
 
@@ -1661,7 +1674,9 @@ public class Minecraft extends ReentrantBlockableEventLoop<Runnable> implements 
             }
 
             if (!this.player.isSpectator()) {
-                this.player.swing(InteractionHand.MAIN_HAND);
+                if (ProtocolTranslator.getTargetVersion().newerThan(ProtocolVersion.v1_8)) {
+                    this.player.swing(InteractionHand.MAIN_HAND);
+                }
             }
 
             return flag;
@@ -1669,7 +1684,9 @@ public class Minecraft extends ReentrantBlockableEventLoop<Runnable> implements 
     }
 
     private void startUseItem() {
-        if (!this.gameMode.isDestroying()) {
+        boolean isDestroying = this.gameMode.isDestroying() && ProtocolTranslator.getTargetVersion().newerThan(ProtocolVersion.v1_7_6);
+
+        if (!isDestroying) {
             this.rightClickDelay = 4;
             if (!this.player.isHandsBusy()) {
                 if (this.hitResult == null) {
@@ -1698,7 +1715,11 @@ public class Minecraft extends ReentrantBlockableEventLoop<Runnable> implements 
                                     }
 
                                     if (interactionresult instanceof InteractionResult.Success interactionresult$success2) {
-                                        if (interactionresult$success2.swingSource() == InteractionResult.SwingSource.CLIENT) {
+                                        InteractionResult.SwingSource swingsource = ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_14_4)
+                                                ? InteractionResult.SwingSource.NONE
+                                                : interactionresult$success2.swingSource();
+
+                                        if (swingsource == InteractionResult.SwingSource.CLIENT) {
                                             this.player.swing(interactionhand);
                                         }
 
@@ -1728,8 +1749,12 @@ public class Minecraft extends ReentrantBlockableEventLoop<Runnable> implements 
                     }
 
                     if (!itemstack.isEmpty()
-                        && this.gameMode.useItem(this.player, interactionhand) instanceof InteractionResult.Success interactionresult$success1) {
-                        if (interactionresult$success1.swingSource() == InteractionResult.SwingSource.CLIENT) {
+                            && this.gameMode.useItem(this.player, interactionhand) instanceof InteractionResult.Success interactionresult$success1) {
+                        InteractionResult.SwingSource swingsource = ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_14_4)
+                                ? InteractionResult.SwingSource.NONE
+                                : interactionresult$success1.swingSource();
+
+                        if (swingsource == InteractionResult.SwingSource.CLIENT) {
                             this.player.swing(interactionhand);
                         }
 
@@ -1795,6 +1820,14 @@ public class Minecraft extends ReentrantBlockableEventLoop<Runnable> implements 
             this.gui.getChat().openScreen(ChatComponent.ChatMethod.MESSAGE, InBedChatScreen::new);
         }
 
+        if (DebugSettings.INSTANCE.executeInputsSynchronously.isEnabled()) {
+            Queue<Runnable> mouseEvents = ((IMouseKeyboardHandlers) this.mouseHandler).viaFabricPlus$getPendingScreenEvents();
+            while (!mouseEvents.isEmpty()) mouseEvents.poll().run();
+
+            Queue<Runnable> keyboardEvents = ((IMouseKeyboardHandlers) this.keyboardHandler).viaFabricPlus$getPendingScreenEvents();
+            while (!keyboardEvents.isEmpty()) keyboardEvents.poll().run();
+        }
+
         if (this.screen != null) {
             this.missTime = 10000;
         }
@@ -1819,11 +1852,26 @@ public class Minecraft extends ReentrantBlockableEventLoop<Runnable> implements 
 
         if (this.overlay == null && this.screen == null) {
             profilerfiller.popPush("Keybindings");
+
+            // @Inject at INVOKE handleKeybinds:
+            // для <= 1.8 декремент missTime происходит ДО handleKeybinds
+            if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_8)) {
+                if (this.missTime > 0) {
+                    --this.missTime;
+                }
+            }
+
             this.handleKeybinds();
-            if (this.missTime > 0) {
-                this.missTime--;
+
+            // @Redirect ordinal=1:
+            // для <= 1.8 декремент пропускаем, он уже был выполнен выше
+            if (ProtocolTranslator.getTargetVersion().newerThan(ProtocolVersion.v1_8)) {
+                if (this.missTime > 0) {
+                    this.missTime--;
+                }
             }
         }
+
         EventRepo.call(new EventPreTick());
 
         if (this.level != null) {
@@ -1900,6 +1948,8 @@ public class Minecraft extends ReentrantBlockableEventLoop<Runnable> implements 
         this.keyboardHandler.tick();
         profilerfiller.pop();
 
+        EventRepo.call(new EventPostTick());
+
         if (this.tickProvider != null) {
             for (IBaritone baritone : BaritoneAPI.getProvider().getAllBaritones()) {
                 TickEvent.Type type = baritone.getPlayerContext().player() != null && baritone.getPlayerContext().world() != null
@@ -1973,6 +2023,16 @@ public class Minecraft extends ReentrantBlockableEventLoop<Runnable> implements 
                 this.player.sendOpenInventory();
             } else {
                 this.tutorial.onOpenInventory();
+
+                if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_11_1)) {
+                    final PacketWrapper clientCommand = PacketWrapper.create(
+                            ServerboundPackets1_9_3.CLIENT_COMMAND,
+                            ProtocolTranslator.getPlayNetworkUserConnection()
+                    );
+                    clientCommand.write(Types.VAR_INT, 2);
+                    clientCommand.scheduleSendToServer(Protocol1_11_1To1_12.class);
+                }
+
                 this.setScreen(new InventoryScreen(this.player));
             }
         }
@@ -1988,15 +2048,17 @@ public class Minecraft extends ReentrantBlockableEventLoop<Runnable> implements 
         while (this.options.keySwapOffhand.consumeClick()) {
             if (!this.player.isSpectator()) {
                 this.getConnection()
-                    .send(
-                        new ServerboundPlayerActionPacket(ServerboundPlayerActionPacket.Action.SWAP_ITEM_WITH_OFFHAND, BlockPos.ZERO, Direction.DOWN)
-                    );
+                        .send(
+                                new ServerboundPlayerActionPacket(ServerboundPlayerActionPacket.Action.SWAP_ITEM_WITH_OFFHAND, BlockPos.ZERO, Direction.DOWN)
+                        );
             }
         }
 
         while (this.options.keyDrop.consumeClick()) {
             if (!this.player.isSpectator() && this.player.drop(this.hasControlDown())) {
-                this.player.swing(InteractionHand.MAIN_HAND);
+                if (ProtocolTranslator.getTargetVersion().newerThanOrEqualTo(ProtocolVersion.v1_15)) {
+                    this.player.swing(InteractionHand.MAIN_HAND);
+                }
             }
         }
 
@@ -2016,11 +2078,6 @@ public class Minecraft extends ReentrantBlockableEventLoop<Runnable> implements 
             if (!this.options.keyUse.isDown()) {
                 this.gameMode.releaseUsingItem(this.player);
             }
-
-//            //custom
-//            this.options.keyPickItem.clickCount = 0;
-//            this.options.keyUse.clickCount = 0;
-//            //custom
 
             while (this.options.keyAttack.consumeClick()) {
             }
@@ -2128,10 +2185,18 @@ public class Minecraft extends ReentrantBlockableEventLoop<Runnable> implements 
         Duration duration = Duration.between(instant, Instant.now());
         SocketAddress socketaddress = this.singleplayerServer.getConnection().startMemoryChannel();
         Connection connection = Connection.connectToLocalServer(socketaddress);
+
+        ProtocolTranslator.setTargetVersion(ProtocolTranslator.NATIVE_VERSION, true);
+        if (connection.isConnected()) {
+            ProtocolTranslator.injectPreviousVersionReset(connection.getChannel());
+        } else {
+            connection.pendingActions.add(c -> ProtocolTranslator.injectPreviousVersionReset(c.getChannel()));
+        }
+
         connection.initiateServerboundPlayConnection(
-            socketaddress.toString(),
-            0,
-            new ClientHandshakePacketListenerImpl(connection, this, null, null, p_261465_, duration, p_231442_ -> {}, levelloadtracker, null)
+                socketaddress.toString(),
+                0,
+                new ClientHandshakePacketListenerImpl(connection, this, null, null, p_261465_, duration, p_231442_ -> {}, levelloadtracker, null)
         );
         connection.send(new ServerboundHelloPacket(this.getUser().getName(), this.getUser().getProfileId()));
         this.pendingConnection = connection;
@@ -2369,6 +2434,10 @@ public class Minecraft extends ReentrantBlockableEventLoop<Runnable> implements 
     }
 
     private void pickBlock() {
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_21_2)) {
+            ItemPick1_21_3.doItemPick((Minecraft) (Object) this);
+            return;
+        }
         if (this.hitResult != null && this.hitResult.getType() != HitResult.Type.MISS) {
             boolean flag = this.hasControlDown();
             switch (this.hitResult) {

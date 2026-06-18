@@ -6,6 +6,9 @@ import com.mojang.serialization.MapCodec;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Function;
+
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.DustParticleOptions;
@@ -51,6 +54,7 @@ public class RedStoneWireBlock extends Block {
     public static final Map<Direction, EnumProperty<RedstoneSide>> PROPERTY_BY_DIRECTION = ImmutableMap.copyOf(
         Maps.newEnumMap(Map.of(Direction.NORTH, NORTH, Direction.EAST, EAST, Direction.SOUTH, SOUTH, Direction.WEST, WEST))
     );
+    private final VoxelShape viaFabricPlus$outline_shape_r1_8_x = Shapes.box(0.0F, 0.0F, 0.0F, 1.0F, 0.0625F, 1.0F);
     private static final int[] COLORS = Util.make(new int[16], p_360448_ -> {
         for (int i = 0; i <= 15; i++) {
             float f = i / 15.0F;
@@ -113,6 +117,9 @@ public class RedStoneWireBlock extends Block {
 
     @Override
     protected VoxelShape getShape(BlockState p_55620_, BlockGetter p_55621_, BlockPos p_55622_, CollisionContext p_55623_) {
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_8)) {
+            return (viaFabricPlus$outline_shape_r1_8_x);
+        }
         return this.shapes.apply(p_55620_);
     }
 
@@ -229,7 +236,7 @@ public class RedStoneWireBlock extends Block {
         }
     }
 
-    private RedstoneSide getConnectingSide(BlockGetter p_55519_, BlockPos p_55520_, Direction p_55521_) {
+    public RedstoneSide getConnectingSide(BlockGetter p_55519_, BlockPos p_55520_, Direction p_55521_) {
         return this.getConnectingSide(p_55519_, p_55520_, p_55521_, !p_55519_.getBlockState(p_55520_.above()).isRedstoneConductor(p_55519_, p_55520_));
     }
 
@@ -467,6 +474,9 @@ public class RedStoneWireBlock extends Block {
 
     @Override
     protected InteractionResult useWithoutItem(BlockState p_55554_, Level p_55555_, BlockPos p_55556_, Player p_55557_, BlockHitResult p_55559_) {
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_15_2)) {
+            return InteractionResult.PASS;
+        }
         if (!p_55557_.getAbilities().mayBuild) {
             return InteractionResult.PASS;
         }

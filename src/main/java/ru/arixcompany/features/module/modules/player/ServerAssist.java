@@ -52,13 +52,12 @@ public class ServerAssist extends Module {
             if (e.isKeyDown(bind.setting())) {
                 PlayerInventoryComponent.addTask(() -> {
                     PlayerInventoryUtil.swapAndUse(bind.item());
-                }, 1, 1);
+                });
             }
         }
     }
 
-    public record KeyBind(Item item, BindSetting setting, Server server) {
-    }
+    public record KeyBind(Item item, BindSetting setting, Server server) {}
 
     @AllArgsConstructor
     @Getter

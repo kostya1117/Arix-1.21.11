@@ -8,6 +8,12 @@ import com.google.common.collect.Sets;
 import com.google.common.collect.ImmutableList.Builder;
 import com.mojang.logging.LogUtils;
 import com.mojang.serialization.Codec;
+import com.viaversion.viafabricplus.features.entity.riding_offset.EntityRidingOffsetsPre1_20_2;
+import com.viaversion.viafabricplus.injection.access.world.always_tick_entities.IEntity;
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viafabricplus.settings.impl.DebugSettings;
+import com.viaversion.viaversion.api.connection.UserConnection;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import it.unimi.dsi.fastutil.floats.FloatArraySet;
 import it.unimi.dsi.fastutil.floats.FloatArrays;
 import it.unimi.dsi.fastutil.floats.FloatSet;
@@ -152,16 +158,21 @@ import net.minecraft.world.scores.PlayerTeam;
 import net.minecraft.world.scores.ScoreHolder;
 import net.minecraft.world.scores.Team;
 import net.minecraft.world.waypoints.WaypointTransmitter;
+import net.raphimc.viabedrock.api.BedrockProtocolVersion;
+import net.raphimc.viabedrock.protocol.data.enums.bedrock.generated.PlayerAuthInputPacket_InputData;
+import net.raphimc.viabedrock.protocol.storage.EntityTracker;
 import org.jetbrains.annotations.Contract;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import ru.arixcompany.Arix;
+import ru.arixcompany.features.event.EventRepo;
+import ru.arixcompany.features.event.player.EventOnMovePost;
 import ru.arixcompany.features.module.modules.player.NoPush;
 import ru.arixcompany.features.module.modules.render.NoRender;
 
 import static ru.arixcompany.utils.IMinecraft.mc;
 
-public abstract class Entity implements SyncedDataHolder, DebugValueSource, Nameable, ItemOwner, SlotProvider, EntityAccess, ScoreHolder, DataComponentGetter {
+public abstract class Entity implements SyncedDataHolder, DebugValueSource, Nameable, ItemOwner, SlotProvider, EntityAccess, ScoreHolder, DataComponentGetter, IEntity {
     private static final Logger LOGGER = LogUtils.getLogger();
     public static final String TAG_ID = "id";
     public static final String TAG_UUID = "UUID";
@@ -443,7 +454,7 @@ public abstract class Entity implements SyncedDataHolder, DebugValueSource, Name
         return Mth.lengthSquared(d0, d2) < Mth.square(p_216994_) && Mth.square(d1) < Mth.square(p_216995_);
     }
 
-    protected void setRot(float p_19916_, float p_19917_) {
+    public void setRot(float p_19916_, float p_19917_) {
         this.setYRot(p_19916_ % 360.0F);
         this.setXRot(p_19917_ % 360.0F);
     }
@@ -728,12 +739,18 @@ public abstract class Entity implements SyncedDataHolder, DebugValueSource, Name
             p_19974_ = this.maybeBackOffFromEdge(p_19974_, p_19973_);
             Vec3 vec3 = this.collide(p_19974_);
             double d0 = vec3.lengthSqr();
-            if (d0 > 1.0E-7 || p_19974_.lengthSqr() - d0 < 1.0E-7) {
+
+            // allowSmallValues: для <= 1.21 всегда допускаем малые значения
+            boolean allowMove = ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_21)
+                    || d0 > 1.0E-7
+                    || p_19974_.lengthSqr() - d0 < 1.0E-7;
+
+            if (allowMove) {
                 if (this.fallDistance != 0.0 && d0 >= 1.0) {
                     double d1 = Math.min(vec3.length(), 8.0);
                     Vec3 vec32 = this.position().add(vec3.normalize().scale(d1));
                     BlockHitResult blockhitresult = this.level()
-                        .clip(new ClipContext(this.position(), vec32, ClipContext.Block.FALLDAMAGE_RESETTING, ClipContext.Fluid.WATER, this));
+                            .clip(new ClipContext(this.position(), vec32, ClipContext.Block.FALLDAMAGE_RESETTING, ClipContext.Fluid.WATER, this));
                     if (blockhitresult.getType() != HitResult.Type.MISS) {
                         this.resetFallDistance();
                     }
@@ -741,14 +758,29 @@ public abstract class Entity implements SyncedDataHolder, DebugValueSource, Name
 
                 Vec3 vec34 = this.position();
                 Vec3 vec31 = vec34.add(vec3);
-                this.addMovementThisTick(new Entity.Movement(vec34, vec31, p_19974_));
+
+                // removeExtraCollisionChecks: для >= 1.21.5 добавляем movement
+                if (ProtocolTranslator.getTargetVersion().newerThanOrEqualTo(ProtocolVersion.v1_21_5)) {
+                    this.addMovementThisTick(new Entity.Movement(vec34, vec31, p_19974_));
+                }
+
                 this.setPos(vec31);
             }
 
             profilerfiller.pop();
             profilerfiller.push("rest");
-            boolean flag = !Mth.equal(p_19974_.x, vec3.x);
-            boolean flag1 = !Mth.equal(p_19974_.z, vec3.z);
+
+            // horizontalExactCollisionEqualness
+            boolean flag;
+            boolean flag1;
+            if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_12_2)) {
+                flag = p_19974_.x != vec3.x;
+                flag1 = p_19974_.z != vec3.z;
+            } else {
+                flag = !Mth.equal(p_19974_.x, vec3.x);
+                flag1 = !Mth.equal(p_19974_.z, vec3.z);
+            }
+
             this.horizontalCollision = flag || flag1;
             if (Math.abs(p_19974_.y) > 0.0 || this.isLocalInstanceAuthoritative()) {
                 this.verticalCollision = p_19974_.y != vec3.y;
@@ -972,6 +1004,13 @@ public abstract class Entity implements SyncedDataHolder, DebugValueSource, Name
     }
 
     public BlockPos getBlockPosBelowThatAffectsMyMovement() {
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_19_4)) {
+            return BlockPos.containing(
+                    position.x,
+                    getBoundingBox().minY - (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_14_4) ? 1 : 0.5000001),
+                    position.z
+            );
+        }
         return this.getOnPos(0.500001F);
     }
 
@@ -980,6 +1019,22 @@ public abstract class Entity implements SyncedDataHolder, DebugValueSource, Name
     }
 
     protected BlockPos getOnPos(float p_216987_) {
+        // modifyPosWithYOffset
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_19_4)) {
+            int i = Mth.floor(this.position.x);
+            int j = Mth.floor(this.position.y - (double)(ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_18_2) && p_216987_ == 1.0E-5F ? 0.2F : p_216987_));
+            int k = Mth.floor(this.position.z);
+            BlockPos blockPos = new BlockPos(i, j, k);
+            if (this.level.getBlockState(blockPos).isAir()) {
+                BlockPos downPos = blockPos.below();
+                BlockState blockState = this.level.getBlockState(downPos);
+                if (blockState.is(BlockTags.FENCES) || blockState.is(BlockTags.WALLS) || blockState.getBlock() instanceof FenceGateBlock) {
+                    return downPos;
+                }
+            }
+            return blockPos;
+        }
+
         if (this.mainSupportingBlockPos.isPresent()) {
             BlockPos blockpos = this.mainSupportingBlockPos.get();
             if (!(p_216987_ > 1.0E-5F)) {
@@ -990,8 +1045,8 @@ public abstract class Entity implements SyncedDataHolder, DebugValueSource, Name
             return (!(p_216987_ <= 0.5) || !blockstate.is(BlockTags.FENCES))
                     && !blockstate.is(BlockTags.WALLS)
                     && !(blockstate.getBlock() instanceof FenceGateBlock)
-                ? blockpos.atY(Mth.floor(this.position.y - p_216987_))
-                : blockpos;
+                    ? blockpos.atY(Mth.floor(this.position.y - p_216987_))
+                    : blockpos;
         } else {
             int i = Mth.floor(this.position.x);
             int j = Mth.floor(this.position.y - p_216987_);
@@ -1061,6 +1116,40 @@ public abstract class Entity implements SyncedDataHolder, DebugValueSource, Name
     }
 
     private Vec3 collide(Vec3 p_20273_) {
+        // use1_20_6StepCollisionCalculation
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_20_5)) {
+            final Entity thiz = (Entity)(Object)this;
+            final AABB box = this.getBoundingBox();
+            final List<VoxelShape> collisions = this.level().getEntityCollisions(thiz, box.expandTowards(p_20273_));
+            Vec3 adjustedMovement = p_20273_.lengthSqr() == 0D ? p_20273_ : Entity.collideBoundingBox(thiz, p_20273_, box, this.level(), collisions);
+            final boolean changedX = p_20273_.x != adjustedMovement.x;
+            final boolean changedY = p_20273_.y != adjustedMovement.y;
+            final boolean changedZ = p_20273_.z != adjustedMovement.z;
+            final boolean mayTouchGround = this.onGround() || changedY && p_20273_.y < 0D;
+            if (this.maxUpStep() > 0F && mayTouchGround && (changedX || changedZ)) {
+                Vec3 vec3d2 = Entity.collideBoundingBox(thiz, new Vec3(p_20273_.x, this.maxUpStep(), p_20273_.z), box, this.level(), collisions);
+                Vec3 vec3d3 = Entity.collideBoundingBox(thiz, new Vec3(0D, this.maxUpStep(), 0D), box.expandTowards(p_20273_.x, 0D, p_20273_.z), this.level(), collisions);
+                if (vec3d3.y < this.maxUpStep()) {
+                    Vec3 vec3d4 = Entity.collideBoundingBox(thiz, new Vec3(p_20273_.x, 0D, p_20273_.z), box.move(vec3d3), this.level(), collisions).add(vec3d3);
+                    if (vec3d4.horizontalDistanceSqr() > vec3d2.horizontalDistanceSqr()) {
+                        vec3d2 = vec3d4;
+                    }
+                }
+
+                if (vec3d2.horizontalDistanceSqr() > adjustedMovement.horizontalDistanceSqr()) {
+                    adjustedMovement = vec3d2.add(Entity.collideBoundingBox(
+                            thiz,
+                            new Vec3(0D, -vec3d2.y + (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_13_2) ? 0 : p_20273_.y), 0D),
+                            box.move(vec3d2),
+                            this.level(),
+                            collisions
+                    ));
+                }
+            }
+
+            return adjustedMovement;
+        }
+
         AABB aabb = this.getBoundingBox();
         List<VoxelShape> list = this.level().getEntityCollisions(this, aabb.expandTowards(p_20273_));
         Vec3 vec3 = p_20273_.lengthSqr() == 0.0 ? p_20273_ : collideBoundingBox(this, p_20273_, aabb, this.level(), list);
@@ -1145,7 +1234,12 @@ public abstract class Entity implements SyncedDataHolder, DebugValueSource, Name
 
         Vec3 vec3 = Vec3.ZERO;
 
-        for (Direction.Axis direction$axis : Direction.axisStepOrder(p_198901_)) {
+        // alwaysSortYXZ
+        ImmutableList<Direction.Axis> axes = ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_13_2)
+                ? Direction.YXZ_AXIS_ORDER
+                : Direction.axisStepOrder(p_198901_);
+
+        for (Direction.Axis direction$axis : axes) {
             double d0 = p_198901_.get(direction$axis);
             if (d0 != 0.0) {
                 double d1 = Shapes.collide(direction$axis, p_198902_.move(vec3), p_198903_, d0);
@@ -1203,7 +1297,16 @@ public abstract class Entity implements SyncedDataHolder, DebugValueSource, Name
     }
 
     private int checkInsideBlocks(Vec3 p_409474_, Vec3 p_409162_, InsideBlockEffectApplier.StepBasedCollector p_409523_, LongSet p_409741_, int p_428258_) {
-        AABB aabb = this.makeBoundingBox(p_409162_).deflate(1.0E-5F);
+        double margin;
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_19_1)) {
+            margin = 1E-3;
+        } else if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_21)) {
+            margin = 1E-7;
+        } else {
+            margin = 9.999999747378752E-6;
+        }
+
+        AABB aabb = this.makeBoundingBox(p_409162_).deflate(margin);
         boolean flag = p_409474_.distanceToSqr(p_409162_) > Mth.square(0.9999900000002526);
         boolean flag1 = this.level instanceof ServerLevel serverlevel && serverlevel.getServer().debugSubscribers().hasAnySubscriberFor(DebugSubscriptions.ENTITY_BLOCK_INTERSECTIONS);
         AtomicInteger atomicinteger = new AtomicInteger();
@@ -1543,17 +1646,29 @@ public abstract class Entity implements SyncedDataHolder, DebugValueSource, Name
     private void updateFluidOnEyes() {
         this.wasEyeInWater = this.isEyeInFluid(FluidTags.WATER);
         this.fluidOnEyes.clear();
-        double d0 = this.getEyeY();
+
+        // subtractMagicOffset / addMagicOffset
+        double eyeY = this.getEyeY();
+        if (ProtocolTranslator.getTargetVersion().betweenInclusive(ProtocolVersion.v1_16, ProtocolVersion.v1_20_3)) {
+            eyeY -= 0.11111111F;
+        }
+
         if (!(
-            this.getVehicle() instanceof AbstractBoat abstractboat
-                && !abstractboat.isUnderWater()
-                && abstractboat.getBoundingBox().maxY >= d0
-                && abstractboat.getBoundingBox().minY <= d0
+                this.getVehicle() instanceof AbstractBoat abstractboat
+                        && !abstractboat.isUnderWater()
+                        && abstractboat.getBoundingBox().maxY >= eyeY
+                        && abstractboat.getBoundingBox().minY <= eyeY
         )) {
-            BlockPos blockpos = BlockPos.containing(this.getX(), d0, this.getZ());
+            BlockPos blockpos = BlockPos.containing(this.getX(), eyeY, this.getZ());
             FluidState fluidstate = this.level().getFluidState(blockpos);
-            double d1 = blockpos.getY() + fluidstate.getHeight(this.level(), blockpos);
-            if (d1 > d0) {
+
+            float height = fluidstate.getHeight(this.level(), blockpos);
+            if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_15_2)) {
+                height += 0.11111111F;
+            }
+
+            double d1 = blockpos.getY() + height;
+            if (d1 > eyeY) {
                 fluidstate.getTags().forEach(this.fluidOnEyes::add);
             }
         }
@@ -1645,6 +1760,10 @@ public abstract class Entity implements SyncedDataHolder, DebugValueSource, Name
     }
 
     public boolean isInLava() {
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_13_2)) {
+            final AABB aabb = this.getBoundingBox().deflate(0.1F, 0.4F, 0.1F);
+            return this.level.getBlockStatesIfLoaded(aabb).anyMatch(key -> key.getFluidState().is(FluidTags.LAVA));
+        }
         return !this.firstTick && this.fluidHeight.getDouble(FluidTags.LAVA) > 0.0;
     }
     private RotationMoveEvent motionUpdateRotationEvent;
@@ -1655,11 +1774,13 @@ public abstract class Entity implements SyncedDataHolder, DebugValueSource, Name
             return;
         }
         this.motionUpdateRotationEvent = new RotationMoveEvent(RotationMoveEvent.Type.MOTION_UPDATE, this.yRot, this.xRot);
-        BaritoneAPI.getProvider().getBaritoneForPlayer((LocalPlayer) (Object) this).getGameEventHandler().onPlayerRotationMove(motionUpdateRotationEvent);
+        BaritoneAPI.getProvider().getBaritoneForPlayer((LocalPlayer) this).getGameEventHandler().onPlayerRotationMove(motionUpdateRotationEvent);
         this.yRot = this.motionUpdateRotationEvent.getYaw();
         this.xRot = this.motionUpdateRotationEvent.getPitch();
 
-        Vec3 vec3 = getInputVector(p_19922_, p_19921_, this.getYRot());
+        var event = new EventOnMovePost(p_19921_, p_19922_);
+        EventRepo.call(event);
+        Vec3 vec3 = getInputVector(event.getMovementInput(), event.getSpeed(), this.getYRot());
         this.setDeltaMovement(this.getDeltaMovement().add(vec3));
         if (this.motionUpdateRotationEvent != null) {
             this.yRot = this.motionUpdateRotationEvent.getOriginal().getYaw();
@@ -1669,14 +1790,15 @@ public abstract class Entity implements SyncedDataHolder, DebugValueSource, Name
     }
 
     public static Vec3 getInputVector(Vec3 p_20016_, float p_20017_, float p_20018_) {
+        double epsilon = ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_13_2) ? 1E-4 : 1E-7;
         double d0 = p_20016_.lengthSqr();
-        if (d0 < 1.0E-7) {
+        if (d0 < epsilon) {
             return Vec3.ZERO;
         }
 
         Vec3 vec3 = (d0 > 1.0 ? p_20016_.normalize() : p_20016_).scale(p_20017_);
-        float f = Mth.sin(p_20018_ * (float) (Math.PI / 180.0));
-        float f1 = Mth.cos(p_20018_ * (float) (Math.PI / 180.0));
+        float f = Mth.sin(p_20018_ * (float)(Math.PI / 180.0));
+        float f1 = Mth.cos(p_20018_ * (float)(Math.PI / 180.0));
         return new Vec3(vec3.x * f1 - vec3.z * f, vec3.y, vec3.z * f1 + vec3.x * f);
     }
 
@@ -1889,8 +2011,12 @@ public abstract class Entity implements SyncedDataHolder, DebugValueSource, Name
     }
 
     public final Vec3 calculateViewVector(float p_20172_, float p_20173_) {
-        float f = p_20172_ * (float) (Math.PI / 180.0);
-        float f1 = -p_20173_ * (float) (Math.PI / 180.0);
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_12_2)) {
+            return Vec3.directionFromRotation(p_20172_, p_20173_);
+        }
+
+        float f = p_20172_ * (float)(Math.PI / 180.0);
+        float f1 = -p_20173_ * (float)(Math.PI / 180.0);
         float f2 = Mth.cos(f1);
         float f3 = Mth.sin(f1);
         float f4 = Mth.cos(f);
@@ -2194,12 +2320,29 @@ public abstract class Entity implements SyncedDataHolder, DebugValueSource, Name
     }
 
     public InteractionResult interact(Player p_19978_, InteractionHand p_19979_) {
+        // ViaFabricPlus - remove leash actions for older versions
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_21_5)) {
+            final ItemStack itemStack = p_19978_.getItemInHand(p_19979_);
+            if (this.isAlive() && this instanceof final Leashable leashable) {
+                if (leashable.getLeashHolder() != p_19978_) {
+                    if (itemStack.is(Items.LEAD) && leashable.canHaveALeashAttachedTo(p_19978_)) {
+                        itemStack.shrink(1);
+                        return InteractionResult.SUCCESS;
+                    }
+                } else {
+                    return InteractionResult.SUCCESS.withoutItem();
+                }
+            }
+
+            return InteractionResult.PASS;
+        }
+
         if (!this.level().isClientSide()
-            && p_19978_.isSecondaryUseActive()
-            && this instanceof Leashable leashable
-            && leashable.canBeLeashed()
-            && this.isAlive()
-            && !(this instanceof LivingEntity livingentity && livingentity.isBaby())) {
+                && p_19978_.isSecondaryUseActive()
+                && this instanceof Leashable leashable
+                && leashable.canBeLeashed()
+                && this.isAlive()
+                && !(this instanceof LivingEntity livingentity && livingentity.isBaby())) {
             List<Leashable> list = Leashable.leashableInArea(this, p_405266_ -> p_405266_.getLeashHolder() == p_19978_);
             if (!list.isEmpty()) {
                 boolean flag = false;
@@ -2224,10 +2367,10 @@ public abstract class Entity implements SyncedDataHolder, DebugValueSource, Name
             itemstack.hurtAndBreak(1, p_19978_, p_19979_);
             return InteractionResult.SUCCESS;
         } else if (this instanceof Mob mob
-            && itemstack.is(Items.SHEARS)
-            && mob.canShearEquipment(p_19978_)
-            && !p_19978_.isSecondaryUseActive()
-            && this.attemptToShearEquipment(p_19978_, p_19979_, itemstack, mob)) {
+                && itemstack.is(Items.SHEARS)
+                && mob.canShearEquipment(p_19978_)
+                && !p_19978_.isSecondaryUseActive()
+                && this.attemptToShearEquipment(p_19978_, p_19979_, itemstack, mob)) {
             return InteractionResult.SUCCESS;
         } else {
             if (this.isAlive() && this instanceof Leashable leashable2) {
@@ -2249,6 +2392,10 @@ public abstract class Entity implements SyncedDataHolder, DebugValueSource, Name
                 ItemStack itemstack1 = p_19978_.getItemInHand(p_19979_);
                 if (itemstack1.is(Items.LEAD) && !(leashable2.getLeashHolder() instanceof Player)) {
                     if (this.level().isClientSide()) {
+                        // ViaFabricPlus - swing hand on older versions
+                        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_21_9)) {
+                            return InteractionResult.SUCCESS;
+                        }
                         return InteractionResult.CONSUME;
                     }
 
@@ -2346,7 +2493,15 @@ public abstract class Entity implements SyncedDataHolder, DebugValueSource, Name
 
     protected void positionRider(Entity p_19957_, Entity.MoveFunction p_19958_) {
         Vec3 vec3 = this.getPassengerRidingPosition(p_19957_);
-        Vec3 vec31 = p_19957_.getVehicleAttachmentPoint(this);
+
+        // ViaFabricPlus - use old riding offset for <= 1.20
+        Vec3 vec31;
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_20)) {
+            vec31 = new Vec3(0, -EntityRidingOffsetsPre1_20_2.getHeightOffset(p_19957_), 0);
+        } else {
+            vec31 = p_19957_.getVehicleAttachmentPoint(this);
+        }
+
         p_19958_.accept(p_19957_, vec3.x - vec31.x, vec3.y - vec31.y, vec3.z - vec31.z);
     }
 
@@ -2358,6 +2513,13 @@ public abstract class Entity implements SyncedDataHolder, DebugValueSource, Name
     }
 
     public Vec3 getPassengerRidingPosition(Entity p_297660_) {
+        // ViaFabricPlus - use old passenger riding position for <= 1.20
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_20)) {
+            return this.position().add(
+                    EntityRidingOffsetsPre1_20_2.getMountedHeightOffset(this, p_297660_).yRot(-this.getYRot() * (float)(Math.PI / 180))
+            );
+        }
+
         return this.position().add(this.getPassengerAttachmentPoint(p_297660_, this.dimensions, 1.0F));
     }
 
@@ -2525,6 +2687,9 @@ public abstract class Entity implements SyncedDataHolder, DebugValueSource, Name
     }
 
     public float getPickRadius() {
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_8)) {
+            return 0.1F;
+        }
         return 0.0F;
     }
 
@@ -2684,9 +2849,21 @@ public abstract class Entity implements SyncedDataHolder, DebugValueSource, Name
     }
 
     public void setSwimming(boolean p_20283_) {
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_12_2) && p_20283_) {
+            return;
+        }
+
+        if (ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.bedrockLatest)) {
+            final UserConnection connection = ProtocolTranslator.getPlayNetworkUserConnection();
+            if (connection != null && p_20283_ != this.isSwimming()) {
+                connection.get(EntityTracker.class).getClientPlayer().addAuthInputData(
+                        p_20283_ ? PlayerAuthInputPacket_InputData.StartSwimming : PlayerAuthInputPacket_InputData.StopSwimming
+                );
+            }
+        }
+
         this.setSharedFlag(4, p_20283_);
     }
-
     public final boolean hasGlowingTag() {
         return this.hasGlowingTag;
     }
@@ -2913,7 +3090,17 @@ public abstract class Entity implements SyncedDataHolder, DebugValueSource, Name
 
     public void makeStuckInBlock(BlockState p_20006_, Vec3 p_20007_) {
         this.resetFallDistance();
-        this.stuckSpeedMultiplier = p_20007_;
+
+
+        if (ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.bedrockLatest) && this.stuckSpeedMultiplier != Vec3.ZERO) {
+            this.stuckSpeedMultiplier = new Vec3(
+                    Math.min(this.stuckSpeedMultiplier.x, p_20007_.x),
+                    Math.min(this.stuckSpeedMultiplier.y, p_20007_.y),
+                    Math.min(this.stuckSpeedMultiplier.z, p_20007_.z)
+            );
+        } else {
+            this.stuckSpeedMultiplier = p_20007_;
+        }
     }
 
     private static Component removeAction(Component p_20141_) {
@@ -3633,6 +3820,55 @@ public abstract class Entity implements SyncedDataHolder, DebugValueSource, Name
     }
 
     public boolean updateFluidHeightAndDoFluidPushing(TagKey<Fluid> p_204032_, double p_204033_) {
+        // modifyFluidMovementBoundingBox
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_12_2)
+                || ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.bedrockLatest)) {
+
+            AABB box = this.getBoundingBox().inflate(0, -0.4, 0).deflate(0.001);
+            int minX = Mth.floor(box.minX);
+            int maxX = Mth.ceil(box.maxX);
+            int minY = Mth.floor(box.minY);
+            int maxY = Mth.ceil(box.maxY);
+            int minZ = Mth.floor(box.minZ);
+            int maxZ = Mth.ceil(box.maxZ);
+
+            if (!this.level.hasChunksAt(minX, minY, minZ, maxX, maxY, maxZ)) {
+                return false;
+            }
+
+            double waterHeight = 0;
+            boolean foundFluid = false;
+            Vec3 pushVec = Vec3.ZERO;
+
+            BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos();
+
+            for (int x = minX; x < maxX; x++) {
+                for (int y = minY - 1; y < maxY; y++) {
+                    for (int z = minZ; z < maxZ; z++) {
+                        mutable.set(x, y, z);
+                        FluidState state = this.level.getFluidState(mutable);
+                        if (state.is(p_204032_)) {
+                            double height = y + state.getHeight(this.level, mutable);
+                            if (height >= box.minY - 0.4)
+                                waterHeight = Math.max(height - box.minY + 0.4, waterHeight);
+                            if (y >= minY && maxY >= height) {
+                                foundFluid = true;
+                                pushVec = pushVec.add(state.getFlow(this.level, mutable));
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (pushVec.length() > 0) {
+                pushVec = pushVec.normalize().scale(0.014);
+                this.setDeltaMovement(this.getDeltaMovement().add(pushVec));
+            }
+
+            this.fluidHeight.put(p_204032_, waterHeight);
+            return foundFluid;
+        }
+
         if (this.touchingUnloadedChunk()) {
             return false;
         }
@@ -3920,7 +4156,10 @@ public abstract class Entity implements SyncedDataHolder, DebugValueSource, Name
     }
 
     public void setYRot(float p_146923_) {
-        if (!Float.isFinite(p_146923_)) {
+        boolean isFinite = Float.isFinite(p_146923_)
+                || (this instanceof LocalPlayer && ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_16_4));
+
+        if (!isFinite) {
             Util.logAndPauseIfInIde("Invalid entity rotation: " + p_146923_ + ", discarding.");
         } else {
             this.yRot = p_146923_;
@@ -3932,10 +4171,17 @@ public abstract class Entity implements SyncedDataHolder, DebugValueSource, Name
     }
 
     public void setXRot(float p_146927_) {
-        if (!Float.isFinite(p_146927_)) {
+        boolean isFinite = Float.isFinite(p_146927_)
+                || (this instanceof LocalPlayer && ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_16_4));
+
+        if (!isFinite) {
             Util.logAndPauseIfInIde("Invalid entity rotation: " + p_146927_ + ", discarding.");
         } else {
-            this.xRot = Math.clamp(p_146927_ % 360.0F, -90.0F, 90.0F);
+            if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_21)) {
+                this.xRot = p_146927_ % 360.0F;
+            } else {
+                this.xRot = Math.clamp(p_146927_ % 360.0F, -90.0F, 90.0F);
+            }
         }
     }
 
@@ -4090,6 +4336,17 @@ public abstract class Entity implements SyncedDataHolder, DebugValueSource, Name
         } else {
             return false;
         }
+    }
+    private boolean viaFabricPlus$isInLoadedChunkAndShouldTick;
+
+    @Override
+    public boolean viaFabricPlus$isInLoadedChunkAndShouldTick() {
+        return this.viaFabricPlus$isInLoadedChunkAndShouldTick || DebugSettings.INSTANCE.alwaysTickClientPlayer.isEnabled();
+    }
+
+    @Override
+    public void viaFabricPlus$setInLoadedChunkAndShouldTick(final boolean inLoadedChunkAndShouldTick) {
+        this.viaFabricPlus$isInLoadedChunkAndShouldTick = inLoadedChunkAndShouldTick;
     }
 
     protected <T> boolean applyImplicitComponentIfPresent(DataComponentGetter p_397566_, DataComponentType<T> p_392129_) {

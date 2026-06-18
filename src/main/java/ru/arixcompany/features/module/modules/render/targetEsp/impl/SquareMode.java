@@ -20,7 +20,7 @@ import ru.arixcompany.features.module.modules.render.targetEsp.TargetEspMode;
 import ru.arixcompany.utils.Textures;
 import ru.arixcompany.utils.animation.Animation;
 import ru.arixcompany.utils.animation.Direction;
-import ru.arixcompany.utils.animation.impl.EaseInOutQuad;
+import ru.arixcompany.utils.animation.impl.quad.EaseInOutQuad;
 
 import java.awt.*;
 

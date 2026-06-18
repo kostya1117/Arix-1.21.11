@@ -11,7 +11,6 @@ import ru.arixcompany.Arix;
 import ru.arixcompany.ui.draggable.DraggableComponent;
 import ru.arixcompany.features.module.modules.render.Interface;
 import ru.arixcompany.utils.Colors;
-import ru.arixcompany.utils.render.RenderUtils;
 import ru.arixcompany.utils.render.font.CustomFont;
 import ru.arixcompany.utils.render.font.FontManager;
 

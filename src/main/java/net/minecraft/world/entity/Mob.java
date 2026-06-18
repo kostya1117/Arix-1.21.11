@@ -2,6 +2,8 @@ package net.minecraft.world.entity;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Maps;
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import it.unimi.dsi.fastutil.objects.Object2IntMap.Entry;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -1126,7 +1128,14 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
         if (!this.isAlive()) {
             return InteractionResult.PASS;
         } else {
-            InteractionResult interactionresult = this.checkAndHandleImportantInteractions(p_21420_, p_21421_);
+            // ViaFabricPlus - move item interactions after leashing on older versions
+            InteractionResult interactionresult;
+            if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_20_5)) {
+                interactionresult = InteractionResult.FAIL;
+            } else {
+                interactionresult = this.checkAndHandleImportantInteractions(p_21420_, p_21421_);
+            }
+
             if (interactionresult.consumesAction()) {
                 this.gameEvent(GameEvent.ENTITY_INTERACT, p_21420_);
                 return interactionresult;
@@ -1135,6 +1144,15 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
                 if (interactionresult1 != InteractionResult.PASS) {
                     return interactionresult1;
                 } else {
+                    // ViaFabricPlus - check item interactions before mobInteract on older versions
+                    if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_20_5)) {
+                        final InteractionResult itemResult = this.checkAndHandleImportantInteractions(p_21420_, p_21421_);
+                        if (itemResult.consumesAction()) {
+                            this.gameEvent(GameEvent.ENTITY_INTERACT, p_21420_);
+                            return itemResult;
+                        }
+                    }
+
                     interactionresult = this.mobInteract(p_21420_, p_21421_);
                     if (interactionresult.consumesAction()) {
                         this.gameEvent(GameEvent.ENTITY_INTERACT, p_21420_);

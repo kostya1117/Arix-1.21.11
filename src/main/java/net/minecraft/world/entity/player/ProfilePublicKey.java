@@ -10,6 +10,8 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.UUID;
+
+import com.viaversion.viafabricplus.injection.access.networking.legacy_chat_signature.IProfilePublicKey_Data;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ThrowingComponent;
@@ -35,7 +37,7 @@ public record ProfilePublicKey(ProfilePublicKey.Data data) {
         return SignatureValidator.from(this.data.key, "SHA256withRSA");
     }
 
-    public record Data(Instant expiresAt, PublicKey key, byte[] keySignature) {
+    public record Data(Instant expiresAt, PublicKey key, byte[] keySignature) implements IProfilePublicKey_Data {
         private static final int MAX_KEY_SIGNATURE_SIZE = 4096;
         public static final Codec<ProfilePublicKey.Data> CODEC = RecordCodecBuilder.create(
             p_219814_ -> p_219814_.group(
@@ -86,6 +88,17 @@ public record ProfilePublicKey(ProfilePublicKey.Data data) {
                 : this.expiresAt.equals(profilepublickey$data.expiresAt)
                     && this.key.equals(profilepublickey$data.key)
                     && Arrays.equals(this.keySignature, profilepublickey$data.keySignature);
+        }
+        private static byte[] viaFabricPlus$legacyKeySignature;
+
+        @Override
+        public byte[] viafabricplus$getLegacyPublicKeySignature() {
+            return this.viaFabricPlus$legacyKeySignature;
+        }
+
+        @Override
+        public void viafabricplus$setLegacyPublicKeySignature(byte[] signature) {
+            this.viaFabricPlus$legacyKeySignature = signature;
         }
     }
 

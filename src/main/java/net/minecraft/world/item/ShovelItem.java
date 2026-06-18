@@ -3,6 +3,9 @@ package net.minecraft.world.item;
 import com.google.common.collect.Maps;
 import com.google.common.collect.ImmutableMap.Builder;
 import java.util.Map;
+
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundEvents;
@@ -43,7 +46,9 @@ public class ShovelItem extends Item {
         }
 
         Player player = p_43119_.getPlayer();
-        BlockState blockstate1 = FLATTENABLES.get(blockstate.getBlock());
+        BlockState blockstate1 = ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_8)
+                ? null
+                : FLATTENABLES.get(blockstate.getBlock());
         BlockState blockstate2 = null;
         if (blockstate1 != null && level.getBlockState(blockpos.above()).isAir()) {
             level.playSound(player, blockpos, SoundEvents.SHOVEL_FLATTEN, SoundSource.BLOCKS, 1.0F, 1.0F);

@@ -60,8 +60,7 @@ public class PlayerMovementInput extends ClientInput {
             leftImpulse *= 0.3D;
             forwardImpulse *= 0.3D;
         }
-        this.leftImpulse = leftImpulse;
-        this.forwardImpulse = forwardImpulse;
+        this.moveVector = new Vec2(leftImpulse, forwardImpulse);
 
         boolean sprinting = handler.isInputForcedDown(Input.SPRINT);
 

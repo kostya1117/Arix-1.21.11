@@ -1,6 +1,10 @@
 package net.minecraft.world.entity.animal.wolf;
 
 import java.util.Optional;
+
+import com.viaversion.viafabricplus.features.entity.metadata_handling.WolfHealthTracker1_14_4;
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
@@ -76,6 +80,8 @@ import net.minecraft.world.item.DyeItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.enchantment.EnchantmentEffectComponents;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.ServerLevelAccessor;
@@ -85,7 +91,6 @@ import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
-import org.jspecify.annotations.Nullable;
 
 public class Wolf extends TamableAnimal implements NeutralMob {
     private static final EntityDataAccessor<Boolean> DATA_INTERESTED_ID = SynchedEntityData.defineId(Wolf.class, EntityDataSerializers.BOOLEAN);
@@ -267,9 +272,12 @@ public class Wolf extends TamableAnimal implements NeutralMob {
         if (this.isAngry()) {
             return this.getSoundVariant().value().growlSound().value();
         } else if (this.random.nextInt(3) == 0) {
-            return this.isTame() && this.getHealth() < 20.0F
-                ? this.getSoundVariant().value().whineSound().value()
-                : this.getSoundVariant().value().pantSound().value();
+            float health = ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_14_4)
+                    ? WolfHealthTracker1_14_4.getWolfHealth(this)
+                    : this.getHealth();
+            return this.isTame() && health < 20.0F
+                    ? this.getSoundVariant().value().whineSound().value()
+                    : this.getSoundVariant().value().pantSound().value();
         } else {
             return this.getSoundVariant().value().ambientSound().value();
         }
@@ -449,6 +457,44 @@ public class Wolf extends TamableAnimal implements NeutralMob {
     public InteractionResult mobInteract(Player p_391202_, InteractionHand p_391687_) {
         ItemStack itemstack = p_391202_.getItemInHand(p_391687_);
         Item item = itemstack.getItem();
+
+        // ViaFabricPlus - old wolf interaction logic for <= 1.14.4
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_14_4)) {
+            if (this.isTame()) {
+                final FoodProperties foodComponent = itemstack.get(DataComponents.FOOD);
+                if (foodComponent != null) {
+                    if (this.isFood(itemstack) && WolfHealthTracker1_14_4.getWolfHealth(this) < 20.0F) {
+                        if (!p_391202_.getAbilities().instabuild) itemstack.shrink(1);
+                        this.heal(foodComponent.nutrition());
+                        return InteractionResult.SUCCESS;
+                    }
+                } else if (item instanceof DyeItem dyeItem) {
+                    final DyeColor dyeColor = dyeItem.getDyeColor();
+                    if (dyeColor != this.getCollarColor()) {
+                        this.setCollarColor(dyeColor);
+                        if (!p_391202_.getAbilities().instabuild) itemstack.shrink(1);
+                        return InteractionResult.SUCCESS;
+                    }
+                }
+            } else if (item == Items.BONE && !this.isAngry()) {
+                if (!p_391202_.getAbilities().instabuild) itemstack.shrink(1);
+                return InteractionResult.SUCCESS;
+            }
+
+            return super.mobInteract(p_391202_, p_391687_);
+        }
+
+        // ViaFabricPlus - call armor shearing manually for <= 1.21.5
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_21_5) && this.isTame()) {
+            if (itemstack.is(Items.SHEARS)
+                    && this.isOwnedBy(p_391202_)
+                    && this.isWearingBodyArmor()
+                    && (!EnchantmentHelper.has(this.getBodyArmorItem(), EnchantmentEffectComponents.PREVENT_ARMOR_CHANGE) || p_391202_.isCreative())) {
+                this.playSound(SoundEvents.ARMOR_UNEQUIP_WOLF);
+                return InteractionResult.SUCCESS;
+            }
+        }
+
         if (this.isTame()) {
             if (this.isFood(itemstack) && this.getHealth() < this.getMaxHealth()) {
                 this.usePlayerItem(p_391202_, p_391687_, itemstack);
@@ -500,7 +546,6 @@ public class Wolf extends TamableAnimal implements NeutralMob {
 
         return super.mobInteract(p_391202_, p_391687_);
     }
-
     private void tryToTame(Player p_397321_) {
         if (this.random.nextInt(3) == 0) {
             this.tame(p_397321_);
@@ -531,7 +576,10 @@ public class Wolf extends TamableAnimal implements NeutralMob {
             return 1.5393804F;
         } else if (this.isTame()) {
             float f = this.getMaxHealth();
-            float f1 = (f - this.getHealth()) / f;
+            float health = ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_14_4)
+                    ? WolfHealthTracker1_14_4.getWolfHealth(this)
+                    : this.getHealth();
+            float f1 = (f - health) / f;
             return (0.55F - f1 * 0.4F) * (float) Math.PI;
         } else {
             return (float) (Math.PI / 5);

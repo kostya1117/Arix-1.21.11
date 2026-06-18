@@ -2,94 +2,168 @@ package ru.arixcompany.utils.player.inventory;
 
 import lombok.experimental.UtilityClass;
 import ru.arixcompany.Arix;
-import ru.arixcompany.features.event.world.EventUpdate;
-import ru.arixcompany.features.repos.ScriptRepo;
+import ru.arixcompany.features.module.modules.movement.AutoSprint;
 import ru.arixcompany.utils.IMinecraft;
+import ru.arixcompany.utils.math.TimerUtils;
 import ru.arixcompany.utils.player.MoveUtils;
-import ru.arixcompany.utils.player.NetworkUtil;
+
+import java.util.ArrayDeque;
+import java.util.Deque;
 
 @UtilityClass
 public class PlayerInventoryComponent implements IMinecraft {
 
-    public void addTask(Runnable task) {
-        ScriptRepo.ScriptTask script = new ScriptRepo.ScriptTask();
-        if (MoveUtils.isMoving()) {
-            Arix.getInstance().getScriptRepo().addTask(script);
-            if (NetworkUtil.isFunTime() || NetworkUtil.isCopyTime()) {
-                script.schedule(EventUpdate.class, eventUpdate -> {
-                    MoveUtils.lockMovement("inv");
-                    return true;
-                });
-                script.schedule(EventUpdate.class, eventUpdate -> {
-                    task.run();
-                    MoveUtils.unlockMovement("inv");
-                    return true;
-                });
-                return;
-            }
-            if (NetworkUtil.isReallyWorld()) {
-                if (mc.player.onGround()) {
+    private static final long DEFAULT_PRE_DELAY = 100L;
+    private static final long DEFAULT_POST_DELAY = 100L;
 
-                    script.schedule(EventUpdate.class, eventUpdate -> {
-                        MoveUtils.lockMovement("inv");
-                        return true;
-                    });
+    private final TimerUtils timer = new TimerUtils();
+    private final Deque<InventoryTask> taskQueue = new ArrayDeque<>();
 
-                    script.schedule(EventUpdate.class, eventUpdate -> {
-                        MoveUtils.unlockMovement("inv");
-                        return true;
-                    });
+    private InventoryTask currentTask;
+    private boolean active;
+    private boolean executed;
+    private boolean sprintBlocked;
 
-                    script.schedule(EventUpdate.class, eventUpdate -> {
-                        task.run();
-                        return true;
-                    });
-                    script.schedule(EventUpdate.class, eventUpdate -> {
-                        MoveUtils.lockMovement("inv");
-                        return true;
-                    });
-                    return;
-                }
-            }
-        }
-        task.run();
-    }
-
-    public void addTask(Runnable task, int preDelayTicks, int postDelayTicks) {
-        if (MoveUtils.isMoving()) {
-            ScriptRepo.ScriptTask script = new ScriptRepo.ScriptTask();
-            Arix.getInstance().getScriptRepo().addTask(script);
-
-            script.schedule(EventUpdate.class, eventUpdate -> {
-                MoveUtils.lockMovement("inv");
-                return true;
-            });
-
-            for (int i = 0; i < preDelayTicks; i++) {
-                script.schedule(EventUpdate.class, eventUpdate -> {
-                    return true;
-                });
-            }
-
-            script.schedule(EventUpdate.class, eventUpdate -> {
-                task.run();
-                return true;
-            });
-
-            for (int i = 0; i < postDelayTicks; i++) {
-                script.schedule(EventUpdate.class, eventUpdate -> {
-                    return true;
-                });
-            }
-
-            script.schedule(EventUpdate.class, eventUpdate -> {
-                MoveUtils.unlockMovement("inv");
-                return true;
-            });
-
+    /**
+     * Вызывай каждый тик.
+     */
+    public void onUpdate() {
+        if (mc.player == null || mc.level == null) {
+            clear();
             return;
         }
 
-        task.run();
+        if (!active && currentTask == null) {
+            currentTask = taskQueue.pollFirst();
+        }
+
+        if (currentTask == null) {
+            sprintBlocked = false;
+            return;
+        }
+
+        // Если задача еще не запущена
+        if (!active) {
+            // Если игрок не двигается — можно выполнить сразу
+            if (!shouldDelay()) {
+                runCurrentTask();
+                finishCurrentTask();
+                return;
+            }
+
+            // Если двигается — блокируем спринт и ждем
+            active = true;
+            executed = false;
+            sprintBlocked = true;
+            suppressSprint();
+            timer.reset();
+            return;
+        }
+
+        // Пока ждем / держим пост-паузу — продолжаем душить спринт
+        suppressSprint();
+
+        long elapsed = timer.getElapsed();
+
+        // Выполняем задачу после preDelay
+        if (!executed && elapsed >= currentTask.preDelay) {
+            executed = true;
+            runCurrentTask();
+            timer.reset();
+        }
+
+        // Ждем postDelay после выполнения и отпускаем
+        if (executed && timer.getElapsed() >= currentTask.postDelay) {
+            finishCurrentTask();
+        }
+    }
+
+    /**
+     * Стандартная задача: 100мс до, 100мс после.
+     */
+    public void addTask(Runnable task) {
+        addTask(task, DEFAULT_PRE_DELAY, DEFAULT_POST_DELAY);
+    }
+
+    /**
+     * Кастомные задержки.
+     */
+    public void addTask(Runnable task, long preDelay, long postDelay) {
+        if (task == null) return;
+
+        taskQueue.addLast(new InventoryTask(
+                task,
+                Math.max(preDelay, 0L),
+                Math.max(postDelay, 0L)
+        ));
+    }
+
+    public boolean isBusy() {
+        return active || currentTask != null || !taskQueue.isEmpty();
+    }
+
+    public boolean isSprintBlocked() {
+        return sprintBlocked;
+    }
+
+    public void clear() {
+        taskQueue.clear();
+        currentTask = null;
+        active = false;
+        executed = false;
+        sprintBlocked = false;
+        restoreSprint();
+    }
+
+    private boolean shouldDelay() {
+        return MoveUtils.isMoving();
+    }
+
+    private void runCurrentTask() {
+        if (currentTask == null || currentTask.action == null) return;
+
+        try {
+            currentTask.action.run();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void finishCurrentTask() {
+        restoreSprint();
+        sprintBlocked = false;
+        active = false;
+        executed = false;
+        currentTask = null;
+    }
+
+    private void suppressSprint() {
+        if (mc.player == null) return;
+
+        mc.player.setSprinting(false);
+
+        AutoSprint autoSprint = Arix.getInstance().getModuleRepo().getModule(AutoSprint.class);
+        if (autoSprint != null && autoSprint.isState()) {
+            autoSprint.sprint = false;
+        }
+    }
+
+    private void restoreSprint() {
+        AutoSprint autoSprint = Arix.getInstance().getModuleRepo().getModule(AutoSprint.class);
+        if (autoSprint != null && autoSprint.isState() && !autoSprint.sprint) {
+            autoSprint.sprint = true;
+        }
+    }
+
+    private static class InventoryTask {
+        private final Runnable action;
+        private final long preDelay;
+        private final long postDelay;
+
+        private InventoryTask(Runnable action, long preDelay, long postDelay) {
+            this.action = action;
+            this.preDelay = preDelay;
+            this.postDelay = postDelay;
+        }
     }
 }

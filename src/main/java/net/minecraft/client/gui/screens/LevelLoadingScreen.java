@@ -1,5 +1,11 @@
 package net.minecraft.client.gui.screens;
 
+import com.viaversion.viafabricplus.injection.access.networking.downloading_terrain.ILevelLoadingScreen;
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viafabricplus.settings.impl.GeneralSettings;
+import com.viaversion.viafabricplus.util.ChatUtil;
+import com.viaversion.viaversion.api.connection.UserConnection;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.client.GameNarrator;
@@ -15,7 +21,9 @@ import net.minecraft.client.renderer.blockentity.AbstractEndPortalRenderer;
 import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureManager;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.common.ServerboundKeepAlivePacket;
 import net.minecraft.server.level.progress.ChunkLoadStatusView;
 import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
@@ -24,9 +32,10 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.chunk.status.ChunkStatus;
 import net.optifine.CustomLoadingScreen;
 import net.optifine.CustomLoadingScreens;
+import net.raphimc.vialegacy.protocol.classic.c0_28_30toa1_0_15.storage.ClassicProgressStorage;
 import org.jspecify.annotations.Nullable;
 
-public class LevelLoadingScreen extends Screen {
+public class LevelLoadingScreen extends Screen implements ILevelLoadingScreen {
     private static final Component DOWNLOADING_TERRAIN_TEXT = Component.translatable("multiplayer.downloadingTerrain");
     private static final Component READY_TO_PLAY_TEXT = Component.translatable("narrator.ready_to_play");
     private static final long NARRATION_DELAY_MS = 2000L;
@@ -52,11 +61,20 @@ public class LevelLoadingScreen extends Screen {
         mapIn.put(ChunkStatus.FULL, 16777215);
     });
     private CustomLoadingScreen customLoadingScreen = CustomLoadingScreens.getCustomLoadingScreen();
+    private long viaFabricPlus$loadStartTime;
+    private int viaFabricPlus$tickCounter;
+    private boolean viaFabricPlus$ready;
+    private boolean viaFabricPlus$closeOnNextTick = false;
 
     public LevelLoadingScreen(LevelLoadTracker p_431526_, LevelLoadingScreen.Reason p_424258_) {
         super(GameNarrator.NO_TITLE);
         this.loadTracker = p_431526_;
         this.reason = p_424258_;
+        this.viaFabricPlus$loadStartTime = Util.getMillis();
+    }
+    @Override
+    public void viaFabricPlus$setReady() {
+        this.viaFabricPlus$ready = true;
     }
 
     public void update(LevelLoadTracker p_426338_, LevelLoadingScreen.Reason p_423642_) {
@@ -83,6 +101,52 @@ public class LevelLoadingScreen extends Screen {
 
     @Override
     public void tick() {
+        if (Minecraft.getInstance() != null && Minecraft.getInstance().isLocalServer()) {
+            // ванильная логика для синглплеера
+            super.tick();
+            this.smoothedProgress = this.smoothedProgress + (this.loadTracker.serverProgress() - this.smoothedProgress) * 0.2F;
+            if (this.loadTracker.isLevelReady()) {
+                this.onClose();
+            }
+            return;
+        }
+
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_20_2)) {
+            if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_18)) {
+                if (this.viaFabricPlus$ready) {
+                    this.onClose();
+                }
+
+                if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_12_1)) {
+                    this.viaFabricPlus$tickCounter++;
+                    if (this.viaFabricPlus$tickCounter % 20 == 0) {
+                        this.minecraft.getConnection().send(new ServerboundKeepAlivePacket(0));
+                    }
+                }
+            } else {
+                if (System.currentTimeMillis() > this.viaFabricPlus$loadStartTime + 30000L) {
+                    this.onClose();
+                } else {
+                    if (this.viaFabricPlus$closeOnNextTick) {
+                        if (this.minecraft.player == null) return;
+
+                        final BlockPos blockPos = this.minecraft.player.blockPosition();
+                        final boolean isOutOfHeightLimit = this.minecraft.level != null && this.minecraft.level.isOutsideBuildHeight(blockPos.getY());
+                        if (isOutOfHeightLimit || this.minecraft.levelRenderer.isSectionCompiledAndVisible(blockPos) || this.minecraft.player.isSpectator() || !this.minecraft.player.isAlive()) {
+                            this.onClose();
+                        }
+                    } else {
+                        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_19_1)) {
+                            this.viaFabricPlus$closeOnNextTick = this.viaFabricPlus$ready || System.currentTimeMillis() > this.viaFabricPlus$loadStartTime + 2000;
+                        } else {
+                            this.viaFabricPlus$closeOnNextTick = this.viaFabricPlus$ready;
+                        }
+                    }
+                }
+            }
+            return;
+        }
+
         super.tick();
         this.smoothedProgress = this.smoothedProgress + (this.loadTracker.serverProgress() - this.smoothedProgress) * 0.2F;
         if (this.loadTracker.isLevelReady()) {
@@ -114,6 +178,28 @@ public class LevelLoadingScreen extends Screen {
         p_283534_.drawCenteredString(this.font, DOWNLOADING_TERRAIN_TEXT, j, l, -1);
         if (this.loadTracker.hasProgress()) {
             this.drawProgressBar(p_283534_, j - 100, l + 9 + 3, 200, 2, this.smoothedProgress);
+        }
+        if (GeneralSettings.INSTANCE.showClassicLoadingProgressInConnectScreen.getValue()) {
+            // Check if ViaVersion is translating
+            final UserConnection connection = ProtocolTranslator.getPlayNetworkUserConnection();
+            if (connection == null) {
+                return;
+            }
+
+            // Check if the client is connecting to a classic server
+            final ClassicProgressStorage classicProgressStorage = connection.get(ClassicProgressStorage.class);
+            if (classicProgressStorage == null) {
+                return;
+            }
+
+            // Draw the classic loading progress
+            p_283534_.drawCenteredString(
+                    minecraft.font,
+                    ChatUtil.prefixText(classicProgressStorage.status),
+                    width / 2,
+                    height / 2 - 30,
+                    -1
+            );
         }
     }
 

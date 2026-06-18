@@ -1,5 +1,7 @@
 package net.minecraft.client.gui.screens;
 
+import com.viaversion.viafabricplus.features.limitation.max_chat_length.MaxChatLength;
+import com.viaversion.viafabricplus.settings.impl.DebugSettings;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.ActiveTextCollector;
 import net.minecraft.client.gui.GuiGraphics;
@@ -40,6 +42,9 @@ public class ChatScreen extends Screen {
         this.initial = initial;
         this.isDraft = isDraft;
     }
+    private boolean viaFabricPlus$keepTabComplete() {
+        return !DebugSettings.INSTANCE.legacyTabCompletions.isEnabled() || !this.input.getValue().startsWith("/");
+    }
 
     @Override
     protected void init() {
@@ -59,7 +64,11 @@ public class ChatScreen extends Screen {
         };
         this.input.setMaxLength(256);
         this.input.setBordered(false);
-        this.input.setValue(this.initial);
+
+        if (!DebugSettings.INSTANCE.legacyTabCompletions.isEnabled()) {
+            this.input.setValue(this.initial);
+        }
+
         this.input.setResponder(this::onEdited);
         this.input.addFormatter(this::formatChat);
         this.input.setCanLoseFocus(false);
@@ -72,6 +81,15 @@ public class ChatScreen extends Screen {
         this.commandSuggestions.setAllowHiding(false);
         this.commandSuggestions.setAllowSuggestions(false);
         this.commandSuggestions.updateCommandInfo();
+
+        if (DebugSettings.INSTANCE.legacyTabCompletions.isEnabled()) {
+            this.input.setValue(this.initial);
+            this.commandSuggestions.updateCommandInfo();
+        }
+
+        if (this.input.getMaxLength() == MaxChatLength.MAX_CHAT_LENGTH_LATEST) {
+            this.input.setMaxLength(MaxChatLength.getChatLength());
+        }
     }
 
     @Override
@@ -238,8 +256,12 @@ public class ChatScreen extends Screen {
 
 
     private void onEdited(String text) {
-        this.commandSuggestions.setAllowSuggestions(true);
-        this.commandSuggestions.updateCommandInfo();
+        this.commandSuggestions.setAllowSuggestions(this.viaFabricPlus$keepTabComplete() ? true : !this.input.getValue().isEmpty());
+
+        if (this.viaFabricPlus$keepTabComplete()) {
+            this.commandSuggestions.updateCommandInfo();
+        }
+
         this.isDraft = false;
     }
 

@@ -2,6 +2,10 @@ package net.minecraft.client.gui.screens.debug;
 
 import com.google.common.collect.Lists;
 import java.util.List;
+
+import com.viaversion.viafabricplus.features.networking.remove_signed_commands.SignedCommands1_21_6;
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.GameNarrator;
 import net.minecraft.client.Minecraft;
@@ -15,6 +19,8 @@ import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ServerGamePacketListener;
 import net.minecraft.network.protocol.game.ServerboundChangeGameModePacket;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.commands.GameModeCommand;
@@ -115,10 +121,17 @@ public class GameModeSwitcherScreen extends Screen {
     private static void switchToHoveredGameMode(Minecraft p_281340_, GameModeSwitcherScreen.GameModeIcon p_281358_) {
         if (p_281340_.canSwitchGameMode()) {
             GameModeSwitcherScreen.GameModeIcon gamemodeswitcherscreen$gamemodeicon = GameModeSwitcherScreen.GameModeIcon.getFromGameType(
-                p_281340_.gameMode.getPlayerMode()
+                    p_281340_.gameMode.getPlayerMode()
             );
             if (p_281358_ != gamemodeswitcherscreen$gamemodeicon && GameModeCommand.PERMISSION_CHECK.check(p_281340_.player.permissions())) {
-                p_281340_.player.connection.send(new ServerboundChangeGameModePacket(p_281358_.mode));
+                Packet<ServerGamePacketListener> packet = new ServerboundChangeGameModePacket(p_281358_.mode);
+
+                if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_21_5)
+                        && packet instanceof ServerboundChangeGameModePacket(final GameType mode)) {
+                    SignedCommands1_21_6.sendGameMode(mode);
+                } else {
+                    p_281340_.player.connection.send(packet);
+                }
             }
         }
     }

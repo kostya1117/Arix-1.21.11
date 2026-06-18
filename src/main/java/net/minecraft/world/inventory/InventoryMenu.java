@@ -2,6 +2,10 @@ package net.minecraft.world.inventory;
 
 import java.util.List;
 import java.util.Map;
+
+import com.viaversion.viafabricplus.features.recipe.Recipes1_11_2;
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Container;
@@ -52,18 +56,21 @@ public class InventoryMenu extends AbstractCraftingMenu {
         }
 
         this.addStandardInventorySlots(p_39706_, 8, 84);
-        this.addSlot(new Slot(p_39706_, 40, 77, 62) {
-            @Override
-            public void setByPlayer(ItemStack p_270969_, ItemStack p_299540_) {
-                p_39708_.onEquipItem(EquipmentSlot.OFFHAND, p_299540_, p_270969_);
-                super.setByPlayer(p_270969_, p_299540_);
-            }
 
-            @Override
-            public Identifier getNoItemIcon() {
-                return InventoryMenu.EMPTY_ARMOR_SLOT_SHIELD;
-            }
-        });
+        if (ProtocolTranslator.getTargetVersion().newerThan(ProtocolVersion.v1_8)) {
+            this.addSlot(new Slot(p_39706_, 40, 77, 62) {
+                @Override
+                public void setByPlayer(ItemStack p_270969_, ItemStack p_299540_) {
+                    p_39708_.onEquipItem(EquipmentSlot.OFFHAND, p_299540_, p_270969_);
+                    super.setByPlayer(p_270969_, p_299540_);
+                }
+
+                @Override
+                public Identifier getNoItemIcon() {
+                    return InventoryMenu.EMPTY_ARMOR_SLOT_SHIELD;
+                }
+            });
+        }
     }
 
     public static boolean isHotbarSlot(int p_150593_) {
@@ -72,6 +79,9 @@ public class InventoryMenu extends AbstractCraftingMenu {
 
     @Override
     public void slotsChanged(Container p_39710_) {
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_11_1)) {
+            Recipes1_11_2.setCraftingResultSlot(containerId, this, this.craftSlots);
+        }
         if (this.owner.level() instanceof ServerLevel serverlevel) {
             CraftingMenu.slotChangedCraftingGrid(this, serverlevel, this.owner, this.craftSlots, this.resultSlots, null);
         }

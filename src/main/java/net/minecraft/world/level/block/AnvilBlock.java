@@ -2,6 +2,9 @@ package net.minecraft.world.level.block;
 
 import com.mojang.serialization.MapCodec;
 import java.util.Map;
+
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -45,6 +48,10 @@ public class AnvilBlock extends FallingBlock {
     private static final float FALL_DAMAGE_PER_DISTANCE = 2.0F;
     private static final int FALL_DAMAGE_MAX = 40;
 
+    private static final VoxelShape viaFabricPlus$x_axis_shape_r1_12_2 = Block.box(0.0D, 0.0D, 2.0D, 16.0D, 16.0D, 14.0D);
+    private static final VoxelShape viaFabricPlus$z_axis_shape_r1_12_2 = Block.box(2.0D, 0.0D, 0.0D, 14.0D, 16.0D, 16.0D);
+    private boolean viaFabricPlus$requireOriginalShape;
+
     @Override
     public MapCodec<AnvilBlock> codec() {
         return CODEC;
@@ -79,8 +86,24 @@ public class AnvilBlock extends FallingBlock {
 
     @Override
     protected VoxelShape getShape(BlockState p_48816_, BlockGetter p_48817_, BlockPos p_48818_, CollisionContext p_48819_) {
+       /* if (ViaFabricPlusMixinPlugin.MORE_CULLING_PRESENT && this.viaFabricPlus$requireOriginalShape) { for culling
+            this.viaFabricPlus$requireOriginalShape = false;
+        } else*/ if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_12_2)) {
+            return p_48816_.getValue(FACING).getAxis() == Direction.Axis.X
+                    ? viaFabricPlus$x_axis_shape_r1_12_2
+                    : viaFabricPlus$z_axis_shape_r1_12_2;
+        }
+
         return SHAPES.get(p_48816_.getValue(FACING).getAxis());
     }
+    @Override
+    protected VoxelShape getOcclusionShape(BlockState state) {
+        // Workaround for https://github.com/ViaVersion/ViaFabricPlus/issues/246
+        // MoreCulling is caching the culling shape and doesn't reload it, so we have to force vanilla's shape here.
+        viaFabricPlus$requireOriginalShape = true;
+        return super.getOcclusionShape(state);
+    }
+
 
     @Override
     protected void falling(FallingBlockEntity p_48779_) {

@@ -1,6 +1,7 @@
 package net.minecraft.world.level.block;
 
 import com.mojang.serialization.MapCodec;
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -20,7 +21,9 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.raphimc.viabedrock.api.BedrockProtocolVersion;
 
 public class CactusBlock extends Block {
     public static final MapCodec<CactusBlock> CODEC = simpleCodec(CactusBlock::new);
@@ -32,6 +35,8 @@ public class CactusBlock extends Block {
     private static final int ATTEMPT_GROW_CACTUS_FLOWER_AGE = 8;
     private static final double ATTEMPT_GROW_CACTUS_FLOWER_SMALL_CACTUS_CHANCE = 0.1;
     private static final double ATTEMPT_GROW_CACTUS_FLOWER_TALL_CACTUS_CHANCE = 0.25;
+
+    private static final VoxelShape BEDROCK_SHAPE_COLLISION = Shapes.box(0.0625, 0, 0.0625, 0.9375, 1, 0.9375);
 
     @Override
     public MapCodec<CactusBlock> codec() {
@@ -83,6 +88,11 @@ public class CactusBlock extends Block {
 
     @Override
     protected VoxelShape getCollisionShape(BlockState p_51176_, BlockGetter p_51177_, BlockPos p_51178_, CollisionContext p_51179_) {
+        // ViaFabricPlus - Bedrock cactus collision shape
+        if (ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.bedrockLatest)) {
+            return BEDROCK_SHAPE_COLLISION;
+        }
+
         return SHAPE_COLLISION;
     }
 
@@ -93,14 +103,14 @@ public class CactusBlock extends Block {
 
     @Override
     protected BlockState updateShape(
-        BlockState p_51157_,
-        LevelReader p_368068_,
-        ScheduledTickAccess p_362750_,
-        BlockPos p_51161_,
-        Direction p_51158_,
-        BlockPos p_51162_,
-        BlockState p_51159_,
-        RandomSource p_362850_
+            BlockState p_51157_,
+            LevelReader p_368068_,
+            ScheduledTickAccess p_362750_,
+            BlockPos p_51161_,
+            Direction p_51158_,
+            BlockPos p_51162_,
+            BlockState p_51159_,
+            RandomSource p_362850_
     ) {
         if (!p_51157_.canSurvive(p_368068_, p_51161_)) {
             p_362750_.scheduleTick(p_51161_, this, 1);

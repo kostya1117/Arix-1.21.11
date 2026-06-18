@@ -20,6 +20,9 @@ import java.util.OptionalInt;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
+
+import com.viaversion.viafabricplus.ViaFabricPlusImpl;
+import com.viaversion.viafabricplus.ViaFixMixin;
 import joptsimple.ArgumentAcceptingOptionSpec;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
@@ -173,6 +176,8 @@ public class Main {
                 new GameConfig.GameData(flag1, s, s5, flag2, flag3, flag4, flag5, optionset.has(optionspec16)),
                 new GameConfig.QuickPlayData(s9, gameconfig$quickplayvariant)
             );
+            ViaFixMixin.fixMixin();
+            ViaFabricPlusImpl.INSTANCE.init();
             Util.startTimerHackThread();
             completablefuture.join();
         } catch (Throwable throwable1) {

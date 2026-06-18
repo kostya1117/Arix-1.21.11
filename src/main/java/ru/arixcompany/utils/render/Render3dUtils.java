@@ -5,12 +5,14 @@ import com.mojang.blaze3d.pipeline.RenderPipeline;
 import com.mojang.blaze3d.platform.DepthTestFunction;
 import com.mojang.blaze3d.vertex.*;
 import lombok.experimental.UtilityClass;
+import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.rendertype.RenderSetup;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix3f;
@@ -178,9 +180,9 @@ public class Render3dUtils implements IMinecraft {
         float maxZ = (float) (box.maxZ - cam.z);
 
         ByteBufferBuilder allocator = new ByteBufferBuilder(512);
-        MultiBufferSource.BufferSource buffer = MultiBufferSource.immediate(allocator);
 
-        try {
+        try (allocator) {
+            MultiBufferSource.BufferSource buffer = MultiBufferSource.immediate(allocator);
             RenderType renderType = depthTest ? OUTLINE_DEPTH : OUTLINE_NO_DEPTH;
             VertexConsumer vertex = buffer.getBuffer(renderType);
             Matrix4f matrix = poseStack.last().pose();
@@ -201,8 +203,6 @@ public class Render3dUtils implements IMinecraft {
             line(vertex, matrix, minX, minY, maxZ, minX, maxY, maxZ, r, g, b, a);
 
             buffer.endBatch();
-        } finally {
-            allocator.close();
         }
     }
 
@@ -752,9 +752,9 @@ public class Render3dUtils implements IMinecraft {
         matrices.translate(-cam.x, -cam.y, -cam.z);
 
         ByteBufferBuilder allocator = new ByteBufferBuilder(segments.size() * 32);
-        MultiBufferSource.BufferSource buffer = MultiBufferSource.immediate(allocator);
 
-        try {
+        try (allocator) {
+            MultiBufferSource.BufferSource buffer = MultiBufferSource.immediate(allocator);
             VertexConsumer vertex = buffer.getBuffer(LINE_RENDER_TYPE);
             Matrix4f posMatrix = matrices.last().pose();
 
@@ -767,11 +767,16 @@ public class Render3dUtils implements IMinecraft {
             }
 
             buffer.endBatch();
-        } finally {
-            allocator.close();
         }
 
         matrices.popPose();
+    }
+
+    public boolean isInView(Entity ent) {
+        if (mc.getCameraEntity() == null || mc.player == null) {
+            return false;
+        }
+        return mc.levelRenderer.capturedFrustum.isVisible(ent.getBoundingBox());
     }
 
     private void line(VertexConsumer vertex, Matrix4f matrix,

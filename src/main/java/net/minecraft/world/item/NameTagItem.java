@@ -1,11 +1,14 @@
 package net.minecraft.world.item;
 
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.monster.creaking.Creaking;
 import net.minecraft.world.entity.player.Player;
 
 public class NameTagItem extends Item {
@@ -15,6 +18,9 @@ public class NameTagItem extends Item {
 
     @Override
     public InteractionResult interactLivingEntity(ItemStack p_42954_, Player p_42955_, LivingEntity p_42956_, InteractionHand p_42957_) {
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_21_4) && p_42956_ instanceof Creaking) {
+            return (InteractionResult.PASS);
+        }
         Component component = p_42954_.get(DataComponents.CUSTOM_NAME);
         if (component != null && p_42956_.getType().canSerialize()) {
             if (!p_42955_.level().isClientSide() && p_42956_.isAlive()) {

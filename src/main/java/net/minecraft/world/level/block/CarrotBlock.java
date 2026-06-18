@@ -1,6 +1,7 @@
 package net.minecraft.world.level.block;
 
 import com.mojang.serialization.MapCodec;
+import com.viaversion.viafabricplus.settings.impl.DebugSettings;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.BlockGetter;
@@ -13,7 +14,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 public class CarrotBlock extends CropBlock {
     public static final MapCodec<CarrotBlock> CODEC = simpleCodec(CarrotBlock::new);
     private static final VoxelShape[] SHAPES = Block.boxes(7, p_395626_ -> Block.column(16.0, 0.0, 2 + p_395626_));
-
+    private static final VoxelShape viaFabricPlus$shape_r1_8_x = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 4.0D, 16.0D);
     @Override
     public MapCodec<CarrotBlock> codec() {
         return CODEC;
@@ -30,6 +31,9 @@ public class CarrotBlock extends CropBlock {
 
     @Override
     protected VoxelShape getShape(BlockState p_51330_, BlockGetter p_51331_, BlockPos p_51332_, CollisionContext p_51333_) {
+        if (DebugSettings.INSTANCE.legacyCropOutlines.isEnabled()) {
+            return viaFabricPlus$shape_r1_8_x;
+        }
         return SHAPES[this.getAge(p_51330_)];
     }
 }

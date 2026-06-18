@@ -36,7 +36,7 @@ public class ElytraAngleSmooth extends FactorAngleSmooth implements IMinecraft {
         float yawDiff = Mth.abs(Rotation.angleDifference(targetRotation.yaw(), currentRotation.yaw()));
         float pitchDiff = Mth.abs(targetRotation.pitch() - currentRotation.pitch());
 
-        float baseYawSpeed = 350;
+        float baseYawSpeed = 255;
         float basePitchSpeed = 120;
         return new float[]{ baseYawSpeed, basePitchSpeed};
     }

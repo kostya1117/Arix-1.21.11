@@ -1,50 +1,50 @@
-/hub
-/login cakkkkkkkkkkkkkk
-/login 1
-/рги
-/hub
-/HUB
-/an101
-/an102
-/an226
-/an236
-/an103
-/login RaynNEW1117
-/рги
-/duel KRUTASKA3
-/duel Shaftila
-/reg Arixxx Arixxx
-/kit pvp
-/login Arixxx
-/reg Arixxx Arixxx
-/kit pvp
-/warp pvp
-/warp zamok
-/reg zaneerxd
-/kit pvp
-/pvp
-/hub
-/spawn
-/warp pvp
-/hub
-/warp pvp
-/reg zaneerx zaneerxd
-/reg zaneerxd zaneerxd
-/reg zaneerxd1 zaneerxd1
+/login ZereX
+/reg 3vBiHP
+/reg Xeno9
+/reg uitraihk
+/reg xN0ir3r3zhjw05
+/reg nutuxzutxi
+/reg wlhyyeo
+/reg ViP3R3n
+/reg xN0ir0v3ngx3r0d
+/reg Frost05
+/reg oucyod
+/reg Kyrokerexxonx
+/reg excwfgwfps
+/reg Puls3ix
+/reg viperez
+/reg venomex2007
+/reg hoclidgzu05
+/reg Juucy
 /login zaneerxd
-/login NOTBANNED404
-/kit pvp
+/reg vkywmutiuv
+/login cakkkkkkkkkkkkkk
+/login DrPrMHHxKi2nsGk
+/hu
+/hub
+/ac
+/god
+/hub
+/login narit1k
+/login DrPrMHHxKi2nsGk
+/login narit1k
+/login DrPrMHHxKi2nsGk
+/login zaneerxd
+/login RaynNEW1117
+/reg Авторизация...
+/reg Авторизация... Авторизация...
+/login RaynNEW1117
+/spawn
+/login RaynNEW1117
+/kit start
 /warp pvp
-/warp zamok
-/give @s stone[lore=['[{"text":"Подпишись","color":"green","bold":true}]'],item_name='{"text":"KinoVersaK","color":"dark_blue","underlined":true,"italic":true}']
-/give @s stone[lore=['{"text":"Подпишись","color":"green","bold":true}'],custom_name='{"text":"KinoVersaK","color":"dark_blue","underlined":true,"italic":true}']
-/give @s stone[lore=['{"text":"Подпишись","color":"green","bold":true}'],item_name='{"text":"KinoVersaK","color":"dark_blue","underlined":true,"italic":true,"obfuscated":true}']
-/give @s stone[item_name='[{"text":"!!!","obfuscated":true},{"text":"KinoVersaK","obfuscated":false,"underlined":true,"italic":true},{"text":"!!!","obfuscated":true}]',lore=['{"text":"Подпишись","color":"green","bold":true}']]
-/give @s stone[item_name='{"text":"KinoVersaK","color":"dark_blue","underlined":true,"italic":true,"obfuscated":true}',lore=['{"text":"Подпишись","color":"green","bold":true}']]
-/give @s stone[item_name='{"text":"","extra":[{"text":"!!!","obfuscated":true},{"text":"KinoVersaK","obfuscated":false,"color":"dark_blue","underlined":true,"italic":true},{"text":"!!!","obfuscated":true}]}',lore=['{"text":"Подпишись","color":"green","bold
-/give @s stone[item_name='{"text":"","extra":[{"text":"!!!","obfuscated":true}
-/reg DIMAIS999
-/reg Arixxx Arixxx
-/kit pvp
-/kit ppv
-/kit pvp
+/login DrPrMHHxKi2nsGk
+/feed
+/tpa GraF12011980
+/hub
+/tpaccept
+/ec
+/home home
+/login RaynNEW1117
+/warp pvp
+/contact 140173937

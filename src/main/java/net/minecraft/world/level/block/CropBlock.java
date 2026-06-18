@@ -1,6 +1,7 @@
 package net.minecraft.world.level.block;
 
 import com.mojang.serialization.MapCodec;
+import com.viaversion.viafabricplus.settings.impl.DebugSettings;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
@@ -28,7 +29,7 @@ public class CropBlock extends VegetationBlock implements BonemealableBlock {
     public static final int MAX_AGE = 7;
     public static final IntegerProperty AGE = BlockStateProperties.AGE_7;
     private static final VoxelShape[] SHAPES = Block.boxes(7, p_397339_ -> Block.column(16.0, 0.0, 2 + p_397339_ * 2));
-
+    private static final VoxelShape viaFabricPlus$shape_r1_8_x = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 4.0D, 16.0D);
     @Override
     public MapCodec<? extends CropBlock> codec() {
         return CODEC;
@@ -41,6 +42,10 @@ public class CropBlock extends VegetationBlock implements BonemealableBlock {
 
     @Override
     protected VoxelShape getShape(BlockState p_52297_, BlockGetter p_52298_, BlockPos p_52299_, CollisionContext p_52300_) {
+        if (DebugSettings.INSTANCE.legacyCropOutlines.isEnabled()) {
+            return viaFabricPlus$shape_r1_8_x;
+        }
+
         return SHAPES[this.getAge(p_52297_)];
     }
 
@@ -163,7 +168,7 @@ public class CropBlock extends VegetationBlock implements BonemealableBlock {
     }
 
     @Override
-    protected ItemStack getCloneItemStack(LevelReader p_310461_, BlockPos p_52255_, BlockState p_52256_, boolean p_377901_) {
+    public ItemStack getCloneItemStack(LevelReader p_310461_, BlockPos p_52255_, BlockState p_52256_, boolean p_377901_) {
         return new ItemStack(this.getBaseSeedId());
     }
 

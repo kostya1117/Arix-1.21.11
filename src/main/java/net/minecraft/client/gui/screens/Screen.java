@@ -13,6 +13,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
+
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import net.minecraft.CrashReport;
 import net.minecraft.CrashReportCategory;
 import net.minecraft.SharedConstants;
@@ -339,7 +342,16 @@ public abstract class Screen extends AbstractContainerEventHandler implements Re
         return true;
     }
 
-    protected static void clickCommandAction(LocalPlayer p_409065_, String p_408291_,  Screen p_409951_) {
+    protected static void clickCommandAction(LocalPlayer p_409065_, String p_408291_, Screen p_409951_) {
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_21_4)) {
+            if (!p_408291_.startsWith("/")) {
+                if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_19)) {
+                    p_409065_.connection.sendChat(p_408291_);
+                }
+                return;
+            }
+        }
+
         p_409065_.connection.sendUnattendedCommand(Commands.trimOptionalPrefix(p_408291_), p_409951_);
     }
 

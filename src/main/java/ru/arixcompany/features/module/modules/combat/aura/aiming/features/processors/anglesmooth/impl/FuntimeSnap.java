@@ -2,13 +2,10 @@ package ru.arixcompany.features.module.modules.combat.aura.aiming.features.proce
 
 import net.minecraft.util.Mth;
 import net.minecraft.util.Util;
-import net.minecraft.world.entity.LivingEntity;
-import ru.arixcompany.features.module.modules.combat.HitAura;
 import ru.arixcompany.features.module.modules.combat.aura.AttackHandler;
 import ru.arixcompany.features.module.modules.combat.aura.aiming.RotationManager;
 import ru.arixcompany.features.module.modules.combat.aura.aiming.RotationTarget;
 import ru.arixcompany.features.module.modules.combat.aura.aiming.data.Rotation;
-import ru.arixcompany.features.module.modules.combat.aura.aiming.features.processors.anglesmooth.AngleSmooth;
 import ru.arixcompany.features.module.modules.combat.aura.aiming.features.processors.anglesmooth.FactorAngleSmooth;
 import ru.arixcompany.utils.IMinecraft;
 import ru.arixcompany.utils.animation.Interpolation;
@@ -73,15 +70,15 @@ public class FuntimeSnap extends FactorAngleSmooth implements IMinecraft {
 
     public FuntimeSnap() {
         this(
-                20.0f, 30.0f,   // idle yaw speed
+                25, 35,   // idle yaw speed
                 5.0f, 15.0f,     // idle pitch speed
-                5.0f, 8.0f,     // idle yaw swing
-                8.0f, 10.0f,    // idle pitch swing
+                3.0f, 5.0f,     // idle yaw swing
+                4.0f, 6.0f,    // idle pitch swing
 
-                70.0f, 90.0f,   // burst yaw speed
+                75.0f, 100.0f,   // burst yaw speed
                 20.0f, 30.0f,   // burst pitch speed
-                4.0f, 7.0f,     // burst yaw swing
-                6.0f, 9.0f,     // burst pitch swing
+                2.0f, 4.0f,     // burst yaw swing
+                1.0f, 3.0f,     // burst pitch swing
                 25              // burst ticks
         );
     }
@@ -99,14 +96,14 @@ public class FuntimeSnap extends FactorAngleSmooth implements IMinecraft {
             baseYawSpeed = MathUtils.randomValue(idleYawSpeedMin, idleYawSpeedMax);
             basePitchSpeed = MathUtils.randomValue(idlePitchSpeedMin, idlePitchSpeedMax);
         }
+//
+//        float hCurve = calculateFactorWithCurve(yawDiff);
+//        float vCurve = calculateFactorWithCurve2(pitchDiff);
+//
+//        float maxYawStep = hCurve * baseYawSpeed;
+//        float maxPitchStep = vCurve * basePitchSpeed;
 
-        float hCurve = calculateFactorWithCurve(yawDiff);
-        float vCurve = calculateFactorWithCurve2(pitchDiff);
-
-        float maxYawStep = hCurve * baseYawSpeed;
-        float maxPitchStep = vCurve * basePitchSpeed;
-
-        return new float[]{ maxYawStep, maxPitchStep };
+        return new float[]{ baseYawSpeed, basePitchSpeed };
     }
 
     private float calculateFactorWithCurve(float rotationDifference) {
@@ -116,8 +113,8 @@ public class FuntimeSnap extends FactorAngleSmooth implements IMinecraft {
 
         float curve = (float) Interpolation.interpolate(
                 0.0, 1.0, adjustedT,
-                Interpolation.Type.CUBIC,
-                Interpolation.Ease.OUT
+                Interpolation.Curve.CUBIC,
+                Interpolation.Mode.OUT
         );
 
         return Math.min(curve, 1.0f);
@@ -130,8 +127,8 @@ public class FuntimeSnap extends FactorAngleSmooth implements IMinecraft {
 
         float curve = (float) Interpolation.interpolate(
                 0.0, 1.0, adjustedT,
-                Interpolation.Type.CUBIC,
-                Interpolation.Ease.OUT
+                Interpolation.Curve.CUBIC,
+                Interpolation.Mode.OUT
         );
 
         return Math.min(curve, 1.0f);

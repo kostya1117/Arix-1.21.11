@@ -87,9 +87,6 @@
       <root url="jar://$PROJECT_DIR$/lib/lwjgl-freetype-3.3.3.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/lz4-java-1.8.1.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/netty-transport-classes-epoll-4.2.7.Final.jar!/" />
-      <root url="jar://$PROJECT_DIR$/lib/ViaRewind-4.1.0.jar!/" />
-      <root url="jar://$PROJECT_DIR$/lib/ViaVersion-5.9.0.jar!/" />
-      <root url="jar://$PROJECT_DIR$/lib/ViaBackwards-5.9.0.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/encog-core-3.4.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/nether-pathfinder-1.4.1.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/xz-1.9.jar!/" />
@@ -99,6 +96,36 @@
       <root url="jar://$PROJECT_DIR$/lib/lame4j-2.1.5.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/speex4j-1.0.3.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/Concentus-1.0.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/viaversion-common-5.9.2-SNAPSHOT.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/ViaBedrock-0.0.27-SNAPSHOT.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/viabackwards-common-5.9.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/viaaprilfools-common-4.2.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/Reflect-1.6.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/netty-transport-raknet-1.7.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/netty-transport-nethernet-1.7.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/mocha-3.0.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/MinecraftAuth-5.0.1-SNAPSHOT.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/webrtc-java-1.0.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/webrtc-java-1.0.3-linux-aarch64.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/webrtc-java-1.0.3-linux-x86_64.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/webrtc-java-1.0.3-macos-aarch64.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/webrtc-java-1.0.3-windows-aarch64.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/webrtc-java-1.0.3-windows-x86_64.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/CubeConverter-5b4fce77c4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/classic4j-2.3.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/text-2.0.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/semver4j-3.1.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/forms-2.0.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/dialog-5-3.2.2-20251210.004302-1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/gson-1.9.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/mc_biome-1.171.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/mc_core-1.210.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/mc_math-1.171.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/mc_noise-1.171.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/mc_seed-1.171.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/registry-5-3.2.2-SNAPSHOT.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/httpclient-1.9.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/ViaLegacy-3.0.16.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

@@ -1,6 +1,5 @@
 package net.minecraft.client.gui.components;
 
-import java.awt.*;
 import java.util.function.Supplier;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
@@ -8,10 +7,6 @@ import net.minecraft.client.input.InputWithModifiers;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import org.jspecify.annotations.Nullable;
-import ru.arixcompany.Arix;
-import ru.arixcompany.features.module.modules.misc.Core;
-import ru.arixcompany.utils.render.RenderUtils;
-import ru.arixcompany.utils.render.font.FontManager;
 
 
 public abstract class Button extends AbstractButton {

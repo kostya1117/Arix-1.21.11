@@ -10,7 +10,11 @@ import ru.arixcompany.features.module.modules.combat.aura.aiming.data.Rotation;
 import ru.arixcompany.features.module.modules.combat.aura.aiming.features.processors.anglesmooth.FactorAngleSmooth;
 import ru.arixcompany.utils.IMinecraft;
 import ru.arixcompany.utils.animation.Interpolation;
+import ru.arixcompany.utils.math.MathUtils;
 import ru.arixcompany.utils.math.Randomizer;
+
+import javax.swing.text.html.HTML;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class SpookyTimeAngleSmooth extends FactorAngleSmooth implements IMinecraft {
 
@@ -24,7 +28,7 @@ public class SpookyTimeAngleSmooth extends FactorAngleSmooth implements IMinecra
     }
 
     public SpookyTimeAngleSmooth() {
-        this(125, 150);
+        this(25, 45);
     }
 
     @Override
@@ -42,81 +46,73 @@ public class SpookyTimeAngleSmooth extends FactorAngleSmooth implements IMinecra
 //            baseYawSpeed *= distMultiplier;
 //        }
 
-        float hCurve = calculateFactorWithCurve(yawDiff);
-        float vCurve = calculateFactorWithCurve2(pitchDiff);
+//        float hCurve = calculateFactorWithCurve(yawDiff);
+//        float vCurve = calculateFactorWithCurve2(pitchDiff);
+//
+//        float maxYawStep = hCurve * baseYawSpeed;
+//        float maxPitchStep = vCurve * basePitchSpeed;
 
-        float maxYawStep = hCurve * baseYawSpeed;
-        float maxPitchStep = vCurve * basePitchSpeed;
-
-        return new float[]{ maxYawStep, maxPitchStep };
-    }
-    private float calculateFactorWithCurve(float rotationDifference) {
-        float t = Math.min(rotationDifference / 180, 1.0f);
-        float exponent = 1;
-        float adjustedT = (float) Math.pow(t, exponent);
-
-        float curve = (float) Interpolation.interpolate(
-                0.0, 1.0, adjustedT,
-                Interpolation.Type.BOUNCE,
-                Interpolation.Ease.OUT
-        );
-
-        return Math.min(curve, 1.0f);
+        return new float[]{baseYawSpeed, basePitchSpeed};
     }
 
-    private float calculateFactorWithCurve2(float rotationDifference) {
-        float t = Math.min(rotationDifference / 90, 1.0f);
-        float exponent = 1;
-        float adjustedT = (float) Math.pow(t, exponent);
 
-        float curve = (float) Interpolation.interpolate(
-                0.0, 1.0, adjustedT,
-                Interpolation.Type.BOUNCE,
-                Interpolation.Ease.OUT
-        );
+    private float targetYawOffset = 0f;
+    private float targetPitchOffset = 0f;
+    private double nextOffsetUpdateTime = 0;
 
-        return Math.min(curve, 1.0f);
+    public Rotation fixDeltaNonVanillaMouse(float delta, float secondDelta) {
+        float value = (float) (MathUtils.randomValue(0.6f, 1.2f) + Math.pow(MathUtils.randomValue(-0.3f, 0.3f), 3));
+//        if (Math.abs(delta) > 0 && Math.abs(secondDelta) == 0) secondDelta += value;
+//        if (Math.abs(secondDelta) > 0 && Math.abs(delta) == 0) delta += value;
+
+        return new Rotation(delta + value, secondDelta + value);
     }
-
-//    private float calculateFactorWithCurve(float rotationDifference, float speed) {
-//        float t = Math.min(rotationDifference / 180, 1.0f);
 //
-//        float speedInfluence = Mth.clamp(speed, -1, 1);
+//    @Override
+//    public Rotation process(RotationTarget rotationTarget, Rotation currentRotation, Rotation targetRotation) {
+//        double now = System.currentTimeMillis();
 //
-//        float adjustedT = (float) Math.pow(t, 1.0 / speedInfluence);
-//        adjustedT = Math.min(adjustedT, 1.0f);
+//        if (mc.player != null && AttackHandler.anyEntityOnRay(new Rotation(mc.player.getYRot(),mc.player.getXRot(),true), HitAura.target, HitAura.attackRange.getValue() + HitAura.preRange.getValue())) { // Убедитесь, что метод rayTrace() реализован в вашем классе
+//            if (now >= nextOffsetUpdateTime) {
+//                float maxYawOffset = MathUtils.randomValue(10,16);
+//                float maxPitchOffset = MathUtils.randomValue(20,30);
+//                targetYawOffset = ThreadLocalRandom.current().nextFloat() * maxYawOffset;
+//                targetPitchOffset = ThreadLocalRandom.current().nextFloat() * maxPitchOffset;
 //
-//        float curve = (float) Interpolation.interpolate(
-//                0.0, 1.0, adjustedT,
-//                Interpolation.Type.LINEAR,
-//                Interpolation.Ease.OUT
+//                targetYawOffset = Mth.clamp(targetYawOffset, -maxYawOffset, maxYawOffset);
+//                targetPitchOffset = Mth.clamp(targetPitchOffset, -maxPitchOffset, maxPitchOffset);
+//
+//                nextOffsetUpdateTime = now + 800 + ThreadLocalRandom.current().nextInt(500);
+//            }
+//        } else {
+//            targetYawOffset = 0f;
+//            targetPitchOffset = 0f;
+//        }
+//
+//        Rotation jitteredTarget = new Rotation(
+//                targetRotation.yaw() + targetYawOffset,
+//                Mth.clamp(targetRotation.pitch() + targetPitchOffset, -90f, 90f) // Не даем сломать шею
 //        );
 //
-//        return Math.min(curve, 1.0f);
-//    }
+//        //jitteredTarget = fixDeltaNonVanillaMouse(jitteredTarget.yaw(),jitteredTarget.pitch());
 //
-//    private float calculateFactorWithCurve2(float rotationDifference, float speed) {
-//        float t = Math.min(rotationDifference / 90, 1.0f);
-//
-//        float speedInfluence = Mth.clamp(speed, -1, 1);
-//
-//        float adjustedT = (float) Math.pow(t, 1.0 / speedInfluence);
-//        adjustedT = Math.min(adjustedT, 1.0f);
-//
-//        float curve = (float) Interpolation.interpolate(
-//                0.0, 1.0, adjustedT,
-//                Interpolation.Type.LINEAR,
-//                Interpolation.Ease.OUT
-//        );
-//
-//        return Math.min(curve, 1.0f);
+//        float[] factors = calculateFactors(rotationTarget, currentRotation, jitteredTarget);
+//        return currentRotation.towardsLinear(jitteredTarget, factors[0], factors[1]);
 //    }
 
     @Override
     public Rotation process(RotationTarget rotationTarget, Rotation currentRotation, Rotation targetRotation) {
         double t = Util.getNanos() / 1.0E9 * Mth.PI2 * 2.0;
-        float yawJitter = 3f * Mth.sin(t);
-        float pitchJitter = 6f * Mth.cos(t);
+        float yawJitter;
+        float pitchJitter;
+
+        if (mc.player != null && AttackHandler.anyEntityOnRay(new Rotation(mc.player.getYRot(), mc.player.getXRot(), true), HitAura.target, HitAura.attackRange.getValue() + HitAura.preRange.getValue())) { // Убедитесь, что метод rayTrace() реализован в вашем классе
+            yawJitter = 4 * Mth.sin(t);
+            pitchJitter = 3 * Mth.cos(t);
+        } else {
+            yawJitter = 0f;
+            pitchJitter = 0f;
+        }
 
         Rotation jitteredTarget = new Rotation(
                 targetRotation.yaw() + yawJitter,
@@ -132,8 +128,8 @@ public class SpookyTimeAngleSmooth extends FactorAngleSmooth implements IMinecra
         if (target == null) return 1.0f;
 
         float range = HitAura.attackRange.getValue() + HitAura.preRange.getValue();
-return AttackHandler.anyEntityOnRay(new Rotation(mc.player), target, range)
-                ? 1.5f
-                : randomizer.nextFloat(3, 5);
+        return AttackHandler.anyEntityOnRay(new Rotation(mc.player.getYRot(),mc.player.getXRot(),true), target, range)
+                ? randomizer.nextFloat(0.1f,0.6f)
+                : randomizer.nextFloat(1f, 3f);
     }
 }

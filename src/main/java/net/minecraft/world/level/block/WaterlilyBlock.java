@@ -1,6 +1,8 @@
 package net.minecraft.world.level.block;
 
 import com.mojang.serialization.MapCodec;
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
@@ -18,6 +20,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 public class WaterlilyBlock extends VegetationBlock {
     public static final MapCodec<WaterlilyBlock> CODEC = simpleCodec(WaterlilyBlock::new);
     private static final VoxelShape SHAPE = Block.column(14.0, 0.0, 1.5);
+    private static final VoxelShape viaFabricPlus$shape_r1_8_x = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 0.25D, 16.0D);
 
     @Override
     public MapCodec<WaterlilyBlock> codec() {
@@ -38,6 +41,10 @@ public class WaterlilyBlock extends VegetationBlock {
 
     @Override
     protected VoxelShape getShape(BlockState p_58169_, BlockGetter p_58170_, BlockPos p_58171_, CollisionContext p_58172_) {
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_8)) {
+            return (viaFabricPlus$shape_r1_8_x);
+        }
+
         return SHAPE;
     }
 

@@ -21,6 +21,7 @@ import net.minecraft.world.item.SwingAnimationType;
 import net.minecraft.world.item.component.SwingAnimation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import ru.arixcompany.features.module.modules.render.ChinaHat;
 
 
 public abstract class HumanoidMobRenderer<T extends Mob, S extends HumanoidRenderState, M extends HumanoidModel<S>> extends AgeableMobRenderer<T, S, M> {
@@ -37,6 +38,7 @@ public abstract class HumanoidMobRenderer<T extends Mob, S extends HumanoidRende
         this.addLayer(new CustomHeadLayer<>(this, p_174173_.getModelSet(), p_174173_.getPlayerSkinRenderCache(), p_362585_));
         this.addLayer(new WingsLayer<>(this, p_174173_.getModelSet(), p_174173_.getEquipmentRenderer()));
         this.addLayer(new ItemInHandLayer<>(this));
+        //this.addLayer(new ChinaHat.ChinaHatLayer<>(this));
     }
 
     protected HumanoidModel.ArmPose getArmPose(T p_375388_, HumanoidArm p_378786_) {

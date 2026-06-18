@@ -1,0 +1,45 @@
+{
+  "general": {
+    "multiplayer_screen_button_orientation": "right_top",
+    "add_server_screen_button_orientation": "right_top",
+    "direct_connect_screen_button_orientation": "right_top",
+    "filter_creative_tabs": "vanilla_and_modded",
+    "save_selected_protocol_version": true,
+    "show_classic_loading_progress": true,
+    "show_advertised_server_version": true,
+    "ignore_packet_translation_errors": "kick",
+    "load_skins_and_skulls_in_legacy_versions": true,
+    "emulate_inventory_actions_in_alpha_versions": true,
+    "save_scroll_position_in_slot_screens": true,
+    "experimental_block_connections": false
+  },
+  "bedrock": {
+    "replace_default_port": true,
+    "experimental_features": true
+  },
+  "authentication": {
+    "use_beta_craft_authentication": true,
+    "verify_session_for_online_mode": true,
+    "automatically_select_cpe_when_using_classicube": true,
+    "set_session_name_to_classicube_name": true
+  },
+  "debug": {
+    "queue_config_packets": true,
+    "print_networking_errors_to_logs": true,
+    "ignore_fabric_sync_errors": false,
+    "hide_modern_jigsaw_screen_features": true,
+    "filter_non_existing_glyphs": true,
+    "dont_create_packet_error_crash_reports": "auto",
+    "disable_sequencing": "auto",
+    "always_tick_client_player": "auto",
+    "execute_inputs_synchronously": "auto",
+    "legacy_tab_completions": "auto",
+    "legacy_pane_outlines": "auto",
+    "emulate_armor_hud": "auto",
+    "hide_modern_command_block_screen_features": "auto",
+    "legacy_crop_outlines": "auto",
+    "serverside_place_sounds": "auto",
+    "disable_server_pinging": "auto"
+  },
+  "selected-protocol-version": "1.16.4-1.16.5"
+}

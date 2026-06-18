@@ -9,7 +9,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.Util;
 import ru.arixcompany.utils.animation.Animation;
 import ru.arixcompany.utils.animation.Direction;
-import ru.arixcompany.utils.animation.impl.EaseInOutQuad;
+import ru.arixcompany.utils.animation.impl.quad.EaseInOutQuad;
 
 import java.util.ArrayList;
 import java.util.List;

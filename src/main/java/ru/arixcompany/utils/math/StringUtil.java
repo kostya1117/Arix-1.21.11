@@ -38,62 +38,36 @@ public class StringUtil implements IMinecraft {
     }
 
    private static String shortenBindName(String bindName) {
-      if (bindName.equals("INSERT")) {
-         return "INS";
-      } else if (bindName.equals("PAGE DOWN")) {
-         return "P DOWN";
-      } else if (bindName.equals("PAGE UP")) {
-         return "P UP";
-      } else if (bindName.equals("PRINT SCREEN")) {
-         return "PR SC";
-      } else if (bindName.equals("NUMPAD 0")) {
-         return "NUM 0";
-      } else if (bindName.equals("NUMPAD 1")) {
-         return "NUM 1";
-      } else if (bindName.equals("NUMPAD 2")) {
-         return "NUM 2";
-      } else if (bindName.equals("NUMPAD 3")) {
-         return "NUM 3";
-      } else if (bindName.equals("NUMPAD 4")) {
-         return "NUM 4";
-      } else if (bindName.equals("NUMPAD 5")) {
-         return "NUM 5";
-      } else if (bindName.equals("NUMPAD 6")) {
-         return "NUM 6";
-      } else if (bindName.equals("NUMPAD 7")) {
-         return "NUM 7";
-      } else if (bindName.equals("NUMPAD 8")) {
-         return "NUM 8";
-      } else if (bindName.equals("NUMPAD 9")) {
-         return "NUM 9";
-      } else if (bindName.equals("ESCAPE")) {
-         return "ESC";
-      } else if (bindName.equals("BACKSPACE")) {
-         return "BACKSPC";
-      } else if (bindName.equals("TAB")) {
-         return "TAB";
-      } else if (bindName.equals("CAPS LOCK")) {
-         return "CAPS";
-      } else if (bindName.equals("LEFT SHIFT")) {
-         return "L SHIFT";
-      } else if (bindName.equals("RIGHT SHIFT")) {
-         return "R SHIFT";
-      } else if (bindName.equals("LEFT CONTROL")) {
-         return "L CTRL";
-      } else if (bindName.equals("RIGHT CONTROL")) {
-         return "R CTRL";
-      } else if (bindName.equals("LEFT ALT")) {
-         return "L ALT";
-      } else if (bindName.equals("RIGHT ALT")) {
-         return "R ALT";
-      } else if (bindName.equals("SPACE")) {
-         return "SPACE";
-      } else if (bindName.equals("ENTER")) {
-         return "ENTER";
-      } else if (bindName.equals("DELETE")) {
-         return "DEL";
-      }
-      return bindName;
+       return switch (bindName) {
+           case "INSERT" -> "INS";
+           case "PAGE DOWN" -> "P DOWN";
+           case "PAGE UP" -> "P UP";
+           case "PRINT SCREEN" -> "PR SC";
+           case "NUMPAD 0" -> "NUM 0";
+           case "NUMPAD 1" -> "NUM 1";
+           case "NUMPAD 2" -> "NUM 2";
+           case "NUMPAD 3" -> "NUM 3";
+           case "NUMPAD 4" -> "NUM 4";
+           case "NUMPAD 5" -> "NUM 5";
+           case "NUMPAD 6" -> "NUM 6";
+           case "NUMPAD 7" -> "NUM 7";
+           case "NUMPAD 8" -> "NUM 8";
+           case "NUMPAD 9" -> "NUM 9";
+           case "ESCAPE" -> "ESC";
+           case "BACKSPACE" -> "BACKSPC";
+           case "TAB" -> "TAB";
+           case "CAPS LOCK" -> "CAPS";
+           case "LEFT SHIFT" -> "L SHIFT";
+           case "RIGHT SHIFT" -> "R SHIFT";
+           case "LEFT CONTROL" -> "L CTRL";
+           case "RIGHT CONTROL" -> "R CTRL";
+           case "LEFT ALT" -> "L ALT";
+           case "RIGHT ALT" -> "R ALT";
+           case "SPACE" -> "SPACE";
+           case "ENTER" -> "ENTER";
+           case "DELETE" -> "DEL";
+           default -> bindName;
+       };
    }
 
     private static final String ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";

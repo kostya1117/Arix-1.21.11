@@ -3,7 +3,7 @@ package ru.arixcompany.features.repos.alerts;
 import lombok.Getter;
 import ru.arixcompany.utils.animation.Animation;
 import ru.arixcompany.utils.animation.Direction;
-import ru.arixcompany.utils.animation.impl.EaseInOutQuad;
+import ru.arixcompany.utils.animation.impl.quad.EaseInOutQuad;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;

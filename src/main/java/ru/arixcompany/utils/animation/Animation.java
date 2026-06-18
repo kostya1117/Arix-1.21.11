@@ -50,7 +50,7 @@ public abstract class Animation {
     public void setDirection(Direction direction) {
       if (this.direction != direction) {
          this.direction = direction;
-         this.timerUtil.setTime(System.currentTimeMillis() - (this.duration - Math.min((long)this.duration, this.timerUtil.getTimePassed())));
+         this.timerUtil.setTime(System.currentTimeMillis() - (this.duration - Math.min(this.duration, this.timerUtil.getTimePassed())));
       }
    }
 
@@ -68,12 +68,12 @@ public abstract class Animation {
       } else if (this.isDone()) {
          return 0.0F;
       } else if (this.correctOutput()) {
-         double revTime = Math.min((long)this.duration, Math.max(0L, this.duration - this.timerUtil.getTimePassed()));
+         double revTime = Math.clamp(this.duration - this.timerUtil.getTimePassed(), 0L, this.duration);
          return (float)(this.getEquation(revTime) * this.endPoint);
       } else {
          return (float)((1.0 - this.getEquation(this.timerUtil.getTimePassed())) * this.endPoint);
       }
    }
 
-   protected abstract double getEquation(double var1);
+   public abstract double getEquation(double var1);
 }

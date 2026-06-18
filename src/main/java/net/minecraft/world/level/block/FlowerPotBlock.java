@@ -5,6 +5,9 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.mojang.serialization.codecs.RecordCodecBuilder.Instance;
 import java.util.Map;
+
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -84,6 +87,11 @@ public class FlowerPotBlock extends Block {
             return InteractionResult.CONSUME;
         }
 
+        // ViaFabricPlus - always consume on older versions
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_10) && this.potted != Blocks.AIR) {
+            return InteractionResult.CONSUME;
+        }
+
         ItemStack itemstack = new ItemStack(this.potted);
         if (!p_333787_.addItem(itemstack)) {
             p_333787_.drop(itemstack, false);
@@ -95,7 +103,7 @@ public class FlowerPotBlock extends Block {
     }
 
     @Override
-    protected ItemStack getCloneItemStack(LevelReader p_312345_, BlockPos p_53532_, BlockState p_53533_, boolean p_377634_) {
+    public ItemStack getCloneItemStack(LevelReader p_312345_, BlockPos p_53532_, BlockState p_53533_, boolean p_377634_) {
         return this.isEmpty() ? super.getCloneItemStack(p_312345_, p_53532_, p_53533_, p_377634_) : new ItemStack(this.potted);
     }
 

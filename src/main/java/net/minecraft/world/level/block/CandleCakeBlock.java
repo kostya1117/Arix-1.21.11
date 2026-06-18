@@ -4,6 +4,7 @@ import com.google.common.collect.Maps;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.mojang.serialization.codecs.RecordCodecBuilder.Instance;
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
 import java.util.List;
 import java.util.Map;
 import net.minecraft.core.BlockPos;
@@ -30,17 +31,21 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.raphimc.viabedrock.api.BedrockProtocolVersion;
 
 public class CandleCakeBlock extends AbstractCandleBlock {
     public static final MapCodec<CandleCakeBlock> CODEC = RecordCodecBuilder.mapCodec(
-        p_422083_ -> p_422083_.group(BuiltInRegistries.BLOCK.byNameCodec().fieldOf("candle").forGetter(p_327254_ -> p_327254_.candleBlock), propertiesCodec())
-            .apply(p_422083_, CandleCakeBlock::new)
+            p_422083_ -> p_422083_.group(BuiltInRegistries.BLOCK.byNameCodec().fieldOf("candle").forGetter(p_327254_ -> p_327254_.candleBlock), propertiesCodec())
+                    .apply(p_422083_, CandleCakeBlock::new)
     );
     public static final BooleanProperty LIT = AbstractCandleBlock.LIT;
     private static final VoxelShape SHAPE = Shapes.or(Block.column(2.0, 8.0, 14.0), Block.column(14.0, 0.0, 8.0));
     private static final Map<CandleBlock, CandleCakeBlock> BY_CANDLE = Maps.newHashMap();
     private static final Iterable<Vec3> PARTICLE_OFFSETS = List.of(new Vec3(8.0, 16.0, 8.0).scale(0.0625));
     private final CandleBlock candleBlock;
+
+    // ViaFabricPlus - Bedrock candle cake shape
+    private static final VoxelShape BEDROCK_SHAPE = Block.column(14.0F, 0.0F, 8.0F);
 
     @Override
     public MapCodec<CandleCakeBlock> codec() {
@@ -65,12 +70,27 @@ public class CandleCakeBlock extends AbstractCandleBlock {
 
     @Override
     protected VoxelShape getShape(BlockState p_152875_, BlockGetter p_152876_, BlockPos p_152877_, CollisionContext p_152878_) {
+        // ViaFabricPlus - Bedrock candle cake shape
+        if (ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.bedrockLatest)) {
+            return BEDROCK_SHAPE;
+        }
+
         return SHAPE;
     }
 
     @Override
+    public VoxelShape getOcclusionShape(BlockState state) {
+        // ViaFabricPlus - Bedrock candle cake occlusion shape
+        if (ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.bedrockLatest)) {
+            return SHAPE;
+        }
+
+        return super.getOcclusionShape(state);
+    }
+
+    @Override
     protected InteractionResult useItemOn(
-        ItemStack p_334372_, BlockState p_331468_, Level p_329195_, BlockPos p_334764_, Player p_333583_, InteractionHand p_329811_, BlockHitResult p_330359_
+            ItemStack p_334372_, BlockState p_331468_, Level p_329195_, BlockPos p_334764_, Player p_333583_, InteractionHand p_329811_, BlockHitResult p_330359_
     ) {
         if (p_334372_.is(Items.FLINT_AND_STEEL) || p_334372_.is(Items.FIRE_CHARGE)) {
             return InteractionResult.PASS;
@@ -102,24 +122,24 @@ public class CandleCakeBlock extends AbstractCandleBlock {
     }
 
     @Override
-    protected ItemStack getCloneItemStack(LevelReader p_312018_, BlockPos p_152863_, BlockState p_152864_, boolean p_376540_) {
+    public ItemStack getCloneItemStack(LevelReader p_312018_, BlockPos p_152863_, BlockState p_152864_, boolean p_376540_) {
         return new ItemStack(Blocks.CAKE);
     }
 
     @Override
     protected BlockState updateShape(
-        BlockState p_152898_,
-        LevelReader p_368310_,
-        ScheduledTickAccess p_362687_,
-        BlockPos p_152902_,
-        Direction p_152899_,
-        BlockPos p_152903_,
-        BlockState p_152900_,
-        RandomSource p_367940_
+            BlockState p_152898_,
+            LevelReader p_368310_,
+            ScheduledTickAccess p_362687_,
+            BlockPos p_152902_,
+            Direction p_152899_,
+            BlockPos p_152903_,
+            BlockState p_152900_,
+            RandomSource p_367940_
     ) {
         return p_152899_ == Direction.DOWN && !p_152898_.canSurvive(p_368310_, p_152902_)
-            ? Blocks.AIR.defaultBlockState()
-            : super.updateShape(p_152898_, p_368310_, p_362687_, p_152902_, p_152899_, p_152903_, p_152900_, p_367940_);
+                ? Blocks.AIR.defaultBlockState()
+                : super.updateShape(p_152898_, p_368310_, p_362687_, p_152902_, p_152899_, p_152903_, p_152900_, p_367940_);
     }
 
     @Override

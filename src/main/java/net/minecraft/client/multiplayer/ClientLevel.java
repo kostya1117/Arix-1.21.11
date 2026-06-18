@@ -5,6 +5,9 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Queues;
 import com.mojang.logging.LogUtils;
+import com.viaversion.viafabricplus.features.world.disable_sequencing.PendingUpdateManager1_18_2;
+import com.viaversion.viafabricplus.injection.access.world.always_tick_entities.IEntity;
+import com.viaversion.viafabricplus.settings.impl.DebugSettings;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
@@ -137,6 +140,8 @@ import net.optifine.render.RenderEnv;
 import net.optifine.shaders.Shaders;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
+import ru.arixcompany.features.event.EventRepo;
+import ru.arixcompany.features.event.world.EventWorldTick;
 
 public class ClientLevel extends Level implements CacheSlot.Cleaner<ClientLevel> {
     private static final Logger LOGGER = LogUtils.getLogger();
@@ -167,7 +172,7 @@ public class ClientLevel extends Level implements CacheSlot.Cleaner<ClientLevel>
     private final ClientChunkCache chunkSource;
     private final Deque<Runnable> lightUpdateQueue = Queues.newArrayDeque();
     private int serverSimulationDistance;
-    public final BlockStatePredictionHandler blockStatePredictionHandler = new BlockStatePredictionHandler();
+    public BlockStatePredictionHandler blockStatePredictionHandler = new BlockStatePredictionHandler();
     private final Set<BlockEntity> globallyRenderedBlockEntities = new ReferenceOpenHashSet<>();
     private final ClientExplosionTracker explosionTracker = new ClientExplosionTracker();
     private final WorldBorder worldBorder = new WorldBorder();
@@ -274,6 +279,9 @@ public class ClientLevel extends Level implements CacheSlot.Cleaner<ClientLevel>
             this.minecraft.gameMode = new PlayerControllerOF(this.minecraft, this.connection);
             CustomGuis.setPlayerControllerOF((PlayerControllerOF)this.minecraft.gameMode);
         }
+        if (DebugSettings.INSTANCE.disableSequencing.isEnabled()) {
+            this.blockStatePredictionHandler = new PendingUpdateManager1_18_2();
+        }
     }
 
     private EnvironmentAttributeSystem.Builder addEnvironmentAttributeLayers(EnvironmentAttributeSystem.Builder p_450625_) {
@@ -364,6 +372,7 @@ public class ClientLevel extends Level implements CacheSlot.Cleaner<ClientLevel>
     }
 
     public void tickEntities() {
+        EventRepo.call(new EventWorldTick(this));
         this.tickingEntities.forEach(entityIn -> {
             if (!entityIn.isRemoved() && !entityIn.isPassenger() && !this.tickRateManager.isEntityFrozen(entityIn)) {
                 this.guardEntityTick(this::tickNonPassenger, entityIn);
@@ -381,6 +390,18 @@ public class ClientLevel extends Level implements CacheSlot.Cleaner<ClientLevel>
     }
 
     public void tickNonPassenger(Entity p_104640_) {
+        final IEntity mixinEntity = p_104640_;
+        if (!mixinEntity.viaFabricPlus$isInLoadedChunkAndShouldTick() && !p_104640_.isSpectator()) {
+            p_104640_.setOldPosAndRot();
+            this.viaFabricPlus$checkChunk(p_104640_);
+            if (mixinEntity.viaFabricPlus$isInLoadedChunkAndShouldTick()) {
+                for (Entity entity2 : p_104640_.getPassengers()) {
+                    this.tickPassenger(p_104640_, entity2);
+                }
+            }
+            return;
+        }
+
         p_104640_.setOldPosAndRot();
         p_104640_.tickCount++;
         Profiler.get().push(() -> BuiltInRegistries.ENTITY_TYPE.getKey(p_104640_.getType()).toString());
@@ -394,12 +415,31 @@ public class ClientLevel extends Level implements CacheSlot.Cleaner<ClientLevel>
 
         Profiler.get().pop();
 
-        for (Entity entity : p_104640_.getPassengers()) {
-            this.tickPassenger(p_104640_, entity);
+        this.viaFabricPlus$checkChunk(p_104640_);
+        if (p_104640_.viaFabricPlus$isInLoadedChunkAndShouldTick()) {
+            for (Entity entity : p_104640_.getPassengers()) {
+                this.tickPassenger(p_104640_, entity);
+            }
         }
     }
 
     private void tickPassenger(Entity p_104642_, Entity p_104643_) {
+        final IEntity mixinPassenger = (IEntity) p_104643_;
+        if (!mixinPassenger.viaFabricPlus$isInLoadedChunkAndShouldTick()) {
+            if (p_104643_.isRemoved() || p_104643_.getVehicle() != p_104642_) {
+                p_104643_.stopRiding();
+            } else if (p_104643_ instanceof Player || this.tickingEntities.contains(p_104643_)) {
+                p_104643_.setOldPosAndRot();
+                this.viaFabricPlus$checkChunk(p_104643_);
+                if (mixinPassenger.viaFabricPlus$isInLoadedChunkAndShouldTick()) {
+                    for (Entity entity2 : p_104643_.getPassengers()) {
+                        this.tickPassenger(p_104643_, entity2);
+                    }
+                }
+            }
+            return;
+        }
+
         if (!p_104643_.isRemoved() && p_104643_.getVehicle() == p_104642_) {
             if (p_104643_ instanceof Player || this.tickingEntities.contains(p_104643_)) {
                 p_104643_.setOldPosAndRot();
@@ -412,6 +452,16 @@ public class ClientLevel extends Level implements CacheSlot.Cleaner<ClientLevel>
             }
         } else {
             p_104643_.stopRiding();
+        }
+    }
+    private void viaFabricPlus$checkChunk(Entity entity) {
+        final IEntity mixinEntity = (IEntity) entity;
+        final int chunkX = Mth.floor(entity.getX() / 16.0D);
+        final int chunkZ = Mth.floor(entity.getZ() / 16.0D);
+        if (!mixinEntity.viaFabricPlus$isInLoadedChunkAndShouldTick() || entity.chunkPosition().x != chunkX || entity.chunkPosition().z != chunkZ) {
+            if (!(this.getChunk(chunkX, chunkZ).isEmpty())) {
+                mixinEntity.viaFabricPlus$setInLoadedChunkAndShouldTick(true);
+            }
         }
     }
 

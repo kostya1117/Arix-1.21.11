@@ -1,6 +1,9 @@
 package net.minecraft.world.item;
 
 import java.util.List;
+
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.InteractionResult;
@@ -27,6 +30,12 @@ public class LeadItem extends Item {
             Player player = p_42834_.getPlayer();
             if (!level.isClientSide() && player != null) {
                 return bindPlayerMobs(player, level, blockpos);
+            }
+        }
+
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_21)) {
+            if (p_42834_.getLevel().getBlockState(p_42834_.getClickedPos()).is(BlockTags.FENCES)) {
+               return (InteractionResult.SUCCESS);
             }
         }
 

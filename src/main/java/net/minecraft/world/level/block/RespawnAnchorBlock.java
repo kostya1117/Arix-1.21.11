@@ -4,6 +4,9 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
 import com.mojang.serialization.MapCodec;
 import java.util.Optional;
+
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
@@ -91,41 +94,53 @@ public class RespawnAnchorBlock extends Block {
 
     @Override
     protected InteractionResult useWithoutItem(BlockState p_331701_, Level p_333411_, BlockPos p_329077_, Player p_334041_, BlockHitResult p_328905_) {
-        if (p_331701_.getValue(CHARGE) == 0) {
-            return InteractionResult.PASS;
-        }
+        InteractionResult result;
 
-        if (p_333411_ instanceof ServerLevel serverlevel) {
+        if (p_331701_.getValue(CHARGE) == 0) {
+            result = InteractionResult.PASS;
+        } else if (p_333411_ instanceof ServerLevel serverlevel) {
             if (!canSetSpawn(serverlevel, p_329077_)) {
                 this.explode(p_331701_, serverlevel, p_329077_);
-                return InteractionResult.SUCCESS_SERVER;
-            }
-
-            if (p_334041_ instanceof ServerPlayer serverplayer) {
-                ServerPlayer.RespawnConfig serverplayer$respawnconfig = serverplayer.getRespawnConfig();
-                ServerPlayer.RespawnConfig serverplayer$respawnconfig1 = new ServerPlayer.RespawnConfig(
-                    LevelData.RespawnData.of(serverlevel.dimension(), p_329077_, 0.0F, 0.0F), false
-                );
-                if (serverplayer$respawnconfig == null || !serverplayer$respawnconfig.isSamePosition(serverplayer$respawnconfig1)) {
-                    serverplayer.setRespawnPosition(serverplayer$respawnconfig1, true);
-                    serverlevel.playSound(
-                        null,
-                        p_329077_.getX() + 0.5,
-                        p_329077_.getY() + 0.5,
-                        p_329077_.getZ() + 0.5,
-                        SoundEvents.RESPAWN_ANCHOR_SET_SPAWN,
-                        SoundSource.BLOCKS,
-                        1.0F,
-                        1.0F
+                result = InteractionResult.SUCCESS_SERVER;
+            } else {
+                if (p_334041_ instanceof ServerPlayer serverplayer) {
+                    ServerPlayer.RespawnConfig serverplayer$respawnconfig = serverplayer.getRespawnConfig();
+                    ServerPlayer.RespawnConfig serverplayer$respawnconfig1 = new ServerPlayer.RespawnConfig(
+                            LevelData.RespawnData.of(serverlevel.dimension(), p_329077_, 0.0F, 0.0F), false
                     );
-                    return InteractionResult.SUCCESS_SERVER;
+                    if (serverplayer$respawnconfig == null || !serverplayer$respawnconfig.isSamePosition(serverplayer$respawnconfig1)) {
+                        serverplayer.setRespawnPosition(serverplayer$respawnconfig1, true);
+                        serverlevel.playSound(
+                                null,
+                                p_329077_.getX() + 0.5,
+                                p_329077_.getY() + 0.5,
+                                p_329077_.getZ() + 0.5,
+                                SoundEvents.RESPAWN_ANCHOR_SET_SPAWN,
+                                SoundSource.BLOCKS,
+                                1.0F,
+                                1.0F
+                        );
+                        result = InteractionResult.SUCCESS_SERVER;
+                    } else {
+                        result = InteractionResult.CONSUME;
+                    }
+                } else {
+                    result = InteractionResult.CONSUME;
                 }
             }
-
-            return InteractionResult.CONSUME;
         } else {
-            return InteractionResult.CONSUME;
+            result = InteractionResult.CONSUME;
         }
+
+        // ViaFabricPlus - post-process return value like mixin @At("RETURN")
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_21_9)) {
+            if (result == InteractionResult.CONSUME
+                    && !p_333411_.environmentAttributes().getValue(EnvironmentAttributes.RESPAWN_ANCHOR_WORKS, p_329077_)) {
+                result = InteractionResult.SUCCESS;
+            }
+        }
+
+        return result;
     }
 
     private static boolean isRespawnFuel(ItemStack p_55849_) {

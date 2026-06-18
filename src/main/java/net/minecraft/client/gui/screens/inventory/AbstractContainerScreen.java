@@ -4,6 +4,8 @@ import com.google.common.collect.Sets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.BundleMouseActions;
 import net.minecraft.client.gui.GuiGraphics;
@@ -24,6 +26,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import net.raphimc.vialegacy.api.LegacyProtocolVersion;
 import org.joml.Vector2i;
 import org.jspecify.annotations.Nullable;
 import ru.arixcompany.features.event.EventRepo;
@@ -363,7 +366,9 @@ public abstract class AbstractContainerScreen<T extends AbstractContainerMenu> e
                         if (flag) {
                             this.slotClicked(slot, k, p_427253_.button(), ClickType.CLONE);
                         } else {
-                            boolean flag2 = k != -999 && p_427253_.hasShiftDown();
+                            boolean flag2 = k != -999
+                                    && p_427253_.hasShiftDown()
+                                    && ProtocolTranslator.getTargetVersion().newerThanOrEqualTo(LegacyProtocolVersion.r1_6_1);
                             ClickType clicktype = ClickType.PICKUP;
                             if (flag2) {
                                 this.lastQuickMoved = slot != null && slot.hasItem() ? slot.getItem().copy() : ItemStack.EMPTY;
@@ -417,6 +422,10 @@ public abstract class AbstractContainerScreen<T extends AbstractContainerMenu> e
 
     @Override
     public boolean mouseDragged(MouseButtonEvent p_423035_, double p_97752_, double p_97753_) {
+        if (ProtocolTranslator.getTargetVersion().olderThan(LegacyProtocolVersion.r1_5tor1_5_1)) {
+            return super.mouseDragged(p_423035_, p_97752_, p_97753_);
+        }
+
         Slot slot = this.getHoveredSlot(p_423035_.x(), p_423035_.y());
         ItemStack itemstack = this.menu.getCarried();
         if (this.clickedSlot != null && this.minecraft.options.touchscreen().get()) {
@@ -444,12 +453,12 @@ public abstract class AbstractContainerScreen<T extends AbstractContainerMenu> e
 
             return true;
         } else if (this.isQuickCrafting
-            && slot != null
-            && !itemstack.isEmpty()
-            && (itemstack.getCount() > this.quickCraftSlots.size() || this.quickCraftingType == 2)
-            && AbstractContainerMenu.canItemQuickReplace(slot, itemstack, true)
-            && slot.mayPlace(itemstack)
-            && this.menu.canDragTo(slot)) {
+                && slot != null
+                && !itemstack.isEmpty()
+                && (itemstack.getCount() > this.quickCraftSlots.size() || this.quickCraftingType == 2)
+                && AbstractContainerMenu.canItemQuickReplace(slot, itemstack, true)
+                && slot.mayPlace(itemstack)
+                && this.menu.canDragTo(slot)) {
             this.quickCraftSlots.add(slot);
             this.recalculateQuickCraftRemaining();
             return true;
@@ -474,14 +483,14 @@ public abstract class AbstractContainerScreen<T extends AbstractContainerMenu> e
         }
 
         if (this.doubleclick && slot != null && p_430939_.button() == 0 && this.menu.canTakeItemForPickAll(ItemStack.EMPTY, slot)) {
-            if (p_430939_.hasShiftDown()) {
+            if (p_430939_.hasShiftDown() && ProtocolTranslator.getTargetVersion().newerThanOrEqualTo(LegacyProtocolVersion.r1_6_1)) {
                 if (!this.lastQuickMoved.isEmpty()) {
                     for (Slot slot2 : this.menu.slots) {
                         if (slot2 != null
-                            && slot2.mayPickup(this.minecraft.player)
-                            && slot2.hasItem()
-                            && slot2.container == slot.container
-                            && AbstractContainerMenu.canItemQuickReplace(slot2, this.lastQuickMoved, true)) {
+                                && slot2.mayPickup(this.minecraft.player)
+                                && slot2.hasItem()
+                                && slot2.container == slot.container
+                                && AbstractContainerMenu.canItemQuickReplace(slot2, this.lastQuickMoved, true)) {
                             this.slotClicked(slot2, slot2.index, p_430939_.button(), ClickType.QUICK_MOVE);
                         }
                     }
@@ -519,18 +528,18 @@ public abstract class AbstractContainerScreen<T extends AbstractContainerMenu> e
                         } else {
                             this.slotClicked(this.clickedSlot, this.clickedSlot.index, p_430939_.button(), ClickType.PICKUP);
                             this.snapbackData = new AbstractContainerScreen.SnapbackData(
-                                this.draggingItem,
-                                new Vector2i((int)p_430939_.x(), (int)p_430939_.y()),
-                                new Vector2i(this.clickedSlot.x + i, this.clickedSlot.y + j),
-                                Util.getMillis()
+                                    this.draggingItem,
+                                    new Vector2i((int)p_430939_.x(), (int)p_430939_.y()),
+                                    new Vector2i(this.clickedSlot.x + i, this.clickedSlot.y + j),
+                                    Util.getMillis()
                             );
                         }
                     } else if (!this.draggingItem.isEmpty()) {
                         this.snapbackData = new AbstractContainerScreen.SnapbackData(
-                            this.draggingItem,
-                            new Vector2i((int)p_430939_.x(), (int)p_430939_.y()),
-                            new Vector2i(this.clickedSlot.x + i, this.clickedSlot.y + j),
-                            Util.getMillis()
+                                this.draggingItem,
+                                new Vector2i((int)p_430939_.x(), (int)p_430939_.y()),
+                                new Vector2i(this.clickedSlot.x + i, this.clickedSlot.y + j),
+                                Util.getMillis()
                         );
                     }
 
@@ -548,7 +557,9 @@ public abstract class AbstractContainerScreen<T extends AbstractContainerMenu> e
                 if (this.minecraft.options.keyPickItem.matchesMouse(p_430939_)) {
                     this.slotClicked(slot, k, p_430939_.button(), ClickType.CLONE);
                 } else {
-                    boolean flag1 = k != -999 && p_430939_.hasShiftDown();
+                    boolean flag1 = k != -999
+                            && p_430939_.hasShiftDown()
+                            && ProtocolTranslator.getTargetVersion().newerThanOrEqualTo(LegacyProtocolVersion.r1_6_1);
                     if (flag1) {
                         this.lastQuickMoved = slot != null && slot.hasItem() ? slot.getItem().copy() : ItemStack.EMPTY;
                     }
@@ -626,7 +637,9 @@ public abstract class AbstractContainerScreen<T extends AbstractContainerMenu> e
         this.checkHotbarKeyPressed(p_424324_);
         if (this.hoveredSlot != null && this.hoveredSlot.hasItem()) {
             if (this.minecraft.options.keyPickItem.matches(p_424324_)) {
-                this.slotClicked(this.hoveredSlot, this.hoveredSlot.index, 0, ClickType.CLONE);
+                if (ProtocolTranslator.getTargetVersion().newerThanOrEqualTo(LegacyProtocolVersion.r1_4_2)) {
+                    this.slotClicked(this.hoveredSlot, this.hoveredSlot.index, 0, ClickType.CLONE);
+                }
             } else if (this.minecraft.options.keyDrop.matches(p_424324_)) {
                 this.slotClicked(this.hoveredSlot, this.hoveredSlot.index, p_424324_.hasControlDown() ? 1 : 0, ClickType.THROW);
             }
@@ -643,7 +656,8 @@ public abstract class AbstractContainerScreen<T extends AbstractContainerMenu> e
             }
 
             for (int i = 0; i < 9; i++) {
-                if (this.minecraft.options.keyHotbarSlots[i].matches(p_428976_)) {
+                if (this.minecraft.options.keyHotbarSlots[i].matches(p_428976_)
+                        && ProtocolTranslator.getTargetVersion().newerThanOrEqualTo(LegacyProtocolVersion.r1_4_2)) {
                     this.slotClicked(this.hoveredSlot, this.hoveredSlot.index, i, ClickType.SWAP);
                     return true;
                 }

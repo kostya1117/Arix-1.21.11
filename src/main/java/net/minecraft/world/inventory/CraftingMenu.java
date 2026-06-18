@@ -2,6 +2,10 @@ package net.minecraft.world.inventory;
 
 import java.util.List;
 import java.util.Optional;
+
+import com.viaversion.viafabricplus.features.recipe.Recipes1_11_2;
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
 import net.minecraft.server.level.ServerLevel;
@@ -76,6 +80,9 @@ public class CraftingMenu extends AbstractCraftingMenu {
 
     @Override
     public void slotsChanged(Container p_39366_) {
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_11_1)) {
+            Recipes1_11_2.setCraftingResultSlot(containerId, this, this.craftSlots);
+        }
         if (!this.placingRecipe) {
             this.access.execute((p_359372_, p_359373_) -> {
                 if (p_359372_ instanceof ServerLevel serverlevel) {
@@ -122,7 +129,8 @@ public class CraftingMenu extends AbstractCraftingMenu {
 
                 slot.onQuickCraft(itemstack1, itemstack);
             } else if (p_39392_ >= 10 && p_39392_ < 46) {
-                if (!this.moveItemStackTo(itemstack1, 1, 10, false)) {
+                if (!(ProtocolTranslator.getTargetVersion().newerThan(ProtocolVersion.v1_14_4)
+                        && this.moveItemStackTo(itemstack1, 1, 10, false))) {
                     if (p_39392_ < 37) {
                         if (!this.moveItemStackTo(itemstack1, 37, 46, false)) {
                             return ItemStack.EMPTY;

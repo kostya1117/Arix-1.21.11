@@ -4,6 +4,10 @@ import com.google.common.base.MoreObjects;
 import com.mojang.serialization.MapCodec;
 import java.util.Map;
 import java.util.Optional;
+
+import com.viaversion.viafabricplus.features.block.interaction.Block1_14;
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -61,7 +65,17 @@ public class TripWireHookBlock extends Block {
         Direction direction = p_57721_.getValue(FACING);
         BlockPos blockpos = p_57723_.relative(direction.getOpposite());
         BlockState blockstate = p_57722_.getBlockState(blockpos);
-        return direction.getAxis().isHorizontal() && blockstate.isFaceSturdy(p_57722_, blockpos, direction);
+        boolean result = direction.getAxis().isHorizontal() && blockstate.isFaceSturdy(p_57722_, blockpos, direction);
+
+        // ViaFabricPlus - block placement 1.14
+        if (result && ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_14)) {
+            final Block block = p_57722_.getBlockState(p_57723_).getBlock();
+            if (Block1_14.isExceptBlockForAttachWithPiston(block)) {
+                return false;
+            }
+        }
+
+        return result;
     }
 
     @Override

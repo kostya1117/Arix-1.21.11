@@ -13,6 +13,7 @@ import ru.arixcompany.features.module.modules.misc.ClientSounds;
 import ru.arixcompany.features.module.modules.misc.funtime.AuctionUtils;
 import ru.arixcompany.features.module.modules.misc.funtime.AutoBuy;
 import ru.arixcompany.features.module.modules.movement.AutoSprint;
+import ru.arixcompany.features.module.modules.movement.Speed;
 import ru.arixcompany.features.module.modules.movement.Strafe;
 import ru.arixcompany.features.module.modules.player.*;
 import ru.arixcompany.features.module.modules.render.*;
@@ -65,6 +66,7 @@ public class ModuleRepo implements IMinecraft {
        modules.add(new AspectRatio());
        modules.add(new SeeInvisibles());
        modules.add(new CustomModels());
+       modules.add(new Speed());
    }
 
    public void init() {

@@ -22,6 +22,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.CrashReport;
@@ -118,6 +119,7 @@ import net.optifine.shaders.Shaders;
 import net.optifine.shaders.ShadersRender;
 import net.optifine.util.MemoryMonitor;
 import net.optifine.util.TimedEvent;
+import net.raphimc.viabedrock.api.BedrockProtocolVersion;
 import org.apache.commons.io.IOUtils;
 import org.joml.Matrix4f;
 import org.joml.Matrix4fStack;
@@ -388,10 +390,26 @@ public class GameRenderer implements TrackedWaypoint.Projector, AutoCloseable {
         Entity entity = this.minecraft.getCameraEntity();
         if (entity != null && this.minecraft.level != null && this.minecraft.player != null) {
             Profiler.get().push("pick");
-            this.minecraft.hitResult = this.minecraft.player.raycastHitResult(p_109088_, entity);
+            HitResult hitResult = this.minecraft.player.raycastHitResult(p_109088_, entity);
+
+            if (ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.bedrockLatest)) {
+                if (hitResult.getType() == HitResult.Type.MISS && viaFabricPlus$canReachAround(entity)) {
+                    final int x = Mth.floor(entity.getX());
+                    final int y = Mth.floor(entity.getY() - 0.2F);
+                    final int z = Mth.floor(entity.getZ());
+                    final BlockPos floorPos = new BlockPos(x, y, z);
+                    hitResult = new BlockHitResult(floorPos.getCenter(), entity.getDirection(), floorPos, false);
+                }
+            }
+
+            this.minecraft.hitResult = hitResult;
             this.minecraft.crosshairPickEntity = this.minecraft.hitResult instanceof EntityHitResult entityhitresult ? entityhitresult.getEntity() : null;
             Profiler.get().pop();
         }
+    }
+
+    private boolean viaFabricPlus$canReachAround(final Entity entity) {
+        return entity.onGround() && entity.getVehicle() == null && entity.getXRot() >= 45;
     }
 
     private void tickFov() {

@@ -3,6 +3,8 @@ package net.minecraft.world.level.entity;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.mojang.logging.LogUtils;
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import it.unimi.dsi.fastutil.ints.Int2ObjectLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import java.util.Map;
@@ -18,7 +20,7 @@ public class EntityLookup<T extends EntityAccess> {
 
     public <U extends T> void getEntities(EntityTypeTest<T, U> p_261575_, AbortableIterationConsumer<U> p_261925_) {
         for (T t : this.byId.values()) {
-            U u = (U)p_261575_.tryCast(t);
+            U u = p_261575_.tryCast(t);
             if (u != null && p_261925_.accept(u).shouldAbort()) {
                 return;
             }
@@ -31,7 +33,7 @@ public class EntityLookup<T extends EntityAccess> {
 
     public void add(T p_156815_) {
         UUID uuid = p_156815_.getUUID();
-        if (this.byUuid.containsKey(uuid)) {
+        if (this.byUuid.containsKey(uuid) && ProtocolTranslator.getTargetVersion().newerThan(ProtocolVersion.v1_16_4)) {
             LOGGER.warn("Duplicate entity UUID {}: {}", uuid, p_156815_);
         } else {
             this.byUuid.put(uuid, p_156815_);
@@ -53,6 +55,10 @@ public class EntityLookup<T extends EntityAccess> {
     }
 
     public int count() {
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_16_4)) {
+            return this.byId.size();
+        }
+
         return this.byUuid.size();
     }
 }

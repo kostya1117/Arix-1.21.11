@@ -5,6 +5,9 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.mojang.serialization.codecs.RecordCodecBuilder.Instance;
+import com.viaversion.viafabricplus.injection.access.item.attack_damage.IDisplayDefault;
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import io.netty.buffer.ByteBuf;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -31,6 +34,9 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.item.enchantment.ItemEnchantments;
 import org.apache.commons.lang3.function.TriConsumer;
 import org.jspecify.annotations.Nullable;
 
@@ -149,10 +155,11 @@ public record ItemAttributeModifiers(List<ItemAttributeModifiers.Entry> modifier
 
         void apply(Consumer<Component> p_408736_, @Nullable Player p_407675_, Holder<Attribute> p_409002_, AttributeModifier p_406224_);
 
-        record Default() implements ItemAttributeModifiers.Display {
+        record Default() implements ItemAttributeModifiers.Display, IDisplayDefault {
             static final ItemAttributeModifiers.Display.Default INSTANCE = new ItemAttributeModifiers.Display.Default();
             static final MapCodec<ItemAttributeModifiers.Display.Default> CODEC = MapCodec.unit(INSTANCE);
             static final StreamCodec<RegistryFriendlyByteBuf, ItemAttributeModifiers.Display.Default> STREAM_CODEC = StreamCodec.unit(INSTANCE);
+            private static ItemEnchantments viaFabricPlus$itemEnchantments;
 
             @Override
             public ItemAttributeModifiers.Display.Type type() {
@@ -165,7 +172,27 @@ public record ItemAttributeModifiers(List<ItemAttributeModifiers.Entry> modifier
                 boolean flag = false;
                 if (p_409823_ != null) {
                     if (p_406254_.is(Item.BASE_ATTACK_DAMAGE_ID)) {
-                        d0 += p_409823_.getAttributeBaseValue(Attributes.ATTACK_DAMAGE);
+                        double value = 0.0;
+                        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_20_5)) {
+                            for (Holder<Enchantment> enchantment : viaFabricPlus$itemEnchantments.keySet()) {
+                                if (enchantment.is(Enchantments.SHARPNESS)) {
+                                    final int level = viaFabricPlus$itemEnchantments.getLevel(enchantment);
+                                    if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_8)) {
+                                        value = level * 1.25F;
+                                    } else {
+                                        value = 1.0F + (float)Math.max(0, level - 1) * 0.5F;
+                                    }
+                                    break;
+                                }
+                            }
+                        }
+
+                        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_8)) {
+                            d0 += value;
+                        } else {
+                            d0 += p_409823_.getAttributeBaseValue(Attributes.ATTACK_DAMAGE) + value;
+                        }
+
                         flag = true;
                     } else if (p_406254_.is(Item.BASE_ATTACK_SPEED_ID)) {
                         d0 += p_409823_.getAttributeBaseValue(Attributes.ATTACK_SPEED);
@@ -175,7 +202,7 @@ public record ItemAttributeModifiers(List<ItemAttributeModifiers.Entry> modifier
 
                 double d1;
                 if (p_406254_.operation() == AttributeModifier.Operation.ADD_MULTIPLIED_BASE
-                    || p_406254_.operation() == AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL) {
+                        || p_406254_.operation() == AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL) {
                     d1 = d0 * 100.0;
                 } else if (p_408648_.is(Attributes.KNOCKBACK_RESISTANCE)) {
                     d1 = d0 * 10.0;
@@ -185,35 +212,39 @@ public record ItemAttributeModifiers(List<ItemAttributeModifiers.Entry> modifier
 
                 if (flag) {
                     p_406087_.accept(
-                        CommonComponents.space()
-                            .append(
-                                Component.translatable(
-                                    "attribute.modifier.equals." + p_406254_.operation().id(),
-                                    ItemAttributeModifiers.ATTRIBUTE_MODIFIER_FORMAT.format(d1),
-                                    Component.translatable(p_408648_.value().getDescriptionId())
-                                )
-                            )
-                            .withStyle(ChatFormatting.DARK_GREEN)
+                            CommonComponents.space()
+                                    .append(
+                                            Component.translatable(
+                                                    "attribute.modifier.equals." + p_406254_.operation().id(),
+                                                    ItemAttributeModifiers.ATTRIBUTE_MODIFIER_FORMAT.format(d1),
+                                                    Component.translatable(p_408648_.value().getDescriptionId())
+                                            )
+                                    )
+                                    .withStyle(ChatFormatting.DARK_GREEN)
                     );
                 } else if (d0 > 0.0) {
                     p_406087_.accept(
-                        Component.translatable(
-                                "attribute.modifier.plus." + p_406254_.operation().id(),
-                                ItemAttributeModifiers.ATTRIBUTE_MODIFIER_FORMAT.format(d1),
-                                Component.translatable(p_408648_.value().getDescriptionId())
-                            )
-                            .withStyle(p_408648_.value().getStyle(true))
+                            Component.translatable(
+                                            "attribute.modifier.plus." + p_406254_.operation().id(),
+                                            ItemAttributeModifiers.ATTRIBUTE_MODIFIER_FORMAT.format(d1),
+                                            Component.translatable(p_408648_.value().getDescriptionId())
+                                    )
+                                    .withStyle(p_408648_.value().getStyle(true))
                     );
                 } else if (d0 < 0.0) {
                     p_406087_.accept(
-                        Component.translatable(
-                                "attribute.modifier.take." + p_406254_.operation().id(),
-                                ItemAttributeModifiers.ATTRIBUTE_MODIFIER_FORMAT.format(-d1),
-                                Component.translatable(p_408648_.value().getDescriptionId())
-                            )
-                            .withStyle(p_408648_.value().getStyle(false))
+                            Component.translatable(
+                                            "attribute.modifier.take." + p_406254_.operation().id(),
+                                            ItemAttributeModifiers.ATTRIBUTE_MODIFIER_FORMAT.format(-d1),
+                                            Component.translatable(p_408648_.value().getDescriptionId())
+                                    )
+                                    .withStyle(p_408648_.value().getStyle(false))
                     );
                 }
+            }
+            @Override
+            public void viaFabricPlus$setItemEnchantments(final ItemEnchantments itemEnchantments) {
+                viaFabricPlus$itemEnchantments = itemEnchantments;
             }
         }
 

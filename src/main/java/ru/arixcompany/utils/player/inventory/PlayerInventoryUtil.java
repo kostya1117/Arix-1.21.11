@@ -2,6 +2,7 @@ package ru.arixcompany.utils.player.inventory;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMaps;
 import lombok.experimental.UtilityClass;
+import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.network.HashedStack;
 import net.minecraft.network.protocol.game.ServerboundContainerClickPacket;
 import net.minecraft.network.protocol.game.ServerboundContainerClosePacket;
@@ -84,8 +85,9 @@ public class PlayerInventoryUtil implements IMinecraft {
     }
 
     public void closeScreen(boolean packet) {
-        if (packet) mc.player.connection.send(new ServerboundContainerClosePacket(mc.player.containerMenu.containerId));
-        else mc.player.closeContainer();
+        if (!(mc.screen instanceof InventoryScreen)) {
+            mc.player.closeContainer();
+        }
     }
 
     public void swapHand(Slot slot, InteractionHand hand, boolean updateInventory) {
@@ -97,15 +99,21 @@ public class PlayerInventoryUtil implements IMinecraft {
 
     public void swapHand(Slot slot, int button, boolean updateInventory) {
         clickSlot(slot, button, ClickType.SWAP, false);
-        if (updateInventory) PlayerInventoryUtil.updateSlots();
+        // if (updateInventory) PlayerInventoryUtil.updateSlots();
     }
 
     public void swapHand(Slot slot, int button) {
         clickSlot(slot, button, ClickType.SWAP, false);
     }
-
+    public int getMenuSlotId(Slot slot) {
+        if (slot == null || mc.player == null) return -1;
+        return mc.player.containerMenu.slots.indexOf(slot);
+    }
     public void clickSlot(Slot slot, int button, ClickType clickType, boolean silent) {
-        if (slot != null) clickSlot(slot.index, button, clickType, silent);
+        int slotId = getMenuSlotId(slot);
+        if (slotId != -1) {
+            clickSlot(slotId, button, clickType, silent);
+        }
     }
 
     public void clickSlot(int slotId, int buttonId, ClickType clickType, boolean silent) {
@@ -114,7 +122,6 @@ public class PlayerInventoryUtil implements IMinecraft {
 
     public void clickSlot(int windowId, int slotId, int buttonId, ClickType clickType, boolean silent) {
         mc.gameMode.handleInventoryMouseClick(windowId, slotId, buttonId, clickType, mc.player);
-        if (silent) mc.player.containerMenu.clicked(slotId, buttonId, clickType, mc.player);
     }
 
     public Slot getSlot(Item item) {

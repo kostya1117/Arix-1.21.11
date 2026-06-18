@@ -3,16 +3,22 @@ package net.minecraft.client.multiplayer.resolver;
 import com.google.common.net.HostAndPort;
 import com.mojang.logging.LogUtils;
 import java.net.IDN;
+
+import com.viaversion.viafabricplus.injection.access.base.bedrock.IServerAddress;
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
+import dev.kastle.netty.channel.nethernet.config.NetherNetAddress;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 
 
-public final class ServerAddress {
+public final class ServerAddress implements IServerAddress {
     private static final Logger LOGGER = LogUtils.getLogger();
     private final HostAndPort hostAndPort;
     private static final ServerAddress INVALID = new ServerAddress(HostAndPort.fromParts("server.invalid", 25565));
+    private NetherNetAddress viaFabricPlus$netherNetAddress;
 
     public ServerAddress(String p_171861_, int p_171862_) {
         this(HostAndPort.fromParts(p_171861_, p_171862_));
@@ -30,6 +36,16 @@ public final class ServerAddress {
         }
     }
 
+    @Override
+    public NetherNetAddress viaFabricPlus$getNetherNetAddress() {
+        return this.viaFabricPlus$netherNetAddress;
+    }
+
+    @Override
+    public void viaFabricPlus$setNetherNetAddress(final NetherNetAddress address) {
+        this.viaFabricPlus$netherNetAddress = address;
+    }
+
     public int getPort() {
         return this.hostAndPort.getPort();
     }
@@ -41,7 +57,13 @@ public final class ServerAddress {
 
         try {
             HostAndPort hostandport = HostAndPort.fromString(p_171865_).withDefaultPort(25565);
-            return hostandport.getHost().isEmpty() ? INVALID : new ServerAddress(hostandport);
+            ServerAddress result = hostandport.getHost().isEmpty() ? INVALID : new ServerAddress(hostandport);
+
+            if (!result.equals(INVALID) && ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_16_4)) {
+                result = ServerNameResolver.DEFAULT.redirectHandler.lookupRedirect(result).orElse(result);
+            }
+
+            return result;
         } catch (IllegalArgumentException illegalargumentexception) {
             LOGGER.info("Failed to parse URL {}", p_171865_, illegalargumentexception);
             return INVALID;

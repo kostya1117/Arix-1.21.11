@@ -18,6 +18,12 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.BooleanSupplier;
+
+import com.viaversion.viafabricplus.base.sync_tasks.DataCustomPayload;
+import com.viaversion.viafabricplus.base.sync_tasks.SyncTasks;
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viafabricplus.settings.impl.DebugSettings;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import net.minecraft.ChatFormatting;
 import net.minecraft.CrashReport;
 import net.minecraft.CrashReportCategory;
@@ -40,6 +46,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.DisconnectionDetails;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.ServerboundPacketListener;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
@@ -117,7 +124,11 @@ public abstract class ClientCommonPacketListenerImpl implements ClientCommonPack
         LOGGER.error("Failed to handle packet {}, disconnecting", p_333124_, p_332903_);
         Optional<Path> optional = this.storeDisconnectionReport(p_333124_, p_332903_);
         Optional<URI> optional1 = this.serverLinks.findKnownType(ServerLinks.KnownLinkType.BUG_REPORT).map(ServerLinks.Entry::link);
-        this.connection.disconnect(new DisconnectionDetails(Component.translatable("disconnect.packetError"), optional, optional1));
+
+        // dontDisconnectOnPacketException: для <= 1.20.3 не отключаемся
+        if (ProtocolTranslator.getTargetVersion().newerThan(ProtocolVersion.v1_20_3)) {
+            this.connection.disconnect(new DisconnectionDetails(Component.translatable("disconnect.packetError"), optional, optional1));
+        }
     }
 
     @Override
@@ -128,6 +139,11 @@ public abstract class ClientCommonPacketListenerImpl implements ClientCommonPack
     }
 
     private Optional<Path> storeDisconnectionReport(@Nullable Packet p_344412_, Throwable p_344707_) {
+        // dontCreatePacketErrorCrashReports
+        if (DebugSettings.INSTANCE.dontCreatePacketErrorCrashReports.isEnabled()) {
+            return Optional.empty();
+        }
+
         CrashReport crashreport = CrashReport.forThrowable(p_344707_, "Packet handling error");
         PacketUtils.fillCrashReport(crashreport, this, p_344412_);
         Path path = this.minecraft.gameDirectory.toPath().resolve("debug");
@@ -146,17 +162,35 @@ public abstract class ClientCommonPacketListenerImpl implements ClientCommonPack
 
     @Override
     public void handleKeepAlive(ClientboundKeepAlivePacket p_301155_) {
-        this.sendWhen(new ServerboundKeepAlivePacket(p_301155_.getId()), () -> !RenderSystem.isFrozenAtPollEvents(), Duration.ofMinutes(1L));
+        // forceSendKeepAlive: для <= 1.19.3 отправляем сразу, без defer
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_19_3)) {
+            this.send(new ServerboundKeepAlivePacket(p_301155_.getId()));
+        } else {
+            this.sendWhen(new ServerboundKeepAlivePacket(p_301155_.getId()), () -> !RenderSystem.isFrozenAtPollEvents(), Duration.ofMinutes(1L));
+        }
     }
 
     @Override
     public void handlePing(ClientboundPingPacket p_300922_) {
         PacketUtils.ensureRunningOnSameThread(p_300922_, this, this.minecraft.packetProcessor());
+
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_16_4)) {
+            final short inventoryId = (short) ((p_300922_.getId() >> 16) & 0xFF);
+            if (inventoryId != 0 && inventoryId != this.minecraft.player.containerMenu.containerId) {
+                return;
+            }
+        }
+
         this.send(new ServerboundPongPacket(p_300922_.getId()));
     }
 
     @Override
     public void handleCustomPayload(ClientboundCustomPayloadPacket p_298103_) {
+        if (p_298103_.payload() instanceof DataCustomPayload(FriendlyByteBuf buf)) {
+            SyncTasks.handleSyncTask(buf);
+            return;
+        }
+
         CustomPacketPayload custompacketpayload = p_298103_.payload();
         if (!(custompacketpayload instanceof DiscardedPayload)) {
             PacketUtils.ensureRunningOnSameThread(p_298103_, this, this.minecraft.packetProcessor());
@@ -173,7 +207,14 @@ public abstract class ClientCommonPacketListenerImpl implements ClientCommonPack
 
     @Override
     public void handleResourcePackPush(ClientboundResourcePackPushPacket p_310071_) {
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_20_2)) {
+            if (parseResourcePackUrl(p_310071_.url()) == null) {
+                this.connection.send(new ServerboundResourcePackPacket(p_310071_.id(), ServerboundResourcePackPacket.Action.INVALID_URL));
+                return;
+            }
+        }
         PacketUtils.ensureRunningOnSameThread(p_310071_, this, this.minecraft.packetProcessor());
+
         UUID uuid = p_310071_.id();
         URL url = parseResourcePackUrl(p_310071_.url());
         if (url == null) {
@@ -183,7 +224,7 @@ public abstract class ClientCommonPacketListenerImpl implements ClientCommonPack
             boolean flag = p_310071_.required();
             ServerData.ServerPackStatus serverdata$serverpackstatus = this.serverData != null ? this.serverData.getResourcePackStatus() : ServerData.ServerPackStatus.PROMPT;
             if (serverdata$serverpackstatus != ServerData.ServerPackStatus.PROMPT
-                && (!flag || serverdata$serverpackstatus != ServerData.ServerPackStatus.DISABLED)) {
+                    && (!flag || serverdata$serverpackstatus != ServerData.ServerPackStatus.DISABLED)) {
                 this.minecraft.getDownloadedPackSource().pushPack(uuid, url, s);
             } else {
                 this.minecraft.setScreen(this.addOrUpdatePackPrompt(uuid, url, s, flag, p_310071_.prompt().orElse(null)));
@@ -349,6 +390,9 @@ public abstract class ClientCommonPacketListenerImpl implements ClientCommonPack
 
     public void send(Packet<?> p_300175_) {
         this.connection.send(p_300175_);
+    }
+    public void sendSilent(Packet<?> p_300175_) {
+        this.connection.sendSilent(p_300175_);
     }
 
     @Override

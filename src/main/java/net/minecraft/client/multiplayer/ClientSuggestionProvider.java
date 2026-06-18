@@ -12,6 +12,8 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
+
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
 import net.minecraft.client.Minecraft;
 import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.core.BlockPos;
@@ -30,6 +32,7 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.raphimc.viabedrock.api.BedrockProtocolVersion;
 import org.jspecify.annotations.Nullable;
 
 
@@ -49,6 +52,11 @@ public class ClientSuggestionProvider implements SharedSuggestionProvider {
 
     @Override
     public Collection<String> getOnlinePlayerNames() {
+        // ViaFabricPlus - Bedrock remove dummy player suggestions
+        if (ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.bedrockLatest)) {
+            return this.customCompletionSuggestions;
+        }
+
         List<String> list = Lists.newArrayList();
 
         for (PlayerInfo playerinfo : this.connection.getOnlinePlayers()) {
@@ -60,6 +68,11 @@ public class ClientSuggestionProvider implements SharedSuggestionProvider {
 
     @Override
     public Collection<String> getCustomTabSugggestions() {
+        // ViaFabricPlus - Bedrock remove dummy player suggestions
+        if (ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.bedrockLatest)) {
+            return this.customCompletionSuggestions;
+        }
+
         if (this.customCompletionSuggestions.isEmpty()) {
             return this.getOnlinePlayerNames();
         }

@@ -1,6 +1,5 @@
 package ru.arixcompany.ui.clickgui.components.module.settings;
 
-import com.mojang.blaze3d.platform.cursor.CursorType;
 import com.mojang.blaze3d.platform.cursor.CursorTypes;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

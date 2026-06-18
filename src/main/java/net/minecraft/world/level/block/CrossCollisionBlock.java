@@ -4,6 +4,10 @@ import com.mojang.serialization.MapCodec;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Function;
+
+import com.viaversion.viafabricplus.injection.access.block.shape.ICrossCollisionBlock;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Util;
@@ -19,7 +23,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-public abstract class CrossCollisionBlock extends Block implements SimpleWaterloggedBlock {
+public abstract class CrossCollisionBlock extends Block implements SimpleWaterloggedBlock, ICrossCollisionBlock {
     public static final BooleanProperty NORTH = PipeBlock.NORTH;
     public static final BooleanProperty EAST = PipeBlock.EAST;
     public static final BooleanProperty SOUTH = PipeBlock.SOUTH;
@@ -37,6 +41,28 @@ public abstract class CrossCollisionBlock extends Block implements SimpleWaterlo
         super(p_52325_);
         this.collisionShapes = this.makeShapes(p_52320_, p_52324_, p_52322_, 0.0F, p_52324_);
         this.shapes = this.makeShapes(p_52320_, p_52321_, p_52322_, 0.0F, p_52323_);
+    }
+    private final Object2IntMap<BlockState> viaFabricPlus$SHAPE_INDEX_CACHE = new Object2IntOpenHashMap<>();
+
+    @Override
+    public int viaFabricPlus$getShapeIndex(final BlockState blockState) {
+        return viaFabricPlus$SHAPE_INDEX_CACHE.computeIfAbsent(blockState, statex -> {
+            int index = 0;
+            if (blockState.getValue(CrossCollisionBlock.NORTH)) {
+                index |= 1 << Direction.NORTH.get2DDataValue();
+            }
+            if (blockState.getValue(CrossCollisionBlock.EAST)) {
+                index |= 1 << Direction.EAST.get2DDataValue();
+            }
+            if (blockState.getValue(CrossCollisionBlock.SOUTH)) {
+                index |= 1 << Direction.SOUTH.get2DDataValue();
+            }
+            if (blockState.getValue(CrossCollisionBlock.WEST)) {
+                index |= 1 << Direction.WEST.get2DDataValue();
+            }
+
+            return index;
+        });
     }
 
     @Override

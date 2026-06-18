@@ -25,7 +25,8 @@ public class StandingAndWallBlockItem extends BlockItem {
     }
 
     @Override
-    protected @Nullable BlockState getPlacementState(BlockPlaceContext p_43255_) {
+    @Nullable
+    public BlockState getPlacementState(BlockPlaceContext p_43255_) {
         BlockState blockstate = this.wallBlock.getStateForPlacement(p_43255_);
         BlockState blockstate1 = null;
         LevelReader levelreader = p_43255_.getLevel();

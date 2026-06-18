@@ -6,15 +6,24 @@ import baritone.api.event.events.PacketEvent;
 import baritone.api.event.events.type.EventState;
 import com.google.common.collect.Queues;
 import com.mojang.logging.LogUtils;
+import com.viaversion.viafabricplus.ViaFabricPlusImpl;
+import com.viaversion.viafabricplus.base.bedrock.NetherNetInetSocketAddress;
+import com.viaversion.viafabricplus.base.bedrock.NetherNetJsonRpcAddress;
+import com.viaversion.viafabricplus.injection.access.base.IConnection;
+import com.viaversion.viafabricplus.injection.access.base.ILocalSampleLogger;
+import com.viaversion.viafabricplus.injection.access.base.bedrock.IEventLoopGroupHolder;
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viafabricplus.protocoltranslator.netty.RakNetPingEncapsulationCodec;
+import com.viaversion.viafabricplus.save.SaveManager;
+import com.viaversion.viafabricplus.settings.impl.DebugSettings;
 import com.viaversion.viaversion.api.connection.UserConnection;
-import com.viaversion.viaversion.connection.UserConnectionImpl;
-import com.viaversion.viaversion.protocol.ProtocolPipelineImpl;
-import de.florianmichael.vialoadingbase.ViaLoadingBase;
-import de.florianmichael.vialoadingbase.netty.event.CompressionReorderEvent;
-import de.florianmichael.viamcp.MCPVLBPipeline;
-import de.florianmichael.viamcp.ViaMCP;
-import de.florianmichael.viamcp.ViaProtocolStripper;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
+import com.viaversion.viaversion.platform.ViaChannelInitializer;
 import de.maxhenkel.voicechat.mixin.ConnectionAccessor;
+import dev.kastle.netty.channel.nethernet.NetherNetChannelFactory;
+import dev.kastle.netty.channel.nethernet.signaling.NetherNetXboxRpcSignaling;
+import dev.kastle.netty.channel.nethernet.signaling.NetherNetXboxSignaling;
+import dev.kastle.webrtc.PeerConnectionFactory;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelException;
@@ -29,14 +38,21 @@ import io.netty.channel.ChannelOutboundHandlerAdapter;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.ChannelPromise;
 import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.channel.epoll.EpollDatagramChannel;
+import io.netty.channel.epoll.EpollSocketChannel;
+import io.netty.channel.kqueue.KQueueSocketChannel;
 import io.netty.channel.local.LocalChannel;
 import io.netty.channel.local.LocalServerChannel;
-import io.netty.channel.socket.SocketChannel;
+import io.netty.channel.socket.nio.NioDatagramChannel;
+import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.flow.FlowControlHandler;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.handler.timeout.TimeoutException;
+
+import java.net.ConnectException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
+import java.net.SocketException;
 import java.nio.channels.ClosedChannelException;
 import java.util.Objects;
 import java.util.Queue;
@@ -63,6 +79,14 @@ import net.minecraft.server.network.EventLoopGroupHolder;
 import net.minecraft.util.Mth;
 import net.minecraft.util.Util;
 import net.minecraft.util.debugchart.LocalSampleLogger;
+import net.raphimc.viabedrock.api.BedrockProtocolVersion;
+import net.raphimc.viabedrock.netty.PacketCodec;
+import net.raphimc.viabedrock.netty.raknet.MessageCodec;
+import net.raphimc.viabedrock.protocol.RakNetStatusProtocol;
+import net.raphimc.vialegacy.api.LegacyProtocolVersion;
+import net.raphimc.vialegacy.netty.PreNettyLengthPrepender;
+import net.raphimc.vialegacy.netty.PreNettyLengthRemover;
+import org.cloudburstmc.netty.channel.raknet.RakChannelFactory;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.Marker;
@@ -70,7 +94,7 @@ import org.slf4j.MarkerFactory;
 import ru.arixcompany.features.event.EventRepo;
 import ru.arixcompany.features.event.world.EventPacket;
 
-public class Connection extends SimpleChannelInboundHandler<Packet<?>> implements ConnectionAccessor {
+public class Connection extends SimpleChannelInboundHandler<Packet<?>> implements ConnectionAccessor,IConnection {
     private static final float AVERAGE_PACKETS_SMOOTHING = 0.75F;
     private static final Logger LOGGER = LogUtils.getLogger();
     public static final Marker ROOT_MARKER = MarkerFactory.getMarker("NETWORK");
@@ -80,7 +104,7 @@ public class Connection extends SimpleChannelInboundHandler<Packet<?>> implement
     private static final ProtocolInfo<ServerHandshakePacketListener> INITIAL_PROTOCOL = HandshakeProtocols.SERVERBOUND;
     private final PacketFlow receiving;
     private volatile boolean sendLoginDisconnect = true;
-    private final Queue<Consumer<Connection>> pendingActions = Queues.newConcurrentLinkedQueue();
+    public final Queue<Consumer<Connection>> pendingActions = Queues.newConcurrentLinkedQueue();
     private Channel channel;
     private SocketAddress address;
     private volatile @Nullable PacketListener disconnectListener;
@@ -101,14 +125,61 @@ public class Connection extends SimpleChannelInboundHandler<Packet<?>> implement
         this.receiving = p_129482_;
     }
 
-    @Override
-    public void channelActive(ChannelHandlerContext p_129525_) throws Exception {
+@Override
+public void channelActive(ChannelHandlerContext p_129525_) throws Exception {
+    if (!BedrockProtocolVersion.bedrockLatest.equals(((IConnection) this).viaFabricPlus$getTargetVersion())) {
         super.channelActive(p_129525_);
-        this.channel = p_129525_.channel();
-        this.address = this.channel.remoteAddress();
-        if (this.delayedDisconnect != null) {
-            this.disconnect(this.delayedDisconnect);
+    }
+
+    this.channel = p_129525_.channel();
+    this.address = this.channel.remoteAddress();
+    if (this.delayedDisconnect != null) {
+        this.disconnect(this.delayedDisconnect);
+    }
+}
+    @Override
+    public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
+        super.channelRegistered(ctx);
+        if (BedrockProtocolVersion.bedrockLatest.equals(((IConnection) this).viaFabricPlus$getTargetVersion())) { // Call channelActive manually when the channel is registered
+            this.channelActive(ctx);
         }
+    }
+
+    private UserConnection viaFabricPlus$userConnection;
+
+    private ProtocolVersion viaFabricPlus$serverVersion;
+
+    private Cipher viaFabricPlus$decryptionCipher;
+
+    @Override
+    public void viaFabricPlus$setupPreNettyDecryption() {
+        if (this.viaFabricPlus$decryptionCipher == null) {
+            throw new IllegalStateException("Decryption cipher is null");
+        }
+
+        this.encrypted = true;
+        // Enabling the decryption side for 1.6.4 if the 1.7 -> 1.6 protocol tells us to do
+        this.channel.pipeline().addBefore(PreNettyLengthPrepender.NAME, HandlerNames.DECRYPT, new CipherDecoder(this.viaFabricPlus$decryptionCipher));
+    }
+
+    @Override
+    public UserConnection viaFabricPlus$getUserConnection() {
+        return this.viaFabricPlus$userConnection;
+    }
+
+    @Override
+    public void viaFabricPlus$setUserConnection(UserConnection connection) {
+        this.viaFabricPlus$userConnection = connection;
+    }
+
+    @Override
+    public ProtocolVersion viaFabricPlus$getTargetVersion() {
+        return this.viaFabricPlus$serverVersion;
+    }
+
+    @Override
+    public void viaFabricPlus$setTargetVersion(final ProtocolVersion serverVersion) {
+        this.viaFabricPlus$serverVersion = serverVersion;
     }
 
     @Override
@@ -120,9 +191,18 @@ public class Connection extends SimpleChannelInboundHandler<Packet<?>> implement
     public void channelInactive(ChannelHandlerContext p_129527_) {
         this.disconnect(Component.translatable("disconnect.endOfStream"));
     }
+    @Override
+    public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
+        super.userEventTriggered(ctx, evt);
+    }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext p_129533_, Throwable p_129534_) {
+        if (DebugSettings.INSTANCE.printNetworkingErrorsToLogs.getValue()) {
+            if (!(p_129534_ instanceof SocketException) && !(p_129534_ instanceof ConnectException)) {
+                ViaFabricPlusImpl.INSTANCE.getLogger().error("An exception occurred while handling a packet", p_129534_);
+            }
+        }
         if (p_129534_ instanceof SkipPacketException) {
             LOGGER.debug("Skipping packet due to errors", p_129534_.getCause());
         } else {
@@ -323,6 +403,9 @@ public class Connection extends SimpleChannelInboundHandler<Packet<?>> implement
         }
         this.send(packet, null);
     }
+    public void sendSilent(Packet<?> packet) {
+        this.send(packet, null);
+    }
 
     public void send(Packet<?> p_298754_, @Nullable ChannelFutureListener p_406534_) {
         this.send(p_298754_, p_406534_, true);
@@ -478,7 +561,11 @@ public class Connection extends SimpleChannelInboundHandler<Packet<?>> implement
 
     public static Connection connectToServer(InetSocketAddress p_178301_, EventLoopGroupHolder p_453747_, @Nullable LocalSampleLogger p_333468_) {
         Connection connection = new Connection(PacketFlow.CLIENTBOUND);
-        if (p_333468_ != null) {
+
+        if (p_333468_ instanceof ILocalSampleLogger mixinMultiValueDebugSampleLogImpl
+                && mixinMultiValueDebugSampleLogImpl.viaFabricPlus$getForcedVersion() != null) {
+            connection.viaFabricPlus$setTargetVersion(mixinMultiValueDebugSampleLogImpl.viaFabricPlus$getForcedVersion());
+        } else if (p_333468_ != null) {
             connection.setBandwidthLogger(p_333468_);
         }
 
@@ -488,26 +575,101 @@ public class Connection extends SimpleChannelInboundHandler<Packet<?>> implement
     }
 
     public static ChannelFuture connect(InetSocketAddress p_290034_, EventLoopGroupHolder p_450865_, final Connection p_290031_) {
-        return new Bootstrap().group(p_450865_.eventLoopGroup()).handler(new ChannelInitializer<Channel>() {
-            @Override
-            protected void initChannel(Channel channel) {
-                try {
-                    channel.config().setOption(ChannelOption.TCP_NODELAY, true);
-                } catch (ChannelException ignored) {
+        ProtocolVersion targetVersion = p_290031_.viaFabricPlus$getTargetVersion();
+        if (targetVersion == null) {
+            targetVersion = ProtocolTranslator.getTargetVersion();
+        }
+        if (targetVersion == ProtocolTranslator.AUTO_DETECT_PROTOCOL) {
+            targetVersion = ProtocolTranslator.NATIVE_VERSION;
+        }
+        p_290031_.viaFabricPlus$setTargetVersion(targetVersion);
+
+        if (BedrockProtocolVersion.bedrockLatest.equals(targetVersion)
+                && (p_450865_.channelCls() == KQueueSocketChannel.class || p_290034_ instanceof NetherNetInetSocketAddress)) {
+            final EventLoopGroupHolder newEventLoopGroupHolder = EventLoopGroupHolder.remote(false);
+            newEventLoopGroupHolder.viaFabricPlus$setConnecting(p_450865_.viaFabricPlus$isConnecting());
+            p_450865_ = newEventLoopGroupHolder;
+        }
+
+        final Bootstrap bootstrap = new Bootstrap()
+                .group(p_450865_.eventLoopGroup())
+                .handler(new ChannelInitializer<Channel>() {
+                    @Override
+                    protected void initChannel(Channel channel) {
+                        try {
+                            channel.config().setOption(ChannelOption.TCP_NODELAY, true);
+                        } catch (ChannelException ignored) {
+                        }
+
+                        ChannelPipeline channelpipeline = channel.pipeline().addLast("timeout", new ReadTimeoutHandler(30));
+                        Connection.configureSerialization(channelpipeline, PacketFlow.CLIENTBOUND, false, p_290031_.bandwidthDebugMonitor);
+                        p_290031_.configurePacketHandler(channelpipeline);
+                        ProtocolTranslator.injectViaPipeline(p_290031_, channel);
+                    }
+                });
+
+        if (BedrockProtocolVersion.bedrockLatest.equals(targetVersion)) {
+            if (p_290034_ instanceof NetherNetInetSocketAddress netherNetAddress) {
+                final String authorizationHeader = SaveManager.INSTANCE.getAccountsSave()
+                        .getBedrockAccount()
+                        .getMinecraftSession()
+                        .getUpToDateUnchecked()
+                        .getAuthorizationHeader();
+
+                if (netherNetAddress.getNetherNetAddress() instanceof NetherNetJsonRpcAddress) {
+                    bootstrap.channelFactory(NetherNetChannelFactory.client(
+                            new PeerConnectionFactory(),
+                            new NetherNetXboxRpcSignaling(authorizationHeader)
+                    ));
+                } else {
+                    bootstrap.channelFactory(NetherNetChannelFactory.client(
+                            new PeerConnectionFactory(),
+                            new NetherNetXboxSignaling(authorizationHeader)
+                    ));
                 }
+            } else {
+                Class<? extends Channel> channelTypeClass = p_450865_.channelCls();
 
-                ChannelPipeline channelpipeline = channel.pipeline().addLast("timeout", new ReadTimeoutHandler(30));
-                Connection.configureSerialization(channelpipeline, PacketFlow.CLIENTBOUND, false, p_290031_.bandwidthDebugMonitor);
-
-                p_290031_.configurePacketHandler(channelpipeline);
-
-                if (channel instanceof SocketChannel && ViaLoadingBase.getInstance().getTargetVersion().getVersion() != SharedConstants.getProtocolVersion()) {
-                    final UserConnection user = new UserConnectionImpl(channel, true);
-                    new ProtocolPipelineImpl(user);
-                    channel.pipeline().addBefore("packet_handler", "via_mcp_pipeline", new MCPVLBPipeline(user));
+                if (channelTypeClass == NioSocketChannel.class) {
+                    bootstrap.channelFactory(RakChannelFactory.client(NioDatagramChannel.class));
+                } else if (channelTypeClass == EpollSocketChannel.class) {
+                    bootstrap.channelFactory(RakChannelFactory.client(EpollDatagramChannel.class));
+                } else {
+                    throw new IllegalStateException("Unsupported channel type for RakNet: " + channelTypeClass);
                 }
             }
-        }).channel(p_450865_.channelCls()).connect(p_290034_.getAddress(), p_290034_.getPort());
+        } else {
+            bootstrap.channel(p_450865_.channelCls());
+        }
+
+        if (BedrockProtocolVersion.bedrockLatest.equals(targetVersion)) {
+            if (p_290034_ instanceof NetherNetInetSocketAddress netherNetAddress) {
+                return bootstrap.connect(netherNetAddress.getNetherNetAddress())
+                        .addListeners(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE, (ChannelFutureListener) f -> {
+                            if (f.isSuccess()) {
+                                f.channel().pipeline().remove(MessageCodec.NAME);
+                            }
+                        });
+            } else if (!p_450865_.viaFabricPlus$isConnecting()) {
+                return bootstrap.register().syncUninterruptibly().channel().bind(new InetSocketAddress(0))
+                        .addListeners(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE, (ChannelFutureListener) f -> {
+                            if (f.isSuccess()) {
+                                f.channel().pipeline().replace(
+                                        MessageCodec.NAME,
+                                        RakNetPingEncapsulationCodec.NAME,
+                                        new RakNetPingEncapsulationCodec(new InetSocketAddress(p_290034_.getAddress(), p_290034_.getPort()))
+                                );
+                                f.channel().pipeline().remove(PacketCodec.NAME);
+                                f.channel().pipeline().remove(HandlerNames.SPLITTER);
+
+                                UserConnection user = p_290031_.viaFabricPlus$getUserConnection();
+                                user.getProtocolInfo().getPipeline().add(RakNetStatusProtocol.INSTANCE);
+                            }
+                        });
+            }
+        }
+
+        return bootstrap.connect(p_290034_.getAddress(), p_290034_.getPort());
     }
 
     private static String outboundHandlerName(boolean p_334174_) {
@@ -568,6 +730,23 @@ public class Connection extends SimpleChannelInboundHandler<Packet<?>> implement
     }
 
     public void setEncryptionKey(Cipher p_129496_, Cipher p_129497_) {
+        if (this.viaFabricPlus$serverVersion != null
+                && this.viaFabricPlus$serverVersion.olderThanOrEqualTo(LegacyProtocolVersion.r1_6_4)) {
+            // Minecraft's encryption code is bad for us, we need to reorder the pipeline
+
+            // сохраняем decryption cipher на потом
+            this.viaFabricPlus$decryptionCipher = p_129496_;
+
+            // включаем только encryption side
+            if (p_129497_ == null) {
+                throw new IllegalStateException("Encryption cipher is null");
+            }
+
+            this.encrypted = true;
+            this.channel.pipeline().addBefore(PreNettyLengthRemover.NAME, HandlerNames.ENCRYPT, new CipherEncoder(p_129497_));
+            return;
+        }
+
         this.encrypted = true;
         this.channel.pipeline().addBefore("splitter", "decrypt", new CipherDecoder(p_129496_));
         this.channel.pipeline().addBefore("prepender", "encrypt", new CipherEncoder(p_129497_));
@@ -612,7 +791,6 @@ public class Connection extends SimpleChannelInboundHandler<Packet<?>> implement
             } else {
                 this.channel.pipeline().addAfter("prepender", "compress", new CompressionEncoder(p_129485_));
             }
-            this.channel.pipeline().fireUserEventTriggered(new CompressionReorderEvent());
         } else {
             if (this.channel.pipeline().get("decompress") instanceof CompressionDecoder) {
                 this.channel.pipeline().remove("decompress");
@@ -621,6 +799,13 @@ public class Connection extends SimpleChannelInboundHandler<Packet<?>> implement
             if (this.channel.pipeline().get("compress") instanceof CompressionEncoder) {
                 this.channel.pipeline().remove("compress");
             }
+        }
+
+        // Перенос из миксина
+        if (this.channel != null
+                && this.channel.pipeline().get("compress") != null
+                && this.channel.pipeline().get("decompress") != null) {
+            ViaChannelInitializer.reorderPipeline(this.channel.pipeline(), "compress", "decompress");
         }
     }
 

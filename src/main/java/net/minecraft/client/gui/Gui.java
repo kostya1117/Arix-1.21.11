@@ -95,7 +95,7 @@ import ru.arixcompany.features.event.render.EventRender2D;
 import ru.arixcompany.features.module.modules.render.Animations;
 import ru.arixcompany.features.module.modules.render.NoRender;
 import ru.arixcompany.utils.animation.Animation;
-import ru.arixcompany.utils.animation.impl.EaseInOutQuad;
+import ru.arixcompany.utils.animation.impl.quad.EaseInOutQuad;
 
 public class Gui {
     private static final Identifier CROSSHAIR_SPRITE = Identifier.withDefaultNamespace("hud/crosshair");
@@ -231,6 +231,11 @@ public class Gui {
                 this.renderScoreboardSidebar(p_282884_, p_342095_);
                 this.renderOverlayMessage(p_282884_, p_342095_);
                 this.renderTitle(p_282884_, p_342095_);
+                if (!(this.minecraft.screen instanceof ChatScreen)) {
+                    renderDraggableOverlay(p_282884_, p_342095_);
+                } else {
+                    renderArmorHudOnly(p_282884_, p_342095_);
+                }
                 this.renderChat(p_282884_, p_342095_);
                 this.renderTabList(p_282884_, p_342095_);
                 this.renderSubtitleOverlay(p_282884_,
@@ -238,15 +243,9 @@ public class Gui {
             } else if (this.minecraft.screen != null && this.minecraft.screen.isInGameUi()) {
                 this.renderSubtitleOverlay(p_282884_, true);
             }
-        }
 
-        if (!(this.minecraft.screen instanceof ChatScreen)) {
-            renderDraggableOverlay(p_282884_, p_342095_);
-        } else {
-            renderArmorHudOnly(p_282884_, p_342095_);
+            EventRepo.call(new EventRender2D(p_282884_));
         }
-
-        EventRepo.call(new EventRender2D(p_282884_));
     }
 
     private void renderArmorHudOnly(GuiGraphics graphics, DeltaTracker delta) {

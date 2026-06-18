@@ -3,6 +3,9 @@ package net.minecraft.world.level.block;
 import com.mojang.serialization.MapCodec;
 import java.util.Arrays;
 import java.util.UUID;
+
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.CommonComponents;
@@ -16,8 +19,7 @@ import net.minecraft.util.Util;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.SignApplicator;
+import net.minecraft.world.item.*;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
@@ -89,8 +91,25 @@ public abstract class SignBlock extends BaseEntityBlock implements SimpleWaterlo
 
     @Override
     protected InteractionResult useItemOn(
-        ItemStack p_333491_, BlockState p_331465_, Level p_334341_, BlockPos p_330848_, Player p_330127_, InteractionHand p_331896_, BlockHitResult p_335647_
+            ItemStack p_333491_, BlockState p_331465_, Level p_334341_, BlockPos p_330848_, Player p_330127_, InteractionHand p_331896_, BlockHitResult p_335647_
     ) {
+        // ViaFabricPlus - old sign interaction behavior on client
+        if (p_334341_.isClientSide()) {
+            if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_14_4)) {
+                // <= 1.14.4 doesn't have any sign interactions
+                return InteractionResult.SUCCESS;
+            } else if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_19_4)) {
+                // Revert 1.19.4 -> 1.20 sign interaction changes and ignore wax logic on client
+                final ItemStack itemStack = p_330127_.getItemInHand(p_331896_);
+                final Item item = itemStack.getItem();
+                final boolean isSuccess =
+                        (item instanceof DyeItem || itemStack.is(Items.GLOW_INK_SAC) || itemStack.is(Items.INK_SAC))
+                                && p_330127_.mayBuild();
+
+                return isSuccess ? InteractionResult.SUCCESS : InteractionResult.CONSUME;
+            }
+        }
+
         if (p_334341_.getBlockEntity(p_330848_) instanceof SignBlockEntity signblockentity) {
             SignApplicator signapplicator1 = p_333491_.getItem() instanceof SignApplicator signapplicator ? signapplicator : null;
             boolean flag1 = signapplicator1 != null && p_330127_.mayBuild();
@@ -98,11 +117,11 @@ public abstract class SignBlock extends BaseEntityBlock implements SimpleWaterlo
                 if (flag1 && !signblockentity.isWaxed() && !this.otherPlayerIsEditingSign(p_330127_, signblockentity)) {
                     boolean flag = signblockentity.isFacingFrontText(p_330127_);
                     if (signapplicator1.canApplyToSign(signblockentity.getText(flag), p_330127_)
-                        && signapplicator1.tryApplyToSign(serverlevel, signblockentity, flag, p_330127_)) {
+                            && signapplicator1.tryApplyToSign(serverlevel, signblockentity, flag, p_330127_)) {
                         signblockentity.executeClickCommandsIfPresent(serverlevel, p_330127_, p_330848_, flag);
                         p_330127_.awardStat(Stats.ITEM_USED.get(p_333491_.getItem()));
                         serverlevel.gameEvent(
-                            GameEvent.BLOCK_CHANGE, signblockentity.getBlockPos(), GameEvent.Context.of(p_330127_, signblockentity.getBlockState())
+                                GameEvent.BLOCK_CHANGE, signblockentity.getBlockPos(), GameEvent.Context.of(p_330127_, signblockentity.getBlockState())
                         );
                         p_333491_.consume(1, p_330127_);
                         return InteractionResult.SUCCESS;

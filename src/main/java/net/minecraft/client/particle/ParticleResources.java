@@ -3,6 +3,7 @@ package net.minecraft.client.particle;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 import com.mojang.logging.LogUtils;
+import com.viaversion.viafabricplus.features.footstep_particle.FootStepParticle1_12_2;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import java.io.IOException;
@@ -171,6 +172,7 @@ public class ParticleResources implements PreparableReloadListener {
         this.register(ParticleTypes.OMINOUS_SPAWNING, FlyStraightTowardsParticle.OminousSpawnProvider::new);
         this.register(ParticleTypes.BLOCK_CRUMBLE, new TerrainParticle.CrumblingProvider());
         this.register(ParticleTypes.FIREFLY, FireflyParticle.FireflyProvider::new);
+        this.register(ParticleTypes.FOOTSTEP, FootStepParticle1_12_2.Factory::new);
     }
 
     private <T extends ParticleOptions> void register(ParticleType<T> p_427222_, ParticleProvider<T> p_423729_) {

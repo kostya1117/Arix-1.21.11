@@ -2,7 +2,7 @@ package ru.arixcompany.features.module;
 
 import lombok.Getter;
 import ru.arixcompany.utils.animation.Animation;
-import ru.arixcompany.utils.animation.impl.EaseInOutQuad;
+import ru.arixcompany.utils.animation.impl.quad.EaseInOutQuad;
 
 import java.awt.*;
 

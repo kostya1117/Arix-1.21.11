@@ -1,6 +1,7 @@
 package net.minecraft.world.level.block;
 
 import com.mojang.serialization.MapCodec;
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.tags.FluidTags;
@@ -23,13 +24,18 @@ import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.raphimc.viabedrock.api.BedrockProtocolVersion;
 import org.jspecify.annotations.Nullable;
 
 public class ConduitBlock extends BaseEntityBlock implements SimpleWaterloggedBlock {
     public static final MapCodec<ConduitBlock> CODEC = simpleCodec(ConduitBlock::new);
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
     private static final VoxelShape SHAPE = Block.cube(6.0);
+
+    // ViaFabricPlus - Bedrock conduit shape
+    private static final VoxelShape BEDROCK_SHAPE = Shapes.box(0.25, 0, 0.25, 0.75, 0.5, 0.75);
 
     @Override
     public MapCodec<ConduitBlock> codec() {
@@ -52,7 +58,7 @@ public class ConduitBlock extends BaseEntityBlock implements SimpleWaterloggedBl
     }
 
     @Override
-    public <T extends BlockEntity>  BlockEntityTicker<T> getTicker(Level p_153094_, BlockState p_153095_, BlockEntityType<T> p_153096_) {
+    public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(Level p_153094_, BlockState p_153095_, BlockEntityType<T> p_153096_) {
         return createTickerHelper(p_153096_, BlockEntityType.CONDUIT, p_153094_.isClientSide() ? ConduitBlockEntity::clientTick : ConduitBlockEntity::serverTick);
     }
 
@@ -63,14 +69,14 @@ public class ConduitBlock extends BaseEntityBlock implements SimpleWaterloggedBl
 
     @Override
     protected BlockState updateShape(
-        BlockState p_52111_,
-        LevelReader p_365158_,
-        ScheduledTickAccess p_367818_,
-        BlockPos p_52115_,
-        Direction p_52112_,
-        BlockPos p_52116_,
-        BlockState p_52113_,
-        RandomSource p_361587_
+            BlockState p_52111_,
+            LevelReader p_365158_,
+            ScheduledTickAccess p_367818_,
+            BlockPos p_52115_,
+            Direction p_52112_,
+            BlockPos p_52116_,
+            BlockState p_52113_,
+            RandomSource p_361587_
     ) {
         if (p_52111_.getValue(WATERLOGGED)) {
             p_367818_.scheduleTick(p_52115_, Fluids.WATER, Fluids.WATER.getTickDelay(p_365158_));
@@ -81,11 +87,26 @@ public class ConduitBlock extends BaseEntityBlock implements SimpleWaterloggedBl
 
     @Override
     protected VoxelShape getShape(BlockState p_52122_, BlockGetter p_52123_, BlockPos p_52124_, CollisionContext p_52125_) {
+        // ViaFabricPlus - Bedrock conduit shape
+        if (ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.bedrockLatest)) {
+            return BEDROCK_SHAPE;
+        }
+
         return SHAPE;
     }
 
     @Override
-    public  BlockState getStateForPlacement(BlockPlaceContext p_52096_) {
+    public VoxelShape getOcclusionShape(BlockState state) {
+        // ViaFabricPlus - Bedrock conduit occlusion shape
+        if (ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.bedrockLatest)) {
+            return SHAPE;
+        }
+
+        return super.getOcclusionShape(state);
+    }
+
+    @Override
+    public @Nullable BlockState getStateForPlacement(BlockPlaceContext p_52096_) {
         FluidState fluidstate = p_52096_.getLevel().getFluidState(p_52096_.getClickedPos());
         return this.defaultBlockState().setValue(WATERLOGGED, fluidstate.is(FluidTags.WATER) && fluidstate.getAmount() == 8);
     }

@@ -18,6 +18,7 @@
  */
 package ru.arixcompany.features.module.modules.combat.aura.aiming;
 
+import net.minecraft.world.entity.Entity;
 import ru.arixcompany.features.module.modules.combat.aura.aiming.data.Rotation;
 import ru.arixcompany.features.module.modules.combat.aura.aiming.features.MovementCorrection;
 import ru.arixcompany.features.module.modules.combat.aura.aiming.features.processors.RotationProcessor;
@@ -35,6 +36,7 @@ import java.util.List;
 public class RotationTarget implements IMinecraft {
 
     public final Rotation rotation;
+    public Entity entity = null;
 
     /**
      * The rotation processors which are being used to calculate the next rotation.
@@ -61,19 +63,19 @@ public class RotationTarget implements IMinecraft {
      */
     public final MovementCorrection movementCorrection;
 
-    public RotationTarget(Rotation rotation,
-                          List<RotationProcessor> processors,
+    public RotationTarget(Rotation rotation,Entity entity,List<RotationProcessor> processors,
                           int ticksUntilReset,
                           float resetThreshold) {
-        this(rotation, processors, ticksUntilReset, resetThreshold, MovementCorrection.SILENT);
+        this(rotation,entity, processors, ticksUntilReset, resetThreshold, MovementCorrection.SILENT);
     }
 
-    public RotationTarget(Rotation rotation,
+    public RotationTarget(Rotation rotation,Entity entity,
                           List<RotationProcessor> processors,
                           int ticksUntilReset,
                           float resetThreshold,
                           MovementCorrection movementCorrection) {
         this.rotation           = rotation;
+        this.entity = entity;
         this.processors         = processors;
         this.ticksUntilReset    = ticksUntilReset;
         this.resetThreshold     = resetThreshold;
@@ -89,6 +91,7 @@ public class RotationTarget implements IMinecraft {
      */
     public Rotation towards(Rotation currentRotation, boolean isResetting) {
         if (isResetting) {
+            entity = null;
             return process(currentRotation, new Rotation(mc.gameRenderer.getMainCamera().yRot(),mc.gameRenderer.getMainCamera().xRot()));
         }
         return process(currentRotation, rotation);

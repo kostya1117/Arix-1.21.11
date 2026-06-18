@@ -7,8 +7,11 @@ import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
 import javax.naming.directory.DirContext;
 import javax.naming.directory.InitialDirContext;
+
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.raphimc.vialegacy.api.LegacyProtocolVersion;
 import org.slf4j.Logger;
 
 @FunctionalInterface
@@ -35,6 +38,10 @@ public interface ServerRedirectHandler {
         }
 
         return p_171900_ -> {
+            if (ProtocolTranslator.getTargetVersion().olderThan(LegacyProtocolVersion.r1_3_1tor1_3_2)) {
+                return Optional.empty();
+            }
+
             if (p_171900_.getPort() == 25565) {
                 try {
                     Attributes attributes = dircontext.getAttributes("_minecraft._tcp." + p_171900_.getHost(), new String[]{"SRV"});

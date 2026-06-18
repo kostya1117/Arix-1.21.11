@@ -39,7 +39,7 @@ import ru.arixcompany.features.repos.FriendRepo;
 import ru.arixcompany.utils.Colors;
 import ru.arixcompany.utils.animation.Animation;
 import ru.arixcompany.utils.animation.Direction;
-import ru.arixcompany.utils.animation.impl.EaseInOutQuad;
+import ru.arixcompany.utils.animation.impl.quad.EaseInOutQuad;
 
 public class PlayerTabOverlay {
     private static final Identifier PING_UNKNOWN_SPRITE = Identifier.withDefaultNamespace("icon/ping_unknown");

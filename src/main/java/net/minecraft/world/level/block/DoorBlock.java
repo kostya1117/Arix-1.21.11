@@ -3,6 +3,7 @@ package net.minecraft.world.level.block;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.mojang.serialization.codecs.RecordCodecBuilder.Instance;
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
 import java.util.Map;
 import java.util.function.BiConsumer;
 import net.minecraft.core.BlockPos;
@@ -39,12 +40,13 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.raphimc.viabedrock.api.BedrockProtocolVersion;
 import org.jspecify.annotations.Nullable;
 
 public class DoorBlock extends Block {
     public static final MapCodec<DoorBlock> CODEC = RecordCodecBuilder.mapCodec(
-        p_422106_ -> p_422106_.group(BlockSetType.CODEC.fieldOf("block_set_type").forGetter(DoorBlock::type), propertiesCodec())
-            .apply(p_422106_, DoorBlock::new)
+            p_422106_ -> p_422106_.group(BlockSetType.CODEC.fieldOf("block_set_type").forGetter(DoorBlock::type), propertiesCodec())
+                    .apply(p_422106_, DoorBlock::new)
     );
     public static final EnumProperty<Direction> FACING = HorizontalDirectionalBlock.FACING;
     public static final EnumProperty<DoubleBlockHalf> HALF = BlockStateProperties.DOUBLE_BLOCK_HALF;
@@ -53,6 +55,14 @@ public class DoorBlock extends Block {
     public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
     private static final Map<Direction, VoxelShape> SHAPES = Shapes.rotateHorizontal(Block.boxZ(16.0, 13.0, 16.0));
     private final BlockSetType type;
+
+    // ViaFabricPlus - Bedrock door shapes
+    private static final Map<Direction, VoxelShape> BEDROCK_SHAPES = Map.of(
+            Direction.NORTH, Shapes.box(0, 0, 0.8175, 1, 1, 1),
+            Direction.SOUTH, Shapes.box(0, 0, 0, 1, 1, 0.1825),
+            Direction.WEST, Shapes.box(0.8175, 0, 0, 1, 1, 1),
+            Direction.EAST, Shapes.box(0, 0, 0, 0.1825, 1, 1)
+    );
 
     @Override
     public MapCodec<? extends DoorBlock> codec() {
@@ -63,13 +73,13 @@ public class DoorBlock extends Block {
         super(p_273303_.sound(p_272854_.soundType()));
         this.type = p_272854_;
         this.registerDefaultState(
-            this.stateDefinition
-                .any()
-                .setValue(FACING, Direction.NORTH)
-                .setValue(OPEN, false)
-                .setValue(HINGE, DoorHingeSide.LEFT)
-                .setValue(POWERED, false)
-                .setValue(HALF, DoubleBlockHalf.LOWER)
+                this.stateDefinition
+                        .any()
+                        .setValue(FACING, Direction.NORTH)
+                        .setValue(OPEN, false)
+                        .setValue(HINGE, DoorHingeSide.LEFT)
+                        .setValue(POWERED, false)
+                        .setValue(HALF, DoubleBlockHalf.LOWER)
         );
     }
 
@@ -81,31 +91,47 @@ public class DoorBlock extends Block {
     protected VoxelShape getShape(BlockState p_52807_, BlockGetter p_52808_, BlockPos p_52809_, CollisionContext p_52810_) {
         Direction direction = p_52807_.getValue(FACING);
         Direction direction1 = p_52807_.getValue(OPEN)
-            ? (p_52807_.getValue(HINGE) == DoorHingeSide.RIGHT ? direction.getCounterClockWise() : direction.getClockWise())
-            : direction;
+                ? (p_52807_.getValue(HINGE) == DoorHingeSide.RIGHT ? direction.getCounterClockWise() : direction.getClockWise())
+                : direction;
+
+        // ViaFabricPlus - Bedrock door shape
+        if (ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.bedrockLatest)) {
+            return BEDROCK_SHAPES.get(direction1);
+        }
+
         return SHAPES.get(direction1);
     }
 
     @Override
+    public VoxelShape getOcclusionShape(BlockState state) {
+        // ViaFabricPlus - Bedrock door occlusion shape
+        if (ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.bedrockLatest)) {
+            return SHAPES.get(state.getValue(FACING));
+        }
+
+        return super.getOcclusionShape(state);
+    }
+
+    @Override
     protected BlockState updateShape(
-        BlockState p_52796_,
-        LevelReader p_360873_,
-        ScheduledTickAccess p_361225_,
-        BlockPos p_52800_,
-        Direction p_52797_,
-        BlockPos p_52801_,
-        BlockState p_52798_,
-        RandomSource p_367859_
+            BlockState p_52796_,
+            LevelReader p_360873_,
+            ScheduledTickAccess p_361225_,
+            BlockPos p_52800_,
+            Direction p_52797_,
+            BlockPos p_52801_,
+            BlockState p_52798_,
+            RandomSource p_367859_
     ) {
         DoubleBlockHalf doubleblockhalf = p_52796_.getValue(HALF);
         if (p_52797_.getAxis() != Direction.Axis.Y || doubleblockhalf == DoubleBlockHalf.LOWER != (p_52797_ == Direction.UP)) {
             return doubleblockhalf == DoubleBlockHalf.LOWER && p_52797_ == Direction.DOWN && !p_52796_.canSurvive(p_360873_, p_52800_)
-                ? Blocks.AIR.defaultBlockState()
-                : super.updateShape(p_52796_, p_360873_, p_361225_, p_52800_, p_52797_, p_52801_, p_52798_, p_367859_);
+                    ? Blocks.AIR.defaultBlockState()
+                    : super.updateShape(p_52796_, p_360873_, p_361225_, p_52800_, p_52797_, p_52801_, p_52798_, p_367859_);
         } else {
             return p_52798_.getBlock() instanceof DoorBlock && p_52798_.getValue(HALF) != doubleblockhalf
-                ? p_52798_.setValue(HALF, doubleblockhalf)
-                : Blocks.AIR.defaultBlockState();
+                    ? p_52798_.setValue(HALF, doubleblockhalf)
+                    : Blocks.AIR.defaultBlockState();
         }
     }
 
@@ -142,11 +168,11 @@ public class DoorBlock extends Block {
         if (blockpos.getY() < level.getMaxY() && level.getBlockState(blockpos.above()).canBeReplaced(p_52739_)) {
             boolean flag = level.hasNeighborSignal(blockpos) || level.hasNeighborSignal(blockpos.above());
             return this.defaultBlockState()
-                .setValue(FACING, p_52739_.getHorizontalDirection())
-                .setValue(HINGE, this.getHinge(p_52739_))
-                .setValue(POWERED, flag)
-                .setValue(OPEN, flag)
-                .setValue(HALF, DoubleBlockHalf.LOWER);
+                    .setValue(FACING, p_52739_.getHorizontalDirection())
+                    .setValue(HINGE, this.getHinge(p_52739_))
+                    .setValue(POWERED, flag)
+                    .setValue(OPEN, flag)
+                    .setValue(HALF, DoubleBlockHalf.LOWER);
         } else {
             return null;
         }
@@ -173,9 +199,9 @@ public class DoorBlock extends Block {
         BlockPos blockpos5 = blockpos1.relative(direction2);
         BlockState blockstate3 = blockgetter.getBlockState(blockpos5);
         int i = (blockstate.isCollisionShapeFullBlock(blockgetter, blockpos2) ? -1 : 0)
-            + (blockstate1.isCollisionShapeFullBlock(blockgetter, blockpos3) ? -1 : 0)
-            + (blockstate2.isCollisionShapeFullBlock(blockgetter, blockpos4) ? 1 : 0)
-            + (blockstate3.isCollisionShapeFullBlock(blockgetter, blockpos5) ? 1 : 0);
+                + (blockstate1.isCollisionShapeFullBlock(blockgetter, blockpos3) ? -1 : 0)
+                + (blockstate2.isCollisionShapeFullBlock(blockgetter, blockpos4) ? 1 : 0)
+                + (blockstate3.isCollisionShapeFullBlock(blockgetter, blockpos5) ? 1 : 0);
         boolean flag = blockstate.getBlock() instanceof DoorBlock && blockstate.getValue(HALF) == DoubleBlockHalf.LOWER;
         boolean flag1 = blockstate2.getBlock() instanceof DoorBlock && blockstate2.getValue(HALF) == DoubleBlockHalf.LOWER;
         if ((!flag || flag1) && i <= 0) {
@@ -186,8 +212,8 @@ public class DoorBlock extends Block {
                 double d0 = vec3.x - blockpos.getX();
                 double d1 = vec3.z - blockpos.getZ();
                 return (j >= 0 || !(d1 < 0.5)) && (j <= 0 || !(d1 > 0.5)) && (k >= 0 || !(d0 > 0.5)) && (k <= 0 || !(d0 < 0.5))
-                    ? DoorHingeSide.LEFT
-                    : DoorHingeSide.RIGHT;
+                        ? DoorHingeSide.LEFT
+                        : DoorHingeSide.RIGHT;
             } else {
                 return DoorHingeSide.LEFT;
             }
@@ -224,7 +250,7 @@ public class DoorBlock extends Block {
     @Override
     protected void neighborChanged(BlockState p_52776_, Level p_52777_, BlockPos p_52778_, Block p_52779_, @Nullable Orientation p_369522_, boolean p_52781_) {
         boolean flag = p_52777_.hasNeighborSignal(p_52778_)
-            || p_52777_.hasNeighborSignal(p_52778_.relative(p_52776_.getValue(HALF) == DoubleBlockHalf.LOWER ? Direction.UP : Direction.DOWN));
+                || p_52777_.hasNeighborSignal(p_52778_.relative(p_52776_.getValue(HALF) == DoubleBlockHalf.LOWER ? Direction.UP : Direction.DOWN));
         if (!this.defaultBlockState().is(p_52779_) && flag != p_52776_.getValue(POWERED)) {
             if (flag != p_52776_.getValue(OPEN)) {
                 this.playSound(null, p_52777_, p_52778_, flag);
@@ -244,12 +270,12 @@ public class DoorBlock extends Block {
 
     private void playSound(@Nullable Entity p_251616_, Level p_249656_, BlockPos p_249439_, boolean p_251628_) {
         p_249656_.playSound(
-            p_251616_,
-            p_249439_,
-            p_251628_ ? this.type.doorOpen() : this.type.doorClose(),
-            SoundSource.BLOCKS,
-            1.0F,
-            p_249656_.getRandom().nextFloat() * 0.1F + 0.9F
+                p_251616_,
+                p_249439_,
+                p_251628_ ? this.type.doorOpen() : this.type.doorClose(),
+                SoundSource.BLOCKS,
+                1.0F,
+                p_249656_.getRandom().nextFloat() * 0.1F + 0.9F
         );
     }
 
@@ -266,7 +292,7 @@ public class DoorBlock extends Block {
     @Override
     protected long getSeed(BlockState p_52793_, BlockPos p_52794_) {
         return Mth.getSeed(
-            p_52794_.getX(), p_52794_.below(p_52793_.getValue(HALF) == DoubleBlockHalf.LOWER ? 0 : 1).getY(), p_52794_.getZ()
+                p_52794_.getX(), p_52794_.below(p_52793_.getValue(HALF) == DoubleBlockHalf.LOWER ? 0 : 1).getY(), p_52794_.getZ()
         );
     }
 

@@ -2,6 +2,9 @@ package net.minecraft.world.level.block;
 
 import com.mojang.serialization.MapCodec;
 import java.util.function.Function;
+
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -39,6 +42,11 @@ public class PitcherCropBlock extends DoublePlantBlock implements BonemealableBl
     private static final VoxelShape SHAPE_BULB = Block.column(6.0, -1.0, 3.0);
     private static final VoxelShape SHAPE_CROP = Block.column(10.0, -1.0, 5.0);
     private final Function<BlockState, VoxelShape> shapes = this.makeShapes();
+    private static final VoxelShape viaFabricPlus$grown_upper_outline_shape_r1_21_4 = Block.box(3.0, 0.0, 3.0, 13.0, 15.0, 13.0);
+    private static final VoxelShape viaFabricPlus$grown_lower_outline_shape_r1_21_4 = Block.box(3.0, -1.0, 3.0, 13.0, 16.0, 13.0);
+    private static final VoxelShape[] viaFabricPlus$upper_outline_shapes_r1_21_4 = new VoxelShape[]{Block.box(3.0, 0.0, 3.0, 13.0, 11.0, 13.0), viaFabricPlus$grown_upper_outline_shape_r1_21_4};
+    private static final VoxelShape[] viaFabricPlus$lower_outline_shapes_r1_21_4 = new VoxelShape[]{SHAPE_BULB, Block.box(3.0, -1.0, 3.0, 13.0, 14.0, 13.0), viaFabricPlus$grown_lower_outline_shape_r1_21_4, viaFabricPlus$grown_lower_outline_shape_r1_21_4, viaFabricPlus$grown_lower_outline_shape_r1_21_4};
+
 
     @Override
     public MapCodec<PitcherCropBlock> codec() {
@@ -69,11 +77,26 @@ public class PitcherCropBlock extends DoublePlantBlock implements BonemealableBl
 
     @Override
     public VoxelShape getShape(BlockState p_277602_, BlockGetter p_277617_, BlockPos p_278005_, CollisionContext p_277514_) {
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_21_4)) {
+            final int age = p_277602_.getValue(AGE);
+            if (p_277602_.getValue(HALF) == DoubleBlockHalf.UPPER) {
+               return (viaFabricPlus$upper_outline_shapes_r1_21_4[Math.min(Math.abs(4 - (age + 1)), viaFabricPlus$upper_outline_shapes_r1_21_4.length - 1)]);
+            } else {
+                return (viaFabricPlus$lower_outline_shapes_r1_21_4[age]);
+            }
+        }
         return this.shapes.apply(p_277602_);
     }
 
     @Override
     public VoxelShape getCollisionShape(BlockState p_277609_, BlockGetter p_277398_, BlockPos p_278042_, CollisionContext p_277995_) {
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_21_4)) {
+            if (p_277609_.getValue(AGE) == 0) {
+                return (SHAPE_BULB);
+            } else {
+                return (p_277609_.getValue(HALF) == DoubleBlockHalf.LOWER ? SHAPE_CROP : super.getCollisionShape(p_277609_, p_277398_, p_278042_, p_277995_));
+            }
+        }
         if (p_277609_.getValue(HALF) == DoubleBlockHalf.LOWER) {
             return p_277609_.getValue(AGE) == 0 ? SHAPE_BULB : SHAPE_CROP;
         } else {

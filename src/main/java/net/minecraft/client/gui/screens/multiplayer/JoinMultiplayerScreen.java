@@ -4,7 +4,12 @@ import com.mojang.logging.LogUtils;
 
 import java.util.List;
 
-import de.florianmichael.viamcp.ViaMCP;
+import com.viaversion.viafabricplus.injection.access.base.IServerData;
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viafabricplus.screen.impl.ProtocolSelectionScreen;
+import com.viaversion.viafabricplus.settings.impl.BedrockSettings;
+import com.viaversion.viafabricplus.settings.impl.GeneralSettings;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import net.minecraft.client.gui.components.*;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.layouts.HeaderAndFooterLayout;
@@ -77,9 +82,6 @@ public class JoinMultiplayerScreen extends Screen {
                 serverselectionlist$entry.join();
             }
         }).width(100).build());
-        if (ViaMCP.INSTANCE.getAsyncVersionSlider() != null) { // Добавьте проверку на null
-            this.addRenderableWidget(ViaMCP.INSTANCE.getAsyncVersionSlider());
-        }
         linearlayout1.addChild(Button.builder(Component.translatable("selectServer.direct"), p_296191_ -> {
             this.editingServer = new ServerData(I18n.get("selectServer.defaultName"), "", ServerData.Type.OTHER);
             this.minecraft.setScreen(new DirectJoinServerScreen(this, this::directJoinCallback, this.editingServer));
@@ -118,6 +120,7 @@ public class JoinMultiplayerScreen extends Screen {
         this.repositionElements();
         this.onSelectedChange();
     }
+    private Button viaFabricPlus$button;
 
     @Override
     protected void repositionElements() {
@@ -125,6 +128,19 @@ public class JoinMultiplayerScreen extends Screen {
         if (this.serverSelectionList != null) {
             this.serverSelectionList.updateSize(this.width, this.layout);
         }
+        final int buttonPosition = GeneralSettings.INSTANCE.multiplayerScreenButtonOrientation.getIndex();
+        if (buttonPosition == 0) { // Off
+            return;
+        }
+
+        if (viaFabricPlus$button == null) {
+            viaFabricPlus$button = Button
+                    .builder(Component.nullToEmpty("ViaFabricPlus"), button -> ProtocolSelectionScreen.INSTANCE.open(this))
+                    .size(98, 20)
+                    .build();
+            this.addRenderableWidget(viaFabricPlus$button);
+        }
+        GeneralSettings.setOrientation(viaFabricPlus$button::setPosition, buttonPosition, width, height);
     }
 
     @Override
@@ -208,8 +224,10 @@ public class JoinMultiplayerScreen extends Screen {
             if (serverdata == null) {
                 this.servers.add(this.editingServer, true);
                 this.servers.save();
+                ((IServerData) this.editingServer).viaFabricPlus$passDirectConnectScreen(true);
                 this.join(this.editingServer);
             } else {
+                ((IServerData) serverdata).viaFabricPlus$passDirectConnectScreen(true);
                 this.join(serverdata);
             }
         } else {
@@ -230,7 +248,16 @@ public class JoinMultiplayerScreen extends Screen {
     }
 
     public void join(ServerData p_99703_) {
-        ConnectScreen.startConnecting(this, this.minecraft, ServerAddress.parseString(p_99703_.ip), p_99703_, false, null);
+        final IServerData mixinServerInfo = (IServerData) p_99703_;
+        ProtocolVersion version;
+        if (mixinServerInfo.viaFabricPlus$passedDirectConnectScreen()) {
+            version = ProtocolTranslator.getTargetVersion();
+        } else {
+            version = mixinServerInfo.viaFabricPlus$forcedVersion();
+        }
+        ServerAddress serverAddress = ServerAddress.parseString(BedrockSettings.replaceDefaultPort(p_99703_.ip, version));
+
+        ConnectScreen.startConnecting(this, this.minecraft, serverAddress, p_99703_, false, null);
     }
 
     protected void onSelectedChange() {

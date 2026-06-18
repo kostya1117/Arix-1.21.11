@@ -1,6 +1,7 @@
 package net.minecraft.world.level.block;
 
 import com.mojang.serialization.MapCodec;
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -21,7 +22,9 @@ import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.raphimc.viabedrock.api.BedrockProtocolVersion;
 import org.jspecify.annotations.Nullable;
 
 public class SeaPickleBlock extends VegetationBlock implements BonemealableBlock, SimpleWaterloggedBlock {
@@ -34,6 +37,9 @@ public class SeaPickleBlock extends VegetationBlock implements BonemealableBlock
     private static final VoxelShape SHAPE_THREE = Block.column(12.0, 0.0, 6.0);
     private static final VoxelShape SHAPE_FOUR = Block.column(12.0, 0.0, 7.0);
 
+    // ViaFabricPlus - Bedrock sea pickle shape
+    private static final VoxelShape BEDROCK_SHAPE = Block.column(16.0F, 0.0F, 6.0F);
+
     @Override
     public MapCodec<SeaPickleBlock> codec() {
         return CODEC;
@@ -45,7 +51,7 @@ public class SeaPickleBlock extends VegetationBlock implements BonemealableBlock
     }
 
     @Override
-    public  BlockState getStateForPlacement(BlockPlaceContext p_56089_) {
+    public @Nullable BlockState getStateForPlacement(BlockPlaceContext p_56089_) {
         BlockState blockstate = p_56089_.getLevel().getBlockState(p_56089_.getClickedPos());
         if (blockstate.is(this)) {
             return blockstate.setValue(PICKLES, Math.min(4, blockstate.getValue(PICKLES) + 1));
@@ -73,14 +79,14 @@ public class SeaPickleBlock extends VegetationBlock implements BonemealableBlock
 
     @Override
     protected BlockState updateShape(
-        BlockState p_56113_,
-        LevelReader p_365386_,
-        ScheduledTickAccess p_362722_,
-        BlockPos p_56117_,
-        Direction p_56114_,
-        BlockPos p_56118_,
-        BlockState p_56115_,
-        RandomSource p_366416_
+            BlockState p_56113_,
+            LevelReader p_365386_,
+            ScheduledTickAccess p_362722_,
+            BlockPos p_56117_,
+            Direction p_56114_,
+            BlockPos p_56118_,
+            BlockState p_56115_,
+            RandomSource p_366416_
     ) {
         if (!p_56113_.canSurvive(p_365386_, p_56117_)) {
             return Blocks.AIR.defaultBlockState();
@@ -96,18 +102,48 @@ public class SeaPickleBlock extends VegetationBlock implements BonemealableBlock
     @Override
     protected boolean canBeReplaced(BlockState p_56101_, BlockPlaceContext p_56102_) {
         return !p_56102_.isSecondaryUseActive() && p_56102_.getItemInHand().is(this.asItem()) && p_56101_.getValue(PICKLES) < 4
-            ? true
-            : super.canBeReplaced(p_56101_, p_56102_);
+                ? true
+                : super.canBeReplaced(p_56101_, p_56102_);
     }
 
     @Override
     protected VoxelShape getShape(BlockState p_56122_, BlockGetter p_56123_, BlockPos p_56124_, CollisionContext p_56125_) {
+        // ViaFabricPlus - Bedrock sea pickle shape
+        if (ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.bedrockLatest)) {
+            return BEDROCK_SHAPE;
+        }
+
         return switch (p_56122_.getValue(PICKLES)) {
             case 2 -> SHAPE_TWO;
             case 3 -> SHAPE_THREE;
             case 4 -> SHAPE_FOUR;
             default -> SHAPE_ONE;
         };
+    }
+
+    @Override
+    protected VoxelShape getCollisionShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
+        // ViaFabricPlus - Bedrock sea pickle has no collision
+        if (ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.bedrockLatest)) {
+            return Shapes.empty();
+        }
+
+        return super.getCollisionShape(state, world, pos, context);
+    }
+
+    @Override
+    public VoxelShape getOcclusionShape(BlockState state) {
+        // ViaFabricPlus - Bedrock sea pickle occlusion shape
+        if (ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.bedrockLatest)) {
+            return switch (state.getValue(PICKLES)) {
+                case 2 -> SHAPE_TWO;
+                case 3 -> SHAPE_THREE;
+                case 4 -> SHAPE_FOUR;
+                default -> SHAPE_ONE;
+            };
+        }
+
+        return super.getOcclusionShape(state);
     }
 
     @Override

@@ -3,6 +3,10 @@ package net.minecraft.world.item;
 import java.util.Collection;
 import java.util.Set;
 import java.util.function.Supplier;
+
+import com.viaversion.viafabricplus.features.item.filter_creative_tabs.VersionedRegistries;
+import com.viaversion.viafabricplus.settings.impl.GeneralSettings;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
@@ -221,14 +225,26 @@ public class CreativeModeTab {
             boolean flag = this.tabContents.contains(p_250391_) && p_251472_ != CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY;
             if (flag) {
                 throw new IllegalStateException(
-                    "Accidentally adding the same item stack twice "
-                        + p_250391_.getDisplayName().getString()
-                        + " to a Creative Mode Tab: "
-                        + this.tab.getDisplayName().getString()
+                        "Accidentally adding the same item stack twice "
+                                + p_250391_.getDisplayName().getString()
+                                + " to a Creative Mode Tab: "
+                                + this.tab.getDisplayName().getString()
                 );
             }
 
-            if (p_250391_.getItem().isEnabled(this.featureFlagSet)) {
+            // removeUnknownItems
+            boolean isEnabled = p_250391_.getItem().isEnabled(this.featureFlagSet);
+            final int index = GeneralSettings.INSTANCE.removeNotAvailableItemsFromCreativeTab.getIndex();
+
+            if (index != 2 && !Minecraft.getInstance().isLocalServer()) {
+                if (index == 1 && !BuiltInRegistries.CREATIVE_MODE_TAB.getKey(this.tab).isDefaultNamespace()) {
+                    // vanilla only mode but non-vanilla tab — не фильтруем
+                } else {
+                    isEnabled = VersionedRegistries.keepItem(p_250391_) && isEnabled;
+                }
+            }
+
+            if (isEnabled) {
                 switch (p_251472_) {
                     case PARENT_AND_SEARCH_TABS:
                         this.tabContents.add(p_250391_);

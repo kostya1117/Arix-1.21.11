@@ -14,6 +14,9 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
+
+import com.viaversion.viafabricplus.features.item.negative_item_count.NegativeItemUtil;
+import net.minecraft.ChatFormatting;
 import net.minecraft.CrashReport;
 import net.minecraft.CrashReportCategory;
 import net.minecraft.ReportedException;
@@ -1243,8 +1246,15 @@ public class GuiGraphics implements IForgeGuiGraphics {
     }
 
     private void renderItemCount(Font p_363240_, ItemStack p_367163_, int p_369299_, int p_364530_, @Nullable String p_368187_) {
-        if (p_367163_.getCount() != 1 || p_368187_ != null) {
-            String s = p_368187_ == null ? String.valueOf(p_367163_.getCount()) : p_368187_;
+        int count = NegativeItemUtil.getCount(p_367163_);
+        if (count != 1 || p_368187_ != null) {
+            String s;
+            if (p_368187_ == null) {
+                s = count <= 0 ? ChatFormatting.RED.toString() + count : String.valueOf(count);
+            } else {
+                s = p_368187_;
+            }
+
             this.drawString(p_363240_, s, p_369299_ + 19 - 2 - p_363240_.width(s), p_364530_ + 6 + 3, -1, true);
         }
     }

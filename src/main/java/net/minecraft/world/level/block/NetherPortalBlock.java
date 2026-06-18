@@ -248,7 +248,7 @@ public class NetherPortalBlock extends Block implements Portal {
     }
 
     @Override
-    protected ItemStack getCloneItemStack(LevelReader p_310044_, BlockPos p_54912_, BlockState p_54913_, boolean p_376456_) {
+    public ItemStack getCloneItemStack(LevelReader p_310044_, BlockPos p_54912_, BlockState p_54913_, boolean p_376456_) {
         return ItemStack.EMPTY;
     }
 

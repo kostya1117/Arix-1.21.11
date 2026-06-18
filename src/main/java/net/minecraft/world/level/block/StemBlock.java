@@ -95,7 +95,7 @@ public class StemBlock extends VegetationBlock implements BonemealableBlock {
     }
 
     @Override
-    protected ItemStack getCloneItemStack(LevelReader p_312829_, BlockPos p_57027_, BlockState p_57028_, boolean p_375751_) {
+    public ItemStack getCloneItemStack(LevelReader p_312829_, BlockPos p_57027_, BlockState p_57028_, boolean p_375751_) {
         return new ItemStack(DataFixUtils.orElse(p_312829_.registryAccess().lookupOrThrow(Registries.ITEM).getOptional(this.seed), this));
     }
 

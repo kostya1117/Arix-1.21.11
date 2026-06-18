@@ -6,6 +6,8 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.mojang.serialization.codecs.RecordCodecBuilder.Instance;
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import io.netty.buffer.ByteBuf;
 import it.unimi.dsi.fastutil.ints.Int2IntFunction;
 import java.util.Optional;
@@ -68,11 +70,15 @@ public class MobEffectInstance implements Comparable<MobEffectInstance> {
     }
 
     public MobEffectInstance(
-        Holder<MobEffect> p_334558_, int p_19519_, int p_19520_, boolean p_332448_, boolean p_327855_, boolean p_334281_,  MobEffectInstance p_332569_
+            Holder<MobEffect> p_334558_, int p_19519_, int p_19520_, boolean p_332448_, boolean p_327855_, boolean p_334281_, @Nullable MobEffectInstance p_332569_
     ) {
         this.effect = p_334558_;
         this.duration = p_19519_;
-        this.amplifier = Mth.clamp(p_19520_, 0, 255);
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_20_3)) {
+            this.amplifier = p_19520_;
+        } else {
+            this.amplifier = Mth.clamp(p_19520_, 0, 255);
+        }
         this.ambient = p_332448_;
         this.visible = p_327855_;
         this.showIcon = p_334281_;

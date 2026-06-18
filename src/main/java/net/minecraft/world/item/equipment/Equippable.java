@@ -4,6 +4,9 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.mojang.serialization.codecs.RecordCodecBuilder.Instance;
 import java.util.Optional;
+
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.HolderSet;
@@ -29,6 +32,7 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentEffectComponents;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.raphimc.vialegacy.api.LegacyProtocolVersion;
 
 public record Equippable(
     EquipmentSlot slot,
@@ -128,8 +132,20 @@ public record Equippable(
     public InteractionResult swapWithEquipmentSlot(ItemStack p_362062_, Player p_365204_) {
         if (p_365204_.canUseSlot(this.slot) && this.canBeEquippedBy(p_365204_.getType())) {
             ItemStack itemstack = p_365204_.getItemBySlot(this.slot);
-            if ((!EnchantmentHelper.has(itemstack, EnchantmentEffectComponents.PREVENT_ARMOR_CHANGE) || p_365204_.isCreative())
-                && !ItemStack.isSameItemSameComponents(p_362062_, itemstack)) {
+
+            if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_19_3)) {
+                final ItemStack targetItem = p_365204_.getItemBySlot(this.slot);
+                if (!targetItem.isEmpty()) {
+                    return InteractionResult.FAIL;
+                }
+            }
+            if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(LegacyProtocolVersion.r1_4_6tor1_4_7)) {
+                return InteractionResult.FAIL;
+            }
+
+            if ((!EnchantmentHelper.has(itemstack, EnchantmentEffectComponents.PREVENT_ARMOR_CHANGE)
+                    || (ProtocolTranslator.getTargetVersion().newerThan(ProtocolVersion.v1_20) && p_365204_.isCreative()))
+                    && !ItemStack.isSameItemSameComponents(p_362062_, itemstack)) {
                 if (!p_365204_.level().isClientSide()) {
                     p_365204_.awardStat(Stats.ITEM_USED.get(p_362062_.getItem()));
                 }

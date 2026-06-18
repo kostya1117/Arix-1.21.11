@@ -2,6 +2,9 @@ package net.minecraft.world.level.block.piston;
 
 import com.mojang.serialization.MapCodec;
 import java.util.Map;
+
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -40,6 +43,31 @@ public class PistonHeadBlock extends DirectionalBlock {
     private static final VoxelShape SHAPE_PLATFORM = Block.boxZ(16.0, 0.0, 4.0);
     private static final Map<Direction, VoxelShape> SHAPES_SHORT = Shapes.rotateAll(Shapes.or(SHAPE_PLATFORM, Block.boxZ(4.0, 4.0, 16.0)));
     private static final Map<Direction, VoxelShape> SHAPES = Shapes.rotateAll(Shapes.or(SHAPE_PLATFORM, Block.boxZ(4.0, 4.0, 20.0)));
+    private static final VoxelShape viaFabricPlus$east_head_shape = Block.box(12.0, 0.0, 0.0, 16.0, 16.0, 16.0);
+
+    private static final VoxelShape viaFabricPlus$west_head_shape = Block.box(0.0, 0.0, 0.0, 4.0, 16.0, 16.0);
+
+    private static final VoxelShape viaFabricPlus$south_head_shape = Block.box(0.0, 0.0, 12.0, 16.0, 16.0, 16.0);
+
+    private static final VoxelShape viaFabricPlus$north_head_shape = Block.box(0.0, 0.0, 0.0, 16.0, 16.0, 4.0);
+
+    private static final VoxelShape viaFabricPlus$up_head_shape = Block.box(0.0, 12.0, 0.0, 16.0, 16.0, 16.0);
+
+    private static final VoxelShape viaFabricPlus$down_head_shape = Block.box(0.0, 0.0, 0.0, 16.0, 4.0, 16.0);
+
+    private static final VoxelShape viaFabricPlus$up_arm_shape_r1_8_x = Block.box(6.0, 0.0, 6.0, 10.0, 12.0, 10.0);
+
+    private static final VoxelShape viaFabricPlus$down_arm_shape_r1_8_x = Block.box(6.0, 4.0, 6.0, 10.0, 16.0, 10.0);
+
+    private static final VoxelShape viaFabricPlus$south_arm_shape_r1_8_x = Block.box(4.0, 6.0, 0.0, 12.0, 10.0, 12.0);
+
+    private static final VoxelShape viaFabricPlus$north_arm_shape_r1_8_x = Block.box(4.0, 6.0, 4.0, 12.0, 10.0, 16.0);
+
+    private static final VoxelShape viaFabricPlus$east_arm_shape_r1_8_x = Block.box(0.0, 6.0, 4.0, 12.0, 10.0, 12.0);
+
+    private static final VoxelShape viaFabricPlus$west_arm_shape_r1_8_x = Block.box(6.0, 4.0, 4.0, 10.0, 12.0, 16.0);
+
+    private boolean viaFabricPlus$selfInflicted = false;
 
     @Override
     protected MapCodec<PistonHeadBlock> codec() {
@@ -58,12 +86,47 @@ public class PistonHeadBlock extends DirectionalBlock {
 
     @Override
     protected VoxelShape getShape(BlockState p_60320_, BlockGetter p_60321_, BlockPos p_60322_, CollisionContext p_60323_) {
-        return (p_60320_.getValue(SHORT) ? SHAPES_SHORT : SHAPES).get(p_60320_.getValue(FACING));
+        VoxelShape vanillaShape = (p_60320_.getValue(SHORT) ? SHAPES_SHORT : SHAPES).get(p_60320_.getValue(FACING));
+
+        if (viaFabricPlus$selfInflicted) {
+            viaFabricPlus$selfInflicted = false;
+            return vanillaShape;
+        } else if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_12_2)) {
+            return switch (p_60320_.getValue(FACING)) {
+                case DOWN -> viaFabricPlus$down_head_shape;
+                case UP -> viaFabricPlus$up_head_shape;
+                case NORTH -> viaFabricPlus$north_head_shape;
+                case SOUTH -> viaFabricPlus$south_head_shape;
+                case WEST -> viaFabricPlus$west_head_shape;
+                case EAST -> viaFabricPlus$east_head_shape;
+            };
+        }
+
+        return vanillaShape;
     }
 
     private boolean isFittingBase(BlockState p_60298_, BlockState p_60299_) {
         Block block = p_60298_.getValue(TYPE) == PistonType.DEFAULT ? Blocks.PISTON : Blocks.STICKY_PISTON;
         return p_60299_.is(block) && p_60299_.getValue(PistonBaseBlock.EXTENDED) && p_60299_.getValue(FACING) == p_60298_.getValue(FACING);
+    }
+    @Override
+    public VoxelShape getCollisionShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_8)) {
+            return switch (state.getValue(PistonHeadBlock.FACING)) {
+                case DOWN -> Shapes.or(viaFabricPlus$down_head_shape, viaFabricPlus$down_arm_shape_r1_8_x);
+                case UP -> Shapes.or(viaFabricPlus$up_head_shape, viaFabricPlus$up_arm_shape_r1_8_x);
+                case NORTH -> Shapes.or(viaFabricPlus$north_head_shape, viaFabricPlus$north_arm_shape_r1_8_x);
+                case SOUTH -> Shapes.or(viaFabricPlus$south_head_shape, viaFabricPlus$south_arm_shape_r1_8_x);
+                case WEST -> Shapes.or(viaFabricPlus$west_head_shape, viaFabricPlus$west_arm_shape_r1_8_x);
+                case EAST -> Shapes.or(viaFabricPlus$east_head_shape, viaFabricPlus$east_arm_shape_r1_8_x);
+            };
+        } else if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_12_2)) {
+            // Collision shape for piston head in <= 1.12.2 needs to be the 1.13+ outline shape
+            viaFabricPlus$selfInflicted = true;
+            return getShape(state, world, pos, context);
+        } else {
+            return super.getCollisionShape(state, world, pos, context);
+        }
     }
 
     @Override
@@ -120,7 +183,7 @@ public class PistonHeadBlock extends DirectionalBlock {
     }
 
     @Override
-    protected ItemStack getCloneItemStack(LevelReader p_312951_, BlockPos p_60262_, BlockState p_60263_, boolean p_377775_) {
+    public ItemStack getCloneItemStack(LevelReader p_312951_, BlockPos p_60262_, BlockState p_60263_, boolean p_377775_) {
         return new ItemStack(p_60263_.getValue(TYPE) == PistonType.STICKY ? Blocks.STICKY_PISTON : Blocks.PISTON);
     }
 

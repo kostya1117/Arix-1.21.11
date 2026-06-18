@@ -14,7 +14,7 @@ public class TickRateManager {
     protected boolean isFrozen = false;
 
     public void setTickRate(float p_312754_) {
-        this.tickrate = Math.max(p_312754_, 1.0F);
+        this.tickrate = Math.max(p_312754_, MIN_TICKRATE);
         this.nanosecondsPerTick = (long)((double)TimeUtil.NANOSECONDS_PER_SECOND / this.tickrate);
     }
 

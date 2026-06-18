@@ -4,6 +4,9 @@ import com.mojang.serialization.MapCodec;
 import java.util.List;
 import java.util.Map;
 import java.util.OptionalInt;
+
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
@@ -156,7 +159,7 @@ public class ShelfBlock extends BaseEntityBlock implements SelectableSlotContain
 
     @Override
     protected InteractionResult useItemOn(
-        ItemStack p_431509_, BlockState p_425013_, Level p_425317_, BlockPos p_430171_, Player p_429634_, InteractionHand p_431676_, BlockHitResult p_424207_
+            ItemStack p_431509_, BlockState p_425013_, Level p_425317_, BlockPos p_430171_, Player p_429634_, InteractionHand p_431676_, BlockHitResult p_424207_
     ) {
         if (p_425317_.getBlockEntity(p_430171_) instanceof ShelfBlockEntity shelfblockentity && !p_431676_.equals(InteractionHand.OFF_HAND)) {
             OptionalInt optionalint = this.getHitSlot(p_424207_, p_425013_.getValue(FACING));
@@ -166,7 +169,12 @@ public class ShelfBlock extends BaseEntityBlock implements SelectableSlotContain
 
             Inventory inventory = p_429634_.getInventory();
             if (p_425317_.isClientSide()) {
-                return inventory.getSelectedItem().isEmpty() ? InteractionResult.PASS : InteractionResult.SUCCESS;
+                boolean isEmpty = inventory.getSelectedItem().isEmpty();
+                if (!ProtocolTranslator.getTargetVersion().newerThanOrEqualTo(ProtocolVersion.v1_21_11)) {
+                    isEmpty = false;
+                }
+
+                return isEmpty ? InteractionResult.PASS : InteractionResult.SUCCESS;
             }
 
             if (!p_425013_.getValue(POWERED)) {

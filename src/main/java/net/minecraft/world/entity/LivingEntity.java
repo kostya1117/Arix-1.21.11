@@ -14,6 +14,10 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.JavaOps;
+import com.viaversion.viafabricplus.features.entity.attribute.EnchantmentAttributesEmulation1_20_6;
+import com.viaversion.viafabricplus.features.entity.riding_offset.EntityRidingOffsetsPre1_20_2;
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import it.unimi.dsi.fastutil.doubles.DoubleDoubleImmutablePair;
 import it.unimi.dsi.fastutil.objects.Object2LongMap;
 import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap;
@@ -143,6 +147,8 @@ import net.minecraft.world.scores.PlayerTeam;
 import net.minecraft.world.scores.Scoreboard;
 import net.minecraft.world.waypoints.Waypoint;
 import net.minecraft.world.waypoints.WaypointTransmitter;
+import net.raphimc.viabedrock.api.BedrockProtocolVersion;
+import net.raphimc.vialegacy.api.LegacyProtocolVersion;
 import org.jetbrains.annotations.Contract;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
@@ -500,6 +506,9 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
 
     @Override
     protected float getBlockSpeedFactor() {
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_20_5)) {
+            EnchantmentAttributesEmulation1_20_6.setGenericMovementEfficiencyAttribute((LivingEntity) (Object) this);
+        }
         return Mth.lerp((float)this.getAttributeValue(Attributes.MOVEMENT_EFFICIENCY), super.getBlockSpeedFactor(), 1.0F);
     }
 
@@ -770,7 +779,9 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
         }
 
         if (this.level().isClientSide()) {
-            this.swing(InteractionHand.MAIN_HAND);
+            if (ProtocolTranslator.getTargetVersion().newerThan(ProtocolVersion.v1_15_2)) {
+                this.swing(InteractionHand.MAIN_HAND);
+            }
             return null;
         }
 
@@ -857,7 +868,7 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
             List<ParticleOptions> list = this.entityData.get(DATA_EFFECT_PARTICLES);
             if (!list.isEmpty()) {
                 boolean flag = this.entityData.get(DATA_EFFECT_AMBIENCE_ID);
-                int j = this.isInvisible() ? 15 : 4;
+                int j = this.isInvisible() ? 15 : (ProtocolTranslator.getTargetVersion().olderThan(ProtocolVersion.v1_20_5) ? 2 : 4);
                 int i = flag ? 5 : 1;
                 if (this.random.nextInt(j * i) == 0) {
                     this.level().addParticle(Util.getRandom(list, this.random), this.getRandomX(0.5), this.getRandomY(), this.getRandomZ(0.5), 1.0, 1.0, 1.0);
@@ -1716,12 +1727,29 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
                 this.lastClimbablePos = Optional.of(blockpos);
                 return true;
             } else {
+                // allowGappedLadderClimb
+                if (ProtocolTranslator.getTargetVersion().olderThan(LegacyProtocolVersion.b1_5tob1_5_2)) {
+                    final BlockPos abovePos = blockpos.above();
+                    final BlockState aboveState = this.level().getBlockState(abovePos);
+                    if (aboveState.is(BlockTags.CLIMBABLE)) {
+                        this.lastClimbablePos = Optional.of(abovePos);
+                        return true;
+                    } else if (aboveState.getBlock() instanceof TrapDoorBlock && this.trapdoorUsableAsLadder(abovePos, aboveState)) {
+                        this.lastClimbablePos = Optional.of(abovePos);
+                        return true;
+                    }
+                }
+
                 return false;
             }
         }
     }
 
     private boolean trapdoorUsableAsLadder(BlockPos p_21177_, BlockState p_21178_) {
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_8)) {
+            return false;
+        }
+
         if (!p_21178_.getValue(TrapDoorBlock.OPEN)) {
             return false;
         }
@@ -2312,21 +2340,27 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
         this.getBaritone().ifPresent(baritone -> {
             this.jumpRotationEvent = new RotationMoveEvent(RotationMoveEvent.Type.JUMP, this.getYRot(), this.getXRot());
             baritone.getGameEventHandler().onPlayerRotationMove(this.jumpRotationEvent);
+            this.setYRot(this.jumpRotationEvent.getYaw());
+            this.setXRot(this.jumpRotationEvent.getPitch());
         });
 
         float f = this.getJumpPower();
         if (!(f <= 1.0E-5F)) {
             Vec3 vec3 = this.getDeltaMovement();
-            this.setDeltaMovement(vec3.x, Math.max(f, vec3.y), vec3.z);
+            this.setDeltaMovement(
+                    vec3.x,
+                    ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_21) ? f : Math.max(f, vec3.y),
+                    vec3.z
+            );
             if (this.isSprinting()) {
                 float yaw;
-                if (this instanceof LocalPlayer && BaritoneAPI.getProvider().getBaritoneForPlayer((LocalPlayer) this) != null) {
+                if (this instanceof LocalPlayer && BaritoneAPI.getProvider().getBaritoneForPlayer((LocalPlayer)this) != null) {
                     yaw = this.jumpRotationEvent.getYaw();
                 } else {
                     yaw = this.getYRot();
                 }
 
-                float f1 = yaw * (float) (Math.PI / 180.0);
+                float f1 = yaw * (float)(Math.PI / 180.0);
                 this.addDeltaMovement(new Vec3(-Mth.sin(f1) * 0.2, 0.0, Mth.cos(f1) * 0.2));
             }
 
@@ -2404,12 +2438,21 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
         MobEffectInstance mobeffectinstance = this.getEffect(MobEffects.LEVITATION);
         if (mobeffectinstance != null) {
             d0 += (0.05 * (mobeffectinstance.getAmplifier() + 1) - vec3.y) * 0.2;
-        } else if (!this.level().isClientSide() || this.level().hasChunkAt(blockpos)) {
-            d0 -= this.getEffectiveGravity();
-        } else if (this.getY() > this.level().getMinY()) {
-            d0 = -0.1;
         } else {
-            d0 = 0.0;
+            boolean hasChunk;
+            if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_13_2)) {
+                hasChunk = this.level().hasChunkAt(blockpos) && this.level().getChunkSource().hasChunk(blockpos.getX() >> 4, blockpos.getZ() >> 4);
+            } else {
+                hasChunk = this.level().hasChunkAt(blockpos);
+            }
+
+            if (!this.level().isClientSide() || hasChunk) {
+                d0 -= this.getEffectiveGravity();
+            } else if (this.getY() > this.level().getMinY()) {
+                d0 = -0.1;
+            } else {
+                d0 = 0.0;
+            }
         }
 
         if (this.shouldDiscardFriction()) {
@@ -2433,7 +2476,15 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
     }
 
     protected void travelInWater(Vec3 p_451732_, double p_452538_, boolean p_455561_, double p_450436_) {
-        float f = this.isSprinting() ? 0.9F : this.getWaterSlowDown();
+        boolean isSprinting = ProtocolTranslator.getTargetVersion().newerThan(ProtocolVersion.v1_12_2) && this.isSprinting();
+
+        float f;
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_12_2)) {
+            f = this.getWaterSlowDown();
+        } else {
+            f = isSprinting ? 0.9F : this.getWaterSlowDown();
+        }
+
         float f1 = 0.02F;
         float f2 = (float)this.getAttributeValue(Attributes.WATER_MOVEMENT_EFFICIENCY);
         if (!this.onGround()) {
@@ -2452,19 +2503,29 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
         this.moveRelative(f1, p_451732_);
         this.move(MoverType.SELF, this.getDeltaMovement());
         Vec3 vec3 = this.getDeltaMovement();
-        if (this.horizontalCollision && this.onClimbable()) {
+
+        boolean onClimbable = ProtocolTranslator.getTargetVersion().newerThan(ProtocolVersion.v1_13_2) && this.horizontalCollision;
+        if (onClimbable && this.onClimbable()) {
             vec3 = new Vec3(vec3.x, 0.2, vec3.z);
         }
 
-        vec3 = vec3.multiply(f, 0.8F, f);
-        this.setDeltaMovement(this.getFluidFallingAdjustedMovement(p_452538_, p_455561_, vec3));
+        float finalF = f;
+        vec3 = vec3.multiply(finalF, 0.8F, finalF);
+
+        boolean movingDown = ProtocolTranslator.getTargetVersion().newerThan(ProtocolVersion.v1_13_2) && p_455561_;
+        this.setDeltaMovement(this.getFluidFallingAdjustedMovement(p_452538_, movingDown, vec3));
         this.jumpOutOfFluid(p_450436_);
     }
 
     private void travelInLava(Vec3 p_452494_, double p_452041_, boolean p_451529_, double p_457703_) {
         this.moveRelative(0.02F, p_452494_);
         this.move(MoverType.SELF, this.getDeltaMovement());
-        if (this.getFluidHeight(FluidTags.LAVA) <= this.getFluidJumpThreshold()) {
+
+        double fluidHeight = ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_15_2)
+                ? Double.MAX_VALUE
+                : this.getFluidHeight(FluidTags.LAVA);
+
+        if (fluidHeight <= this.getFluidJumpThreshold()) {
             this.setDeltaMovement(this.getDeltaMovement().multiply(0.5, 0.8F, 0.5));
             Vec3 vec3 = this.getFluidFallingAdjustedMovement(p_452041_, p_451529_, this.getDeltaMovement());
             this.setDeltaMovement(vec3);
@@ -2494,7 +2555,9 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
     }
 
     private void travelFallFlying(Vec3 p_391378_) {
-        if (this.onClimbable()) {
+        boolean onClimbable = ProtocolTranslator.getTargetVersion().newerThan(ProtocolVersion.v1_21_4) && this.onClimbable();
+
+        if (onClimbable) {
             this.travelInAir(p_391378_);
             this.stopFallFlying();
         } else {
@@ -2530,11 +2593,16 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
         });
 
         Vec3 vec3 = this.getLookAngle();
-        float f = this.getXRot() * (float) (Math.PI / 180.0);
+        float f = this.getXRot() * (float)(Math.PI / 180.0);
         double d0 = Math.sqrt(vec3.x * vec3.x + vec3.z * vec3.z);
         double d1 = p_366729_.horizontalDistance();
         double d2 = this.getEffectiveGravity();
-        double d3 = Mth.square(Math.cos(f));
+
+        double cosValue = ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_18)
+                ? Mth.cos(f)
+                : Math.cos(f);
+        double d3 = Mth.square(cosValue);
+
         p_366729_ = p_366729_.add(0.0, d2 * (-1.0 + d3 * 0.75), 0.0);
         if (p_366729_.y < 0.0 && d0 > 0.0) {
             double d4 = p_366729_.y * -0.1 * d3;
@@ -2605,7 +2673,14 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
         this.setDeltaMovement(this.handleOnClimbable(this.getDeltaMovement()));
         this.move(MoverType.SELF, this.getDeltaMovement());
         Vec3 vec3 = this.getDeltaMovement();
-        if ((this.horizontalCollision || this.jumping) && (this.onClimbable() || this.wasInPowderSnow && PowderSnowBlock.canEntityWalkOnPowderSnow(this))) {
+
+        boolean inPowderSnow = ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_21_4)
+                ? this.getInBlockState().is(Blocks.POWDER_SNOW)
+                : this.wasInPowderSnow;
+
+        boolean jumping = ProtocolTranslator.getTargetVersion().newerThan(ProtocolVersion.v1_13_2) && this.jumping;
+
+        if ((this.horizontalCollision || jumping) && (this.onClimbable() || inPowderSnow && PowderSnowBlock.canEntityWalkOnPowderSnow(this))) {
             vec3 = new Vec3(vec3.x, 0.2, vec3.z);
         }
 
@@ -2613,7 +2688,23 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
     }
 
     public Vec3 getFluidFallingAdjustedMovement(double p_20995_, boolean p_20996_, Vec3 p_20997_) {
-        if (p_20995_ != 0.0 && !this.isSprinting()) {
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_12_2) && !this.isNoGravity()) {
+            return new Vec3(p_20997_.x, p_20997_.y - 0.02, p_20997_.z);
+        }
+
+        // ViaFabricPlus - Bedrock levitation velocity
+        if (ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.bedrockLatest)) {
+            final MobEffectInstance effect = this.getEffect(MobEffects.LEVITATION);
+            if (effect != null) {
+                return new Vec3(p_20997_.x, p_20997_.y + (((effect.getAmplifier() + 1) * 0.05) - p_20997_.y) * 0.2, p_20997_.z);
+            }
+        }
+
+        final boolean sprintCheck = ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.bedrockLatest)
+                ? this.isSwimming()
+                : this.isSprinting();
+
+        if (p_20995_ != 0.0 && !sprintCheck) {
             double d0;
             if (p_20996_ && Math.abs(p_20997_.y - 0.005) >= 0.003 && Math.abs(p_20997_.y - p_20995_ / 16.0) < 0.003) {
                 d0 = -0.003;
@@ -2946,6 +3037,10 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
     }
 
     public void aiStep() {
+        if (ProtocolTranslator.getTargetVersion().olderThan(LegacyProtocolVersion.r1_0_0tor1_0_1)) {
+            this.noJumpDelay = 0;
+        }
+
         if (this.noJumpDelay > 0) {
             this.noJumpDelay--;
         }
@@ -2966,22 +3061,27 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
         double d0 = vec3.x;
         double d1 = vec3.y;
         double d2 = vec3.z;
-        if (this.getType().equals(EntityType.PLAYER)) {
+
+        double velocityZero = ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_8) ? 0.005D : 0.003D;
+
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_21_4)
+                ? false
+                : this.getType().equals(EntityType.PLAYER)) {
             if (vec3.horizontalDistanceSqr() < 9.0E-6) {
                 d0 = 0.0;
                 d2 = 0.0;
             }
         } else {
-            if (Math.abs(vec3.x) < 0.003) {
+            if (Math.abs(vec3.x) < velocityZero) {
                 d0 = 0.0;
             }
 
-            if (Math.abs(vec3.z) < 0.003) {
+            if (Math.abs(vec3.z) < velocityZero) {
                 d2 = 0.0;
             }
         }
 
-        if (Math.abs(vec3.y) < 0.003) {
+        if (Math.abs(vec3.y) < velocityZero) {
             d1 = 0.0;
         }
 
@@ -3006,7 +3106,13 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
             if (this.isInLava()) {
                 d3 = this.getFluidHeight(FluidTags.LAVA);
             } else {
-                d3 = this.getFluidHeight(FluidTags.WATER);
+                if ((ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_12_2)
+                        || ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.bedrockLatest))
+                        && this.isInWater()) {
+                    d3 = 1;
+                } else {
+                    d3 = this.getFluidHeight(FluidTags.WATER);
+                }
             }
 
             boolean flag = this.isInWater() && d3 > 0.0;
@@ -3029,6 +3135,12 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
 
         profilerfiller.pop();
         profilerfiller.push("travel");
+
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_21_4)) {
+            this.xxa *= 0.98F;
+            this.zza *= 0.98F;
+        }
+
         if (this.isFallFlying()) {
             this.updateFallFlying();
         }
@@ -3036,7 +3148,9 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
         AABB aabb = this.getBoundingBox();
         Vec3 vec31 = new Vec3(this.xxa, this.yya, this.zza);
         if (this.hasEffect(MobEffects.SLOW_FALLING) || this.hasEffect(MobEffects.LEVITATION)) {
-            this.resetFallDistance();
+            if (this.hasEffect(MobEffects.SLOW_FALLING) || ProtocolTranslator.getTargetVersion().newerThan(ProtocolVersion.v1_12_2)) {
+                this.resetFallDistance();
+            }
         }
 
         if (this.getControllingPassenger() instanceof Player player && this.isAlive()) {
@@ -3118,7 +3232,10 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
     }
 
     protected boolean canGlide() {
-        if (!this.onGround() && !this.isPassenger() && !this.hasEffect(MobEffects.LEVITATION)) {
+        boolean isPassenger = ProtocolTranslator.getTargetVersion().newerThan(ProtocolVersion.v1_14_4) && this.isPassenger();
+        boolean hasLevitation = ProtocolTranslator.getTargetVersion().newerThan(ProtocolVersion.v1_15_2) && this.hasEffect(MobEffects.LEVITATION);
+
+        if (!this.onGround() && !isPassenger && !hasLevitation) {
             for (EquipmentSlot equipmentslot : EquipmentSlot.VALUES) {
                 if (canGlideUsing(this.getItemBySlot(equipmentslot), equipmentslot)) {
                     return true;
@@ -3135,6 +3252,10 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
     }
 
     protected void pushEntities() {
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_8)) {
+            return;
+        }
+
         List<Entity> list = this.level().getPushableEntities(this, this.getBoundingBox());
         if (!list.isEmpty()) {
             if (this.level() instanceof ServerLevel serverlevel) {
@@ -3337,7 +3458,14 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
 
     private void updatingUsingItem() {
         if (this.isUsingItem()) {
-            if (ItemStack.isSameItem(this.getItemInHand(this.getUsedItemHand()), this.useItem)) {
+            boolean sameItem;
+            if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_14_3)) {
+                sameItem = this.getItemInHand(this.getUsedItemHand()) == this.useItem;
+            } else {
+                sameItem = ItemStack.isSameItem(this.getItemInHand(this.getUsedItemHand()), this.useItem);
+            }
+
+            if (sameItem) {
                 this.useItem = this.getItemInHand(this.getUsedItemHand());
                 this.updateUsingItem(this.useItem);
             } else {
@@ -3803,6 +3931,10 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
     }
 
     public final EquipmentSlot getEquipmentSlotForItem(ItemStack p_147234_) {
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_9_3) && p_147234_.is(Items.SHIELD)) {
+            return EquipmentSlot.MAINHAND;
+        }
+
         Equippable equippable = p_147234_.get(DataComponents.EQUIPPABLE);
         return equippable != null && this.canUseSlot(equippable.slot()) ? equippable.slot() : EquipmentSlot.MAINHAND;
     }
@@ -3903,6 +4035,13 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
 
     @Override
     public Vec3 getPassengerRidingPosition(Entity p_299288_) {
+        // ViaFabricPlus - use old passenger riding position for <= 1.20
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_20)) {
+            return this.position().add(
+                    EntityRidingOffsetsPre1_20_2.getMountedHeightOffset(this, p_299288_).yRot(-this.getYRot() * (float)(Math.PI / 180))
+            );
+        }
+
         return this.position().add(this.getPassengerAttachmentPoint(p_299288_, this.getDimensions(this.getPose()), this.getScale() * this.getAgeScale()));
     }
 

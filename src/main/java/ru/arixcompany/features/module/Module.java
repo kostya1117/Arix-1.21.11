@@ -9,7 +9,7 @@ import ru.arixcompany.features.repos.SoundRepo;
 import ru.arixcompany.features.repos.alerts.AlertRepo;
 import ru.arixcompany.utils.IMinecraft;
 import ru.arixcompany.utils.animation.Animation;
-import ru.arixcompany.utils.animation.impl.EaseInOutQuad;
+import ru.arixcompany.utils.animation.impl.quad.EaseInOutQuad;
 
 @Getter
 @Setter

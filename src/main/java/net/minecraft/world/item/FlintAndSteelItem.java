@@ -1,5 +1,6 @@
 package net.minecraft.world.item;
 
+import com.viaversion.viafabricplus.settings.impl.DebugSettings;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
@@ -31,7 +32,9 @@ public class FlintAndSteelItem extends Item {
         if (!CampfireBlock.canLight(blockstate) && !CandleBlock.canLight(blockstate) && !CandleCakeBlock.canLight(blockstate)) {
             BlockPos blockpos1 = blockpos.relative(p_41297_.getClickedFace());
             if (BaseFireBlock.canBePlacedAt(level, blockpos1, p_41297_.getHorizontalDirection())) {
-                level.playSound(player, blockpos1, SoundEvents.FLINTANDSTEEL_USE, SoundSource.BLOCKS, 1.0F, level.getRandom().nextFloat() * 0.4F + 0.8F);
+                if (!DebugSettings.INSTANCE.serversidePlaceSounds.isEnabled()) {
+                    level.playSound(player, blockpos1, SoundEvents.FLINTANDSTEEL_USE, SoundSource.BLOCKS, 1.0F, level.getRandom().nextFloat() * 0.4F + 0.8F);
+                }
                 BlockState blockstate1 = BaseFireBlock.getState(level, blockpos1);
                 level.setBlock(blockpos1, blockstate1, 11);
                 level.gameEvent(player, GameEvent.BLOCK_PLACE, blockpos);
@@ -46,7 +49,9 @@ public class FlintAndSteelItem extends Item {
                 return InteractionResult.FAIL;
             }
         } else {
-            level.playSound(player, blockpos, SoundEvents.FLINTANDSTEEL_USE, SoundSource.BLOCKS, 1.0F, level.getRandom().nextFloat() * 0.4F + 0.8F);
+            if (!DebugSettings.INSTANCE.serversidePlaceSounds.isEnabled()) {
+                level.playSound(player, blockpos, SoundEvents.FLINTANDSTEEL_USE, SoundSource.BLOCKS, 1.0F, level.getRandom().nextFloat() * 0.4F + 0.8F);
+            }
             level.setBlock(blockpos, blockstate.setValue(BlockStateProperties.LIT, true), 11);
             level.gameEvent(player, GameEvent.BLOCK_CHANGE, blockpos);
             if (player != null) {

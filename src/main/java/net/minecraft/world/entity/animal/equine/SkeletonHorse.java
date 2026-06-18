@@ -1,5 +1,7 @@
 package net.minecraft.world.entity.animal.equine;
 
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
@@ -146,6 +148,9 @@ public class SkeletonHorse extends AbstractHorse {
 
     @Override
     protected float getWaterSlowDown() {
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_12_2)) {
+            return (super.getWaterSlowDown());
+        }
         return 0.96F;
     }
 

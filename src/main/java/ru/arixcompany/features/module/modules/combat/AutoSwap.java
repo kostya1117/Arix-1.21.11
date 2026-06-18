@@ -5,10 +5,15 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
+import ru.arixcompany.Arix;
 import ru.arixcompany.features.event.EventHandler;
+import ru.arixcompany.features.event.player.EventGameTicked;
 import ru.arixcompany.features.event.player.EventKey;
+import ru.arixcompany.features.event.player.EventSprint;
+import ru.arixcompany.features.event.world.EventUpdate;
 import ru.arixcompany.features.module.Category;
 import ru.arixcompany.features.module.Module;
+import ru.arixcompany.features.module.modules.movement.AutoSprint;
 import ru.arixcompany.features.module.setting.implement.BindSetting;
 import ru.arixcompany.features.module.setting.implement.SelectSetting;
 import ru.arixcompany.utils.player.inventory.PlayerInventoryComponent;
@@ -28,6 +33,28 @@ public class AutoSwap extends Module {
     private final SelectSetting swapType = new SelectSetting("Свапать на")
             .value("Щит", "Геплы", "Тотем", "Шар");
     private final BindSetting keyToSwap = new BindSetting("Кнопка");
+
+    // EventUpdate — каждый тик
+    @EventHandler
+    public void onUpdate(EventUpdate e) {
+        PlayerInventoryComponent.onUpdate();
+    }
+
+    // EventSprint — блокируем спринт пока active
+    @EventHandler
+    public void onSprint(EventSprint e) {
+        if (mc.player == null || mc.level == null) return;
+
+        if (PlayerInventoryComponent.isSprintBlocked() && (e.getSource() == EventSprint.Source.MOVEMENT_TICK
+                || e.getSource() == EventSprint.Source.INPUT)) {
+            e.setSprinting(false);
+            mc.player.setSprinting(false);
+            AutoSprint autoSprint = Arix.getInstance().getModuleRepo().getModule(AutoSprint.class);
+            if (autoSprint != null && autoSprint.isState()) {
+                autoSprint.sprint = false;
+            }
+        }
+    }
 
     @EventHandler
     public void onKey(EventKey event) {
@@ -65,7 +92,7 @@ public class AutoSwap extends Module {
             } catch (Exception e) {
                 //sendOverlayMessage(Text.of(Formatting.RED + "Не удалось свапнуть"));
             }
-        },1,1);
+        });
     }
 
     private Item getItemByType(String type) {

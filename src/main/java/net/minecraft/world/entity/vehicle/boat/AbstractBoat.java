@@ -3,6 +3,12 @@ package net.minecraft.world.entity.vehicle.boat;
 import com.google.common.collect.Lists;
 import java.util.List;
 import java.util.function.Supplier;
+
+import com.viaversion.viafabricplus.features.entity.r1_8_boat.PositionInterpolator1_8;
+import com.viaversion.viafabricplus.features.entity.riding_offset.EntityRidingOffsetsPre1_20_2;
+import com.viaversion.viafabricplus.injection.access.entity.r1_8_boat.IAbstractBoat;
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -35,6 +41,8 @@ import net.minecraft.world.entity.vehicle.VehicleEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.WaterlilyBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
@@ -46,9 +54,10 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.raphimc.vialegacy.api.LegacyProtocolVersion;
 import org.jspecify.annotations.Nullable;
 
-public abstract class AbstractBoat extends VehicleEntity implements Leashable {
+public abstract class AbstractBoat extends VehicleEntity implements Leashable, IAbstractBoat {
     private static final EntityDataAccessor<Boolean> DATA_ID_PADDLE_LEFT = SynchedEntityData.defineId(AbstractBoat.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> DATA_ID_PADDLE_RIGHT = SynchedEntityData.defineId(AbstractBoat.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Integer> DATA_ID_BUBBLE_TIME = SynchedEntityData.defineId(AbstractBoat.class, EntityDataSerializers.INT);
@@ -78,6 +87,11 @@ public abstract class AbstractBoat extends VehicleEntity implements Leashable {
     private float bubbleAngleO;
     private Leashable.@Nullable LeashData leashData;
     private final Supplier<Item> dropItem;
+    // ViaFabricPlus - 1.8 boat fields
+    private final InterpolationHandler viaFabricPlus$positionInterpolator = new PositionInterpolator1_8((AbstractBoat) this);
+    private double viaFabricPlus$speedMultiplier = 0.07D;
+    private int viaFabricPlus$boatInterpolationSteps;
+    private Vec3 viaFabricPlus$boatVelocity = Vec3.ZERO;
 
     public AbstractBoat(EntityType<? extends AbstractBoat> p_450919_, Level p_452768_, Supplier<Item> p_460538_) {
         super(p_450919_, p_452768_);
@@ -181,6 +195,12 @@ public abstract class AbstractBoat extends VehicleEntity implements Leashable {
 
     @Override
     public void push(Entity p_458910_) {
+        // ViaFabricPlus - old push behavior for <= 1.8
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_8)) {
+            super.push(p_458910_);
+            return;
+        }
+
         if (p_458910_ instanceof AbstractBoat) {
             if (p_458910_.getBoundingBox().minY < this.getBoundingBox().maxY) {
                 super.push(p_458910_);
@@ -204,7 +224,21 @@ public abstract class AbstractBoat extends VehicleEntity implements Leashable {
 
     @Override
     public InterpolationHandler getInterpolation() {
+        // ViaFabricPlus - replace interpolation for <= 1.8
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_8)) {
+            return viaFabricPlus$positionInterpolator;
+        }
+
         return this.interpolation;
+    }
+    @Override
+    public void lerpMotion(Vec3 clientVelocity) {
+        super.lerpMotion(clientVelocity);
+
+        // ViaFabricPlus - save boat velocity for <= 1.8
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_8)) {
+            this.viaFabricPlus$boatVelocity = clientVelocity;
+        }
     }
 
     @Override
@@ -214,6 +248,159 @@ public abstract class AbstractBoat extends VehicleEntity implements Leashable {
 
     @Override
     public void tick() {
+        // ViaFabricPlus - old tick for <= 1.8
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_8)) {
+            super.tick();
+
+            if (this.getHurtTime() > 0) {
+                this.setHurtTime(this.getHurtTime() - 1);
+            }
+            if (this.getDamage() > 0) {
+                this.setDamage(this.getDamage() - 1);
+            }
+            this.xo = this.getX();
+            this.yo = this.getY();
+            this.zo = this.getZ();
+
+            final int yPartitions = 5;
+            double percentSubmerged = 0;
+            for (int partitionIndex = 0; partitionIndex < yPartitions; partitionIndex++) {
+                final double minY = this.getBoundingBox().minY + this.getBoundingBox().getYsize() * partitionIndex / yPartitions - 0.125;
+                final double maxY = this.getBoundingBox().minY + this.getBoundingBox().getYsize() * (partitionIndex + 1) / yPartitions - 0.125;
+                final AABB box = new AABB(this.getBoundingBox().minX, minY, this.getBoundingBox().minZ, this.getBoundingBox().maxX, maxY, this.getBoundingBox().maxZ);
+                if (BlockPos.betweenClosedStream(box).anyMatch(pos -> this.level().getFluidState(pos).is(FluidTags.WATER))) {
+                    percentSubmerged += 1.0 / yPartitions;
+                }
+            }
+
+            final double oldHorizontalSpeed = this.getDeltaMovement().horizontalDistance();
+            if (oldHorizontalSpeed > (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_7_6) ? 0.2625D : 0.2975D)) {
+                final double rx = Math.cos(this.getYRot() * Math.PI / 180);
+                final double rz = Math.sin(this.getYRot() * Math.PI / 180);
+                for (int i = 0; i < 1 + oldHorizontalSpeed * 60; i++) {
+                    final double dForward = this.random.nextFloat() * 2 - 1;
+                    final double dSideways = (this.random.nextInt(2) * 2 - 1) * 0.7D;
+                    if (this.random.nextBoolean()) {
+                        final double x = this.getX() - rx * dForward * 0.8 + rz * dSideways;
+                        final double z = this.getZ() - rz * dForward * 0.8 - rx * dSideways;
+                        this.level().addParticle(ParticleTypes.SPLASH, x, this.getY() - 0.125D, z, this.getDeltaMovement().x, this.getDeltaMovement().y, this.getDeltaMovement().z);
+                    } else {
+                        final double x = this.getX() + rx + rz * dForward * 0.7;
+                        final double z = this.getZ() + rz - rx * dForward * 0.7;
+                        this.level().addParticle(ParticleTypes.SPLASH, x, this.getY() - 0.125D, z, this.getDeltaMovement().x, this.getDeltaMovement().y, this.getDeltaMovement().z);
+                    }
+                }
+            }
+
+            if (this.level().isClientSide() && !this.isVehicle()) {
+                if (this.viaFabricPlus$boatInterpolationSteps > 0) {
+                    final InterpolationHandler.InterpolationData data = viaFabricPlus$positionInterpolator.interpolationData;
+                    final double newX = this.getX() + (data.position.x - this.getX()) / this.viaFabricPlus$boatInterpolationSteps;
+                    final double newY = this.getY() + (data.position.y - this.getY()) / this.viaFabricPlus$boatInterpolationSteps;
+                    final double newZ = this.getZ() + (data.position.z - this.getZ()) / this.viaFabricPlus$boatInterpolationSteps;
+                    final double newYaw = this.getYRot() + Mth.wrapDegrees(data.yRot - this.getYRot()) / this.viaFabricPlus$boatInterpolationSteps;
+                    final double newPitch = this.getXRot() + (data.xRot - this.getXRot()) / this.viaFabricPlus$boatInterpolationSteps;
+                    this.viaFabricPlus$boatInterpolationSteps--;
+                    this.setPos(newX, newY, newZ);
+                    this.setRot((float) newYaw, (float) newPitch);
+                } else {
+                    this.setPos(this.getX() + this.getDeltaMovement().x, this.getY() + this.getDeltaMovement().y, this.getZ() + this.getDeltaMovement().z);
+                    if (this.onGround()) {
+                        this.setDeltaMovement(this.getDeltaMovement().scale(0.5D));
+                    }
+                    this.setDeltaMovement(this.getDeltaMovement().multiply(0.99D, 0.95D, 0.99D));
+                }
+            } else {
+                if (percentSubmerged < 1) {
+                    final double normalizedDistanceFromMiddle = percentSubmerged * 2 - 1;
+                    this.setDeltaMovement(this.getDeltaMovement().add(0, 0.04D * normalizedDistanceFromMiddle, 0));
+                } else {
+                    if (this.getDeltaMovement().y < 0) {
+                        this.setDeltaMovement(this.getDeltaMovement().multiply(1, 0.5D, 1));
+                    }
+                    this.setDeltaMovement(this.getDeltaMovement().add(0, 0.007D, 0));
+                }
+
+                if (this.getControllingPassenger() != null) {
+                    final LivingEntity passenger = this.getControllingPassenger();
+                    if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(LegacyProtocolVersion.r1_5_2)) {
+                        final double xAcceleration = passenger.getDeltaMovement().x * this.viaFabricPlus$speedMultiplier;
+                        final double zAcceleration = passenger.getDeltaMovement().z * this.viaFabricPlus$speedMultiplier;
+                        this.setDeltaMovement(this.getDeltaMovement().add(xAcceleration, 0, zAcceleration));
+                    } else if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(LegacyProtocolVersion.r1_6_4)) {
+                        if (passenger.zza > 0) {
+                            final double xAcceleration = -Math.sin(passenger.getYRot() * Math.PI / 180) * this.viaFabricPlus$speedMultiplier * 0.05D;
+                            final double zAcceleration = Math.cos(passenger.getYRot() * Math.PI / 180) * this.viaFabricPlus$speedMultiplier * 0.05D;
+                            this.setDeltaMovement(this.getDeltaMovement().add(xAcceleration, 0, zAcceleration));
+                        }
+                    } else {
+                        final float boatAngle = passenger.getYRot() - passenger.xxa * 90F;
+                        final double xAcceleration = -Math.sin(boatAngle * Math.PI / 180) * this.viaFabricPlus$speedMultiplier * passenger.zza * 0.05D;
+                        final double zAcceleration = Math.cos(boatAngle * Math.PI / 180) * this.viaFabricPlus$speedMultiplier * passenger.zza * 0.05D;
+                        this.setDeltaMovement(this.getDeltaMovement().add(xAcceleration, 0, zAcceleration));
+                    }
+                }
+
+                double newHorizontalSpeed = this.getDeltaMovement().horizontalDistance();
+                if (newHorizontalSpeed > 0.35D) {
+                    final double multiplier = 0.35D / newHorizontalSpeed;
+                    this.setDeltaMovement(this.getDeltaMovement().multiply(multiplier, 1, multiplier));
+                    newHorizontalSpeed = 0.35D;
+                }
+
+                if (newHorizontalSpeed > oldHorizontalSpeed && this.viaFabricPlus$speedMultiplier < 0.35D) {
+                    this.viaFabricPlus$speedMultiplier += (0.35D - this.viaFabricPlus$speedMultiplier) / 35;
+                    if (this.viaFabricPlus$speedMultiplier > 0.35D) {
+                        this.viaFabricPlus$speedMultiplier = 0.35D;
+                    }
+                } else {
+                    this.viaFabricPlus$speedMultiplier -= (this.viaFabricPlus$speedMultiplier - 0.07D) / 35;
+                    if (this.viaFabricPlus$speedMultiplier < 0.07D) {
+                        this.viaFabricPlus$speedMultiplier = 0.07D;
+                    }
+                }
+
+                if (ProtocolTranslator.getTargetVersion().newerThan(LegacyProtocolVersion.r1_6_4)) {
+                    for (int i = 0; i < 4; i++) {
+                        final int dx = Mth.floor(this.getX() + ((i % 2) - 0.5D) * 0.8D);
+                        //noinspection IntegerDivisionInFloatingPointContext
+                        final int dz = Mth.floor(this.getZ() + ((i / 2) - 0.5D) * 0.8D);
+                        for (int ddy = 0; ddy < 2; ddy++) {
+                            final int dy = Mth.floor(this.getY()) + ddy;
+                            final BlockPos pos = new BlockPos(dx, dy, dz);
+                            final Block block = this.level().getBlockState(pos).getBlock();
+                            if (block == Blocks.SNOW) {
+                                this.level().setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
+                                this.horizontalCollision = false;
+                            } else if (block == Blocks.LILY_PAD) {
+                                this.level().destroyBlock(pos, true);
+                                this.horizontalCollision = false;
+                            }
+                        }
+                    }
+                }
+
+                if (this.onGround()) {
+                    this.setDeltaMovement(this.getDeltaMovement().scale(0.5D));
+                }
+
+                this.move(MoverType.SELF, this.getDeltaMovement());
+
+                if (!this.horizontalCollision || oldHorizontalSpeed <= 0.2975D) {
+                    this.setDeltaMovement(this.getDeltaMovement().multiply(0.99D, 0.95D, 0.99D));
+                }
+
+                this.setXRot(0);
+                final double deltaX = this.xo - this.getX();
+                final double deltaZ = this.zo - this.getZ();
+                if (deltaX * deltaX + deltaZ * deltaZ > 0.001D) {
+                    final double yawDelta = Mth.clamp(Mth.wrapDegrees((Mth.atan2(deltaZ, deltaX) * 180 / Math.PI) - this.getYRot()), -20, 20);
+                    this.setYRot((float) (this.getYRot() + yawDelta));
+                }
+            }
+            return;
+        }
+
         this.oldStatus = this.status;
         this.status = this.getStatus();
         if (this.status != AbstractBoat.Status.UNDER_WATER && this.status != AbstractBoat.Status.UNDER_FLOWING_WATER) {
@@ -553,7 +740,11 @@ public abstract class AbstractBoat extends VehicleEntity implements Leashable {
         if (this.oldStatus == AbstractBoat.Status.IN_AIR && this.status != AbstractBoat.Status.IN_AIR && this.status != AbstractBoat.Status.ON_LAND) {
             this.waterLevel = this.getY(1.0);
             double d2 = this.getWaterLevelAbove() - this.getBbHeight() + 0.101;
-            if (this.level().noCollision(this, this.getBoundingBox().move(0.0, d2 - this.getY(), 0.0))) {
+
+            boolean noCollision = ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_20_5)
+                    || this.level().noCollision(this, this.getBoundingBox().move(0.0, d2 - this.getY(), 0.0));
+
+            if (noCollision) {
                 this.setPos(this.getX(), d2, this.getZ());
                 this.setDeltaMovement(this.getDeltaMovement().multiply(1.0, 0.0, 1.0));
                 this.lastYd = 0.0;
@@ -633,6 +824,13 @@ public abstract class AbstractBoat extends VehicleEntity implements Leashable {
 
     @Override
     protected void positionRider(Entity p_453643_, Entity.MoveFunction p_457698_) {
+
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_8)) {
+            final Vec3 newPosition = EntityRidingOffsetsPre1_20_2.getMountedHeightOffset(this, p_453643_).add(this.position());
+            p_457698_.accept(p_453643_, newPosition.x, newPosition.y + EntityRidingOffsetsPre1_20_2.getHeightOffset(p_453643_), newPosition.z);
+            return;
+        }
+
         super.positionRider(p_453643_, p_457698_);
         if (!p_453643_.getType().is(EntityTypeTags.CAN_TURN_IN_BOATS)) {
             p_453643_.setYRot(p_453643_.getYRot() + this.deltaRotation);
@@ -689,6 +887,12 @@ public abstract class AbstractBoat extends VehicleEntity implements Leashable {
 
     @Override
     public void onPassengerTurned(Entity p_455062_) {
+        // ViaFabricPlus - old passenger turned for <= 1.8
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_8)) {
+            super.onPassengerTurned(p_455062_);
+            return;
+        }
+
         this.clampRotation(p_455062_);
     }
 
@@ -704,13 +908,19 @@ public abstract class AbstractBoat extends VehicleEntity implements Leashable {
 
     @Override
     public InteractionResult interact(Player p_460818_, InteractionHand p_455281_) {
-        InteractionResult interactionresult = super.interact(p_460818_, p_455281_);
-        if (interactionresult != InteractionResult.PASS) {
-            return interactionresult;
+        InteractionResult superResult;
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_20_5)) {
+            superResult = InteractionResult.PASS;
+        } else {
+            superResult = super.interact(p_460818_, p_455281_);
+        }
+
+        if (superResult != InteractionResult.PASS) {
+            return superResult;
         } else {
             return p_460818_.isSecondaryUseActive() || !(this.outOfControlTicks < 60.0F) || !this.level().isClientSide() && !p_460818_.startRiding(this)
-                ? InteractionResult.PASS
-                : InteractionResult.SUCCESS;
+                    ? InteractionResult.PASS
+                    : InteractionResult.SUCCESS;
         }
     }
 
@@ -725,6 +935,15 @@ public abstract class AbstractBoat extends VehicleEntity implements Leashable {
 
     @Override
     protected void checkFallDamage(double p_456661_, boolean p_455047_, BlockState p_456253_, BlockPos p_451590_) {
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(LegacyProtocolVersion.r1_6_4)) {
+            super.checkFallDamage(p_456661_, p_455047_, p_456253_, p_451590_);
+            return;
+        }
+
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_8)) {
+            this.status = AbstractBoat.Status.ON_LAND;
+        }
+
         this.lastYd = this.getDeltaMovement().y;
         if (!this.isPassenger()) {
             if (p_455047_) {
@@ -753,7 +972,27 @@ public abstract class AbstractBoat extends VehicleEntity implements Leashable {
 
     @Override
     protected boolean canAddPassenger(Entity p_457043_) {
+        // ViaFabricPlus - old canAddPassenger for <= 1.8
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_8)) {
+            return super.canAddPassenger(p_457043_);
+        }
+
         return this.getPassengers().size() < this.getMaxPassengers() && !this.isEyeInFluid(FluidTags.WATER);
+    }
+
+    @Override
+    public void viaFabricPlus$setBoatInterpolationSteps(final int steps) {
+        viaFabricPlus$boatInterpolationSteps = steps;
+    }
+
+    @Override
+    public Vec3 viaFabricPlus$getBoatVelocity() {
+        return viaFabricPlus$boatVelocity;
+    }
+
+    @Override
+    public void viaFabricPlus$setBoatVelocity(final Vec3 velocity) {
+        viaFabricPlus$boatVelocity = velocity;
     }
 
     protected int getMaxPassengers() {

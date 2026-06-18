@@ -2,6 +2,9 @@ package net.minecraft.world.entity.animal.equine;
 
 import java.util.function.DoubleSupplier;
 import java.util.function.IntUnaryOperator;
+
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -114,7 +117,7 @@ public abstract class AbstractHorse extends Animal implements HasCustomInventory
     private float eatAnim;
     private float eatAnimO;
     private float standAnim;
-    private float standAnimO;
+    public float standAnimO;
     private float mouthAnim;
     private float mouthAnimO;
     protected boolean canGallop = true;
@@ -408,7 +411,13 @@ public abstract class AbstractHorse extends Animal implements HasCustomInventory
     }
 
     public InteractionResult fedFood(Player p_457822_, ItemStack p_458672_) {
-        boolean flag = this.handleEating(p_457822_, p_458672_);
+        boolean flag;
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_20_2)) {
+            flag = true;
+        } else {
+            flag = this.handleEating(p_457822_, p_458672_);
+        }
+
         if (flag) {
             p_458672_.consume(1, p_457822_);
         }
@@ -742,7 +751,9 @@ public abstract class AbstractHorse extends Animal implements HasCustomInventory
     @Override
     protected void addPassenger(Entity p_458224_) {
         super.addPassenger(p_458224_);
-        p_458224_.absSnapRotationTo(this.getViewYRot(0.0F), this.getViewXRot(0.0F));
+        if (ProtocolTranslator.getTargetVersion().newerThan(ProtocolVersion.v1_21_7)) {
+            p_458224_.absSnapRotationTo(this.getViewYRot(0.0F), this.getViewXRot(0.0F));
+        }
     }
 
     @Override

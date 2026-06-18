@@ -1,9 +1,11 @@
 package net.minecraft.client.gui.screens;
 
+import com.viaversion.viafabricplus.injection.access.base.bedrock.IConfirmScreen;
 import it.unimi.dsi.fastutil.booleans.BooleanConsumer;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.MultiLineTextWidget;
 import net.minecraft.client.gui.components.StringWidget;
+import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.layouts.FrameLayout;
 import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.client.input.KeyEvent;
@@ -14,7 +16,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jspecify.annotations.Nullable;
 
 
-public class ConfirmScreen extends Screen {
+public class ConfirmScreen extends Screen implements IConfirmScreen {
     private final Component message;
     protected LinearLayout layout = LinearLayout.vertical().spacing(8);
     protected Component yesButtonComponent;
@@ -39,6 +41,15 @@ public class ConfirmScreen extends Screen {
     @Override
     public Component getNarrationMessage() {
         return CommonComponents.joinForNarration(super.getNarrationMessage(), this.message);
+    }
+    @Override
+    public void viaFabricPlus$updateMessage(Component message) {
+        for (final GuiEventListener element : children()) {
+            if (element instanceof final MultiLineTextWidget textWidget) {
+                textWidget.setMessage(message);
+                repositionElements();
+            }
+        }
     }
 
     @Override

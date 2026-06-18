@@ -4,6 +4,9 @@ import com.google.common.collect.Lists;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Optional;
+
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ActiveTextCollector;
 import net.minecraft.client.gui.GuiGraphics;
@@ -84,7 +87,7 @@ public class BookEditScreen extends Screen {
             .setX((this.width - 114) / 2 - 8)
             .setY(28)
             .build(this.font, 122, 134, CommonComponents.EMPTY);
-        this.page.setCharacterLimit(1024);
+        this.page.setCharacterLimit(ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_13_2) ? 256 : 1024);
         this.page.setLineLimit(126 / 9);
         this.page.setValueListener(p_404856_ -> this.pages.set(this.currentPage, p_404856_));
         this.addRenderableWidget(this.page);
@@ -183,7 +186,8 @@ public class BookEditScreen extends Screen {
     }
 
     private void appendPageToBook() {
-        if (this.getNumPages() < 100) {
+        int maxPages = ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_13_2) ? 50 : 100;
+        if (this.getNumPages() < maxPages) {
             this.pages.add("");
         }
     }

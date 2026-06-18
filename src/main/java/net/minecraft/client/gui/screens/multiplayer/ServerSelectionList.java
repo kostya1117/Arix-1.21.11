@@ -10,6 +10,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadPoolExecutor;
+
+import com.viaversion.viafabricplus.injection.access.base.IServerData;
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viafabricplus.settings.impl.DebugSettings;
+import com.viaversion.viafabricplus.settings.impl.GeneralSettings;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import net.minecraft.ChatFormatting;
 import net.minecraft.DefaultUncaughtExceptionHandler;
 import net.minecraft.SharedConstants;
@@ -25,10 +31,7 @@ import net.minecraft.client.multiplayer.ServerData;
 import net.minecraft.client.multiplayer.ServerList;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.server.LanServer;
-import net.minecraft.network.chat.CommonComponents;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.ComponentUtils;
-import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.*;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.network.EventLoopGroupHolder;
 import net.minecraft.util.FormattedCharSequence;
@@ -270,56 +273,73 @@ public class ServerSelectionList extends ObjectSelectionList<ServerSelectionList
             this.refreshStatus();
         }
 
+        private boolean viaFabricPlus$disableServerPinging = false;
+
         @Override
         public void renderContent(GuiGraphics p_425273_, int p_424268_, int p_430737_, boolean p_425246_, float p_422401_) {
             if (this.serverData.state() == ServerData.State.INITIAL) {
                 this.serverData.setState(ServerData.State.PINGING);
                 this.serverData.motd = CommonComponents.EMPTY;
                 this.serverData.status = CommonComponents.EMPTY;
-                ServerSelectionList.THREAD_POOL
-                    .submit(
-                        () -> {
-                            try {
-                                this.screen
-                                    .getPinger()
-                                    .pingServer(
-                                        this.serverData,
-                                        () -> this.minecraft.execute(this::updateServerList),
-                                        () -> {
-                                            this.serverData
-                                                .setState(
-                                                    this.serverData.protocol == SharedConstants.getCurrentVersion().protocolVersion()
-                                                        ? ServerData.State.SUCCESSFUL
-                                                        : ServerData.State.INCOMPATIBLE
+
+                ProtocolVersion version = ((IServerData) serverData).viaFabricPlus$forcedVersion();
+                if (version == null) {
+                    version = ProtocolTranslator.getTargetVersion();
+                }
+
+                viaFabricPlus$disableServerPinging = DebugSettings.INSTANCE.disableServerPinging.isEnabled(version);
+                if (viaFabricPlus$disableServerPinging) {
+                    this.serverData.version = Component.nullToEmpty(version.getName());
+                } else {
+                    ServerSelectionList.THREAD_POOL.submit(
+                            () -> {
+                                try {
+                                    this.screen.getPinger().pingServer(
+                                            this.serverData,
+                                            () -> this.minecraft.execute(this::updateServerList),
+                                            () -> {
+                                                this.serverData.setState(
+                                                        this.serverData.protocol == SharedConstants.getCurrentVersion().protocolVersion()
+                                                                ? ServerData.State.SUCCESSFUL
+                                                                : ServerData.State.INCOMPATIBLE
                                                 );
-                                            this.minecraft.execute(this::refreshStatus);
-                                        },
-                                        EventLoopGroupHolder.remote(this.minecraft.options.useNativeTransport())
+                                                this.minecraft.execute(this::refreshStatus);
+                                            },
+                                            EventLoopGroupHolder.remote(this.minecraft.options.useNativeTransport())
                                     );
-                            } catch (UnknownHostException unknownhostexception) {
-                                this.serverData.setState(ServerData.State.UNREACHABLE);
-                                this.serverData.motd = ServerSelectionList.CANT_RESOLVE_TEXT;
-                                this.minecraft.execute(this::refreshStatus);
-                            } catch (Exception exception) {
-                                this.serverData.setState(ServerData.State.UNREACHABLE);
-                                this.serverData.motd = ServerSelectionList.CANT_CONNECT_TEXT;
-                                this.minecraft.execute(this::refreshStatus);
+                                } catch (UnknownHostException unknownhostexception) {
+                                    this.serverData.setState(ServerData.State.UNREACHABLE);
+                                    this.serverData.motd = ServerSelectionList.CANT_RESOLVE_TEXT;
+                                    this.minecraft.execute(this::refreshStatus);
+                                } catch (Exception exception) {
+                                    this.serverData.setState(ServerData.State.UNREACHABLE);
+                                    this.serverData.motd = ServerSelectionList.CANT_CONNECT_TEXT;
+                                    this.minecraft.execute(this::refreshStatus);
+                                }
                             }
-                        }
                     );
+                }
             }
 
             p_425273_.drawString(this.minecraft.font, this.serverData.name, this.getContentX() + 32 + 3, this.getContentY() + 1, -1);
-            List<FormattedCharSequence> list = this.minecraft.font.split(this.serverData.motd, this.getContentWidth() - 32 - 2);
+
+            FormattedText motdText = viaFabricPlus$disableServerPinging
+                    ? Component.nullToEmpty(serverData.ip)
+                    : this.serverData.motd;
+            List<FormattedCharSequence> list = this.minecraft.font.split(motdText, this.getContentWidth() - 32 - 2);
 
             for (int i = 0; i < Math.min(list.size(), 2); i++) {
                 p_425273_.drawString(this.minecraft.font, list.get(i), this.getContentX() + 32 + 3, this.getContentY() + 12 + 9 * i, -8355712);
             }
 
-            this.drawIcon(p_425273_, this.getContentX(), this.getContentY(), this.icon.textureLocation());
+            Identifier iconLocation = viaFabricPlus$disableServerPinging
+                    ? FaviconTexture.MISSING_LOCATION
+                    : this.icon.textureLocation();
+            this.drawIcon(p_425273_, this.getContentX(), this.getContentY(), iconLocation);
+
             int k1 = ServerSelectionList.this.children().indexOf(this);
             if (this.serverData.state() == ServerData.State.PINGING) {
-                int j = (int)(Util.getMillis() / 100L + k1 * 2 & 7L);
+                int j = (int) (Util.getMillis() / 100L + k1 * 2 & 7L);
                 if (j > 4) {
                     j = 8 - j;
                 }
@@ -333,7 +353,8 @@ public class ServerSelectionList extends ObjectSelectionList<ServerSelectionList
             }
 
             int l1 = this.getContentRight() - 10 - 5;
-            if (this.statusIcon != null) {
+
+            if (this.statusIcon != null && !viaFabricPlus$disableServerPinging) {
                 p_425273_.blitSprite(RenderPipelines.GUI_TEXTURED, this.statusIcon, l1, this.getContentY(), 10, 8);
             }
 
@@ -347,18 +368,46 @@ public class ServerSelectionList extends ObjectSelectionList<ServerSelectionList
                 }
             }
 
-            Component component = this.serverData.state() == ServerData.State.INCOMPATIBLE
-                ? this.serverData.version.copy().withStyle(ChatFormatting.RED)
-                : this.serverData.status;
+            ServerData.State incompatibleState = viaFabricPlus$disableServerPinging
+                    ? this.serverData.state()
+                    : ServerData.State.INCOMPATIBLE;
+
+            Component component = this.serverData.state() == incompatibleState
+                    ? this.serverData.version.copy().withStyle(ChatFormatting.RED)
+                    : this.serverData.status;
+
             int k = this.minecraft.font.width(component);
             int l = l1 - k - 5;
+            if (viaFabricPlus$disableServerPinging) {
+                l += 15 - 3;
+            }
             p_425273_.drawString(this.minecraft.font, component, l, this.getContentY() + 1, -8355712);
+
             if (this.statusIconTooltip != null && p_424268_ >= l1 && p_424268_ <= l1 + 10 && p_430737_ >= this.getContentY() && p_430737_ <= this.getContentY() + 8) {
-                p_425273_.setTooltipForNextFrame(this.statusIconTooltip, p_424268_, p_430737_);
-            } else if (this.onlinePlayersTooltip != null && p_424268_ >= l && p_424268_ <= l + k && p_430737_ >= this.getContentY() && p_430737_ <= this.getContentY() - 1 + 9
-                )
-             {
-                p_425273_.setTooltipForNextFrame(Lists.transform(this.onlinePlayersTooltip, Component::getVisualOrderText), p_424268_, p_430737_);
+                final List<Component> tooltips = new ArrayList<>();
+                tooltips.add(this.statusIconTooltip);
+
+                if (GeneralSettings.INSTANCE.showAdvertisedServerVersion.getValue()) {
+                    final ProtocolVersion ver = ((IServerData) this.serverData).viaFabricPlus$translatingVersion();
+                    if (ver != null) {
+                        tooltips.add(Component.translatable(
+                                "base.viafabricplus.via_translates_to",
+                                ver.getName() + " (" + ver.getOriginalVersion() + ")"
+                        ));
+                        tooltips.add(Component.translatable(
+                                "base.viafabricplus.server_version",
+                                this.serverData.version.getString() + " (" + this.serverData.protocol + ")"
+                        ));
+                    }
+                }
+
+                if (!viaFabricPlus$disableServerPinging) {
+                    p_425273_.setTooltipForNextFrame(Lists.transform(tooltips, Component::getVisualOrderText), p_424268_, p_430737_);
+                }
+            } else if (this.onlinePlayersTooltip != null && p_424268_ >= l && p_424268_ <= l + k && p_430737_ >= this.getContentY() && p_430737_ <= this.getContentY() - 1 + 9) {
+                if (!viaFabricPlus$disableServerPinging) {
+                    p_425273_.setTooltipForNextFrame(Lists.transform(this.onlinePlayersTooltip, Component::getVisualOrderText), p_424268_, p_430737_);
+                }
             }
 
             if (this.minecraft.options.touchscreen().get() || p_425246_) {

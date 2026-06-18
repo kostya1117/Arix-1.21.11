@@ -1,5 +1,7 @@
 package ru.arixcompany.features.module.modules.combat.aura.aiming;
 
+import lombok.Getter;
+import lombok.Setter;
 import net.minecraft.client.Minecraft;
 
 import java.util.Comparator;
@@ -11,50 +13,51 @@ import java.util.concurrent.PriorityBlockingQueue;
 public class RequestHandler<T> {
 
     private int currentTick = 0;
+    private final PriorityBlockingQueue<Request<T>> activeRequests;
 
-    // PriorityBlockingQueue для потокобезопасности (как в LiquidBounce)
-    private final PriorityBlockingQueue<Request<T>> activeRequests =
-            new PriorityBlockingQueue<>(11, Comparator.comparingInt(r -> -r.priority));
-
-    public void tick() {
-        tick(1);
+    public RequestHandler() {
+        this.activeRequests = new PriorityBlockingQueue<>(11,
+                Comparator.comparingInt((Request<T> req) -> -req.getPriority())
+        );
     }
 
     public void tick(int deltaTime) {
         currentTick += deltaTime;
     }
 
+    public void tick() {
+        tick(1);
+    }
+
     public void request(Request<T> request) {
-        // Удаляем старые запросы от того же провайдера
-        activeRequests.removeIf(r -> r.provider == request.provider);
-        request.expiresIn += currentTick;
+        // we remove all requests provided by module on new request
+        activeRequests.removeIf(req -> req.getProvider() == request.getProvider());
+        request.setExpiresIn(request.getExpiresIn() + currentTick);
         activeRequests.add(request);
     }
 
     public T getActiveRequestValue() {
         Request<T> top = activeRequests.peek();
-        if (top == null) return null;
+        if (top == null) {
+            return null;
+        }
 
-        if (Minecraft.getInstance().isSameThread()){
-            while (top != null && (top.expiresIn <= currentTick || !top.provider.isRunning())) {
-                activeRequests.poll();
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.isSameThread()) {
+            while (top.getExpiresIn() <= currentTick || !top.getProvider().isRunning()) {
+                activeRequests.remove();
                 top = activeRequests.peek();
+                if (top == null) {
+                    return null;
+                }
             }
         }
 
-        return top != null ? top.value : null;
+        return top.getValue();
     }
 
-    /**
-     * A requested state of the system.
-     *
-     * Note: A request is deleted when its corresponding module is disabled.
-     *
-     * @param expiresIn in how many ticks should this request expire?
-     * @param priority  higher = higher priority
-     * @param provider  module which requested value (must implement RequestProvider)
-     * @param value     the requested value
-     */
+    @Getter
+    @Setter
     public static class Request<T> {
         public int expiresIn;
         public final int priority;

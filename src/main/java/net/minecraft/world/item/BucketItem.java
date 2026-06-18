@@ -1,5 +1,7 @@
 package net.minecraft.world.item;
 
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -85,7 +87,16 @@ public class BucketItem extends Item implements DispensibleContainerItem {
                 }
 
                 p_40704_.awardStat(Stats.ITEM_USED.get(this));
-                ItemStack itemstack1 = ItemUtils.createFilledResult(itemstack, p_40704_, getEmptySuccessItem(itemstack, p_40704_));
+
+                // dontExchangeStack: для <= 1.20.5 не заменяем стак, просто возвращаем пустой
+                ItemStack emptyResult = getEmptySuccessItem(itemstack, p_40704_);
+                ItemStack itemstack1;
+                if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_20_5)) {
+                    itemstack1 = emptyResult;
+                } else {
+                    itemstack1 = ItemUtils.createFilledResult(itemstack, p_40704_, emptyResult);
+                }
+
                 return InteractionResult.SUCCESS.heldItemTransformedTo(itemstack1);
             } else {
                 return InteractionResult.FAIL;

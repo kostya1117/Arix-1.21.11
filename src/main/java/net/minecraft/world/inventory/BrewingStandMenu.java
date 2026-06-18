@@ -1,6 +1,9 @@
 package net.minecraft.world.inventory;
 
 import java.util.Optional;
+
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
@@ -133,7 +136,13 @@ public class BrewingStandMenu extends AbstractContainerMenu {
         }
 
         public static boolean mayPlaceItem(ItemStack p_39113_) {
-            return p_39113_.is(ItemTags.BREWING_FUEL);
+            return ProtocolTranslator.getTargetVersion().newerThan(ProtocolVersion.v1_8)
+                    && p_39113_.is(ItemTags.BREWING_FUEL);
+        }
+
+        @Override
+        public boolean isActive() {
+            return ProtocolTranslator.getTargetVersion().newerThan(ProtocolVersion.v1_8);
         }
 
         @Override

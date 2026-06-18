@@ -1,6 +1,8 @@
 package net.minecraft.world.entity.animal.bee;
 
 import com.google.common.collect.Lists;
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import it.unimi.dsi.fastutil.longs.Long2LongOpenHashMap;
 import java.util.Comparator;
 import java.util.EnumSet;
@@ -575,6 +577,9 @@ public class Bee extends Animal implements NeutralMob, FlyingAnimal {
 
     @Override
     public InteractionResult mobInteract(Player p_455916_, InteractionHand p_460611_) {
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_21_2)) {
+            return (super.mobInteract(p_455916_, p_460611_));
+        }
         ItemStack itemstack = p_455916_.getItemInHand(p_460611_);
         if (this.isFood(itemstack) && itemstack.getItem() instanceof BlockItem blockitem && blockitem.getBlock() instanceof FlowerBlock flowerblock) {
             MobEffectInstance mobeffectinstance = flowerblock.getBeeInteractionEffect();

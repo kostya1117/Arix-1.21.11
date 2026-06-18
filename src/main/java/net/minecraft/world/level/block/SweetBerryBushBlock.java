@@ -50,7 +50,7 @@ public class SweetBerryBushBlock extends VegetationBlock implements Bonemealable
     }
 
     @Override
-    protected ItemStack getCloneItemStack(LevelReader p_312054_, BlockPos p_57257_, BlockState p_57258_, boolean p_376908_) {
+    public ItemStack getCloneItemStack(LevelReader p_312054_, BlockPos p_57257_, BlockState p_57258_, boolean p_376908_) {
         return new ItemStack(Items.SWEET_BERRIES);
     }
 

@@ -4,6 +4,9 @@ import com.mojang.logging.LogUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.stats.Stats;
@@ -27,7 +30,15 @@ public class KnowledgeBookItem extends Item {
     public InteractionResult use(Level p_42824_, Player p_42825_, InteractionHand p_42826_) {
         ItemStack itemstack = p_42825_.getItemInHand(p_42826_);
         List<ResourceKey<Recipe<?>>> list = itemstack.getOrDefault(DataComponents.RECIPES, List.of());
-        itemstack.consume(1, p_42825_);
+
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_20_5)) {
+            if (!p_42825_.hasInfiniteMaterials()) {
+                p_42825_.setItemInHand(p_42826_, ItemStack.EMPTY);
+            }
+        } else {
+            itemstack.consume(1, p_42825_);
+        }
+
         if (list.isEmpty()) {
             return InteractionResult.FAIL;
         }

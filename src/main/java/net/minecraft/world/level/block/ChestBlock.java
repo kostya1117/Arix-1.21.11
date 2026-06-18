@@ -3,6 +3,7 @@ package net.minecraft.world.level.block;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.mojang.serialization.codecs.RecordCodecBuilder.Instance;
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
 import it.unimi.dsi.fastutil.floats.Float2FloatFunction;
 import java.util.List;
 import java.util.Map;
@@ -58,6 +59,8 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.raphimc.viabedrock.api.BedrockProtocolVersion;
+import net.raphimc.vialegacy.api.LegacyProtocolVersion;
 import org.jspecify.annotations.Nullable;
 
 public class ChestBlock extends AbstractChestBlock<ChestBlockEntity> implements SimpleWaterloggedBlock {
@@ -68,6 +71,14 @@ public class ChestBlock extends AbstractChestBlock<ChestBlockEntity> implements 
                 propertiesCodec()
             )
             .apply(p_422095_, (p_422092_, p_422093_, p_422094_) -> new ChestBlock(() -> BlockEntityType.CHEST, p_422092_, p_422093_, p_422094_))
+    );
+    private static final VoxelShape viaFabricPlus$single_chest_shape_bedrock = Shapes.box(0.025, 0, 0.025, 0.975, 0.95, 0.975);
+
+    private static final Map<Direction, VoxelShape> viaFabricPlus$double_chest_shapes_bedrock = Map.of(
+            Direction.NORTH, Shapes.box(0.025, 0, 0, 0.975, 0.95, 0.975),
+            Direction.SOUTH, Shapes.box(0.025, 0, 0.025, 0.975, 0.95, 1),
+            Direction.WEST, Shapes.box(0, 0, 0.025, 0.975, 0.95, 0.975),
+            Direction.EAST, Shapes.box(0.025, 0, 0.025, 1, 0.95, 0.975)
     );
     public static final EnumProperty<Direction> FACING = HorizontalDirectionalBlock.FACING;
     public static final EnumProperty<ChestType> TYPE = BlockStateProperties.CHEST_TYPE;
@@ -188,9 +199,18 @@ public class ChestBlock extends AbstractChestBlock<ChestBlockEntity> implements 
 
     @Override
     protected VoxelShape getShape(BlockState p_51569_, BlockGetter p_51570_, BlockPos p_51571_, CollisionContext p_51572_) {
-        return switch ((ChestType)p_51569_.getValue(TYPE)) {
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(LegacyProtocolVersion.r1_4_2)) {
+            return Shapes.block();
+        } else if (ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.bedrockLatest)) {
+            return switch (p_51569_.getValue(TYPE)) {
+                case SINGLE -> viaFabricPlus$single_chest_shape_bedrock;
+                case LEFT, RIGHT -> viaFabricPlus$double_chest_shapes_bedrock.get(getConnectedDirection(p_51569_));
+            };
+        }
+
+        return switch (p_51569_.getValue(TYPE)) {
             case SINGLE -> SHAPE;
-            case LEFT, RIGHT -> (VoxelShape)HALF_SHAPES.get(getConnectedDirection(p_51569_));
+            case LEFT, RIGHT -> HALF_SHAPES.get(getConnectedDirection(p_51569_));
         };
     }
 

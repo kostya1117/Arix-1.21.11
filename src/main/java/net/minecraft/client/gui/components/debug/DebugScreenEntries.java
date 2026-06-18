@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
+
+import com.viaversion.viafabricplus.base.VFPDebugHudEntry;
 import net.minecraft.resources.Identifier;
 import net.optifine.gui.DebugEntryOF;
 import org.jspecify.annotations.Nullable;
@@ -51,7 +53,7 @@ public class DebugScreenEntries {
     public static final Identifier VISUALIZE_SKY_LIGHT_SECTIONS = register("visualize_sky_light_sections", new DebugEntryNoop());
     public static final Identifier CHUNK_SECTION_VISIBILITY = register("chunk_section_visibility", new DebugEntryNoop());
     public static final Identifier OPTIFINE = register("optifine", new DebugEntryOF());
-    public static final Map<DebugScreenProfile, Map<Identifier, DebugScreenEntryStatus>> PROFILES;
+    public static Map<DebugScreenProfile, Map<Identifier, DebugScreenEntryStatus>> PROFILES;
     private static Set<Identifier> locationsLeft = ImmutableSet.of(
         GAME_VERSION,
         FPS,
@@ -174,5 +176,15 @@ public class DebugScreenEntries {
             DebugScreenEntryStatus.IN_OVERLAY
         );
         PROFILES = Map.of(DebugScreenProfile.DEFAULT, map1, DebugScreenProfile.PERFORMANCE, map2);
+        final Identifier vfpId = register(VFPDebugHudEntry.ID, new VFPDebugHudEntry());
+        final Map<DebugScreenProfile, Map<Identifier, DebugScreenEntryStatus>> newProfiles = new HashMap<>();
+        for (Map.Entry<DebugScreenProfile, Map<Identifier, DebugScreenEntryStatus>> entry : PROFILES.entrySet()) {
+            final Map<Identifier, DebugScreenEntryStatus> entries = new HashMap<>(entry.getValue());
+            if (entry.getKey() == DebugScreenProfile.DEFAULT) {
+                entries.put(vfpId, DebugScreenEntryStatus.IN_OVERLAY);
+            }
+            newProfiles.put(entry.getKey(), entries);
+        }
+        PROFILES = newProfiles;
     }
 }

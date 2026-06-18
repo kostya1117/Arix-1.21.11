@@ -1,5 +1,7 @@
 package net.minecraft.world.item;
 
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -28,26 +30,26 @@ public class FishingRodItem extends Item {
             }
 
             p_41290_.playSound(
-                null,
-                p_41291_.getX(),
-                p_41291_.getY(),
-                p_41291_.getZ(),
-                SoundEvents.FISHING_BOBBER_RETRIEVE,
-                SoundSource.NEUTRAL,
-                1.0F,
-                0.4F / (p_41290_.getRandom().nextFloat() * 0.4F + 0.8F)
+                    null,
+                    p_41291_.getX(),
+                    p_41291_.getY(),
+                    p_41291_.getZ(),
+                    SoundEvents.FISHING_BOBBER_RETRIEVE,
+                    SoundSource.NEUTRAL,
+                    1.0F,
+                    0.4F / (p_41290_.getRandom().nextFloat() * 0.4F + 0.8F)
             );
             itemstack.causeUseVibration(p_41291_, GameEvent.ITEM_INTERACT_FINISH);
         } else {
             p_41290_.playSound(
-                null,
-                p_41291_.getX(),
-                p_41291_.getY(),
-                p_41291_.getZ(),
-                SoundEvents.FISHING_BOBBER_THROW,
-                SoundSource.NEUTRAL,
-                0.5F,
-                0.4F / (p_41290_.getRandom().nextFloat() * 0.4F + 0.8F)
+                    null,
+                    p_41291_.getX(),
+                    p_41291_.getY(),
+                    p_41291_.getZ(),
+                    SoundEvents.FISHING_BOBBER_THROW,
+                    SoundSource.NEUTRAL,
+                    0.5F,
+                    0.4F / (p_41290_.getRandom().nextFloat() * 0.4F + 0.8F)
             );
             if (p_41290_ instanceof ServerLevel serverlevel) {
                 int j = (int)(EnchantmentHelper.getFishingTimeReduction(serverlevel, itemstack, p_41291_) * 20.0F);
@@ -57,6 +59,10 @@ public class FishingRodItem extends Item {
 
             p_41291_.awardStat(Stats.ITEM_USED.get(this));
             itemstack.causeUseVibration(p_41291_, GameEvent.ITEM_INTERACT_START);
+        }
+
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_14_4)) {
+            p_41291_.swing(p_41292_);
         }
 
         return InteractionResult.SUCCESS;

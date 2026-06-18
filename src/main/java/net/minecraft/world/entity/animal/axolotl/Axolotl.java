@@ -3,6 +3,8 @@ package net.minecraft.world.entity.animal.axolotl;
 import com.google.common.collect.ImmutableList;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.Dynamic;
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import io.netty.buffer.ByteBuf;
 import java.util.Arrays;
 import java.util.List;
@@ -507,7 +509,13 @@ public class Axolotl extends Animal implements Bucketable {
     @Override
     protected void usePlayerItem(Player p_149124_, InteractionHand p_149125_, ItemStack p_149126_) {
         if (p_149126_.is(Items.TROPICAL_FISH_BUCKET)) {
-            p_149124_.setItemInHand(p_149125_, ItemUtils.createFilledResult(p_149126_, p_149124_, new ItemStack(Items.WATER_BUCKET)));
+            ItemStack result;
+            if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_20_5)) {
+                result = new ItemStack(Items.WATER_BUCKET);
+            } else {
+                result = ItemUtils.createFilledResult(p_149126_, p_149124_, new ItemStack(Items.WATER_BUCKET));
+            }
+            p_149124_.setItemInHand(p_149125_, result);
         } else {
             super.usePlayerItem(p_149124_, p_149125_, p_149126_);
         }

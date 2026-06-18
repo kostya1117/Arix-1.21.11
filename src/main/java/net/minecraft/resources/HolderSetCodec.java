@@ -8,6 +8,9 @@ import com.mojang.serialization.DynamicOps;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.HolderOwner;
@@ -63,9 +66,17 @@ public class HolderSetCodec<E> implements Codec<HolderSet<E>> {
     }
 
     private static <E> DataResult<HolderSet<E>> lookupTag(HolderGetter<E> p_331398_, TagKey<E> p_328227_) {
-        return (DataResult)p_331398_.get(p_328227_)
-            .map(DataResult::success)
-            .orElseGet(() -> DataResult.error(() -> "Missing tag: '" + p_328227_.location() + "' in '" + p_328227_.registry().identifier() + "'"));
+        DataResult<HolderSet<E>> result = (DataResult) p_331398_.get(p_328227_)
+                .map(DataResult::success)
+                .orElseGet(() -> DataResult.error(() -> "Missing tag: '" + p_328227_.location() + "' in '" + p_328227_.registry().identifier() + "'"));
+
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_21)) {
+            if (result.isError()) {
+                return DataResult.success(HolderSet.empty());
+            }
+        }
+
+        return result;
     }
 
     public <T> DataResult<T> encode(HolderSet<E> p_206674_, DynamicOps<T> p_206675_, T p_206676_) {

@@ -8,6 +8,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
@@ -115,6 +118,17 @@ public class PlayerTeam extends Team {
 
     @Override
     public MutableComponent getFormattedName(Component p_83369_) {
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_12_2)) {
+            final Style prefixStyle = viaFabricPlus$getLastStyle(this.playerPrefix);
+            final Component nameWithStyle = viaFabricPlus$fillStyle(p_83369_, prefixStyle);
+            final Style nameStyle = viaFabricPlus$getLastStyle(nameWithStyle);
+
+            return (Component.empty()
+                    .append(this.playerPrefix)
+                    .append(nameWithStyle)
+                    .append(viaFabricPlus$fillStyle(this.playerSuffix, nameStyle))
+            );
+        }
         MutableComponent mutablecomponent = Component.empty().append(this.playerPrefix).append(p_83369_).append(this.playerSuffix);
         ChatFormatting chatformatting = this.getColor();
         if (chatformatting != ChatFormatting.RESET) {
@@ -122,6 +136,24 @@ public class PlayerTeam extends Team {
         }
 
         return mutablecomponent;
+    }
+    private Style viaFabricPlus$getLastStyle(final Component text) {
+        for (int i = text.getSiblings().size() - 1; i >= 0; i--) {
+            final Component sibling = text.getSiblings().get(i);
+            if (sibling.getStyle() != Style.EMPTY) {
+                return sibling.getStyle();
+            }
+        }
+
+        return text.getStyle();
+    }
+
+    private Component viaFabricPlus$fillStyle(final Component text, final Style style) {
+        if (text.getStyle() != Style.EMPTY) {
+            return text;
+        } else {
+            return text.copy().withStyle(style);
+        }
     }
 
     public static MutableComponent formatNameForTeam( Team p_83349_, Component p_83350_) {

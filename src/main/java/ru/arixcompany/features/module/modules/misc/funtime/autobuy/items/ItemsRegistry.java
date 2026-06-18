@@ -114,7 +114,6 @@ public final class ItemsRegistry {
                 List.of("● Каст: Световая вспышка"),
                 "Явная пыль");
 
-        // ===== NAME =====
         name(targets, "potion_assassin", "[★] Зелье Ассасина", Items.SPLASH_POTION, "зелье Ассасина");
         name(targets, "potion_holy_water", "[★] Святая вода", Items.SPLASH_POTION, "Святая вода");
         name(targets, "potion_paladin", "[★] Зелье Палладина", Items.SPLASH_POTION, "зелье Палладина");
@@ -123,7 +122,6 @@ public final class ItemsRegistry {
         name(targets, "potion_wrath", "[★] Зелье Гнева", Items.SPLASH_POTION, "зелье Гнева");
         name(targets, "potion_radiation", "[★] Зелье Радиации", Items.SPLASH_POTION, "зелье Радиации");
 
-        // ===== NEW ITEMS =====
         name(targets, "disorientation", "[★] Дезориентация", Items.ENDER_EYE, "Дезориентация");
         name(targets, "obvious_dust", "[★] Явная пыль", Items.SUGAR, "Явная пыль");
     }

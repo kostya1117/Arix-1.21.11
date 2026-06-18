@@ -2,6 +2,8 @@ package net.minecraft.world.entity.animal.armadillo;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.Dynamic;
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import io.netty.buffer.ByteBuf;
 import java.util.function.IntFunction;
 import net.minecraft.core.BlockPos;
@@ -300,7 +302,10 @@ public class Armadillo extends Animal {
             itemstack.hurtAndBreak(16, p_335255_, p_331602_.asEquipmentSlot());
             return InteractionResult.SUCCESS;
         } else {
-            return this.isScared() ? InteractionResult.FAIL : super.mobInteract(p_335255_, p_331602_);
+            // ViaFabricPlus - change isScared condition for older versions
+            return (ProtocolTranslator.getTargetVersion().newerThan(ProtocolVersion.v1_20_5) && this.isScared())
+                    ? InteractionResult.FAIL
+                    : super.mobInteract(p_335255_, p_331602_);
         }
     }
 

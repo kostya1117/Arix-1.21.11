@@ -5,7 +5,7 @@ import ru.arixcompany.ui.title.button.AbstractButton;
 import ru.arixcompany.utils.Colors;
 import ru.arixcompany.utils.animation.Animation;
 import ru.arixcompany.utils.animation.Direction;
-import ru.arixcompany.utils.animation.impl.EaseInOutQuad;
+import ru.arixcompany.utils.animation.impl.quad.EaseInOutQuad;
 import ru.arixcompany.utils.math.MathUtils;
 import ru.arixcompany.utils.render.ColorUtil;
 import ru.arixcompany.utils.render.RenderUtils;

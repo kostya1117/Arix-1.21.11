@@ -3,6 +3,9 @@ package com.mojang.blaze3d.audio;
 import java.nio.ByteBuffer;
 import java.util.OptionalInt;
 import javax.sound.sampled.AudioFormat;
+
+import com.viaversion.viaaprilfools.api.AprilFoolsProtocolVersion;
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jspecify.annotations.Nullable;
@@ -18,6 +21,9 @@ public class SoundBuffer {
     public SoundBuffer(ByteBuffer p_83798_, AudioFormat p_83799_) {
         this.data = p_83798_;
         this.format = p_83799_;
+        if (ProtocolTranslator.getTargetVersion().equals(AprilFoolsProtocolVersion.s3d_shareware)) {
+            this.viaFabricPlus$apply8BitSound(p_83798_);
+        }
     }
 
     OptionalInt getAlBuffer() {
@@ -45,6 +51,54 @@ public class SoundBuffer {
 
         return OptionalInt.of(this.alBuffer);
     }
+    private void viaFabricPlus$apply8BitSound(final ByteBuffer byteBuffer) {
+        if (byteBuffer == null) {
+            return;
+        }
+        if (this.format.getChannels() == 1) {
+            this.viaFabricPlus$apply8BitMono(byteBuffer);
+        } else {
+            this.viaFabricPlus$apply8BitStereo(byteBuffer);
+        }
+    }
+
+    private void viaFabricPlus$apply8BitMono(final ByteBuffer byteBuffer) {
+        short short2 = 0;
+        int integer3 = 0;
+        while (byteBuffer.hasRemaining()) {
+            if (integer3 == 0) {
+                byteBuffer.mark();
+                short2 = (short) (byteBuffer.getShort() & 0xFFFFFFFC);
+                byteBuffer.reset();
+                integer3 = 15;
+            } else {
+                --integer3;
+            }
+            byteBuffer.putShort(short2);
+        }
+        byteBuffer.flip();
+    }
+
+    private void viaFabricPlus$apply8BitStereo(final ByteBuffer byteBuffer) {
+        short short2 = 0;
+        short short3 = 0;
+        int integer4 = 0;
+        while (byteBuffer.hasRemaining()) {
+            if (integer4 == 0) {
+                byteBuffer.mark();
+                short2 = (short) (byteBuffer.getShort() & 0xFFFFFFFC);
+                short3 = (short) (byteBuffer.getShort() & 0xFFFFFFFC);
+                byteBuffer.reset();
+                integer4 = 15;
+            } else {
+                --integer4;
+            }
+            byteBuffer.putShort(short2);
+            byteBuffer.putShort(short3);
+        }
+        byteBuffer.flip();
+    }
+
 
     public void discardAlBuffer() {
         if (this.hasAlBuffer) {

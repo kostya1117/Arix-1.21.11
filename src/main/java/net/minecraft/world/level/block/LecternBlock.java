@@ -1,6 +1,7 @@
 package net.minecraft.world.level.block;
 
 import com.mojang.serialization.MapCodec;
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
 import java.util.Map;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -39,6 +40,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.raphimc.viabedrock.api.BedrockProtocolVersion;
 import org.jspecify.annotations.Nullable;
 
 public class LecternBlock extends BaseEntityBlock {
@@ -48,14 +50,17 @@ public class LecternBlock extends BaseEntityBlock {
     public static final BooleanProperty HAS_BOOK = BlockStateProperties.HAS_BOOK;
     private static final VoxelShape SHAPE_COLLISION = Shapes.or(Block.column(16.0, 0.0, 2.0), Block.column(8.0, 2.0, 14.0));
     private static final Map<Direction, VoxelShape> SHAPES = Shapes.rotateHorizontal(
-        Shapes.or(
-            Block.boxZ(16.0, 10.0, 14.0, 1.0, 5.333333),
-            Block.boxZ(16.0, 12.0, 16.0, 5.333333, 9.666667),
-            Block.boxZ(16.0, 14.0, 18.0, 9.666667, 14.0),
-            SHAPE_COLLISION
-        )
+            Shapes.or(
+                    Block.boxZ(16.0, 10.0, 14.0, 1.0, 5.333333),
+                    Block.boxZ(16.0, 12.0, 16.0, 5.333333, 9.666667),
+                    Block.boxZ(16.0, 14.0, 18.0, 9.666667, 14.0),
+                    SHAPE_COLLISION
+            )
     );
     private static final int PAGE_CHANGE_IMPULSE_TICKS = 2;
+
+    // ViaFabricPlus - Bedrock lectern collision shape
+    private static final VoxelShape BEDROCK_SHAPE_COLLISION = Shapes.box(0, 0, 0, 1, 0.9, 1);
 
     @Override
     public MapCodec<LecternBlock> codec() {
@@ -95,6 +100,11 @@ public class LecternBlock extends BaseEntityBlock {
 
     @Override
     protected VoxelShape getCollisionShape(BlockState p_54577_, BlockGetter p_54578_, BlockPos p_54579_, CollisionContext p_54580_) {
+        // ViaFabricPlus - Bedrock lectern collision shape
+        if (ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.bedrockLatest)) {
+            return BEDROCK_SHAPE_COLLISION;
+        }
+
         return SHAPE_COLLISION;
     }
 
@@ -123,7 +133,7 @@ public class LecternBlock extends BaseEntityBlock {
         return new LecternBlockEntity(p_153573_, p_153574_);
     }
 
-    public static boolean tryPlaceBook( LivingEntity p_344930_, Level p_270604_, BlockPos p_270276_, BlockState p_270445_, ItemStack p_270458_) {
+    public static boolean tryPlaceBook(@Nullable LivingEntity p_344930_, Level p_270604_, BlockPos p_270276_, BlockState p_270445_, ItemStack p_270458_) {
         if (!p_270445_.getValue(HAS_BOOK)) {
             if (!p_270604_.isClientSide()) {
                 placeBook(p_344930_, p_270604_, p_270276_, p_270445_, p_270458_);
@@ -135,7 +145,7 @@ public class LecternBlock extends BaseEntityBlock {
         }
     }
 
-    private static void placeBook( LivingEntity p_343476_, Level p_270065_, BlockPos p_270155_, BlockState p_270753_, ItemStack p_270173_) {
+    private static void placeBook(@Nullable LivingEntity p_343476_, Level p_270065_, BlockPos p_270155_, BlockState p_270753_, ItemStack p_270173_) {
         if (p_270065_.getBlockEntity(p_270155_) instanceof LecternBlockEntity lecternblockentity) {
             lecternblockentity.setBook(p_270173_.consumeAndReturn(1, p_343476_));
             resetBookState(p_343476_, p_270065_, p_270155_, p_270753_, true);
@@ -143,7 +153,7 @@ public class LecternBlock extends BaseEntityBlock {
         }
     }
 
-    public static void resetBookState( Entity p_270231_, Level p_270114_, BlockPos p_270251_, BlockState p_270758_, boolean p_270452_) {
+    public static void resetBookState(@Nullable Entity p_270231_, Level p_270114_, BlockPos p_270251_, BlockState p_270758_, boolean p_270452_) {
         BlockState blockstate = p_270758_.setValue(POWERED, false).setValue(HAS_BOOK, p_270452_);
         p_270114_.setBlock(p_270251_, blockstate, 3);
         p_270114_.gameEvent(GameEvent.BLOCK_CHANGE, p_270251_, GameEvent.Context.of(p_270231_, blockstate));
@@ -212,7 +222,7 @@ public class LecternBlock extends BaseEntityBlock {
 
     @Override
     protected InteractionResult useItemOn(
-        ItemStack p_333093_, BlockState p_335984_, Level p_334086_, BlockPos p_332284_, Player p_332545_, InteractionHand p_328802_, BlockHitResult p_328840_
+            ItemStack p_333093_, BlockState p_335984_, Level p_334086_, BlockPos p_332284_, Player p_332545_, InteractionHand p_328802_, BlockHitResult p_328840_
     ) {
         if (p_335984_.getValue(HAS_BOOK)) {
             return InteractionResult.TRY_WITH_EMPTY_HAND;
@@ -237,7 +247,7 @@ public class LecternBlock extends BaseEntityBlock {
     }
 
     @Override
-    protected  MenuProvider getMenuProvider(BlockState p_54571_, Level p_54572_, BlockPos p_54573_) {
+    protected @Nullable MenuProvider getMenuProvider(BlockState p_54571_, Level p_54572_, BlockPos p_54573_) {
         return !p_54571_.getValue(HAS_BOOK) ? null : super.getMenuProvider(p_54571_, p_54572_, p_54573_);
     }
 

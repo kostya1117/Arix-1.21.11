@@ -1,8 +1,13 @@
 package net.minecraft.world.item;
 
 import java.util.Map;
+
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viafabricplus.settings.impl.DebugSettings;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.permissions.Permissions;
@@ -18,12 +23,11 @@ import net.minecraft.world.item.component.TypedEntityData;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.ShulkerBoxBlock;
-import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.ChestType;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.storage.TagValueOutput;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -85,7 +89,9 @@ public class BlockItem extends Item {
         }
 
         SoundType soundtype = blockstate1.getSoundType();
-        level.playSound(player, blockpos, this.getPlaceSound(blockstate1), SoundSource.BLOCKS, (soundtype.getVolume() + 1.0F) / 2.0F, soundtype.getPitch() * 0.8F);
+        if (!DebugSettings.INSTANCE.serversidePlaceSounds.isEnabled()) {
+            level.playSound(player, blockpos, this.getPlaceSound(blockstate1), SoundSource.BLOCKS, (soundtype.getVolume() + 1.0F) / 2.0F, soundtype.getPitch() * 0.8F);
+        }
         level.gameEvent(GameEvent.BLOCK_PLACE, blockpos, GameEvent.Context.of(player, blockstate1));
         itemstack.consume(1, player);
         return InteractionResult.SUCCESS;
@@ -111,7 +117,8 @@ public class BlockItem extends Item {
         return updateCustomBlockEntityTag(p_40598_, p_40599_, p_40597_, p_40600_);
     }
 
-    protected @Nullable BlockState getPlacementState(BlockPlaceContext p_40613_) {
+    @Nullable
+    public BlockState getPlacementState(BlockPlaceContext p_40613_) {
         BlockState blockstate = this.getBlock().getStateForPlacement(p_40613_);
         return blockstate != null && this.canPlace(p_40613_, blockstate) ? blockstate : null;
     }
@@ -131,6 +138,26 @@ public class BlockItem extends Item {
     }
 
     protected boolean canPlace(BlockPlaceContext p_40611_, BlockState p_40612_) {
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_12_2)) {
+            Block block = p_40612_.getBlock();
+            if (block == Blocks.CHEST || block == Blocks.TRAPPED_CHEST) {
+                Level world = p_40611_.getLevel();
+                BlockPos pos = p_40611_.getClickedPos();
+                boolean foundAdjChest = false;
+                for (Direction dir : Direction.Plane.HORIZONTAL) {
+                    BlockState otherState = world.getBlockState(pos.relative(dir));
+                    if (otherState.getBlock() == block) {
+                        if (foundAdjChest) {
+                            return false;
+                        }
+                        foundAdjChest = true;
+                        if (otherState.getValue(ChestBlock.TYPE) != ChestType.SINGLE) {
+                            return (false);
+                        }
+                    }
+                }
+            }
+        }
         Player player = p_40611_.getPlayer();
         return (!this.mustSurvive() || p_40612_.canSurvive(p_40611_.getLevel(), p_40611_.getClickedPos()))
             && p_40611_.getLevel().isUnobstructed(p_40612_, p_40611_.getClickedPos(), CollisionContext.placementContext(player));

@@ -210,7 +210,7 @@ public class LevelRenderer implements ResourceManagerReloadListener, AutoCloseab
     private  SectionRenderDispatcher sectionRenderDispatcher;
     private int lastViewDistance = -1;
     private boolean captureFrustum;
-    private  Frustum capturedFrustum;
+    public   Frustum capturedFrustum;
     private  BlockPos lastTranslucentSortBlockPos;
     private int translucencyResortIterationIndex;
     private final LevelRenderState levelRenderState;

@@ -11,22 +11,15 @@ import java.util.concurrent.ConcurrentHashMap;
 public class FontManager {
     private static final Map<String, CustomFont> fonts = new ConcurrentHashMap<>();
 
-    /**
-     * Системный fallback-шрифт — подбирается под ОС
-     */
     @Getter
     private static Font commonFont;
 
-    /**
-     * CJK fallback — для китайских/японских/корейских символов
-     */
     @Getter
     private static Font cjkFont;
 
     static {
         String os = System.getProperty("os.name", "").toLowerCase();
 
-        // Общий fallback
         if (os.contains("win")) {
             commonFont = new Font("Segoe UI", Font.PLAIN, 1);
         } else if (os.contains("mac")) {
@@ -35,7 +28,6 @@ public class FontManager {
             commonFont = new Font("DejaVu Sans", Font.PLAIN, 1);
         }
 
-        // CJK fallback
         if (os.contains("win")) {
             cjkFont = new Font("Microsoft YaHei", Font.PLAIN, 1);
         } else if (os.contains("mac")) {

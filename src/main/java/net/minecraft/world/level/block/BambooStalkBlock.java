@@ -1,6 +1,7 @@
 package net.minecraft.world.level.block;
 
 import com.mojang.serialization.MapCodec;
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -22,6 +23,7 @@ import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.raphimc.viabedrock.api.BedrockProtocolVersion;
 import org.jspecify.annotations.Nullable;
 
 public class BambooStalkBlock extends Block implements BonemealableBlock {
@@ -37,6 +39,10 @@ public class BambooStalkBlock extends Block implements BonemealableBlock {
     public static final int STAGE_DONE_GROWING = 1;
     public static final int AGE_THIN_BAMBOO = 0;
     public static final int AGE_THICK_BAMBOO = 1;
+
+    // ViaFabricPlus - Bedrock bamboo shapes
+    private static final VoxelShape BEDROCK_SHAPE_SMALL = Block.box(8D, 0.0D, 8D, 10D, 16.0D, 10D);
+    private static final VoxelShape BEDROCK_SHAPE_LARGE = Block.box(8D, 0.0D, 8D, 11D, 16.0D, 11D);
 
     @Override
     public MapCodec<BambooStalkBlock> codec() {
@@ -60,6 +66,12 @@ public class BambooStalkBlock extends Block implements BonemealableBlock {
 
     @Override
     protected VoxelShape getShape(BlockState p_261515_, BlockGetter p_261586_, BlockPos p_261526_, CollisionContext p_261930_) {
+        // ViaFabricPlus - Bedrock bamboo shape
+        if (ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.bedrockLatest)) {
+            final VoxelShape voxelShape = p_261515_.getValue(AGE) == AGE_THICK_BAMBOO ? BEDROCK_SHAPE_LARGE : BEDROCK_SHAPE_SMALL;
+            return voxelShape.move(p_261515_.getOffset(p_261526_));
+        }
+
         VoxelShape voxelshape = p_261515_.getValue(LEAVES) == BambooLeaves.LARGE ? SHAPE_LARGE : SHAPE_SMALL;
         return voxelshape.move(p_261515_.getOffset(p_261526_));
     }
@@ -71,6 +83,12 @@ public class BambooStalkBlock extends Block implements BonemealableBlock {
 
     @Override
     protected VoxelShape getCollisionShape(BlockState p_261560_, BlockGetter p_261965_, BlockPos p_261950_, CollisionContext p_261571_) {
+        // ViaFabricPlus - Bedrock bamboo collision shape
+        if (ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.bedrockLatest)) {
+            final VoxelShape voxelShape = p_261560_.getValue(AGE) == AGE_THICK_BAMBOO ? BEDROCK_SHAPE_LARGE : BEDROCK_SHAPE_SMALL;
+            return voxelShape.move(p_261560_.getOffset(p_261950_));
+        }
+
         return SHAPE_COLLISION.move(p_261560_.getOffset(p_261950_));
     }
 
@@ -80,7 +98,7 @@ public class BambooStalkBlock extends Block implements BonemealableBlock {
     }
 
     @Override
-    public  BlockState getStateForPlacement(BlockPlaceContext p_261764_) {
+    public @Nullable BlockState getStateForPlacement(BlockPlaceContext p_261764_) {
         FluidState fluidstate = p_261764_.getLevel().getFluidState(p_261764_.getClickedPos());
         if (!fluidstate.isEmpty()) {
             return null;
@@ -96,8 +114,8 @@ public class BambooStalkBlock extends Block implements BonemealableBlock {
             } else {
                 BlockState blockstate1 = p_261764_.getLevel().getBlockState(p_261764_.getClickedPos().above());
                 return blockstate1.is(Blocks.BAMBOO)
-                    ? this.defaultBlockState().setValue(AGE, blockstate1.getValue(AGE))
-                    : Blocks.BAMBOO_SAPLING.defaultBlockState();
+                        ? this.defaultBlockState().setValue(AGE, blockstate1.getValue(AGE))
+                        : Blocks.BAMBOO_SAPLING.defaultBlockState();
             }
         } else {
             return null;
@@ -135,22 +153,22 @@ public class BambooStalkBlock extends Block implements BonemealableBlock {
 
     @Override
     protected BlockState updateShape(
-        BlockState p_261476_,
-        LevelReader p_362157_,
-        ScheduledTickAccess p_366749_,
-        BlockPos p_261876_,
-        Direction p_261512_,
-        BlockPos p_262140_,
-        BlockState p_262167_,
-        RandomSource p_364105_
+            BlockState p_261476_,
+            LevelReader p_362157_,
+            ScheduledTickAccess p_366749_,
+            BlockPos p_261876_,
+            Direction p_261512_,
+            BlockPos p_262140_,
+            BlockState p_262167_,
+            RandomSource p_364105_
     ) {
         if (!p_261476_.canSurvive(p_362157_, p_261876_)) {
             p_366749_.scheduleTick(p_261876_, this, 1);
         }
 
         return p_261512_ == Direction.UP && p_262167_.is(Blocks.BAMBOO) && p_262167_.getValue(AGE) > p_261476_.getValue(AGE)
-            ? p_261476_.cycle(AGE)
-            : super.updateShape(p_261476_, p_362157_, p_366749_, p_261876_, p_261512_, p_262140_, p_262167_, p_364105_);
+                ? p_261476_.cycle(AGE)
+                : super.updateShape(p_261476_, p_362157_, p_366749_, p_261876_, p_261512_, p_262140_, p_262167_, p_364105_);
     }
 
     @Override

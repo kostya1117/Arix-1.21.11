@@ -6,7 +6,7 @@ import lombok.experimental.Accessors;
 import ru.arixcompany.features.module.setting.Setting;
 import ru.arixcompany.utils.animation.Animation;
 import ru.arixcompany.utils.animation.Direction;
-import ru.arixcompany.utils.animation.impl.EaseInOutQuad;
+import ru.arixcompany.utils.animation.impl.quad.EaseInOutQuad;
 
 import java.awt.Color;
 import java.util.function.Supplier;

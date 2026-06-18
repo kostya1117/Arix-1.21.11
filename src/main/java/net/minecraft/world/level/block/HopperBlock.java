@@ -4,6 +4,9 @@ import com.google.common.collect.ImmutableMap;
 import com.mojang.serialization.MapCodec;
 import java.util.Map;
 import java.util.function.Function;
+
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -43,6 +46,11 @@ public class HopperBlock extends BaseEntityBlock {
     public static final BooleanProperty ENABLED = BlockStateProperties.ENABLED;
     private final Function<BlockState, VoxelShape> shapes;
     private final Map<Direction, VoxelShape> interactionShapes;
+    private static final VoxelShape viaFabricPlus$inside_shape_r1_12_2 = Block.box(2.0D, 10.0D, 2.0D, 14.0D, 16.0D, 14.0D);
+
+    private static final VoxelShape viaFabricPlus$hopper_shape_r1_12_2 = Shapes.join(Shapes.block(), viaFabricPlus$inside_shape_r1_12_2, BooleanOp.ONLY_FIRST);
+
+    private boolean viaFabricPlus$requireOriginalShape;
 
     @Override
     public MapCodec<HopperBlock> codec() {
@@ -71,12 +79,26 @@ public class HopperBlock extends BaseEntityBlock {
 
     @Override
     protected VoxelShape getShape(BlockState p_54105_, BlockGetter p_54106_, BlockPos p_54107_, CollisionContext p_54108_) {
+       /* if (false && viaFabricPlus$requireOriginalShape) {// for culling
+            viaFabricPlus$requireOriginalShape = false;
+        } else*/ if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_12_2)) {
+            return (viaFabricPlus$hopper_shape_r1_12_2);
+        }
         return this.shapes.apply(p_54105_);
     }
 
     @Override
     protected VoxelShape getInteractionShape(BlockState p_54099_, BlockGetter p_54100_, BlockPos p_54101_) {
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_12_2)) {
+            return (viaFabricPlus$inside_shape_r1_12_2);
+        }
         return this.interactionShapes.get(p_54099_.getValue(FACING));
+    }
+    @Override
+    public VoxelShape getOcclusionShape(BlockState state) {
+        // Workaround for https://github.com/ViaVersion/ViaFabricPlus/issues/45
+        viaFabricPlus$requireOriginalShape = true;
+        return super.getOcclusionShape(state);
     }
 
     @Override

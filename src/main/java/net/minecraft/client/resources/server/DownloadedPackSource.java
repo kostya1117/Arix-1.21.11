@@ -22,6 +22,10 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
+
+import com.viaversion.viafabricplus.features.networking.resource_pack_header.ResourcePackHeaderDiff;
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import net.minecraft.SharedConstants;
 import net.minecraft.WorldVersion;
 import net.minecraft.client.Minecraft;
@@ -167,21 +171,34 @@ public class DownloadedPackSource implements AutoCloseable {
             private static final HashFunction CACHE_HASHING_FUNCTION = Hashing.sha1();
 
             private Map<String, String> createDownloadHeaders() {
-                WorldVersion worldversion = SharedConstants.getCurrentVersion();
-                return Map.of(
-                    "X-Minecraft-Username",
-                    p_312845_.getName(),
-                    "X-Minecraft-UUID",
-                    UndashedUuid.toString(p_312845_.getProfileId()),
-                    "X-Minecraft-Version",
-                    worldversion.name(),
-                    "X-Minecraft-Version-ID",
-                    worldversion.id(),
-                    "X-Minecraft-Pack-Format",
-                    String.valueOf(worldversion.packVersion(PackType.CLIENT_RESOURCES)),
-                    "User-Agent",
-                    "Minecraft Java/" + worldversion.name()
-                );
+                WorldVersion worldversion = ResourcePackHeaderDiff.get(ProtocolTranslator.getTargetVersion());
+
+                String packFormat;
+                Object packVersionObj = worldversion.packVersion(PackType.CLIENT_RESOURCES);
+                if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_21_7) && packVersionObj instanceof final PackFormat packVersion) {
+                    packFormat = String.valueOf(packVersion.major());
+                } else {
+                    packFormat = String.valueOf(packVersionObj);
+                }
+
+                Map<String, String> headers = new java.util.LinkedHashMap<>();
+                headers.put("X-Minecraft-Username", p_312845_.getName());
+                headers.put("X-Minecraft-UUID", UndashedUuid.toString(p_312845_.getProfileId()));
+                headers.put("X-Minecraft-Version", worldversion.name());
+                headers.put("X-Minecraft-Version-ID", worldversion.id());
+                headers.put("X-Minecraft-Pack-Format", packFormat);
+                headers.put("User-Agent", "Minecraft Java/" + worldversion.name());
+
+                // removeHeaders: для <= 1.14.3 убираем некоторые заголовки
+                if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_14_3)) {
+                    headers.remove("X-Minecraft-Version-ID");
+                    if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_12_2)) {
+                        headers.remove("X-Minecraft-Pack-Format");
+                        headers.remove("User-Agent");
+                    }
+                }
+
+                return headers;
             }
 
             @Override

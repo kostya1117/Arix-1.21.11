@@ -1,5 +1,7 @@
 package net.minecraft.world.item;
 
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Position;
@@ -29,6 +31,9 @@ public class FireChargeItem extends Item implements ProjectileItem {
 
     @Override
     public InteractionResult useOn(UseOnContext p_41204_) {
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_14_4) && p_41204_.getLevel().isClientSide()) {
+            return (InteractionResult.SUCCESS);
+        }
         Level level = p_41204_.getLevel();
         BlockPos blockpos = p_41204_.getClickedPos();
         BlockState blockstate = level.getBlockState(blockpos);

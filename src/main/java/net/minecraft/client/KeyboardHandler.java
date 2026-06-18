@@ -9,7 +9,14 @@ import com.mojang.blaze3d.platform.Window;
 import com.mojang.logging.LogUtils;
 import java.nio.file.Path;
 import java.util.Locale;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
+import com.viaversion.viafabricplus.features.networking.remove_signed_commands.SignedCommands1_21_6;
+import com.viaversion.viafabricplus.injection.access.execute_inputs_sync.IMouseKeyboardHandlers;
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viafabricplus.settings.impl.DebugSettings;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import de.maxhenkel.voicechat.events.InputEvents;
 import net.minecraft.ChatFormatting;
 import net.minecraft.CrashReport;
@@ -39,6 +46,8 @@ import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MessageSignature;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ServerGamePacketListener;
 import net.minecraft.network.protocol.game.ServerboundChangeGameModePacket;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.commands.GameModeCommand;
@@ -68,7 +77,7 @@ import org.slf4j.Logger;
 import ru.arixcompany.features.event.EventRepo;
 import ru.arixcompany.features.event.player.EventKey;
 
-public class KeyboardHandler {
+public class KeyboardHandler implements IMouseKeyboardHandlers {
     private static final Logger LOGGER = LogUtils.getLogger();
     public static final int DEBUG_CRASH_TIME = 10000;
     private final Minecraft minecraft;
@@ -253,10 +262,22 @@ public class KeyboardHandler {
             if (this.minecraft.player == null || !GameModeCommand.PERMISSION_CHECK.check(this.minecraft.player.permissions())) {
                 this.debugFeedbackTranslated("debug.creative_spectator.error");
             } else if (!this.minecraft.player.isSpectator()) {
-                this.minecraft.player.connection.send(new ServerboundChangeGameModePacket(GameType.SPECTATOR));
+                Packet<ServerGamePacketListener> spectatorPacket = new ServerboundChangeGameModePacket(GameType.SPECTATOR);
+                if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_21_5)
+                        && spectatorPacket instanceof ServerboundChangeGameModePacket(final GameType mode)) {
+                    SignedCommands1_21_6.sendGameMode(mode);
+                } else {
+                    this.minecraft.player.connection.send(spectatorPacket);
+                }
             } else {
                 GameType gametype = MoreObjects.firstNonNull(this.minecraft.gameMode.getPreviousPlayerMode(), GameType.CREATIVE);
-                this.minecraft.player.connection.send(new ServerboundChangeGameModePacket(gametype));
+                Packet<ServerGamePacketListener> gameModePacket = new ServerboundChangeGameModePacket(gametype);
+                if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_21_5)
+                        && gameModePacket instanceof ServerboundChangeGameModePacket(final GameType mode)) {
+                    SignedCommands1_21_6.sendGameMode(mode);
+                } else {
+                    this.minecraft.player.connection.send(gameModePacket);
+                }
             }
 
             flag = true;
@@ -298,8 +319,8 @@ public class KeyboardHandler {
             Path path = TextureUtil.getDebugTexturePath(path1);
             this.minecraft.getTextureManager().dumpAllSheets(path);
             Component component = Component.literal(path1.relativize(path).toString())
-                .withStyle(ChatFormatting.UNDERLINE)
-                .withStyle(styleIn -> styleIn.withClickEvent(new ClickEvent.OpenFile(path)));
+                    .withStyle(ChatFormatting.UNDERLINE)
+                    .withStyle(styleIn -> styleIn.withClickEvent(new ClickEvent.OpenFile(path)));
             this.debugFeedbackComponent(Component.translatable("debug.dump_dynamic_textures", component));
             flag = true;
         }
@@ -321,16 +342,16 @@ public class KeyboardHandler {
         if (options.keyDebugCopyLocation.matches(p_423688_) && this.minecraft.player != null && !this.minecraft.player.isReducedDebugInfo()) {
             this.debugFeedbackTranslated("debug.copy_location.message");
             this.setClipboard(
-                String.format(
-                    Locale.ROOT,
-                    "/execute in %s run tp @s %.2f %.2f %.2f %.2f %.2f",
-                    this.minecraft.player.level().dimension().identifier(),
-                    this.minecraft.player.getX(),
-                    this.minecraft.player.getY(),
-                    this.minecraft.player.getZ(),
-                    this.minecraft.player.getYRot(),
-                    this.minecraft.player.getXRot()
-                )
+                    String.format(
+                            Locale.ROOT,
+                            "/execute in %s run tp @s %.2f %.2f %.2f %.2f %.2f",
+                            this.minecraft.player.level().dimension().identifier(),
+                            this.minecraft.player.getX(),
+                            this.minecraft.player.getY(),
+                            this.minecraft.player.getZ(),
+                            this.minecraft.player.getYRot(),
+                            this.minecraft.player.getXRot()
+                    )
             );
             flag = true;
         }
@@ -663,15 +684,32 @@ public class KeyboardHandler {
             }
         }
     }
+    private final Queue<Runnable> viaFabricPlus$pendingScreenEvents = new ConcurrentLinkedQueue<>();
 
     public void setup(Window p_424136_) {
         InputConstants.setupKeyboardCallbacks(p_424136_, (pointer2In, key2In, scancode2In, action2In, modifiers2In) -> {
             KeyEvent keyevent = new KeyEvent(key2In, scancode2In, modifiers2In);
-            this.minecraft.execute(() -> this.keyPress(pointer2In, action2In, keyevent));
+            Runnable runnable1 = () -> this.keyPress(pointer2In, action2In, keyevent);
+            // ViaFabricPlus - store event for synchronous execution
+            if (this.minecraft.getConnection() != null && this.minecraft.screen != null && DebugSettings.INSTANCE.executeInputsSynchronously.isEnabled()) {
+                this.viaFabricPlus$pendingScreenEvents.offer(runnable1);
+            } else {
+                this.minecraft.execute(runnable1);
+            }
         }, (pointer3In, codepoint3In, modifiers3In) -> {
             CharacterEvent characterevent = new CharacterEvent(codepoint3In, modifiers3In);
-            this.minecraft.execute(() -> this.charTyped(pointer3In, characterevent));
+            Runnable runnable2 = () -> this.charTyped(pointer3In, characterevent);
+            // ViaFabricPlus - store event for synchronous execution
+            if (this.minecraft.getConnection() != null && this.minecraft.screen != null && DebugSettings.INSTANCE.executeInputsSynchronously.isEnabled()) {
+                this.viaFabricPlus$pendingScreenEvents.offer(runnable2);
+            } else {
+                this.minecraft.execute(runnable2);
+            }
         });
+    }
+    @Override
+    public Queue<Runnable> viaFabricPlus$getPendingScreenEvents() {
+        return this.viaFabricPlus$pendingScreenEvents;
     }
 
     public String getClipboard() {

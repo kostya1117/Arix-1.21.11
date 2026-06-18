@@ -6,6 +6,8 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.mojang.serialization.codecs.RecordCodecBuilder.Instance;
 import java.util.Map;
 import java.util.function.BiConsumer;
+
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -36,6 +38,7 @@ import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.raphimc.vialegacy.api.LegacyProtocolVersion;
 import org.jspecify.annotations.Nullable;
 
 public class FenceGateBlock extends HorizontalDirectionalBlock {
@@ -58,6 +61,7 @@ public class FenceGateBlock extends HorizontalDirectionalBlock {
     private static final Map<Direction.Axis, VoxelShape> SHAPE_OCCLUSION_WALL = Maps.newEnumMap(
         Util.mapValues(SHAPE_OCCLUSION, p_390935_ -> p_390935_.move(0.0, -0.1875, 0.0).optimize())
     );
+    private static final VoxelShape viaFabricPlus$x_and_z_axis_collision_shape_b1_8_1 = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 24.0D, 16.0D);
     private final WoodType type;
 
     @Override
@@ -73,6 +77,9 @@ public class FenceGateBlock extends HorizontalDirectionalBlock {
 
     @Override
     protected VoxelShape getShape(BlockState p_53391_, BlockGetter p_53392_, BlockPos p_53393_, CollisionContext p_53394_) {
+        if (!p_53391_.getValue(FenceGateBlock.IN_WALL) && ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(LegacyProtocolVersion.b1_8tob1_8_1)) {
+            return Shapes.block();
+        }
         Direction.Axis direction$axis = p_53391_.getValue(FACING).getAxis();
         return (p_53391_.getValue(IN_WALL) ? SHAPES_WALL : SHAPES).get(direction$axis);
     }
@@ -105,6 +112,9 @@ public class FenceGateBlock extends HorizontalDirectionalBlock {
 
     @Override
     protected VoxelShape getCollisionShape(BlockState p_53396_, BlockGetter p_53397_, BlockPos p_53398_, CollisionContext p_53399_) {
+        if (!p_53396_.getValue(FenceGateBlock.OPEN) && ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(LegacyProtocolVersion.b1_8tob1_8_1)) {
+            return (viaFabricPlus$x_and_z_axis_collision_shape_b1_8_1);
+        }
         Direction.Axis direction$axis = p_53396_.getValue(FACING).getAxis();
         return p_53396_.getValue(OPEN) ? Shapes.empty() : SHAPE_COLLISION.get(direction$axis);
     }

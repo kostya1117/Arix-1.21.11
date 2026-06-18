@@ -1,6 +1,9 @@
 package net.minecraft.world.entity.animal.squid;
 
 import java.util.Objects;
+
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
@@ -82,6 +85,9 @@ public class Squid extends AgeableWaterCreature {
 
     @Override
     public boolean canBeLeashed() {
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_16_4)) {
+            return false;
+        }
         return true;
     }
 

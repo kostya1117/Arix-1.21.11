@@ -7,7 +7,7 @@ import lombok.experimental.Accessors;
 import org.lwjgl.glfw.GLFW;
 import ru.arixcompany.utils.animation.Animation;
 import ru.arixcompany.utils.animation.Direction;
-import ru.arixcompany.utils.animation.impl.EaseInOutQuad;
+import ru.arixcompany.utils.animation.impl.quad.EaseInOutQuad;
 
 import java.util.function.Supplier;
 

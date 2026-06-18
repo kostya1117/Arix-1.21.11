@@ -138,7 +138,7 @@ public class Util {
     }
 
     public static long getMillis() {
-        return getNanos() / 1000000L;
+        return getNanos() / NANOS_PER_MILLI;
     }
 
     public static long getNanos() {

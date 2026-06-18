@@ -46,7 +46,7 @@ public class TallSeagrassBlock extends DoublePlantBlock implements LiquidBlockCo
     }
 
     @Override
-    protected ItemStack getCloneItemStack(LevelReader p_311085_, BlockPos p_154750_, BlockState p_154751_, boolean p_376180_) {
+    public ItemStack getCloneItemStack(LevelReader p_311085_, BlockPos p_154750_, BlockState p_154751_, boolean p_376180_) {
         return new ItemStack(Blocks.SEAGRASS);
     }
 

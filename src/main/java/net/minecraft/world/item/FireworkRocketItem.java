@@ -1,5 +1,7 @@
 package net.minecraft.world.item;
 
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Position;
 import net.minecraft.core.dispenser.BlockSource;
@@ -26,6 +28,9 @@ public class FireworkRocketItem extends Item implements ProjectileItem {
 
     @Override
     public InteractionResult useOn(UseOnContext p_41216_) {
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_21_5)) {
+           return (InteractionResult.SUCCESS);
+        }
         Level level = p_41216_.getLevel();
         Player player = p_41216_.getPlayer();
         if (player != null && player.isFallFlying()) {
@@ -56,7 +61,9 @@ public class FireworkRocketItem extends Item implements ProjectileItem {
 
     @Override
     public InteractionResult use(Level p_41218_, Player p_41219_, InteractionHand p_41220_) {
-        if (p_41219_.isFallFlying()) {
+        boolean isFallFlying = ProtocolTranslator.getTargetVersion().newerThan(ProtocolVersion.v1_11) && p_41219_.isFallFlying();
+
+        if (isFallFlying) {
             ItemStack itemstack = p_41219_.getItemInHand(p_41220_);
             if (p_41218_ instanceof ServerLevel serverlevel) {
                 if (p_41219_.dropAllLeashConnections(null)) {

@@ -1,5 +1,9 @@
 package net.minecraft.client.gui.screens.inventory;
 
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.connection.UserConnection;
+import com.viaversion.viaversion.api.protocol.packet.PacketWrapper;
+import com.viaversion.viaversion.api.type.Types;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.navigation.ScreenPosition;
@@ -17,6 +21,12 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.raphimc.viabedrock.api.BedrockProtocolVersion;
+import net.raphimc.viabedrock.protocol.BedrockProtocol;
+import net.raphimc.viabedrock.protocol.ServerboundBedrockPackets;
+import net.raphimc.viabedrock.protocol.data.enums.bedrock.generated.InteractPacket_Action;
+import net.raphimc.viabedrock.protocol.storage.EntityTracker;
+import net.raphimc.viabedrock.protocol.types.BedrockTypes;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
@@ -31,6 +41,15 @@ public class InventoryScreen extends AbstractRecipeBookScreen<InventoryMenu> {
         super(p_98839_.inventoryMenu, new CraftingRecipeBookComponent(p_98839_.inventoryMenu), p_98839_.getInventory(), Component.translatable("container.crafting"));
         this.titleLabelX = 97;
         this.effects = new EffectsInInventory(this);
+        if (ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.bedrockLatest)) {
+            final UserConnection connection = ProtocolTranslator.getPlayNetworkUserConnection();
+
+            final PacketWrapper interact = PacketWrapper.create(ServerboundBedrockPackets.INTERACT, connection);
+            interact.write(Types.UNSIGNED_BYTE, (short) InteractPacket_Action.OpenInventory.getValue()); // action
+            interact.write(BedrockTypes.UNSIGNED_VAR_LONG, connection.get(EntityTracker.class).getClientPlayer().runtimeId()); // target entity runtime id
+            interact.write(BedrockTypes.OPTIONAL_POSITION_3F, null); // position
+            interact.sendToServer(BedrockProtocol.class);
+        }
     }
 
     @Override

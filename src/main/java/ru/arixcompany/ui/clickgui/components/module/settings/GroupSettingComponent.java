@@ -14,7 +14,6 @@ import ru.arixcompany.utils.render.RenderUtils;
 import ru.arixcompany.utils.render.font.FontManager;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public final class GroupSettingComponent implements IComponent {

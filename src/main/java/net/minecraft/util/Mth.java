@@ -32,9 +32,9 @@ public class Mth {
     private static final int SIN_MASK = 65535;
     private static final int COS_OFFSET = 16384;
     private static final double SIN_SCALE = 10430.378350470453;
-    private static final float[] SIN = Util.make(new float[65536], p_439083_0_ -> {
+    private static final float[] SIN = Util.make(new float[SIN_QUANTIZATION], p_439083_0_ -> {
         for (int i = 0; i < p_439083_0_.length; i++) {
-            p_439083_0_[i] = (float)Math.sin(i / 10430.378350470453);
+            p_439083_0_[i] = (float)Math.sin(i / SIN_SCALE);
         }
     });
     private static final RandomSource RANDOM = RandomSource.createThreadSafe();
@@ -45,8 +45,8 @@ public class Mth {
     private static final int FRAC_EXP = 8;
     private static final int LUT_SIZE = 257;
     private static final double FRAC_BIAS = Double.longBitsToDouble(4805340802404319232L);
-    private static final double[] ASIN_TAB = new double[257];
-    private static final double[] COS_TAB = new double[257];
+    private static final double[] ASIN_TAB = new double[LUT_SIZE];
+    private static final double[] COS_TAB = new double[LUT_SIZE];
     private static final int SIN_BITS_FAST = 12;
     private static final int SIN_MASK_FAST = 4095;
     private static final int SIN_COUNT_FAST = 4096;
@@ -55,17 +55,17 @@ public class Mth {
     public static final float PId2 = MathUtils.roundToFloat(Math.PI / 2);
     private static final float radToIndex = MathUtils.roundToFloat(651.8986469044033);
     public static final float deg2Rad = MathUtils.roundToFloat(Math.PI / 180.0);
-    private static final float[] SIN_TABLE_FAST = new float[4096];
+    private static final float[] SIN_TABLE_FAST = new float[SIN_COUNT_FAST];
     public static boolean fastMath = false;
 
     public static float sin(double p_457266_) {
-        return fastMath ? SIN_TABLE_FAST[(int)(p_457266_ * radToIndex) & 4095] : SIN[(int)((long)(p_457266_ * 10430.378350470453) & 65535L)];
+        return fastMath ? SIN_TABLE_FAST[(int)(p_457266_ * radToIndex) & SIN_MASK_FAST] : SIN[(int)((long)(p_457266_ * SIN_SCALE) & SIN_MASK)];
     }
 
     public static float cos(double p_455002_) {
         return fastMath
-            ? SIN_TABLE_FAST[(int)(p_455002_ * radToIndex + 1024.0) & 4095]
-            : SIN[(int)((long)(p_455002_ * 10430.378350470453 + 16384.0) & 65535L)];
+            ? SIN_TABLE_FAST[(int)(p_455002_ * radToIndex + SIN_COUNT_FAST_D4) & SIN_MASK_FAST]
+            : SIN[(int)((long)(p_455002_ * SIN_SCALE + COS_OFFSET) & SIN_MASK)];
     }
 
     public static float sqrt(float p_14117_) {
@@ -426,7 +426,7 @@ public class Mth {
         double d4 = COS_TAB[i];
         double d5 = d2 - FRAC_BIAS;
         double d6 = p_14137_ * d4 - p_14138_ * d5;
-        double d7 = (6.0 + d6 * d6) * d6 * 0.16666666666666666;
+        double d7 = (6.0 + d6 * d6) * d6 * ONE_SIXTH;
         double d8 = d3 + d7;
         if (flag2) {
             d8 = (Math.PI / 2) - d8;
@@ -775,7 +775,7 @@ public class Mth {
     }
 
     static {
-        for (int i = 0; i < 257; i++) {
+        for (int i = 0; i < LUT_SIZE; i++) {
             double d0 = i / 256.0;
             double d1 = Math.asin(d0);
             COS_TAB[i] = Math.cos(d1);
@@ -783,7 +783,7 @@ public class Mth {
         }
 
         for (int j = 0; j < SIN_TABLE_FAST.length; j++) {
-            SIN_TABLE_FAST[j] = MathUtils.roundToFloat(Math.sin(j * Math.PI * 2.0 / 4096.0));
+            SIN_TABLE_FAST[j] = MathUtils.roundToFloat(Math.sin(j * Math.PI * 2.0 / SIN_COUNT_FAST));
         }
     }
 

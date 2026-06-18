@@ -23,6 +23,13 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.logging.LogUtils;
+import com.viaversion.viafabricplus.features.block.connections.BlockConnectionsEmulation1_12_2;
+import com.viaversion.viafabricplus.injection.access.base.IConnection;
+import com.viaversion.viafabricplus.injection.access.networking.downloading_terrain.ILevelLoadingScreen;
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.connection.UserConnection;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
+import com.viaversion.viaversion.connection.ConnectionDetails;
 import de.maxhenkel.voicechat.intercompatibility.CommonCompatibilityManager;
 import de.maxhenkel.voicechat.intercompatibility.FabricClientCompatibilityManager;
 import de.maxhenkel.voicechat.net.FabricNetManager;
@@ -30,18 +37,7 @@ import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
 import it.unimi.dsi.fastutil.objects.Object2IntMap.Entry;
 import java.lang.ref.WeakReference;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.BitSet;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.OptionalInt;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.AdvancementHolder;
@@ -348,6 +344,7 @@ import net.minecraft.world.scores.Scoreboard;
 import net.minecraft.world.scores.criteria.ObjectiveCriteria;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.raphimc.viabedrock.api.BedrockProtocolVersion;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import ru.arixcompany.Arix;
@@ -408,7 +405,7 @@ public class ClientPacketListener extends ClientCommonPacketListenerImpl impleme
     private ClientLevel level;
     private ClientLevel.ClientLevelData levelData;
     private final Map<UUID, PlayerInfo> playerInfoMap = Maps.newHashMap();
-    private final Set<PlayerInfo> listedPlayers = new ReferenceOpenHashSet<>();
+    private Set<PlayerInfo> listedPlayers = new ReferenceOpenHashSet<>();
     private final ClientAdvancements advancements;
     private final ClientSuggestionProvider suggestionsProvider;
     private final ClientSuggestionProvider restrictedSuggestionsProvider;
@@ -571,6 +568,13 @@ public class ClientPacketListener extends ClientCommonPacketListenerImpl impleme
         this.minecraft.quickPlayLog().log(this.minecraft);
         this.serverEnforcesSecureChat = p_105030_.enforcesSecureChat();
         FabricClientCompatibilityManager.fireJoinWorld();
+        final UserConnection user = ((IConnection) getConnection()).viaFabricPlus$getUserConnection();
+        if (user != null) {
+            ConnectionDetails.sendConnectionDetails(user, ConnectionDetails.MOD_CHANNEL);
+        }
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_19_1)) {
+            this.listedPlayers = new LinkedHashSet<>();
+        }
     }
 
     @Override
@@ -654,7 +658,13 @@ public class ClientPacketListener extends ClientCommonPacketListenerImpl impleme
         if (entity != null) {
             Vec3 vec3 = p_364334_.values().position();
             entity.getPositionCodec().setBase(vec3);
-            if (!entity.isLocalInstanceAuthoritative()) {
+
+            // allowPlayerToBeMovedByEntityPackets
+            boolean isAuthoritative = ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_19_3) || ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.bedrockLatest)
+                    ? entity.getControllingPassenger() instanceof Player player ? player.isLocalPlayer() : !entity.level().isClientSide()
+                    : entity.isLocalInstanceAuthoritative();
+
+            if (!isAuthoritative) {
                 float f = p_364334_.values().yRot();
                 float f1 = p_364334_.values().xRot();
                 boolean flag = entity.position().distanceToSqr(vec3) > 4096.0;
@@ -679,28 +689,29 @@ public class ClientPacketListener extends ClientCommonPacketListenerImpl impleme
         PacketUtils.ensureRunningOnSameThread(p_105124_, this, this.minecraft.packetProcessor());
         Entity entity = this.level.getEntity(p_105124_.id());
         if (entity == null) {
-            if (this.removedPlayerVehicleId.isPresent() && this.removedPlayerVehicleId.getAsInt() == p_105124_.id()) {
+            // dontHandleRemovedVehiclePositionChange: для <= 1.21 не обрабатываем
+            boolean shouldHandle = ProtocolTranslator.getTargetVersion().newerThan(ProtocolVersion.v1_21) && this.removedPlayerVehicleId.isPresent();
+            if (shouldHandle && this.removedPlayerVehicleId.getAsInt() == p_105124_.id()) {
                 LOGGER.debug(
-                    "Trying to teleport entity with id {}, that was formerly player vehicle, applying teleport to player instead", p_105124_.id()
+                        "Trying to teleport entity with id {}, that was formerly player vehicle, applying teleport to player instead", p_105124_.id()
                 );
                 setValuesFromPositionPacket(p_105124_.change(), p_105124_.relatives(), this.minecraft.player, false);
-                this.connection
-                    .send(
+                this.connection.send(
                         new ServerboundMovePlayerPacket.PosRot(
-                            this.minecraft.player.getX(),
-                            this.minecraft.player.getY(),
-                            this.minecraft.player.getZ(),
-                            this.minecraft.player.getYRot(),
-                            this.minecraft.player.getXRot(),
-                            false,
-                            false
+                                this.minecraft.player.getX(),
+                                this.minecraft.player.getY(),
+                                this.minecraft.player.getZ(),
+                                this.minecraft.player.getYRot(),
+                                this.minecraft.player.getXRot(),
+                                false,
+                                false
                         )
-                    );
+                );
             }
         } else {
             boolean flag = p_105124_.relatives().contains(Relative.X)
-                || p_105124_.relatives().contains(Relative.Y)
-                || p_105124_.relatives().contains(Relative.Z);
+                    || p_105124_.relatives().contains(Relative.Y)
+                    || p_105124_.relatives().contains(Relative.Z);
             boolean flag1 = this.level.isTickingEntity(entity) || !entity.isLocalInstanceAuthoritative() || flag;
             boolean flag2 = setValuesFromPositionPacket(p_105124_.change(), p_105124_.relatives(), entity, flag1);
             entity.setOnGround(p_105124_.onGround());
@@ -741,15 +752,24 @@ public class ClientPacketListener extends ClientCommonPacketListenerImpl impleme
         }
     }
 
+
     @Override
     public void handleMoveEntity(ClientboundMoveEntityPacket p_105036_) {
         PacketUtils.ensureRunningOnSameThread(p_105036_, this, this.minecraft.packetProcessor());
         Entity entity = p_105036_.getEntity(this.level);
         if (entity != null) {
-            if (entity.isLocalInstanceAuthoritative()) {
+            // allowPlayerToBeMovedByEntityPackets
+            boolean isAuthoritative = ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_19_3) || ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.bedrockLatest)
+                    ? entity.getControllingPassenger() instanceof Player player ? player.isLocalPlayer() : !entity.level().isClientSide()
+                    : entity.isLocalInstanceAuthoritative();
+
+            if (isAuthoritative) {
                 VecDeltaCodec vecdeltacodec1 = entity.getPositionCodec();
                 Vec3 vec31 = vecdeltacodec1.decode(p_105036_.getXa(), p_105036_.getYa(), p_105036_.getZa());
-                vecdeltacodec1.setBase(vec31);
+                // dontHandleEntityPositionChange: для < 1.21.2 не обновляем base
+                if (ProtocolTranslator.getTargetVersion().newerThanOrEqualTo(ProtocolVersion.v1_21_2)) {
+                    vecdeltacodec1.setBase(vec31);
+                }
             } else {
                 if (p_105036_.hasPosition()) {
                     VecDeltaCodec vecdeltacodec = entity.getPositionCodec();
@@ -804,6 +824,7 @@ public class ClientPacketListener extends ClientCommonPacketListenerImpl impleme
             }
         });
     }
+    private Packet<?> viaFabricPlus$teleportConfirmPacket;
 
     @Override
     public void handleMovePlayer(ClientboundPlayerPositionPacket p_105056_) {
@@ -813,20 +834,25 @@ public class ClientPacketListener extends ClientCommonPacketListenerImpl impleme
             setValuesFromPositionPacket(p_105056_.change(), p_105056_.relatives(), player, false);
         }
 
-        this.connection.send(new ServerboundAcceptTeleportationPacket(p_105056_.id()));
-//        this.connection
-//            .send(
-//                new ServerboundMovePlayerPacket.PosRot(
-//                    player.getX(), player.getY(), player.getZ(), player.getYRot(), player.getXRot(), false, false
-//                )
-//            );
-//        if (player instanceof LocalPlayer) {
-//            EventMotion eventSync = new EventMotion(player.getYRot(), player.getXRot(), player.getX(), player.getY(), player.getZ(), false, false);
-//            EventRepo.call(eventSync);
-//            this.connection.send(new ServerboundMovePlayerPacket.PosRot(eventSync.getX(), eventSync.getY(), eventSync.getZ(), eventSync.getYaw(), eventSync.getPitch(),false, false));
-//        } else {
-            this.connection.send(new ServerboundMovePlayerPacket.PosRot(player.getX(), player.getY(), player.getZ(), player.getYRot(), player.getXRot(),false, false));
-        //}
+        // changePacketOrder: для 1.21.2 откладываем teleport confirm пакет
+        ServerboundAcceptTeleportationPacket teleportPacket = new ServerboundAcceptTeleportationPacket(p_105056_.id());
+        if (ProtocolTranslator.getTargetVersion().equalTo(ProtocolVersion.v1_21_2)) {
+            this.viaFabricPlus$teleportConfirmPacket = teleportPacket;
+        } else {
+            this.connection.send(teleportPacket);
+        }
+
+        this.connection.send(new ServerboundMovePlayerPacket.PosRot(player.getX(), player.getY(), player.getZ(), player.getYRot(), player.getXRot(), false, false));
+
+        // changePacketOrder: отправляем отложенный пакет после PosRot
+        if (viaFabricPlus$teleportConfirmPacket != null) {
+            this.connection.send(viaFabricPlus$teleportConfirmPacket);
+            viaFabricPlus$teleportConfirmPacket = null;
+        }
+
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_18) && this.minecraft.screen instanceof ILevelLoadingScreen mixinDownloadingTerrainScreen) {
+            mixinDownloadingTerrainScreen.viaFabricPlus$setReady();
+        }
     }
 
     private static boolean setValuesFromPositionPacket(PositionMoveRotation p_361901_, Set<Relative> p_362559_, Entity p_368395_, boolean p_366293_) {
@@ -845,6 +871,20 @@ public class ClientPacketListener extends ClientCommonPacketListenerImpl impleme
             PositionMoveRotation positionmoverotation2 = new PositionMoveRotation(p_368395_.oldPosition(), Vec3.ZERO, p_368395_.yRotO, p_368395_.xRotO);
             PositionMoveRotation positionmoverotation3 = PositionMoveRotation.calculateAbsolute(positionmoverotation2, p_361901_, p_362559_);
             p_368395_.setOldPosAndRot(positionmoverotation3.position(), positionmoverotation3.yRot(), positionmoverotation3.xRot());
+
+            // cancelSmallChanges: для <= 1.16.1 отменяем малые изменения позиции
+            if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_16_1)
+                    && Math.abs(p_368395_.getX() - positionmoverotation1.position().x) < 0.03125
+                    && Math.abs(p_368395_.getY() - positionmoverotation1.position().y) < 0.015625
+                    && Math.abs(p_368395_.getZ() - positionmoverotation1.position().z) < 0.03125) {
+                if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_15_2) && p_368395_.getInterpolation() != null) {
+                    p_368395_.getInterpolation().setInterpolationLength(0);
+                }
+                p_368395_.moveOrInterpolateTo(p_368395_.position(), positionmoverotation1.yRot(), positionmoverotation1.xRot());
+            } else {
+                p_368395_.moveOrInterpolateTo(positionmoverotation1.position(), positionmoverotation1.yRot(), positionmoverotation1.xRot());
+            }
+
             return false;
         }
     }
@@ -959,6 +999,8 @@ public class ClientPacketListener extends ClientCommonPacketListenerImpl impleme
 
     private void updateLevelChunk(int p_194199_, int p_194200_, ClientboundLevelChunkPacketData p_194201_) {
         this.level.getChunkSource().replaceWithPacketData(p_194199_, p_194200_, p_194201_.getReadBuffer(), p_194201_.getHeightmaps(), p_194201_.getBlockEntitiesTagsConsumer(p_194199_, p_194200_));
+
+        BlockConnectionsEmulation1_12_2.updateChunkNeighborConnections(this.level, p_194199_, p_194200_);
     }
 
     private void enableChunkLight(LevelChunk p_194213_, int p_194214_, int p_194215_) {
@@ -1022,9 +1064,13 @@ public class ClientPacketListener extends ClientCommonPacketListenerImpl impleme
         PacketUtils.ensureRunningOnSameThread(p_104980_, this, this.minecraft.packetProcessor());
         this.level.setServerVerifiedBlockState(p_104980_.getPos(), p_104980_.getBlockState(), 19);
         if (!Baritone.settings().repackOnAnyBlockChange.value) {
+            // ViaFabricPlus - block connections emulation
+            BlockConnectionsEmulation1_12_2.updateChunkNeighborConnections(this.level, p_104980_.getPos());
             return;
         }
         if (!CachedChunk.BLOCKS_TO_KEEP_TRACK_OF.contains(p_104980_.getBlockState().getBlock())) {
+            // ViaFabricPlus - block connections emulation
+            BlockConnectionsEmulation1_12_2.updateChunkNeighborConnections(this.level, p_104980_.getPos());
             return;
         }
         for (IBaritone ibaritone : BaritoneAPI.getProvider().getAllBaritones()) {
@@ -1040,41 +1086,54 @@ public class ClientPacketListener extends ClientCommonPacketListenerImpl impleme
                 );
             }
         }
+
+        // ViaFabricPlus - block connections emulation
+        BlockConnectionsEmulation1_12_2.updateChunkNeighborConnections(this.level, p_104980_.getPos());
     }
 
     @Override
     public void handleConfigurationStart(ClientboundStartConfigurationPacket p_298839_) {
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_20_3)) {
+            this.connection.getChannel().config().setAutoRead(false);
+        }
         PacketUtils.ensureRunningOnSameThread(p_298839_, this, this.minecraft.packetProcessor());
         this.minecraft.getChatListener().flushQueue();
-        this.sendChatAcknowledgement();
+
+        // dontSendChatAck: для < 1.20.5 не отправляем chat acknowledgement
+        if (ProtocolTranslator.getTargetVersion().newerThanOrEqualTo(ProtocolVersion.v1_20_5)) {
+            this.sendChatAcknowledgement();
+        }
+
         ChatComponent.State chatcomponent$state = this.minecraft.gui.getChat().storeState();
         this.minecraft.clearClientLevel(new ServerReconfigScreen(RECONFIGURE_SCREEN_MESSAGE, this.connection));
-        this.connection
-            .setupInboundProtocol(
+        this.connection.setupInboundProtocol(
                 ConfigurationProtocols.CLIENTBOUND,
                 new ClientConfigurationPacketListenerImpl(
-                    this.minecraft,
-                    this.connection,
-                    new CommonListenerCookie(
-                        new LevelLoadTracker(),
-                        this.localGameProfile,
-                        this.telemetryManager,
-                        this.registryAccess,
-                        this.enabledFeatures,
-                        this.serverBrand,
-                        this.serverData,
-                        this.postDisconnectScreen,
-                        this.serverCookies,
-                        chatcomponent$state,
-                        this.customReportDetails,
-                        this.serverLinks(),
-                        this.seenPlayers,
-                        this.seenInsecureChatWarning
-                    )
+                        this.minecraft,
+                        this.connection,
+                        new CommonListenerCookie(
+                                new LevelLoadTracker(),
+                                this.localGameProfile,
+                                this.telemetryManager,
+                                this.registryAccess,
+                                this.enabledFeatures,
+                                this.serverBrand,
+                                this.serverData,
+                                this.postDisconnectScreen,
+                                this.serverCookies,
+                                chatcomponent$state,
+                                this.customReportDetails,
+                                this.serverLinks(),
+                                this.seenPlayers,
+                                this.seenInsecureChatWarning
+                        )
                 )
-            );
+        );
         this.send(ServerboundConfigurationAcknowledgedPacket.INSTANCE);
         this.connection.setupOutboundProtocol(ConfigurationProtocols.SERVERBOUND);
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_20_3)) {
+            this.connection.getChannel().config().setAutoRead(true);
+        }
     }
 
     @Override
@@ -1141,7 +1200,10 @@ public class ClientPacketListener extends ClientCommonPacketListenerImpl impleme
         PacketUtils.ensureRunningOnSameThread(p_233702_, this, this.minecraft.packetProcessor());
         int i = this.nextChatIndex++;
         if (p_233702_.globalIndex() != i) {
-            LOGGER.error("Missing or out-of-order chat message from server, expected index {} but got {}", i, p_233702_.globalIndex());
+            // removeChatPacketError: для < 1.20.2 не логируем ошибку
+            if (ProtocolTranslator.getTargetVersion().newerThanOrEqualTo(ProtocolVersion.v1_20_2)) {
+                LOGGER.error("Missing or out-of-order chat message from server, expected index {} but got {}", i, p_233702_.globalIndex());
+            }
             this.connection.disconnect(BAD_CHAT_INDEX);
         } else {
             Optional<SignedMessageBody> optional = p_233702_.body().unpack(this.messageSignatureCache);
@@ -1165,7 +1227,7 @@ public class ClientPacketListener extends ClientCommonPacketListenerImpl impleme
                     }
 
                     PlayerChatMessage playerchatmessage = new PlayerChatMessage(
-                        signedmessagelink, p_233702_.signature(), optional.get(), p_233702_.unsignedContent(), p_233702_.filterMask()
+                            signedmessagelink, p_233702_.signature(), optional.get(), p_233702_.unsignedContent(), p_233702_.filterMask()
                     );
                     playerchatmessage = playerinfo.getMessageValidator().updateAndValidate(playerchatmessage);
                     if (playerchatmessage != null) {
@@ -1240,6 +1302,9 @@ public class ClientPacketListener extends ClientCommonPacketListenerImpl impleme
     public void handleSetSpawn(ClientboundSetDefaultSpawnPositionPacket p_105084_) {
         PacketUtils.ensureRunningOnSameThread(p_105084_, this, this.minecraft.packetProcessor());
         this.minecraft.level.setRespawnData(p_105084_.respawnData());
+        if (ProtocolTranslator.getTargetVersion().betweenInclusive(ProtocolVersion.v1_18_2, ProtocolVersion.v1_20_2) && this.minecraft.screen instanceof ILevelLoadingScreen mixinDownloadingTerrainScreen) {
+            mixinDownloadingTerrainScreen.viaFabricPlus$setReady();
+        }
     }
 
     @Override
@@ -1259,7 +1324,8 @@ public class ClientPacketListener extends ClientCommonPacketListenerImpl impleme
                     if (entity1 == this.minecraft.player) {
                         this.removedPlayerVehicleId = OptionalInt.empty();
                         if (!flag) {
-                            if (entity instanceof AbstractBoat) {
+                            // dontChangeYawWhenMountingBoats: для <= 1.18 не меняем yaw при посадке в лодку
+                            if (ProtocolTranslator.getTargetVersion().newerThan(ProtocolVersion.v1_18) && entity instanceof AbstractBoat) {
                                 this.minecraft.player.yRotO = entity.getYRot();
                                 this.minecraft.player.setYRot(entity.getYRot());
                                 this.minecraft.player.setYHeadRot(entity.getYRot());
@@ -1362,16 +1428,16 @@ public class ClientPacketListener extends ClientCommonPacketListenerImpl impleme
             ClientLevel.ClientLevelData clientlevel$clientleveldata = new ClientLevel.ClientLevelData(this.levelData.getDifficulty(), this.levelData.isHardcore(), flag2);
             this.levelData = clientlevel$clientleveldata;
             this.level = new ClientLevel(
-                this,
-                clientlevel$clientleveldata,
-                resourcekey,
-                holder,
-                this.serverChunkRadius,
-                this.serverSimulationDistance,
-                this.minecraft.levelRenderer,
-                flag1,
-                commonplayerspawninfo.seed(),
-                i
+                    this,
+                    clientlevel$clientleveldata,
+                    resourcekey,
+                    holder,
+                    this.serverChunkRadius,
+                    this.serverSimulationDistance,
+                    this.minecraft.levelRenderer,
+                    flag1,
+                    commonplayerspawninfo.seed(),
+                    i
             );
             this.level.addMapData(map);
             this.minecraft.setLevel(this.level);
@@ -1384,16 +1450,19 @@ public class ClientPacketListener extends ClientCommonPacketListenerImpl impleme
         }
 
         LocalPlayer localplayer1;
-        if (p_105066_.shouldKeep((byte)2)) {
-            localplayer1 = this.minecraft
-                .gameMode
-                .createPlayer(this.level, localplayer.getStats(), localplayer.getRecipeBook(), localplayer.getLastSentInput(), localplayer.isSprinting());
+        if (p_105066_.shouldKeep((byte) 2)) {
+            localplayer1 = this.minecraft.gameMode.createPlayer(this.level, localplayer.getStats(), localplayer.getRecipeBook(), localplayer.getLastSentInput(), localplayer.isSprinting());
         } else {
             localplayer1 = this.minecraft.gameMode.createPlayer(this.level, localplayer.getStats(), localplayer.getRecipeBook());
         }
 
         this.setClientLoaded(false);
-        this.startWaitingForNewLevel(localplayer1, this.level, levelloadingscreen$reason);
+
+        // checkDimensionChange: для <= 1.20.2 startWaitingForNewLevel только при смене измерения
+        if (ProtocolTranslator.getTargetVersion().newerThanOrEqualTo(ProtocolVersion.v1_20_3) || resourcekey != resourcekey1) {
+            this.startWaitingForNewLevel(localplayer1, this.level, levelloadingscreen$reason);
+        }
+
         localplayer1.setId(localplayer.getId());
         this.minecraft.player = localplayer1;
         if (flag) {
@@ -1401,7 +1470,7 @@ public class ClientPacketListener extends ClientCommonPacketListenerImpl impleme
         }
 
         this.minecraft.setCameraEntity(localplayer1);
-        if (p_105066_.shouldKeep((byte)2)) {
+        if (p_105066_.shouldKeep((byte) 2)) {
             List<SynchedEntityData.DataValue<?>> list = localplayer.getEntityData().getNonDefaultValues();
             if (list != null) {
                 localplayer1.getEntityData().assignValues(list);
@@ -1415,10 +1484,13 @@ public class ClientPacketListener extends ClientCommonPacketListenerImpl impleme
             localplayer1.setYRot(-180.0F);
         }
 
-        if (p_105066_.shouldKeep((byte)1)) {
+        if (p_105066_.shouldKeep((byte) 1)) {
             localplayer1.getAttributes().assignAllValues(localplayer.getAttributes());
         } else {
-            localplayer1.getAttributes().assignBaseValues(localplayer.getAttributes());
+            // dontApplyBaseValues: для < 1.21 не применяем base values
+            if (ProtocolTranslator.getTargetVersion().newerThanOrEqualTo(ProtocolVersion.v1_21)) {
+                localplayer1.getAttributes().assignBaseValues(localplayer.getAttributes());
+            }
         }
 
         this.level.addEntity(localplayer1);
@@ -1564,7 +1636,14 @@ public class ClientPacketListener extends ClientCommonPacketListenerImpl impleme
         if (this.level.getBlockEntity(blockpos) instanceof SignBlockEntity signblockentity) {
             this.minecraft.player.openTextEdit(signblockentity, p_105044_.isFrontText());
         } else {
-            LOGGER.warn("Ignoring openTextEdit on an invalid entity: {} at pos {}", this.level.getBlockEntity(blockpos), blockpos);
+            // openEmptySignEditor: для <= 1.21 открываем пустой знак вместо warn
+            if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_21)) {
+                final SignBlockEntity emptySignBlockEntity = new SignBlockEntity(blockpos, this.level.getBlockState(blockpos));
+                emptySignBlockEntity.setLevel(this.level);
+                this.minecraft.player.openTextEdit(emptySignBlockEntity, p_105044_.isFrontText());
+            } else {
+                LOGGER.warn("Ignoring openTextEdit on an invalid entity: {} at pos {}", this.level.getBlockEntity(blockpos), blockpos);
+            }
         }
     }
 
@@ -1621,12 +1700,18 @@ public class ClientPacketListener extends ClientCommonPacketListenerImpl impleme
     public void handleBlockEvent(ClientboundBlockEventPacket p_104978_) {
         PacketUtils.ensureRunningOnSameThread(p_104978_, this, this.minecraft.packetProcessor());
         this.minecraft.level.blockEvent(p_104978_.getPos(), p_104978_.getBlock(), p_104978_.getB0(), p_104978_.getB1());
+
+        // ViaFabricPlus - block connections emulation
+        BlockConnectionsEmulation1_12_2.updateChunkNeighborConnections(this.level, p_104978_.getPos());
     }
 
     @Override
     public void handleBlockDestruction(ClientboundBlockDestructionPacket p_104974_) {
         PacketUtils.ensureRunningOnSameThread(p_104974_, this, this.minecraft.packetProcessor());
         this.minecraft.level.destroyBlockProgress(p_104974_.getId(), p_104974_.getPos(), p_104974_.getProgress());
+
+        // ViaFabricPlus - block connections emulation
+        BlockConnectionsEmulation1_12_2.updateChunkNeighborConnections(this.level, p_104974_.getPos());
     }
 
     @Override
@@ -1647,10 +1732,23 @@ public class ClientPacketListener extends ClientCommonPacketListenerImpl impleme
         } else if (clientboundgameeventpacket$type == ClientboundGameEventPacket.CHANGE_GAME_MODE) {
             this.minecraft.gameMode.setLocalMode(GameType.byId(i));
         } else if (clientboundgameeventpacket$type == ClientboundGameEventPacket.WIN_GAME) {
-            this.minecraft.setScreen(new WinScreen(true, () -> {
-                this.minecraft.player.connection.send(new ServerboundClientCommandPacket(ServerboundClientCommandPacket.Action.PERFORM_RESPAWN));
-                this.minecraft.setScreen(null);
-            }));
+            // handleWinGameState0: для <= 1.20.5 меняем поведение
+            if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_20_5)) {
+                if (i == 0) {
+                    this.minecraft.player.connection.send(new ServerboundClientCommandPacket(ServerboundClientCommandPacket.Action.PERFORM_RESPAWN));
+                    this.minecraft.setScreen(new LevelLoadingScreen(this.levelLoadTracker, LevelLoadingScreen.Reason.END_PORTAL));
+                } else if (i == 1) {
+                    this.minecraft.setScreen(new WinScreen(true, () -> {
+                        this.minecraft.player.connection.send(new ServerboundClientCommandPacket(ServerboundClientCommandPacket.Action.PERFORM_RESPAWN));
+                        this.minecraft.setScreen(null);
+                    }));
+                }
+            } else {
+                this.minecraft.setScreen(new WinScreen(true, () -> {
+                    this.minecraft.player.connection.send(new ServerboundClientCommandPacket(ServerboundClientCommandPacket.Action.PERFORM_RESPAWN));
+                    this.minecraft.setScreen(null);
+                }));
+            }
         } else if (clientboundgameeventpacket$type == ClientboundGameEventPacket.DEMO_EVENT) {
             Options options = this.minecraft.options;
             Component component = null;
@@ -1658,7 +1756,7 @@ public class ClientPacketListener extends ClientCommonPacketListenerImpl impleme
                 this.minecraft.setScreen(new DemoIntroScreen());
             } else if (f == 101.0F) {
                 component = Component.translatable(
-                    "demo.help.movement", options.keyUp.getTranslatedKeyMessage(), options.keyLeft.getTranslatedKeyMessage(), options.keyDown.getTranslatedKeyMessage(), options.keyRight.getTranslatedKeyMessage()
+                        "demo.help.movement", options.keyUp.getTranslatedKeyMessage(), options.keyLeft.getTranslatedKeyMessage(), options.keyDown.getTranslatedKeyMessage(), options.keyRight.getTranslatedKeyMessage()
                 );
             } else if (f == 102.0F) {
                 component = Component.translatable("demo.help.jump", options.keyJump.getTranslatedKeyMessage());
@@ -2077,9 +2175,12 @@ public class ClientPacketListener extends ClientCommonPacketListenerImpl impleme
         for (ClientboundPlayerInfoUpdatePacket.Entry clientboundplayerinfoupdatepacket$entry1 : p_250115_.entries()) {
             PlayerInfo playerinfo1 = this.playerInfoMap.get(clientboundplayerinfoupdatepacket$entry1.profileId());
             if (playerinfo1 == null) {
-                LOGGER.warn(
-                    "Ignoring player info update for unknown player {} ({})", clientboundplayerinfoupdatepacket$entry1.profileId(), p_250115_.actions()
-                );
+                // removeUnknownPlayerListEntryWarning: для < 1.19.3 не логируем warn
+                if (ProtocolTranslator.getTargetVersion().newerThanOrEqualTo(ProtocolVersion.v1_19_3)) {
+                    LOGGER.warn(
+                            "Ignoring player info update for unknown player {} ({})", clientboundplayerinfoupdatepacket$entry1.profileId(), p_250115_.actions()
+                    );
+                }
             } else {
                 for (ClientboundPlayerInfoUpdatePacket.Action clientboundplayerinfoupdatepacket$action : p_250115_.actions()) {
                     this.applyPlayerInfoUpdate(clientboundplayerinfoupdatepacket$action, clientboundplayerinfoupdatepacket$entry1, playerinfo1);
@@ -2095,9 +2196,12 @@ public class ClientPacketListener extends ClientCommonPacketListenerImpl impleme
                 break;
             case UPDATE_GAME_MODE:
                 if (p_251146_.getGameMode() != p_251310_.gameMode()
-                    && this.minecraft.player != null
-                    && this.minecraft.player.getUUID().equals(p_251310_.profileId())) {
-                    this.minecraft.player.onGameModeChanged(p_251310_.gameMode());
+                        && this.minecraft.player != null
+                        && this.minecraft.player.getUUID().equals(p_251310_.profileId())) {
+                    // dontResetVelocity: для < 1.20 не вызываем onGameModeChanged
+                    if (ProtocolTranslator.getTargetVersion().newerThanOrEqualTo(ProtocolVersion.v1_20)) {
+                        this.minecraft.player.onGameModeChanged(p_251310_.gameMode());
+                    }
                 }
 
                 p_251146_.setGameMode(p_251310_.gameMode());
@@ -2127,7 +2231,10 @@ public class ClientPacketListener extends ClientCommonPacketListenerImpl impleme
         GameProfile gameprofile = p_251136_.getProfile();
         SignatureValidator signaturevalidator = this.minecraft.services().profileKeySignatureValidator();
         if (signaturevalidator == null) {
-            LOGGER.warn("Ignoring chat session from {} due to missing Services public key", gameprofile.name());
+            // removeInvalidSignatureWarning: для < 1.19.4 не логируем warn
+            if (ProtocolTranslator.getTargetVersion().newerThanOrEqualTo(ProtocolVersion.v1_19_4)) {
+                LOGGER.warn("Ignoring chat session from {} due to missing Services public key", gameprofile.name());
+            }
             p_251136_.clearChatSession(this.enforcesSecureChat());
         } else {
             RemoteChatSession.Data remotechatsession$data = p_248806_.chatSession();
@@ -2227,7 +2334,12 @@ public class ClientPacketListener extends ClientCommonPacketListenerImpl impleme
                 vec31 = entity.position();
             }
 
-            if (vec3.distanceTo(vec31) > 1.0E-5F) {
+            // allowSmallValues: для <= 1.21.2 всегда считаем расстояние достаточным
+            double distance = ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_21_2)
+                    ? Integer.MAX_VALUE
+                    : vec3.distanceTo(vec31);
+
+            if (distance > 1.0E-5F) {
                 if (entity.isInterpolating()) {
                     entity.getInterpolation().cancel();
                 }
@@ -2243,7 +2355,15 @@ public class ClientPacketListener extends ClientCommonPacketListenerImpl impleme
     public void handleOpenBook(ClientboundOpenBookPacket p_105040_) {
         PacketUtils.ensureRunningOnSameThread(p_105040_, this, this.minecraft.packetProcessor());
         ItemStack itemstack = this.minecraft.player.getItemInHand(p_105040_.getHand());
-        BookViewScreen.BookAccess bookviewscreen$bookaccess = BookViewScreen.BookAccess.fromItem(itemstack);
+
+        // dontOpenWriteableBookScreen: для < 1.20.5 открываем только written book
+        BookViewScreen.BookAccess bookviewscreen$bookaccess;
+        if (ProtocolTranslator.getTargetVersion().newerThanOrEqualTo(ProtocolVersion.v1_20_5) || itemstack.is(Items.WRITTEN_BOOK)) {
+            bookviewscreen$bookaccess = BookViewScreen.BookAccess.fromItem(itemstack);
+        } else {
+            bookviewscreen$bookaccess = null;
+        }
+
         if (bookviewscreen$bookaccess != null) {
             this.minecraft.setScreen(new BookViewScreen(bookviewscreen$bookaccess));
         }
@@ -2503,6 +2623,10 @@ public class ClientPacketListener extends ClientCommonPacketListenerImpl impleme
         this.serverChunkRadius = p_105082_.getRadius();
         this.minecraft.options.setServerRenderDistance(this.serverChunkRadius);
         this.level.getChunkSource().updateViewRadius(p_105082_.getRadius());
+
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_17_1)) {
+            this.handleSetSimulationDistance(new ClientboundSetSimulationDistancePacket(p_105082_.getRadius()));
+        }
     }
 
     @Override
@@ -2765,7 +2889,13 @@ public class ClientPacketListener extends ClientCommonPacketListenerImpl impleme
 
     public void sendCommand(String p_250092_) {
         SignableCommand<ClientSuggestionProvider> signablecommand = SignableCommand.of(this.commands.parse(p_250092_, this.suggestionsProvider));
-        if (signablecommand.arguments().isEmpty()) {
+
+        boolean isEmpty = signablecommand.arguments().isEmpty();
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_20_3)) {
+            isEmpty = false;
+        }
+
+        if (isEmpty) {
             this.send(new ServerboundChatCommandPacket(p_250092_));
         } else {
             Instant instant = Instant.now();
@@ -2780,9 +2910,28 @@ public class ClientPacketListener extends ClientCommonPacketListenerImpl impleme
     }
 
     public void sendUnattendedCommand(String p_407213_, @Nullable Screen p_406262_) {
-        switch (this.verifyCommand(p_407213_)) {
+        ClientPacketListener.CommandCheckResult checkResult = this.verifyCommand(p_407213_);
+
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_21_5)) {
+            if (checkResult == ClientPacketListener.CommandCheckResult.PARSE_ERRORS
+                    || checkResult == ClientPacketListener.CommandCheckResult.PERMISSIONS_REQUIRED) {
+                checkResult = ClientPacketListener.CommandCheckResult.NO_ISSUES;
+            }
+        }
+
+        switch (checkResult) {
             case NO_ISSUES:
-                this.send(new ServerboundChatCommandPacket(p_407213_));
+                if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_20_3)) {
+                    this.send(new ServerboundChatCommandSignedPacket(
+                            p_407213_,
+                            Instant.now(),
+                            0L,
+                            ArgumentSignatures.EMPTY,
+                            this.lastSeenMessages.generateAndApplyUpdate().update()
+                    ));
+                } else {
+                    this.send(new ServerboundChatCommandPacket(p_407213_));
+                }
                 this.minecraft.setScreen(p_406262_);
                 break;
             case PARSE_ERRORS:
@@ -2973,6 +3122,9 @@ public class ClientPacketListener extends ClientCommonPacketListenerImpl impleme
     }
 
     public boolean hasClientLoaded() {
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_21_2)) {
+            return (true);
+        }
         return this.clientLoaded;
     }
 

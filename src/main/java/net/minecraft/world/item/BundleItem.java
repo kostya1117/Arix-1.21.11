@@ -3,6 +3,9 @@ package net.minecraft.world.item;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
+
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -128,6 +131,17 @@ public class BundleItem extends Item {
     @Override
     public InteractionResult use(Level p_150760_, Player p_150761_, InteractionHand p_150762_) {
         p_150761_.startUsingItem(p_150762_);
+
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_21)) {
+            final ItemStack itemStack = p_150761_.getItemInHand(p_150762_);
+            final BundleContents component = itemStack.get(DataComponents.BUNDLE_CONTENTS);
+            if (component == null || component.isEmpty()) {
+                return InteractionResult.FAIL;
+            }
+        } else if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_21_2)) {
+            return InteractionResult.CONSUME;
+        }
+
         return InteractionResult.SUCCESS;
     }
 

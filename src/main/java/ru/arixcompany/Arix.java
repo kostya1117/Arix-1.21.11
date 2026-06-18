@@ -1,6 +1,5 @@
 package ru.arixcompany;
 
-import de.florianmichael.viamcp.ViaMCP;
 import de.maxhenkel.voicechat.integration.ViaVersionCompatibility;
 import lombok.Getter;
 import lombok.Setter;
@@ -27,8 +26,7 @@ import ru.arixcompany.features.file.exception.FileProcessingException;
 import ru.arixcompany.features.module.ModuleRepo;
 import ru.arixcompany.features.module.Theme;
 import ru.arixcompany.utils.IMinecraft;
-import ru.arixcompany.utils.math.PredictUtils;
-import ru.arixcompany.utils.math.Timer;
+import ru.arixcompany.utils.render.particle.ParticleSystem;
 import ru.arixcompany.utils.render.shader.ShadersRepo;
 import ru.arixcompany.utils.render.font.FontManager;
 
@@ -70,11 +68,11 @@ public class Arix implements IMinecraft {
     OtherRepo otherRepo;
     @NonFinal
     ScriptRepo scriptRepo;
+    @NonFinal
+    ParticleSystem particleSystem;
 
-    public Arix(){
+    public Arix() {
         instance = this;
-        ViaMCP.create();
-        ViaMCP.INSTANCE.initAsyncSlider();
         ViaVersionCompatibility.register();
         FontManager.init();
         DebugScreenEntries.register(OptimizationDebugEntry.ID, new OptimizationDebugEntry());
@@ -83,7 +81,6 @@ public class Arix implements IMinecraft {
 
         shadersRepo = new ShadersRepo();
         shadersRepo.init();
-        new Timer();
 
         otherRepo = new OtherRepo();
 
@@ -99,7 +96,7 @@ public class Arix implements IMinecraft {
         draggableRepo = new DraggableRepo();
         draggableRepo.init();
 
-        new PredictUtils();
+        particleSystem = new ParticleSystem();
 
         initFileManager();
         tryAutoLogin();

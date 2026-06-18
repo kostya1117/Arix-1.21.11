@@ -1,6 +1,8 @@
 package net.minecraft.world.inventory;
 
 import java.util.List;
+
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
 import net.minecraft.recipebook.ServerPlaceRecipe;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
@@ -17,6 +19,7 @@ import net.minecraft.world.item.crafting.RecipePropertySet;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.crafting.SingleRecipeInput;
 import net.minecraft.world.level.Level;
+import net.raphimc.vialegacy.api.LegacyProtocolVersion;
 
 public abstract class AbstractFurnaceMenu extends RecipeBookMenu {
     public static final int INGREDIENT_SLOT = 0;
@@ -102,11 +105,11 @@ public abstract class AbstractFurnaceMenu extends RecipeBookMenu {
 
                 slot.onQuickCraft(itemstack1, itemstack);
             } else if (p_38987_ != 1 && p_38987_ != 0) {
-                if (this.canSmelt(itemstack1)) {
+                if (this.canSmelt(itemstack1) && ProtocolTranslator.getTargetVersion().newerThan(LegacyProtocolVersion.r1_2_1tor1_2_3)) {
                     if (!this.moveItemStackTo(itemstack1, 0, 1, false)) {
                         return ItemStack.EMPTY;
                     }
-                } else if (this.isFuel(itemstack1)) {
+                } else if (this.isFuel(itemstack1) && ProtocolTranslator.getTargetVersion().newerThan(LegacyProtocolVersion.r1_2_1tor1_2_3)) {
                     if (!this.moveItemStackTo(itemstack1, 1, 2, false)) {
                         return ItemStack.EMPTY;
                     }

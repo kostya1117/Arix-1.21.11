@@ -1,6 +1,9 @@
 package net.minecraft.world.entity;
 
 import java.util.Set;
+
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -45,7 +48,14 @@ public record PositionMoveRotation(Vec3 position, Vec3 deltaMovement, float yRot
         float f1 = p_370218_.contains(Relative.X_ROT) ? p_364389_.xRot : 0.0F;
         Vec3 vec3 = new Vec3(d0 + p_363716_.position.x, d1 + p_363716_.position.y, d2 + p_363716_.position.z);
         float f2 = f + p_363716_.yRot;
-        float f3 = Mth.clamp(f1 + p_363716_.xRot, -90.0F, 90.0F);
+
+        float f3;
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_21_4)) {
+            f3 = f1 + p_363716_.xRot;
+        } else {
+            f3 = Mth.clamp(f1 + p_363716_.xRot, -90.0F, 90.0F);
+        }
+
         Vec3 vec31 = p_364389_.deltaMovement;
         if (p_370218_.contains(Relative.ROTATE_DELTA)) {
             float f4 = p_364389_.yRot - f2;
@@ -55,9 +65,9 @@ public record PositionMoveRotation(Vec3 position, Vec3 deltaMovement, float yRot
         }
 
         Vec3 vec32 = new Vec3(
-            calculateDelta(vec31.x, p_363716_.deltaMovement.x, p_370218_, Relative.DELTA_X),
-            calculateDelta(vec31.y, p_363716_.deltaMovement.y, p_370218_, Relative.DELTA_Y),
-            calculateDelta(vec31.z, p_363716_.deltaMovement.z, p_370218_, Relative.DELTA_Z)
+                calculateDelta(vec31.x, p_363716_.deltaMovement.x, p_370218_, Relative.DELTA_X),
+                calculateDelta(vec31.y, p_363716_.deltaMovement.y, p_370218_, Relative.DELTA_Y),
+                calculateDelta(vec31.z, p_363716_.deltaMovement.z, p_370218_, Relative.DELTA_Z)
         );
         return new PositionMoveRotation(vec3, vec32, f2, f3);
     }

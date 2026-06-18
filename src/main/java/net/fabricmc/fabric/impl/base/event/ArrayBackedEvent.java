@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2016, 2017, 2018, 2019 FabricMC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package net.fabricmc.fabric.impl.base.event;
 
 import java.lang.reflect.Array;
@@ -9,17 +25,22 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
 
+import net.minecraft.resources.Identifier;
+
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.impl.base.toposort.NodeSorting;
-import net.minecraft.resources.Identifier;
 
 class ArrayBackedEvent<T> extends Event<T> {
 	private final Function<T[], T> invokerFactory;
 	private final Object lock = new Object();
 	private T[] handlers;
-
+	/**
+	 * Registered event phases.
+	 */
 	private final Map<Identifier, EventPhaseData<T>> phases = new LinkedHashMap<>();
-
+	/**
+	 * Phases sorted in the correct dependency order.
+	 */
 	private final List<EventPhaseData<T>> sortedPhases = new ArrayList<>();
 
 	@SuppressWarnings("unchecked")
@@ -66,7 +87,9 @@ class ArrayBackedEvent<T> extends Event<T> {
 	}
 
 	private void rebuildInvoker(int newLength) {
+		// Rebuild handlers.
 		if (sortedPhases.size() == 1) {
+			// Special case with a single phase: use the array of the phase directly.
 			handlers = sortedPhases.get(0).listeners;
 		} else {
 			@SuppressWarnings("unchecked")
@@ -82,6 +105,7 @@ class ArrayBackedEvent<T> extends Event<T> {
 			handlers = newHandlers;
 		}
 
+		// Rebuild invoker.
 		update();
 	}
 

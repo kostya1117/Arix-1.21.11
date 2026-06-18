@@ -1,6 +1,8 @@
 package net.minecraft.world.level.block;
 
 import com.mojang.serialization.MapCodec;
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -21,6 +23,7 @@ import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jspecify.annotations.Nullable;
 
@@ -29,6 +32,12 @@ public abstract class BaseRailBlock extends Block implements SimpleWaterloggedBl
     private static final VoxelShape SHAPE_FLAT = Block.column(16.0, 0.0, 2.0);
     private static final VoxelShape SHAPE_SLOPE = Block.column(16.0, 0.0, 8.0);
     private final boolean isStraight;
+    private static final VoxelShape viaFabricPlus$ascending_shape_r1_10_x = Shapes.block();
+
+    private static final VoxelShape viaFabricPlus$ascending_shape_r1_9_x = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 2.5D, 16.0D);
+
+    private static final VoxelShape viaFabricPlus$ascending_shape_r1_8_x = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 10.0D, 16.0D);
+
 
     public static boolean isRail(Level p_49365_, BlockPos p_49366_) {
         return isRail(p_49365_.getBlockState(p_49366_));
@@ -52,7 +61,19 @@ public abstract class BaseRailBlock extends Block implements SimpleWaterloggedBl
 
     @Override
     protected VoxelShape getShape(BlockState p_49403_, BlockGetter p_49404_, BlockPos p_49405_, CollisionContext p_49406_) {
-        return p_49403_.getValue(this.getShapeProperty()).isSlope() ? SHAPE_SLOPE : SHAPE_FLAT;
+        if (p_49403_.getValue(this.getShapeProperty()).isSlope()) {
+            if (ProtocolTranslator.getTargetVersion().equalTo(ProtocolVersion.v1_10)) {
+                return viaFabricPlus$ascending_shape_r1_10_x;
+            } else if (ProtocolTranslator.getTargetVersion().betweenInclusive(ProtocolVersion.v1_9, ProtocolVersion.v1_9_3)) {
+                return viaFabricPlus$ascending_shape_r1_9_x;
+            } else if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_8)) {
+                return viaFabricPlus$ascending_shape_r1_8_x;
+            } else {
+                return SHAPE_SLOPE;
+            }
+        }
+
+        return SHAPE_FLAT;
     }
 
     @Override

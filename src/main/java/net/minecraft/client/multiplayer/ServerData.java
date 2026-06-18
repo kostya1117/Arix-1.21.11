@@ -7,6 +7,10 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+
+import com.viaversion.viafabricplus.injection.access.base.IServerData;
+import com.viaversion.viafabricplus.save.impl.SettingsSave;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import net.minecraft.SharedConstants;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -19,7 +23,7 @@ import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 
 
-public class ServerData {
+public class ServerData implements IServerData {
     private static final Logger LOGGER = LogUtils.getLogger();
     private static final int MAX_ICON_SIZE = 1024;
     public String name;
@@ -36,6 +40,11 @@ public class ServerData {
     private ServerData.Type type;
     private int acceptedCodeOfConduct;
     private ServerData.State state = ServerData.State.INITIAL;
+    private ProtocolVersion viaFabricPlus$forcedVersion = null;
+
+    private boolean viaFabricPlus$passedDirectConnectScreen;
+
+    private ProtocolVersion viaFabricPlus$translatingVersion;
 
     public ServerData(String p_105375_, String p_105376_, ServerData.Type p_297678_) {
         this.name = p_105375_;
@@ -51,6 +60,10 @@ public class ServerData {
         compoundtag.store(ServerData.ServerPackStatus.FIELD_CODEC, this.packStatus);
         if (this.acceptedCodeOfConduct != 0) {
             compoundtag.putInt("acceptedCodeOfConduct", this.acceptedCodeOfConduct);
+        }
+
+        if (this.viaFabricPlus$forcedVersion != null) {
+            compoundtag.putString("viafabricplus_forcedversion", this.viaFabricPlus$forcedVersion.getName());
         }
 
         return compoundtag;
@@ -69,6 +82,14 @@ public class ServerData {
         serverdata.setIconBytes(p_105386_.read("icon", ExtraCodecs.BASE64_STRING).orElse(null));
         serverdata.setResourcePackStatus(p_105386_.read(ServerData.ServerPackStatus.FIELD_CODEC).orElse(ServerData.ServerPackStatus.PROMPT));
         serverdata.acceptedCodeOfConduct = p_105386_.getIntOr("acceptedCodeOfConduct", 0);
+
+        if (p_105386_.contains("viafabricplus_forcedversion")) {
+            final ProtocolVersion version = SettingsSave.protocolVersionByName(p_105386_.getStringOr("viafabricplus_forcedversion", null));
+            if (version != null) {
+                serverdata.viaFabricPlus$forceVersion(version);
+            }
+        }
+
         return serverdata;
     }
 
@@ -108,6 +129,8 @@ public class ServerData {
         this.ip = p_233804_.ip;
         this.name = p_233804_.name;
         this.iconBytes = p_233804_.iconBytes;
+
+        this.viaFabricPlus$forceVersion(p_233804_.viaFabricPlus$forcedVersion());
     }
 
     public void copyFrom(ServerData p_105382_) {
@@ -179,5 +202,34 @@ public class ServerData {
         LAN,
         REALM,
         OTHER;
+    }
+    @Override
+    public ProtocolVersion viaFabricPlus$forcedVersion() {
+        return viaFabricPlus$forcedVersion;
+    }
+
+    @Override
+    public void viaFabricPlus$forceVersion(ProtocolVersion version) {
+        viaFabricPlus$forcedVersion = version;
+    }
+
+    @Override
+    public boolean viaFabricPlus$passedDirectConnectScreen() {
+        return viaFabricPlus$passedDirectConnectScreen;
+    }
+
+    @Override
+    public void viaFabricPlus$passDirectConnectScreen(boolean state) {
+        viaFabricPlus$passedDirectConnectScreen = state;
+    }
+
+    @Override
+    public ProtocolVersion viaFabricPlus$translatingVersion() {
+        return viaFabricPlus$translatingVersion;
+    }
+
+    @Override
+    public void viaFabricPlus$setTranslatingVersion(ProtocolVersion version) {
+        viaFabricPlus$translatingVersion = version;
     }
 }

@@ -5,8 +5,10 @@ import com.ibm.icu.text.ArabicShapingException;
 import com.ibm.icu.text.Bidi;
 import com.mojang.blaze3d.font.GlyphInfo;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
 import java.util.ArrayList;
 import java.util.List;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.StringSplitter;
 import net.minecraft.client.gui.font.EmptyArea;
 import net.minecraft.client.gui.font.TextRenderable;
@@ -27,6 +29,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.StringDecomposer;
 import net.minecraftforge.client.extensions.IForgeFont;
+import net.raphimc.viabedrock.api.BedrockProtocolVersion;
 import org.joml.Matrix4f;
 import org.jspecify.annotations.Nullable;
 
@@ -44,7 +47,7 @@ public class Font implements IForgeFont {
     public Font(Font.Provider p_430972_) {
         this.provider = p_430972_;
         this.splitter = new StringSplitter(
-            (char2In, style2In) -> this.getGlyphSource(style2In.getFont()).getGlyph(char2In).info().getAdvance(style2In.isBold())
+                (char2In, style2In) -> this.getGlyphSource(style2In.getFont()).getGlyph(char2In).info().getAdvance(style2In.isBold())
         );
     }
 
@@ -63,62 +66,109 @@ public class Font implements IForgeFont {
     }
 
     public void drawInBatch(
-        String p_272751_,
-        float p_272661_,
-        float p_273129_,
-        int p_273272_,
-        boolean p_273209_,
-        Matrix4f p_272940_,
-        MultiBufferSource p_273017_,
-        Font.DisplayMode p_272608_,
-        int p_273365_,
-        int p_272755_
+            String p_272751_,
+            float p_272661_,
+            float p_273129_,
+            int p_273272_,
+            boolean p_273209_,
+            Matrix4f p_272940_,
+            MultiBufferSource p_273017_,
+            Font.DisplayMode p_272608_,
+            int p_273365_,
+            int p_272755_
     ) {
+        // ViaFabricPlus - Bedrock new line support
+        if (ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.bedrockLatest)) {
+            final List<FormattedCharSequence> lines = this.split(
+                    FormattedText.of(this.isBidirectional() ? this.bidirectionalShaping(p_272751_) : p_272751_),
+                    Integer.MAX_VALUE
+            );
+            if (!lines.isEmpty()) {
+                for (int i = 0, size = lines.size(); i < size; i++) {
+                    this.drawInBatch(
+                            lines.get(i),
+                            p_272661_,
+                            p_273129_ - (size * (this.lineHeight + 2)) + (i * (this.lineHeight + 2)),
+                            p_273272_,
+                            p_273209_,
+                            new Matrix4f(p_272940_),
+                            p_273017_,
+                            p_272608_,
+                            p_273365_,
+                            p_272755_
+                    );
+                }
+                return;
+            }
+        }
+
         Font.PreparedText font$preparedtext = this.prepareText(p_272751_, p_272661_, p_273129_, p_273272_, p_273209_, p_273365_);
         font$preparedtext.visit(Font.GlyphVisitor.forMultiBufferSource(p_273017_, p_272940_, p_272608_, p_272755_));
     }
 
     public void drawInBatch(
-        Component p_409939_,
-        float p_273006_,
-        float p_273254_,
-        int p_273375_,
-        boolean p_273674_,
-        Matrix4f p_273525_,
-        MultiBufferSource p_272624_,
-        Font.DisplayMode p_273418_,
-        int p_273330_,
-        int p_272981_
+            Component p_409939_,
+            float p_273006_,
+            float p_273254_,
+            int p_273375_,
+            boolean p_273674_,
+            Matrix4f p_273525_,
+            MultiBufferSource p_272624_,
+            Font.DisplayMode p_273418_,
+            int p_273330_,
+            int p_272981_
     ) {
+        // ViaFabricPlus - Bedrock new line support
+        if (ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.bedrockLatest)) {
+            final List<FormattedCharSequence> lines = this.split(p_409939_, Integer.MAX_VALUE);
+            if (!lines.isEmpty()) {
+                for (int i = 0, size = lines.size(); i < size; i++) {
+                    this.drawInBatch(
+                            lines.get(i),
+                            p_273006_,
+                            p_273254_ - (size * (this.lineHeight + 2)) + (i * (this.lineHeight + 2)),
+                            p_273375_,
+                            p_273674_,
+                            new Matrix4f(p_273525_),
+                            p_272624_,
+                            p_273418_,
+                            p_273330_,
+                            p_272981_
+                    );
+                }
+                return;
+            }
+        }
+
         Font.PreparedText font$preparedtext = this.prepareText(p_409939_.getVisualOrderText(), p_273006_, p_273254_, p_273375_, p_273674_, false, p_273330_);
         font$preparedtext.visit(Font.GlyphVisitor.forMultiBufferSource(p_272624_, p_273525_, p_273418_, p_272981_));
     }
 
     public void drawInBatch(
-        FormattedCharSequence p_407439_,
-        float p_272811_,
-        float p_272610_,
-        int p_273422_,
-        boolean p_273016_,
-        Matrix4f p_273443_,
-        MultiBufferSource p_273387_,
-        Font.DisplayMode p_273551_,
-        int p_272706_,
-        int p_273114_
+            FormattedCharSequence p_407439_,
+            float p_272811_,
+            float p_272610_,
+            int p_273422_,
+            boolean p_273016_,
+            Matrix4f p_273443_,
+            MultiBufferSource p_273387_,
+            Font.DisplayMode p_273551_,
+            int p_272706_,
+            int p_273114_
     ) {
         Font.PreparedText font$preparedtext = this.prepareText(p_407439_, p_272811_, p_272610_, p_273422_, p_273016_, false, p_272706_);
         font$preparedtext.visit(Font.GlyphVisitor.forMultiBufferSource(p_273387_, p_273443_, p_273551_, p_273114_));
     }
 
     public void drawInBatch8xOutline(
-        FormattedCharSequence p_168646_,
-        float p_168647_,
-        float p_168648_,
-        int p_168649_,
-        int p_168650_,
-        Matrix4f p_254170_,
-        MultiBufferSource p_168652_,
-        int p_168653_
+            FormattedCharSequence p_168646_,
+            float p_168647_,
+            float p_168648_,
+            int p_168649_,
+            int p_168650_,
+            Matrix4f p_254170_,
+            MultiBufferSource p_168652_,
+            int p_168653_
     ) {
         Font.PreparedTextBuilder font$preparedtextbuilder = new Font.PreparedTextBuilder(0.0F, 0.0F, p_168650_, false, false);
 
@@ -173,7 +223,7 @@ public class Font implements IForgeFont {
     }
 
     public Font.PreparedText prepareText(
-        FormattedCharSequence p_406646_, float p_410379_, float p_409318_, int p_410317_, boolean p_406084_, boolean p_454438_, int p_406668_
+            FormattedCharSequence p_406646_, float p_410379_, float p_409318_, int p_410317_, boolean p_406084_, boolean p_454438_, int p_406668_
     ) {
         Font.PreparedTextBuilder font$preparedtextbuilder = new Font.PreparedTextBuilder(p_410379_, p_409318_, p_410317_, p_406668_, p_406084_, p_454438_);
         p_406646_.accept(font$preparedtextbuilder);
@@ -185,6 +235,17 @@ public class Font implements IForgeFont {
     }
 
     public int width(FormattedText p_92853_) {
+        if (Minecraft.getInstance().level != null && ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.bedrockLatest)) {
+            int maxWidth = 0;
+            for (FormattedCharSequence wrapLine : this.split(p_92853_, Integer.MAX_VALUE)) {
+                int lineWidth = this.width(wrapLine);
+                if (lineWidth >= maxWidth) {
+                    maxWidth = lineWidth;
+                }
+            }
+            return Mth.ceil(maxWidth);
+        }
+
         return Mth.ceil(this.splitter.stringWidth(p_92853_));
     }
 
@@ -290,7 +351,7 @@ public class Font implements IForgeFont {
         }
 
         public PreparedTextBuilder(
-            final float p_408474_, final float p_405862_, final int p_406916_, final int p_407483_, final boolean p_410641_, final boolean p_456735_
+                final float p_408474_, final float p_405862_, final int p_406916_, final int p_407483_, final boolean p_410641_, final boolean p_456735_
         ) {
             this.x = p_408474_;
             this.y = p_405862_;
@@ -366,13 +427,13 @@ public class Font implements IForgeFont {
             this.markBackground(this.x, this.y, f);
             if (p_423260_.isStrikethrough()) {
                 this.addEffect(
-                    Font.this.provider.effect().createEffect(f1, this.y + 4.5F - 1.0F, this.x + f, this.y + 4.5F, 0.01F, i, j, f2)
+                        Font.this.provider.effect().createEffect(f1, this.y + 4.5F - 1.0F, this.x + f, this.y + 4.5F, 0.01F, i, j, f2)
                 );
             }
 
             if (p_423260_.isUnderlined()) {
                 this.addEffect(
-                    Font.this.provider.effect().createEffect(f1, this.y + 9.0F - 1.0F, this.x + f, this.y + 9.0F, 0.01F, i, j, f2)
+                        Font.this.provider.effect().createEffect(f1, this.y + 9.0F - 1.0F, this.x + f, this.y + 9.0F, 0.01F, i, j, f2)
                 );
             }
 
@@ -384,7 +445,7 @@ public class Font implements IForgeFont {
         public void visit(Font.GlyphVisitor p_407346_) {
             if (ARGB.alpha(this.backgroundColor) != 0) {
                 p_407346_.acceptEffect(
-                    Font.this.provider.effect().createEffect(this.backgroundLeft, this.backgroundTop, this.backgroundRight, this.backgroundBottom, -0.01F, this.backgroundColor, 0, 0.0F)
+                        Font.this.provider.effect().createEffect(this.backgroundLeft, this.backgroundTop, this.backgroundRight, this.backgroundBottom, -0.01F, this.backgroundColor, 0, 0.0F)
                 );
             }
 

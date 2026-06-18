@@ -1,6 +1,9 @@
 package net.minecraft.world.level.block;
 
 import com.mojang.serialization.MapCodec;
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -25,6 +28,7 @@ import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jspecify.annotations.Nullable;
 
@@ -80,7 +84,33 @@ public class FarmBlock extends Block {
 
     @Override
     protected VoxelShape getShape(BlockState p_53290_, BlockGetter p_53291_, BlockPos p_53292_, CollisionContext p_53293_) {
+        if (Minecraft.getInstance() != null && Minecraft.getInstance().isLocalServer()) {
+            // When joining the singleplayer, we set the target version to the native version when the integrated server is started
+            // However this is already to late for blocks since the world and entities have already been loaded, causing block collisions
+            // to make issues as described via https://github.com/ViaVersion/ViaFabricPlus/issues/436. A proper fix would be to
+            // move version setting to earlier stage but /shrug
+            return SHAPE;
+        }
+
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_9_3)) {
+            return (Shapes.block());
+        }
+
         return SHAPE;
+    }
+
+    @Override
+    public VoxelShape getOcclusionShape(BlockState state) {
+        if (Minecraft.getInstance() != null && Minecraft.getInstance().isLocalServer()) {
+            // See above for explanation
+            return super.getOcclusionShape(state);
+        }
+
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_9_3)) {
+            return SHAPE;
+        } else {
+            return super.getOcclusionShape(state);
+        }
     }
 
     @Override

@@ -19,6 +19,10 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
+
+import com.viaversion.viafabricplus.injection.access.base.IConnection;
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import net.minecraft.CrashReport;
 import net.minecraft.CrashReportCategory;
 import net.minecraft.client.ClientBrandRetriever;
@@ -52,6 +56,8 @@ import net.minecraft.util.Util;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.raphimc.vialegacy.api.LegacyProtocolVersion;
+import net.raphimc.vialegacy.protocol.release.r1_6_4tor1_7_2_5.storage.ProtocolMetadataStorage;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 
@@ -153,7 +159,18 @@ public class ClientHandshakePacketListenerImpl implements ClientLoginPacketListe
         this.connection.send(p_333847_, PacketSendListener.thenRun(() -> this.connection.setEncryptionKey(p_327699_, p_330168_)));
     }
 
-    private  Component authenticateServer(String p_104532_) {
+    private Component authenticateServer(String p_104532_) {
+        final IConnection mixinClientConnection = (IConnection) this.connection;
+        if (mixinClientConnection.viaFabricPlus$getTargetVersion().olderThanOrEqualTo(LegacyProtocolVersion.r1_6_4)) {
+            // We are in the 1.7 -> 1.6 protocol, so we need to skip the joinServer call
+            // if the server is in offline mode, due the packet changes <-> networking changes
+            // Minecraft's networking code is bad for us.
+            ProtocolMetadataStorage metadataStorage = mixinClientConnection.viaFabricPlus$getUserConnection().get(ProtocolMetadataStorage.class);
+            if (metadataStorage != null && !metadataStorage.authenticate) {
+                return null;
+            }
+        }
+
         try {
             this.minecraft.services().sessionService().joinServer(this.minecraft.getUser().getProfileId(), this.minecraft.getUser().getAccessToken(), p_104532_);
             return null;
@@ -227,7 +244,10 @@ public class ClientHandshakePacketListenerImpl implements ClientLoginPacketListe
     @Override
     public void handleCompression(ClientboundLoginCompressionPacket p_104551_) {
         if (!this.connection.isMemoryConnection()) {
-            this.connection.setupCompression(p_104551_.getCompressionThreshold(), false);
+            this.connection.setupCompression(
+                    p_104551_.getCompressionThreshold(),
+                    ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_17)
+            );
         }
     }
 

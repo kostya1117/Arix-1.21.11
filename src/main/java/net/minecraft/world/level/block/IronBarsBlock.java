@@ -1,6 +1,9 @@
 package net.minecraft.world.level.block;
 
 import com.mojang.serialization.MapCodec;
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viafabricplus.settings.impl.DebugSettings;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.tags.BlockTags;
@@ -20,6 +23,9 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class IronBarsBlock extends CrossCollisionBlock {
     public static final MapCodec<IronBarsBlock> CODEC = simpleCodec(IronBarsBlock::new);
+    private VoxelShape[] viaFabricPlus$shape_r1_12_2;
+
+    private VoxelShape[] viaFabricPlus$shape_r1_8;
 
     @Override
     public MapCodec<? extends IronBarsBlock> codec() {
@@ -37,6 +43,58 @@ public class IronBarsBlock extends CrossCollisionBlock {
                 .setValue(WEST, false)
                 .setValue(WATERLOGGED, false)
         );
+        final float f = 7.0F;
+        final float g = 9.0F;
+        final float h = 7.0F;
+        final float i = 9.0F;
+
+        final VoxelShape baseShape = Block.box(f, 0.0, f, g, (float) 16.0, g);
+
+        viaFabricPlus$shape_r1_12_2 = new VoxelShape[]{
+                baseShape,
+                Block.box(h, 0.0, h, i, 16.0, 16.0), // south
+                Block.box(0.0, 0.0, h, i, 16.0, i), // west
+                Block.box(0.0, 0.0, h, i, 16.0, 16.0), // south-west corner
+                Block.box(h, 0.0, 0.0, i, 16.0, i), // north
+                Block.box(h, 0.0, 0.0, i, 16.0, 16.0), // south-north line
+                Block.box(0.0, 0.0, 0.0, i, 16.0, i), // west-north corner
+                Block.box(0.0, 0.0, 0.0, i, 16.0, 16.0), // south-west-north T
+                Block.box(h, 0.0, h, 16.0, 16.0, i), // east
+                Block.box(h, 0.0, h, 16.0, 16.0, 16.0), // south-east corner
+                Block.box(0.0, 0.0, h, 16.0, 16.0, i), // west-east line
+                Block.box(0.0, 0.0, h, 16.0, 16.0, 16.0), // south-west-east T
+                Block.box(h, 0.0, 0.0, 16.0, 16.0, i), // north-east corner
+                Block.box(h, 0.0, 0.0, 16.0, 16.0, 16.0), // south-north-east T
+                Block.box(0.0, 0.0, 0.0, 16.0, 16.0, i), // west-north-east T
+                Shapes.block() // cross
+        };
+
+        final VoxelShape northShape = Block.box(h, (float) 0.0, 0.0, i, (float) 16.0, i - 1);
+        final VoxelShape southShape = Block.box(h, (float) 0.0, h + 1, i, (float) 16.0, 16.0);
+        final VoxelShape westShape = Block.box(0.0, (float) 0.0, h, i - 1, (float) 16.0, i);
+        final VoxelShape eastShape = Block.box(h + 1, (float) 0.0, h, 16.0, (float) 16.0, i);
+
+        final VoxelShape northEastCornerShape = Shapes.or(northShape, eastShape);
+        final VoxelShape southWestCornerShape = Shapes.or(southShape, westShape);
+
+        viaFabricPlus$shape_r1_8 = new VoxelShape[]{
+                baseShape,
+                southShape,
+                westShape,
+                southWestCornerShape,
+                northShape,
+                Shapes.or(southShape, northShape),
+                Shapes.or(westShape, northShape),
+                Shapes.or(southWestCornerShape, northShape),
+                eastShape,
+                Shapes.or(southShape, eastShape),
+                Shapes.or(westShape, eastShape),
+                Shapes.or(southWestCornerShape, eastShape),
+                northEastCornerShape,
+                Shapes.or(southShape, northEastCornerShape),
+                Shapes.or(westShape, northEastCornerShape),
+                Shapes.or(southWestCornerShape, northEastCornerShape)
+        };
     }
 
     @Override
@@ -52,12 +110,34 @@ public class IronBarsBlock extends CrossCollisionBlock {
         BlockState blockstate1 = blockgetter.getBlockState(blockpos2);
         BlockState blockstate2 = blockgetter.getBlockState(blockpos3);
         BlockState blockstate3 = blockgetter.getBlockState(blockpos4);
-        return this.defaultBlockState()
-            .setValue(NORTH, this.attachsTo(blockstate, blockstate.isFaceSturdy(blockgetter, blockpos1, Direction.SOUTH)))
-            .setValue(SOUTH, this.attachsTo(blockstate1, blockstate1.isFaceSturdy(blockgetter, blockpos2, Direction.NORTH)))
-            .setValue(WEST, this.attachsTo(blockstate2, blockstate2.isFaceSturdy(blockgetter, blockpos3, Direction.EAST)))
-            .setValue(EAST, this.attachsTo(blockstate3, blockstate3.isFaceSturdy(blockgetter, blockpos4, Direction.WEST)))
-            .setValue(WATERLOGGED, fluidstate.getType() == Fluids.WATER);
+
+        boolean north = this.attachsTo(blockstate, blockstate.isFaceSturdy(blockgetter, blockpos1, Direction.SOUTH));
+        boolean south = this.attachsTo(blockstate1, blockstate1.isFaceSturdy(blockgetter, blockpos2, Direction.NORTH));
+        boolean west = this.attachsTo(blockstate2, blockstate2.isFaceSturdy(blockgetter, blockpos3, Direction.EAST));
+        boolean east = this.attachsTo(blockstate3, blockstate3.isFaceSturdy(blockgetter, blockpos4, Direction.WEST));
+
+        int count = 0;
+        if (north) count++;
+        if (south) count++;
+        if (west) count++;
+        if (east) count++;
+
+        BlockState result = this.defaultBlockState()
+                .setValue(NORTH, north)
+                .setValue(SOUTH, south)
+                .setValue(WEST, west)
+                .setValue(EAST, east)
+                .setValue(WATERLOGGED, fluidstate.getType() == Fluids.WATER);
+
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_8) && count == 0) {
+            result = result
+                    .setValue(NORTH, true)
+                    .setValue(SOUTH, true)
+                    .setValue(WEST, true)
+                    .setValue(EAST, true);
+        }
+
+        return result;
     }
 
     @Override
@@ -82,7 +162,27 @@ public class IronBarsBlock extends CrossCollisionBlock {
 
     @Override
     protected VoxelShape getVisualShape(BlockState p_54202_, BlockGetter p_54203_, BlockPos p_54204_, CollisionContext p_54205_) {
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_15_2)) {
+            return (this.getCollisionShape(p_54202_, p_54203_, p_54204_, p_54205_));
+        }
         return Shapes.empty();
+    }
+    @Override
+    public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
+        if (DebugSettings.INSTANCE.legacyPaneOutlines.isEnabled()) {
+            return this.viaFabricPlus$shape_r1_12_2[this.viaFabricPlus$getShapeIndex(state)];
+        } else {
+            return super.getShape(state, world, pos, context);
+        }
+    }
+
+    @Override
+    public VoxelShape getCollisionShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_8)) {
+            return this.viaFabricPlus$shape_r1_8[this.viaFabricPlus$getShapeIndex(state)];
+        } else {
+            return super.getCollisionShape(state, world, pos, context);
+        }
     }
 
     @Override

@@ -18,7 +18,7 @@ import ru.arixcompany.features.event.render.EventRender3D;
 import ru.arixcompany.features.module.modules.render.targetEsp.TargetEspMode;
 import ru.arixcompany.utils.animation.Animation;
 import ru.arixcompany.utils.animation.Direction;
-import ru.arixcompany.utils.animation.impl.EaseOutCubic;
+import ru.arixcompany.utils.animation.impl.cubic.EaseOutCubic;
 
 import java.awt.*;
 

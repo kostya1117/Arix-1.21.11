@@ -2,6 +2,8 @@ package net.minecraft.client.renderer;
 
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import java.util.List;
+
+import com.viaversion.viafabricplus.features.classic.cpe_extension.CPEAdditions;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -56,6 +58,7 @@ public class WeatherEffectRenderer {
         }
     }
 
+
     public void extractRenderState(Level p_430760_, int p_428982_, float p_431567_, Vec3 p_427801_, WeatherRenderState p_426425_) {
         p_426425_.intensity = p_430760_.getRainLevel(p_431567_);
         if (!(p_426425_.intensity <= 0.0F)) {
@@ -100,7 +103,8 @@ public class WeatherEffectRenderer {
             flag = Shaders.isRainDepth();
         }
 
-        if (!p_428296_.rainColumns.isEmpty()) {
+        // ViaFabricPlus - force snow
+        if (!p_428296_.rainColumns.isEmpty() || CPEAdditions.isSnowing()) {
             RenderType rendertype = RenderTypes.weather(RAIN_LOCATION, flag);
             this.renderInstances(p_375954_.getBuffer(rendertype), p_428296_.rainColumns, p_368504_, 1.0F, p_428296_.radius, p_428296_.intensity);
         }
@@ -224,6 +228,11 @@ public class WeatherEffectRenderer {
     }
 
     private Biome.Precipitation getPrecipitationAt(Level p_360760_, BlockPos p_361577_) {
+        // ViaFabricPlus - force snow
+        if (CPEAdditions.isSnowing()) {
+            return Biome.Precipitation.SNOW;
+        }
+
         if (!p_360760_.getChunkSource().hasChunk(SectionPos.blockToSectionCoord(p_361577_.getX()), SectionPos.blockToSectionCoord(p_361577_.getZ()))) {
             return Biome.Precipitation.NONE;
         }

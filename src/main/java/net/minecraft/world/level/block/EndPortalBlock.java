@@ -2,6 +2,9 @@ package net.minecraft.world.level.block;
 
 import com.mojang.serialization.MapCodec;
 import java.util.Set;
+
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -32,6 +35,8 @@ import org.jspecify.annotations.Nullable;
 public class EndPortalBlock extends BaseEntityBlock implements Portal {
     public static final MapCodec<EndPortalBlock> CODEC = simpleCodec(EndPortalBlock::new);
     private static final VoxelShape SHAPE = Block.column(16.0, 6.0, 12.0);
+    private static final VoxelShape viaFabricPlus$shape_r1_8_x = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 1.0D, 16.0D);
+    private static final VoxelShape viaFabricPlus$shape_r1_16_5 = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 12.0D, 16.0D);
 
     @Override
     public MapCodec<EndPortalBlock> codec() {
@@ -49,6 +54,11 @@ public class EndPortalBlock extends BaseEntityBlock implements Portal {
 
     @Override
     protected VoxelShape getShape(BlockState p_53038_, BlockGetter p_53039_, BlockPos p_53040_, CollisionContext p_53041_) {
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_8)) {
+            return (viaFabricPlus$shape_r1_8_x);
+        } else if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_16_4)) {
+           return (viaFabricPlus$shape_r1_16_5);
+        }
         return SHAPE;
     }
 
@@ -115,7 +125,7 @@ public class EndPortalBlock extends BaseEntityBlock implements Portal {
     }
 
     @Override
-    protected ItemStack getCloneItemStack(LevelReader p_310938_, BlockPos p_53022_, BlockState p_53023_, boolean p_376423_) {
+    public ItemStack getCloneItemStack(LevelReader p_310938_, BlockPos p_53022_, BlockState p_53023_, boolean p_376423_) {
         return ItemStack.EMPTY;
     }
 

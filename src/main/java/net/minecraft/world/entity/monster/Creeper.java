@@ -1,6 +1,9 @@
 package net.minecraft.world.entity.monster;
 
 import java.util.Collection;
+
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -210,9 +213,14 @@ public class Creeper extends Monster {
     protected InteractionResult mobInteract(Player p_32301_, InteractionHand p_32302_) {
         ItemStack itemstack = p_32301_.getItemInHand(p_32302_);
         if (itemstack.is(ItemTags.CREEPER_IGNITERS)) {
-            SoundEvent soundevent = itemstack.is(Items.FIRE_CHARGE) ? SoundEvents.FIRECHARGE_USE : SoundEvents.FLINTANDSTEEL_USE;
+            // ViaFabricPlus - change fire charge sound for older versions
+            SoundEvent soundevent = itemstack.is(Items.FIRE_CHARGE)
+                    ? (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_19_1)
+                       ? SoundEvents.FLINTANDSTEEL_USE
+                       : SoundEvents.FIRECHARGE_USE)
+                    : SoundEvents.FLINTANDSTEEL_USE;
             this.level()
-                .playSound(p_32301_, this.getX(), this.getY(), this.getZ(), soundevent, this.getSoundSource(), 1.0F, this.random.nextFloat() * 0.4F + 0.8F);
+                    .playSound(p_32301_, this.getX(), this.getY(), this.getZ(), soundevent, this.getSoundSource(), 1.0F, this.random.nextFloat() * 0.4F + 0.8F);
             if (!this.level().isClientSide()) {
                 this.ignite();
                 if (!itemstack.isDamageableItem()) {

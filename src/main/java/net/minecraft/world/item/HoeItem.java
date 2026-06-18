@@ -6,6 +6,8 @@ import com.mojang.datafixers.util.Pair;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+
+import com.viaversion.viafabricplus.settings.impl.DebugSettings;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundEvents;
@@ -53,7 +55,9 @@ public class HoeItem extends Item {
         Consumer<UseOnContext> consumer = pair.getSecond();
         if (predicate.test(p_41341_)) {
             Player player = p_41341_.getPlayer();
-            level.playSound(player, blockpos, SoundEvents.HOE_TILL, SoundSource.BLOCKS, 1.0F, 1.0F);
+            if (!DebugSettings.INSTANCE.serversidePlaceSounds.isEnabled()) {
+                level.playSound(player, blockpos, SoundEvents.HOE_TILL, SoundSource.BLOCKS, 1.0F, 1.0F);
+            }
             if (!level.isClientSide()) {
                 consumer.accept(p_41341_);
                 if (player != null) {

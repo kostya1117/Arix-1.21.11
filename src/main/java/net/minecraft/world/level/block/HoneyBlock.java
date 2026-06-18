@@ -1,6 +1,8 @@
 package net.minecraft.world.level.block;
 
 import com.mojang.serialization.MapCodec;
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;
@@ -19,7 +21,9 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.raphimc.viabedrock.api.BedrockProtocolVersion;
 
 public class HoneyBlock extends HalfTransparentBlock {
     public static final MapCodec<HoneyBlock> CODEC = simpleCodec(HoneyBlock::new);
@@ -28,6 +32,9 @@ public class HoneyBlock extends HalfTransparentBlock {
     private static final double THROTTLE_SLIDE_SPEED_TO = 0.05;
     private static final int SLIDE_ADVANCEMENT_CHECK_INTERVAL = 20;
     private static final VoxelShape SHAPE = Block.column(14.0, 0.0, 15.0);
+
+    // ViaFabricPlus - Bedrock honey block collision shape
+    private static final VoxelShape BEDROCK_SHAPE = Shapes.box(0.0625, 0, 0.0625, 0.9375, 1, 0.9375);
 
     @Override
     public MapCodec<HoneyBlock> codec() {
@@ -44,6 +51,11 @@ public class HoneyBlock extends HalfTransparentBlock {
 
     @Override
     protected VoxelShape getCollisionShape(BlockState p_54015_, BlockGetter p_54016_, BlockPos p_54017_, CollisionContext p_54018_) {
+        // ViaFabricPlus - Bedrock honey block collision shape
+        if (ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.bedrockLatest)) {
+            return BEDROCK_SHAPE;
+        }
+
         return SHAPE;
     }
 
@@ -61,6 +73,17 @@ public class HoneyBlock extends HalfTransparentBlock {
 
     @Override
     protected void entityInside(BlockState p_54003_, Level p_54004_, BlockPos p_54005_, Entity p_54006_, InsideBlockEffectApplier p_395723_, boolean p_432034_) {
+        // ViaFabricPlus - Bedrock honey block entity inside
+        if (ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.bedrockLatest)) {
+            if (this.isSlidingDown(p_54005_, p_54006_)) {
+                this.maybeDoSlideEffects(p_54004_, p_54006_);
+            }
+
+            final Vec3 velocity = p_54006_.getDeltaMovement();
+            p_54006_.setDeltaMovement(new Vec3(velocity.x * 0.4F, Math.max(-0.12F, velocity.y), velocity.z * 0.4F));
+            return;
+        }
+
         if (this.isSlidingDown(p_54005_, p_54006_)) {
             this.maybeDoSlideAchievement(p_54006_, p_54005_);
             this.doSlideMovement(p_54006_);
@@ -70,11 +93,66 @@ public class HoneyBlock extends HalfTransparentBlock {
         super.entityInside(p_54003_, p_54004_, p_54005_, p_54006_, p_395723_, p_432034_);
     }
 
+    @Override
+    public void stepOn(Level world, BlockPos pos, BlockState state, Entity entity) {
+        // ViaFabricPlus - Bedrock honey block step on
+        if (ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.bedrockLatest)) {
+            final double absoluteY = Math.abs(entity.getDeltaMovement().y);
+            if (absoluteY < 0.1 && !entity.isSteppingCarefully()) {
+                final double frictionFactor = 0.4 + absoluteY * 0.2;
+                entity.setDeltaMovement(entity.getDeltaMovement().multiply(frictionFactor, 1.0F, frictionFactor));
+            }
+            return;
+        }
+
+        super.stepOn(world, pos, state, entity);
+    }
+
+    @Override
+    public float getFriction() {
+        // ViaFabricPlus - Bedrock honey block friction
+        if (ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.bedrockLatest)) {
+            return 0.8F;
+        }
+
+        return super.getFriction();
+    }
+
+    @Override
+    public float getSpeedFactor() {
+        // ViaFabricPlus - Bedrock honey block speed factor
+        if (ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.bedrockLatest)) {
+            return 1F;
+        }
+
+        return super.getSpeedFactor();
+    }
+
+    @Override
+    public float getJumpFactor() {
+        // ViaFabricPlus - Bedrock honey block jump factor
+        if (ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.bedrockLatest)) {
+            return 0.6F;
+        }
+
+        return super.getJumpFactor();
+    }
+
     private static double getOldDeltaY(double p_368591_) {
+        // ViaFabricPlus - simplify velocity comparisons for older versions
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_21)) {
+            return p_368591_;
+        }
+
         return p_368591_ / 0.98F + 0.08;
     }
 
     private static double getNewDeltaY(double p_369047_) {
+        // ViaFabricPlus - simplify velocity comparisons for older versions
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_21)) {
+            return p_369047_;
+        }
+
         return (p_369047_ - 0.08) * 0.98F;
     }
 
@@ -141,15 +219,15 @@ public class HoneyBlock extends HalfTransparentBlock {
 
             for (int i = 0; i < p_53990_; i++) {
                 p_53989_.level()
-                    .addParticle(
-                        new BlockParticleOption(ParticleTypes.BLOCK, blockstate),
-                        p_53989_.getX(),
-                        p_53989_.getY(),
-                        p_53989_.getZ(),
-                        0.0,
-                        0.0,
-                        0.0
-                    );
+                        .addParticle(
+                                new BlockParticleOption(ParticleTypes.BLOCK, blockstate),
+                                p_53989_.getX(),
+                                p_53989_.getY(),
+                                p_53989_.getZ(),
+                                0.0,
+                                0.0,
+                                0.0
+                        );
             }
         }
     }

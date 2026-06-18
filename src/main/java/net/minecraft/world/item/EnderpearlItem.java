@@ -1,5 +1,7 @@
 package net.minecraft.world.item;
 
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -20,6 +22,9 @@ public class EnderpearlItem extends Item {
 
     @Override
     public InteractionResult use(Level p_41190_, Player p_41191_, InteractionHand p_41192_) {
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_8) && p_41191_.getAbilities().instabuild) {
+           return (InteractionResult.PASS);
+        }
         ItemStack itemstack = p_41191_.getItemInHand(p_41192_);
         p_41190_.playSound(
             null,

@@ -4,6 +4,9 @@ import com.google.common.collect.ImmutableList;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Locale;
+
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.CycleButton;
@@ -97,7 +100,7 @@ public class StructureBlockEditScreen extends Screen {
     @Override
     protected void init() {
         this.addRenderableWidget(
-            Button.builder(CommonComponents.GUI_DONE, p_99460_ -> this.onDone()).bounds(this.width / 2 - 4 - 150, 210, 150, 20).build()
+                Button.builder(CommonComponents.GUI_DONE, p_99460_ -> this.onDone()).bounds(this.width / 2 - 4 - 150, 210, 150, 20).build()
         );
         this.addRenderableWidget(Button.builder(CommonComponents.GUI_CANCEL, p_99457_ -> this.onCancel()).bounds(this.width / 2 + 4, 210, 150, 20).build());
         this.initialMirror = this.structure.getMirror();
@@ -120,13 +123,13 @@ public class StructureBlockEditScreen extends Screen {
             }
         }).bounds(this.width / 2 + 4 + 100, 185, 50, 20).build());
         this.addRenderableWidget(
-            CycleButton.<StructureMode>builder(p_169852_ -> Component.translatable("structure_block.mode." + p_169852_.getSerializedName()), this.initialMode)
-                .withValues(DEFAULT_MODES, ALL_MODES)
-                .displayOnlyValue()
-                .create(this.width / 2 - 4 - 150, 185, 50, 20, Component.literal("MODE"), (p_169846_, p_169847_) -> {
-                    this.structure.setMode(p_169847_);
-                    this.updateMode(p_169847_);
-                })
+                CycleButton.<StructureMode>builder(p_169852_ -> Component.translatable("structure_block.mode." + p_169852_.getSerializedName()), this.initialMode)
+                        .withValues(DEFAULT_MODES, ALL_MODES)
+                        .displayOnlyValue()
+                        .create(this.width / 2 - 4 - 150, 185, 50, 20, Component.literal("MODE"), (p_169846_, p_169847_) -> {
+                            this.structure.setMode(p_169847_);
+                            this.updateMode(p_169847_);
+                        })
         );
         this.detectButton = this.addRenderableWidget(Button.builder(Component.translatable("structure_block.button.detect_size"), p_280865_ -> {
             if (this.structure.getMode() == StructureMode.SAVE) {
@@ -135,30 +138,30 @@ public class StructureBlockEditScreen extends Screen {
             }
         }).bounds(this.width / 2 + 4 + 100, 120, 50, 20).build());
         this.includeEntitiesButton = this.addRenderableWidget(
-            CycleButton.onOffBuilder(!this.structure.isIgnoreEntities())
-                .displayOnlyValue()
-                .create(this.width / 2 + 4 + 100, 160, 50, 20, INCLUDE_ENTITIES_LABEL, (p_169861_, p_169862_) -> this.structure.setIgnoreEntities(!p_169862_))
+                CycleButton.onOffBuilder(!this.structure.isIgnoreEntities())
+                        .displayOnlyValue()
+                        .create(this.width / 2 + 4 + 100, 160, 50, 20, INCLUDE_ENTITIES_LABEL, (p_169861_, p_169862_) -> this.structure.setIgnoreEntities(!p_169862_))
         );
         this.strictButton = this.addRenderableWidget(
-            CycleButton.onOffBuilder(this.structure.isStrict())
-                .displayOnlyValue()
-                .create(this.width / 2 + 4 + 100, 120, 50, 20, STRICT_LABEL, (p_389312_, p_389313_) -> this.structure.setStrict(p_389313_))
+                CycleButton.onOffBuilder(this.structure.isStrict())
+                        .displayOnlyValue()
+                        .create(this.width / 2 + 4 + 100, 120, 50, 20, STRICT_LABEL, (p_389312_, p_389313_) -> this.structure.setStrict(p_389313_))
         );
         this.mirrorButton = this.addRenderableWidget(
-            CycleButton.builder(Mirror::symbol, this.initialMirror)
-                .withValues(Mirror.values())
-                .displayOnlyValue()
-                .create(this.width / 2 - 20, 185, 40, 20, Component.literal("MIRROR"), (p_169843_, p_169844_) -> this.structure.setMirror(p_169844_))
+                CycleButton.builder(Mirror::symbol, this.initialMirror)
+                        .withValues(Mirror.values())
+                        .displayOnlyValue()
+                        .create(this.width / 2 - 20, 185, 40, 20, Component.literal("MIRROR"), (p_169843_, p_169844_) -> this.structure.setMirror(p_169844_))
         );
         this.toggleAirButton = this.addRenderableWidget(
-            CycleButton.onOffBuilder(this.structure.getShowAir())
-                .displayOnlyValue()
-                .create(this.width / 2 + 4 + 100, 80, 50, 20, SHOW_AIR_LABEL, (p_169856_, p_169857_) -> this.structure.setShowAir(p_169857_))
+                CycleButton.onOffBuilder(this.structure.getShowAir())
+                        .displayOnlyValue()
+                        .create(this.width / 2 + 4 + 100, 80, 50, 20, SHOW_AIR_LABEL, (p_169856_, p_169857_) -> this.structure.setShowAir(p_169857_))
         );
         this.toggleBoundingBox = this.addRenderableWidget(
-            CycleButton.onOffBuilder(this.structure.getShowBoundingBox())
-                .displayOnlyValue()
-                .create(this.width / 2 + 4 + 100, 80, 50, 20, SHOW_BOUNDING_BOX_LABEL, (p_169849_, p_169850_) -> this.structure.setShowBoundingBox(p_169850_))
+                CycleButton.onOffBuilder(this.structure.getShowBoundingBox())
+                        .displayOnlyValue()
+                        .create(this.width / 2 + 4 + 100, 80, 50, 20, SHOW_BOUNDING_BOX_LABEL, (p_169849_, p_169850_) -> this.structure.setShowBoundingBox(p_169850_))
         );
         this.rot0Button = this.addRenderableWidget(Button.builder(Component.literal("0"), p_99425_ -> {
             this.structure.setRotation(Rotation.NONE);
@@ -179,6 +182,9 @@ public class StructureBlockEditScreen extends Screen {
         this.nameEdit = new EditBox(this.font, this.width / 2 - 152, 40, 300, 20, Component.translatable("structure_block.structure_name")) {
             @Override
             public boolean charTyped(CharacterEvent p_425032_) {
+                if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_12_2)) {
+                    return (super.charTyped(p_425032_));
+                }
                 return !StructureBlockEditScreen.this.isValidCharacterForName(this.getValue(), p_425032_.codepoint(), this.getCursorPosition()) ? false : super.charTyped(p_425032_);
             }
         };
@@ -225,6 +231,11 @@ public class StructureBlockEditScreen extends Screen {
         this.addWidget(this.dataEdit);
         this.updateDirectionButtons();
         this.updateMode(this.initialMode);
+
+        // changeInputNameMaxLength: для <= 1.18.2 ограничиваем длину до 64
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_18_2)) {
+            this.nameEdit.setMaxLength(64);
+        }
     }
 
     @Override
@@ -339,6 +350,11 @@ public class StructureBlockEditScreen extends Screen {
             case DATA:
                 this.dataEdit.setVisible(true);
         }
+
+        // hideStrictButton: после RETURN для <= 1.21.4 скрываем strictButton
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_21_4)) {
+            this.strictButton.visible = false;
+        }
     }
 
     private boolean sendToServer(StructureBlockEntity.UpdateType p_99404_) {
@@ -444,7 +460,11 @@ public class StructureBlockEditScreen extends Screen {
             p_281951_.drawString(this.font, INTEGRITY_LABEL, this.width / 2 - 153, 110, -6250336);
             this.integrityEdit.render(p_281951_, p_99407_, p_99408_, p_99409_);
             this.seedEdit.render(p_281951_, p_99407_, p_99408_, p_99409_);
-            p_281951_.drawString(this.font, STRICT_LABEL, this.width / 2 + 154 - this.font.width(STRICT_LABEL), 110, -6250336);
+
+            if (ProtocolTranslator.getTargetVersion().newerThan(ProtocolVersion.v1_21_4)) {
+                p_281951_.drawString(this.font, STRICT_LABEL, this.width / 2 + 154 - this.font.width(STRICT_LABEL), 110, -6250336);
+            }
+
             p_281951_.drawString(this.font, SHOW_BOUNDING_BOX_LABEL, this.width / 2 + 154 - this.font.width(SHOW_BOUNDING_BOX_LABEL), 70, -6250336);
         }
 

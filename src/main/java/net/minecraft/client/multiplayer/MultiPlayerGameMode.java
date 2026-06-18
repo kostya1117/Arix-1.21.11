@@ -5,6 +5,21 @@ import com.google.common.collect.Lists;
 import com.google.common.primitives.Shorts;
 import com.google.common.primitives.SignedBytes;
 import com.mojang.logging.LogUtils;
+import com.viaversion.viafabricplus.features.interaction.r1_18_2_block_ack_emulation.ClientPlayerInteractionManager1_18_2;
+import com.viaversion.viafabricplus.features.interaction.replace_block_placement_logic.ActionResultException1_12_2;
+import com.viaversion.viafabricplus.injection.access.interaction.container_clicking.IAbstractContainerMenu;
+import com.viaversion.viafabricplus.injection.access.interaction.r1_18_2_block_ack_emulation.IMultiPlayerGameMode;
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viafabricplus.protocoltranslator.impl.provider.viaversion.ViaFabricPlusHandItemProvider;
+import com.viaversion.viafabricplus.protocoltranslator.translator.ItemTranslator;
+import com.viaversion.viaversion.api.protocol.packet.PacketWrapper;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
+import com.viaversion.viaversion.api.type.Types;
+import com.viaversion.viaversion.api.type.types.version.VersionedTypes;
+import com.viaversion.viaversion.protocols.v1_16_1to1_16_2.packet.ServerboundPackets1_16_2;
+import com.viaversion.viaversion.protocols.v1_16_4to1_17.Protocol1_16_4To1_17;
+import com.viaversion.viaversion.protocols.v1_21_2to1_21_4.packet.ServerboundPackets1_21_4;
+import com.viaversion.viaversion.protocols.v1_21_4to1_21_5.Protocol1_21_4To1_21_5;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import java.util.List;
@@ -25,19 +40,7 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.network.HashedStack;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ServerGamePacketListener;
-import net.minecraft.network.protocol.game.ServerboundContainerButtonClickPacket;
-import net.minecraft.network.protocol.game.ServerboundContainerClickPacket;
-import net.minecraft.network.protocol.game.ServerboundContainerSlotStateChangedPacket;
-import net.minecraft.network.protocol.game.ServerboundInteractPacket;
-import net.minecraft.network.protocol.game.ServerboundPickItemFromBlockPacket;
-import net.minecraft.network.protocol.game.ServerboundPickItemFromEntityPacket;
-import net.minecraft.network.protocol.game.ServerboundPlaceRecipePacket;
-import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket;
-import net.minecraft.network.protocol.game.ServerboundSetCarriedItemPacket;
-import net.minecraft.network.protocol.game.ServerboundSetCreativeModeSlotPacket;
-import net.minecraft.network.protocol.game.ServerboundUseItemOnPacket;
-import net.minecraft.network.protocol.game.ServerboundUseItemPacket;
+import net.minecraft.network.protocol.game.*;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.StatsCounter;
 import net.minecraft.util.Mth;
@@ -50,15 +53,15 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.PiercingWeapon;
+import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.item.crafting.display.RecipeDisplayId;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.GameMasterBlock;
-import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.BlockHitResult;
@@ -66,6 +69,7 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.raphimc.vialegacy.api.LegacyProtocolVersion;
 import org.apache.commons.lang3.mutable.MutableObject;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
@@ -74,7 +78,7 @@ import ru.arixcompany.features.event.player.EventAttack;
 import ru.arixcompany.utils.MessageSender;
 
 
-public class MultiPlayerGameMode implements IPlayerControllerMP {
+public class MultiPlayerGameMode implements IPlayerControllerMP, IMultiPlayerGameMode {
     private static final Logger LOGGER = LogUtils.getLogger();
     private final Minecraft minecraft;
     private final ClientPacketListener connection;
@@ -87,6 +91,9 @@ public class MultiPlayerGameMode implements IPlayerControllerMP {
     private GameType localPlayerMode = GameType.DEFAULT_MODE;
     private  GameType previousLocalPlayerMode;
     private int carriedIndex;
+    private ItemStack viaFabricPlus$oldCursorStack;
+    private List<ItemStack> viaFabricPlus$oldItems;
+    private final ClientPlayerInteractionManager1_18_2 viaFabricPlus$1_18_2InteractionManager = new ClientPlayerInteractionManager1_18_2();
 
     public MultiPlayerGameMode(Minecraft p_105203_, ClientPacketListener p_105204_) {
         this.minecraft = p_105203_;
@@ -147,6 +154,11 @@ public class MultiPlayerGameMode implements IPlayerControllerMP {
             LOGGER.error("client broke {} {} -> {}", p_105268_, blockstate, level.getBlockState(p_105268_));
         }
 
+        // resetBlockBreaking
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_14_3)) {
+            this.destroyBlockPos = new BlockPos(this.destroyBlockPos.getX(), -1, this.destroyBlockPos.getZ());
+        }
+
         return flag;
     }
 
@@ -167,8 +179,14 @@ public class MultiPlayerGameMode implements IPlayerControllerMP {
             }
 
             this.startPrediction(this.minecraft.level, p_233757_ -> {
-                this.destroyBlock(p_105270_);
-                return new ServerboundPlayerActionPacket(ServerboundPlayerActionPacket.Action.START_DESTROY_BLOCK, p_105270_, p_105271_, p_233757_);
+                if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_15_2)) {
+                    if (!this.viaFabricPlus$extinguishFire(p_105270_, p_105271_)) {
+                        this.destroyBlock(p_105270_);
+                    }
+                } else {
+                    this.destroyBlock(p_105270_);
+                }
+                return this.viaFabricPlus$createPlayerActionPacket(ServerboundPlayerActionPacket.Action.START_DESTROY_BLOCK, p_105270_, p_105271_, p_233757_);
             });
             this.destroyDelay = 5;
         } else if (!this.isDestroying || !this.sameDestroyTarget(p_105270_)) {
@@ -177,8 +195,10 @@ public class MultiPlayerGameMode implements IPlayerControllerMP {
                     LOGGER.info("Abort old break {} {}", p_105270_, this.minecraft.level.getBlockState(p_105270_));
                 }
 
-                this.connection
-                    .send(new ServerboundPlayerActionPacket(ServerboundPlayerActionPacket.Action.ABORT_DESTROY_BLOCK, this.destroyBlockPos, p_105271_));
+                ServerboundPlayerActionPacket abortPacket = this.viaFabricPlus$createPlayerActionPacket(
+                        ServerboundPlayerActionPacket.Action.ABORT_DESTROY_BLOCK, this.destroyBlockPos, p_105271_
+                );
+                this.connection.send(abortPacket);
             }
 
             BlockState blockstate1 = this.minecraft.level.getBlockState(p_105270_);
@@ -194,7 +214,14 @@ public class MultiPlayerGameMode implements IPlayerControllerMP {
                 }
 
                 if (flag && blockstate1.getDestroyProgress(this.minecraft.player, this.minecraft.player.level(), p_105270_) >= 1.0F) {
-                    this.destroyBlock(p_105270_);
+                    // checkFireBlock
+                    if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_15_2)) {
+                        if (!this.viaFabricPlus$extinguishFire(p_105270_, p_105271_)) {
+                            this.destroyBlock(p_105270_);
+                        }
+                    } else {
+                        this.destroyBlock(p_105270_);
+                    }
                 } else {
                     this.isDestroying = true;
                     this.destroyBlockPos = p_105270_;
@@ -204,28 +231,74 @@ public class MultiPlayerGameMode implements IPlayerControllerMP {
                     this.minecraft.level.destroyBlockProgress(this.minecraft.player.getId(), this.destroyBlockPos, this.getDestroyStage());
                 }
 
-                return new ServerboundPlayerActionPacket(ServerboundPlayerActionPacket.Action.START_DESTROY_BLOCK, p_105270_, p_105271_, p_233728_);
+                return this.viaFabricPlus$createPlayerActionPacket(ServerboundPlayerActionPacket.Action.START_DESTROY_BLOCK, p_105270_, p_105271_, p_233728_);
             });
         }
 
         return true;
     }
+    private boolean viaFabricPlus$extinguishFire(BlockPos blockPos, final Direction direction) {
+        blockPos = blockPos.relative(direction);
+        if (this.minecraft.level.getBlockState(blockPos).getBlock() == Blocks.FIRE) {
+            this.minecraft.level.levelEvent(this.minecraft.player, 1009, blockPos, 0);
+            this.minecraft.level.removeBlock(blockPos, false);
+            return true;
+        }
+        return false;
+    }
 
     public void stopDestroyBlock() {
-        if (this.isDestroying) {
+        // fixMiningReset1_7: для <= 1.7.6 всегда заходим в блок
+        boolean shouldStop = ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_7_6) || this.isDestroying;
+
+        if (shouldStop) {
             BlockState blockstate = this.minecraft.level.getBlockState(this.destroyBlockPos);
             this.minecraft.getTutorial().onDestroyBlock(this.minecraft.level, this.destroyBlockPos, blockstate, -1.0F);
             if (SharedConstants.DEBUG_BLOCK_BREAK) {
                 LOGGER.info("Stop dest {} {}", this.destroyBlockPos, blockstate);
             }
 
-            this.connection
-                .send(new ServerboundPlayerActionPacket(ServerboundPlayerActionPacket.Action.ABORT_DESTROY_BLOCK, this.destroyBlockPos, Direction.DOWN));
+            // preventPacketWhenNotMining1_7
+            if (ProtocolTranslator.getTargetVersion().newerThan(ProtocolVersion.v1_7_6) || this.isDestroying) {
+                ServerboundPlayerActionPacket abortPacket = this.viaFabricPlus$createPlayerActionPacket(
+                        ServerboundPlayerActionPacket.Action.ABORT_DESTROY_BLOCK, this.destroyBlockPos, Direction.DOWN
+                );
+                this.connection.send(abortPacket);
+            }
+
             this.isDestroying = false;
             this.destroyProgress = 0.0F;
             this.minecraft.level.destroyBlockProgress(this.minecraft.player.getId(), this.destroyBlockPos, -1);
-            this.minecraft.player.resetAttackStrengthTicker();
+
+            // preventAttackResetWhenNotMining1_7
+            if (ProtocolTranslator.getTargetVersion().newerThan(ProtocolVersion.v1_7_6) || this.isDestroying) {
+                this.minecraft.player.resetAttackStrengthTicker();
+            }
         }
+    }
+
+    // Создаёт пакет и трекает действие для <= 1.18.2
+    private ServerboundPlayerActionPacket viaFabricPlus$createPlayerActionPacket(
+            ServerboundPlayerActionPacket.Action action, BlockPos pos, Direction direction
+    ) {
+        if (ProtocolTranslator.getTargetVersion().betweenInclusive(ProtocolVersion.v1_14_4, ProtocolVersion.v1_18_2)) {
+            this.viaFabricPlus$1_18_2InteractionManager.trackPlayerAction(action, pos);
+        }
+        return new ServerboundPlayerActionPacket(action, pos, direction);
+    }
+
+    private ServerboundPlayerActionPacket viaFabricPlus$createPlayerActionPacket(
+            ServerboundPlayerActionPacket.Action action, BlockPos pos, Direction direction, int sequence
+    ) {
+        if (ProtocolTranslator.getTargetVersion().betweenInclusive(ProtocolVersion.v1_14_4, ProtocolVersion.v1_18_2)) {
+            this.viaFabricPlus$1_18_2InteractionManager.trackPlayerAction(action, pos);
+        }
+        return new ServerboundPlayerActionPacket(action, pos, direction, sequence);
+    }
+
+    @Override
+    public ClientPlayerInteractionManager1_18_2 viaFabricPlus$get1_18_2InteractionManager() {
+        return this.viaFabricPlus$1_18_2InteractionManager;
     }
 
     public boolean continueDestroyBlock(BlockPos p_105284_, Direction p_105285_) {
@@ -300,6 +373,13 @@ public class MultiPlayerGameMode implements IPlayerControllerMP {
         try (BlockStatePredictionHandler blockstatepredictionhandler = p_233730_.getBlockStatePredictionHandler().startPredicting()) {
             int i = blockstatepredictionhandler.currentSequence();
             Packet<ServerGamePacketListener> packet = p_233731_.predict(i);
+
+            // trackPlayerAction (Inject at HEAD of startPrediction)
+            if (ProtocolTranslator.getTargetVersion().betweenInclusive(ProtocolVersion.v1_14_4, ProtocolVersion.v1_18_2)
+                    && packet instanceof ServerboundPlayerActionPacket playerActionPacket) {
+                this.viaFabricPlus$1_18_2InteractionManager.trackPlayerAction(playerActionPacket.getAction(), playerActionPacket.getPos());
+            }
+
             this.connection.send(packet);
         }
     }
@@ -327,24 +407,50 @@ public class MultiPlayerGameMode implements IPlayerControllerMP {
     }
 
     public InteractionResult useItemOn(LocalPlayer p_233733_, InteractionHand p_233734_, BlockHitResult p_233735_) {
+        // cancelOffHandBlockPlace
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_8) && !InteractionHand.MAIN_HAND.equals(p_233734_)) {
+            return InteractionResult.PASS;
+        }
+
         this.ensureHasSentCarriedItem();
         if (!this.minecraft.level.getWorldBorder().isWithinBounds(p_233735_.getBlockPos())) {
             return InteractionResult.FAIL;
         }
 
         MutableObject<InteractionResult> mutableobject = new MutableObject<>();
-        this.startPrediction(this.minecraft.level, p_233745_ -> {
-            mutableobject.setValue(this.performUseItemOn(p_233733_, p_233734_, p_233735_));
-            return new ServerboundUseItemOnPacket(p_233734_, p_233735_, p_233745_);
-        });
+
+        // catchPacketCancelException
+        try {
+            this.startPrediction(this.minecraft.level, p_233745_ -> {
+                // lambdauseItemOn4 / trackLastUsedItem for useItemOn
+                if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_8)) {
+                    ViaFabricPlusHandItemProvider.lastUsedItem = p_233733_.getItemInHand(p_233734_).copy();
+                }
+                try {
+                    mutableobject.setValue(this.performUseItemOn(p_233733_, p_233734_, p_233735_));
+                    return new ServerboundUseItemOnPacket(p_233734_, p_233735_, p_233745_);
+                } catch (ActionResultException1_12_2 e) {
+                    mutableobject.setValue(e.getActionResult());
+                    throw e;
+                }
+            });
+        } catch (ActionResultException1_12_2 ignored) {
+        }
+
         return mutableobject.get();
     }
 
     private InteractionResult performUseItemOn(LocalPlayer p_233747_, InteractionHand p_233748_, BlockHitResult p_233749_) {
         BlockPos blockpos = p_233749_.getBlockPos();
         ItemStack itemstack = p_233747_.getItemInHand(p_233748_);
+
+        // changeSpectatorAction
         if (this.localPlayerMode == GameType.SPECTATOR) {
-            return InteractionResult.CONSUME;
+            if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_21)) {
+                return InteractionResult.SUCCESS;
+            } else {
+                return InteractionResult.CONSUME;
+            }
         }
 
         boolean flag = !p_233747_.getMainHandItem().isEmpty() || !p_233747_.getOffhandItem().isEmpty();
@@ -368,6 +474,42 @@ public class MultiPlayerGameMode implements IPlayerControllerMP {
             }
         }
 
+        // interactBlock1_12_2
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_12_2)) {
+            BlockHitResult checkHitResult = p_233749_;
+            if (itemstack.getItem() instanceof BlockItem) {
+                final BlockState clickedBlock = this.minecraft.level.getBlockState(p_233749_.getBlockPos());
+                if (clickedBlock.getBlock().equals(Blocks.SNOW)) {
+                    if (clickedBlock.getValue(SnowLayerBlock.LAYERS) == 1) {
+                        checkHitResult = p_233749_.withDirection(Direction.UP);
+                    }
+                }
+                final UseOnContext itemUsageContext = new UseOnContext(p_233747_, p_233748_, checkHitResult);
+                final BlockPlaceContext itemPlacementContext = new BlockPlaceContext(itemUsageContext);
+                if (!itemPlacementContext.canPlace() || ((BlockItem) itemPlacementContext.getItemInHand().getItem()).getPlacementState(itemPlacementContext) == null) {
+                    throw new ActionResultException1_12_2(InteractionResult.PASS);
+                }
+            }
+
+            this.connection.send(new ServerboundUseItemOnPacket(p_233748_, p_233749_, 0));
+            if (itemstack.isEmpty()) {
+                throw new ActionResultException1_12_2(InteractionResult.PASS);
+            }
+            final UseOnContext itemUsageContext = new UseOnContext(p_233747_, p_233748_, checkHitResult);
+            InteractionResult actionResult;
+            if (this.localPlayerMode.isCreative()) {
+                final int count = itemstack.getCount();
+                actionResult = itemstack.useOn(itemUsageContext);
+                itemstack.setCount(count);
+            } else {
+                actionResult = itemstack.useOn(itemUsageContext);
+            }
+            if (!actionResult.consumesAction()) {
+                actionResult = InteractionResult.PASS;
+            }
+            throw new ActionResultException1_12_2(actionResult);
+        }
+
         if (!itemstack.isEmpty() && !p_233747_.getCooldowns().isOnCooldown(itemstack)) {
             UseOnContext useoncontext = new UseOnContext(p_233747_, p_233748_, p_233749_);
             InteractionResult interactionresult2;
@@ -386,25 +528,53 @@ public class MultiPlayerGameMode implements IPlayerControllerMP {
     }
 
     public InteractionResult useItem(Player p_233722_, InteractionHand p_233723_) {
+        // cancelOffHandItemInteract
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_8) && !InteractionHand.MAIN_HAND.equals(p_233723_)) {
+            return InteractionResult.PASS;
+        }
+
         if (this.localPlayerMode == GameType.SPECTATOR) {
             return InteractionResult.PASS;
         }
 
         this.ensureHasSentCarriedItem();
+
+        // sendPlayerPosPacket
+        if (ProtocolTranslator.getTargetVersion().betweenInclusive(ProtocolVersion.v1_17, ProtocolVersion.v1_20_5)) {
+            this.connection.send(new ServerboundMovePlayerPacket.PosRot(p_233722_.getX(), p_233722_.getY(), p_233722_.getZ(), p_233722_.getYRot(), p_233722_.getXRot(), p_233722_.onGround(), p_233722_.horizontalCollision));
+        }
+
         MutableObject<InteractionResult> mutableobject = new MutableObject<>();
-        this.startPrediction(
-            this.minecraft.level,
-            p_357795_ -> {
-                ServerboundUseItemPacket serverbounduseitempacket = new ServerboundUseItemPacket(
-                    p_233723_, p_357795_, p_233722_.getYRot(), p_233722_.getXRot()
-                );
-                ItemStack itemstack = p_233722_.getItemInHand(p_233723_);
-                if (p_233722_.getCooldowns().isOnCooldown(itemstack)) {
-                    mutableobject.setValue(InteractionResult.PASS);
-                    return serverbounduseitempacket;
+
+        // fixPacketOrder
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_18_2)) {
+            ServerboundUseItemPacket serverbounduseitempacket = new ServerboundUseItemPacket(p_233723_, 0, p_233722_.getYRot(), p_233722_.getXRot());
+            ItemStack itemstack = p_233722_.getItemInHand(p_233723_);
+
+            if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_8)) {
+                ViaFabricPlusHandItemProvider.lastUsedItem = itemstack.copy();
+            }
+
+            if (p_233722_.getCooldowns().isOnCooldown(itemstack)) {
+                mutableobject.setValue(InteractionResult.PASS);
+            } else {
+                final int count = itemstack.getCount();
+                InteractionResult interactionresult = itemstack.use(this.minecraft.level, p_233722_, p_233723_);
+
+                // eitherSuccessOrPass
+                if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_8)) {
+                    ItemStack output;
+                    if (interactionresult instanceof InteractionResult.Success success) {
+                        output = Objects.requireNonNullElseGet(success.heldItemTransformedTo(), () -> p_233722_.getItemInHand(p_233723_));
+                    } else {
+                        output = p_233722_.getItemInHand(p_233723_);
+                    }
+                    final boolean accepted = !output.isEmpty() && (output != itemstack || output.getCount() != count);
+                    if (interactionresult.consumesAction() != accepted) {
+                        interactionresult = accepted ? InteractionResult.SUCCESS.heldItemTransformedTo(output) : InteractionResult.PASS;
+                    }
                 }
 
-                InteractionResult interactionresult = itemstack.use(this.minecraft.level, p_233722_, p_233723_);
                 ItemStack itemstack1;
                 if (interactionresult instanceof InteractionResult.Success interactionresult$success) {
                     itemstack1 = Objects.requireNonNullElseGet(interactionresult$success.heldItemTransformedTo(), () -> p_233722_.getItemInHand(p_233723_));
@@ -417,8 +587,60 @@ public class MultiPlayerGameMode implements IPlayerControllerMP {
                 }
 
                 mutableobject.setValue(interactionresult);
-                return serverbounduseitempacket;
             }
+
+            this.connection.send(serverbounduseitempacket);
+            return mutableobject.get();
+        }
+
+        this.startPrediction(
+                this.minecraft.level,
+                p_357795_ -> {
+                    ServerboundUseItemPacket serverbounduseitempacket = new ServerboundUseItemPacket(
+                            p_233723_, p_357795_, p_233722_.getYRot(), p_233722_.getXRot()
+                    );
+
+                    if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_8)) {
+                        ViaFabricPlusHandItemProvider.lastUsedItem = p_233722_.getItemInHand(p_233723_).copy();
+                    }
+
+                    ItemStack itemstack = p_233722_.getItemInHand(p_233723_);
+                    if (p_233722_.getCooldowns().isOnCooldown(itemstack)) {
+                        mutableobject.setValue(InteractionResult.PASS);
+                        return serverbounduseitempacket;
+                    }
+
+                    final int count = itemstack.getCount();
+                    InteractionResult interactionresult = itemstack.use(this.minecraft.level, p_233722_, p_233723_);
+
+                    // eitherSuccessOrPass
+                    if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_8)) {
+                        ItemStack output;
+                        if (interactionresult instanceof InteractionResult.Success success) {
+                            output = Objects.requireNonNullElseGet(success.heldItemTransformedTo(), () -> p_233722_.getItemInHand(p_233723_));
+                        } else {
+                            output = p_233722_.getItemInHand(p_233723_);
+                        }
+                        final boolean accepted = !output.isEmpty() && (output != itemstack || output.getCount() != count);
+                        if (interactionresult.consumesAction() != accepted) {
+                            interactionresult = accepted ? InteractionResult.SUCCESS.heldItemTransformedTo(output) : InteractionResult.PASS;
+                        }
+                    }
+
+                    ItemStack itemstack1;
+                    if (interactionresult instanceof InteractionResult.Success interactionresult$success) {
+                        itemstack1 = Objects.requireNonNullElseGet(interactionresult$success.heldItemTransformedTo(), () -> p_233722_.getItemInHand(p_233723_));
+                    } else {
+                        itemstack1 = p_233722_.getItemInHand(p_233723_);
+                    }
+
+                    if (itemstack1 != itemstack) {
+                        p_233722_.setItemInHand(p_233723_, itemstack1);
+                    }
+
+                    mutableobject.setValue(interactionresult);
+                    return serverbounduseitempacket;
+                }
         );
         return mutableobject.get();
     }
@@ -441,11 +663,11 @@ public class MultiPlayerGameMode implements IPlayerControllerMP {
 
         this.ensureHasSentCarriedItem();
         this.connection.send(ServerboundInteractPacket.createAttackPacket(p_105225_, p_105224_.isShiftKeyDown()));
+        MessageSender.sendOverlayMessage(Component.literal(minecraft.player.attackStrengthTicker + "")); //debug
         if (this.localPlayerMode != GameType.SPECTATOR) {
             p_105224_.attack(p_105225_);
             p_105224_.resetAttackStrengthTicker();
         }
-        MessageSender.sendOverlayMessage(Component.literal(minecraft.player.fallDistance + "")); //debug
     }
 
     public InteractionResult interact(Player p_105227_, Entity p_105228_, InteractionHand p_105229_) {
@@ -462,43 +684,128 @@ public class MultiPlayerGameMode implements IPlayerControllerMP {
     }
 
     public void handleInventoryMouseClick(int p_171800_, int p_171801_, int p_171802_, ClickType p_171803_, Player p_171804_) {
+        // removeClickActions
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(LegacyProtocolVersion.b1_5tob1_5_2) && !p_171803_.equals(ClickType.PICKUP)) {
+            return;
+        } else if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(LegacyProtocolVersion.r1_4_6tor1_4_7)
+                && !p_171803_.equals(ClickType.PICKUP)
+                && !p_171803_.equals(ClickType.QUICK_MOVE)
+                && !p_171803_.equals(ClickType.SWAP)
+                && !p_171803_.equals(ClickType.CLONE)) {
+            return;
+        }
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_15_2)
+                && p_171803_ == ClickType.SWAP
+                && p_171802_ == 40) {
+            return;
+        }
+
         AbstractContainerMenu abstractcontainermenu = p_171804_.containerMenu;
         if (p_171800_ != abstractcontainermenu.containerId) {
             LOGGER.warn("Ignoring click in mismatching container. Click in {}, player has {}.", p_171800_, abstractcontainermenu.containerId);
-        } else {
-            NonNullList<Slot> nonnulllist = abstractcontainermenu.slots;
-            int i = nonnulllist.size();
-            List<ItemStack> list = Lists.newArrayListWithCapacity(i);
-
-            for (Slot slot : nonnulllist) {
-                list.add(slot.getItem().copy());
-            }
-
-            abstractcontainermenu.clicked(p_171801_, p_171802_, p_171803_, p_171804_);
-            Int2ObjectMap<HashedStack> int2objectmap = new Int2ObjectOpenHashMap<>();
-
-            for (int j = 0; j < i; j++) {
-                ItemStack itemstack = list.get(j);
-                ItemStack itemstack1 = nonnulllist.get(j).getItem();
-                if (!ItemStack.matches(itemstack, itemstack1)) {
-                    int2objectmap.put(j, HashedStack.create(itemstack1, this.connection.decoratedHashOpsGenenerator()));
-                }
-            }
-
-            HashedStack hashedstack = HashedStack.create(abstractcontainermenu.getCarried(), this.connection.decoratedHashOpsGenenerator());
-            this.connection
-                .send(
-                    new ServerboundContainerClickPacket(
-                        p_171800_,
-                        abstractcontainermenu.getStateId(),
-                        Shorts.checkedCast(p_171801_),
-                        SignedBytes.checkedCast(p_171802_),
-                        p_171803_,
-                        int2objectmap,
-                        hashedstack
-                    )
-                );
+            return;
         }
+
+        NonNullList<Slot> nonnulllist = abstractcontainermenu.slots;
+        int i = nonnulllist.size();
+        List<ItemStack> list = Lists.newArrayListWithCapacity(i);
+
+        for (Slot slot : nonnulllist) {
+            list.add(slot.getItem().copy());
+        }
+
+        // captureOldItems
+        this.viaFabricPlus$oldCursorStack = this.minecraft.player.containerMenu.getCarried().copy();
+        this.viaFabricPlus$oldItems = list;
+
+        abstractcontainermenu.clicked(p_171801_, p_171802_, p_171803_, p_171804_);
+        Int2ObjectMap<HashedStack> int2objectmap = new Int2ObjectOpenHashMap<>();
+
+        for (int j = 0; j < i; j++) {
+            ItemStack itemstack = list.get(j);
+            ItemStack itemstack1 = nonnulllist.get(j).getItem();
+            if (!ItemStack.matches(itemstack, itemstack1)) {
+                int2objectmap.put(j, HashedStack.create(itemstack1, this.connection.decoratedHashOpsGenenerator()));
+            }
+        }
+
+        HashedStack hashedstack = HashedStack.create(abstractcontainermenu.getCarried(), this.connection.decoratedHashOpsGenenerator());
+        ServerboundContainerClickPacket clickSlotPacket = new ServerboundContainerClickPacket(
+                p_171800_,
+                abstractcontainermenu.getStateId(),
+                Shorts.checkedCast(p_171801_),
+                SignedBytes.checkedCast(p_171802_),
+                p_171803_,
+                int2objectmap,
+                hashedstack
+        );
+
+        // handleWindowClick
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_16_4)) {
+            this.viaFabricPlus$clickSlot1_16_5(clickSlotPacket);
+        } else if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_21_4)) {
+            this.viaFabricPlus$clickSlot1_21_4(clickSlotPacket);
+        } else {
+            this.connection.send(clickSlotPacket);
+        }
+    }
+    private void viaFabricPlus$clickSlot1_21_4(final ServerboundContainerClickPacket packet) {
+        final PacketWrapper containerClick = PacketWrapper.create(ServerboundPackets1_21_4.CONTAINER_CLICK, ProtocolTranslator.getPlayNetworkUserConnection());
+        containerClick.write(Types.VAR_INT, packet.containerId());
+        containerClick.write(Types.VAR_INT, packet.stateId());
+        containerClick.write(Types.SHORT, packet.slotNum());
+        containerClick.write(Types.BYTE, packet.buttonNum());
+        containerClick.write(Types.VAR_INT, packet.clickType().id());
+
+        final Int2ObjectMap<HashedStack> modifiedStacks = packet.changedSlots();
+        containerClick.write(Types.VAR_INT, modifiedStacks.size());
+        for (Int2ObjectMap.Entry<HashedStack> entry : modifiedStacks.int2ObjectEntrySet()) {
+            final ItemStack itemStack = minecraft.player.containerMenu.slots.get(entry.getIntKey()).getItem();
+            containerClick.write(Types.SHORT, (short) entry.getIntKey());
+            containerClick.write(VersionedTypes.V1_21_4.item, ItemTranslator.mcToVia(itemStack, ProtocolVersion.v1_21_4));
+        }
+
+        final ItemStack cursorStack = minecraft.player.containerMenu.getCarried();
+        containerClick.write(VersionedTypes.V1_21_4.item, ItemTranslator.mcToVia(cursorStack, ProtocolVersion.v1_21_4));
+        containerClick.scheduleSendToServer(Protocol1_21_4To1_21_5.class);
+    }
+
+    private void viaFabricPlus$clickSlot1_16_5(final ServerboundContainerClickPacket packet) {
+        ItemStack slotItemBeforeModification;
+        if (this.viaFabricPlus$shouldBeEmpty(packet.clickType(), packet.slotNum())) {
+            slotItemBeforeModification = ItemStack.EMPTY;
+        } else if (packet.slotNum() < 0 || packet.slotNum() >= viaFabricPlus$oldItems.size()) {
+            slotItemBeforeModification = viaFabricPlus$oldCursorStack;
+        } else {
+            slotItemBeforeModification = viaFabricPlus$oldItems.get(packet.slotNum());
+        }
+
+        final PacketWrapper containerClick = PacketWrapper.create(ServerboundPackets1_16_2.CONTAINER_CLICK, ProtocolTranslator.getPlayNetworkUserConnection());
+        containerClick.write(Types.BYTE, (byte) packet.containerId());
+        containerClick.write(Types.SHORT, packet.slotNum());
+        containerClick.write(Types.BYTE, packet.buttonNum());
+        containerClick.write(Types.SHORT, minecraft.player.containerMenu.viaFabricPlus$incrementAndGetActionId());
+        containerClick.write(Types.VAR_INT, packet.clickType().ordinal());
+        containerClick.write(Types.ITEM1_13_2, ItemTranslator.mcToVia(slotItemBeforeModification, ProtocolVersion.v1_16_4));
+        containerClick.scheduleSendToServer(Protocol1_16_4To1_17.class);
+
+        viaFabricPlus$oldCursorStack = null;
+        viaFabricPlus$oldItems = null;
+    }
+
+    private boolean viaFabricPlus$shouldBeEmpty(final ClickType type, final int slot) {
+        // quick craft always uses empty stack for verification
+        if (type == ClickType.QUICK_CRAFT) return true;
+
+        // Special case: throw always uses empty stack for verification
+        if (type == ClickType.THROW) return true;
+
+        // quick move always uses empty stack for verification since 1.12
+        if (type == ClickType.QUICK_MOVE && ProtocolTranslator.getTargetVersion().newerThan(ProtocolVersion.v1_11_1))
+            return true;
+
+        // pickup with slot -999 (outside window) to throw items always uses empty stack for verification
+        return type == ClickType.PICKUP && slot == -999;
     }
 
     public void handlePlaceRecipe(int p_105218_, RecipeDisplayId p_365843_, boolean p_105220_) {
@@ -566,6 +873,10 @@ public class MultiPlayerGameMode implements IPlayerControllerMP {
     }
 
     public int getDestroyStage() {
+        // changeCalculation
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_19_4)) {
+            return (int)(this.destroyProgress * 10.0F) - 1;
+        }
         return this.destroyProgress > 0.0F ? (int)(this.destroyProgress * 10.0F) : -1;
     }
 

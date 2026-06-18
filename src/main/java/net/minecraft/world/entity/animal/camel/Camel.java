@@ -2,6 +2,8 @@ package net.minecraft.world.entity.animal.camel;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.mojang.serialization.Dynamic;
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ParticleTypes;
@@ -165,6 +167,34 @@ public class Camel extends AbstractHorse {
         CamelAi.updateActivity(this);
         profilerfiller.pop();
         super.customServerAiStep(p_366084_);
+    }
+    @Override
+    public void onPassengerTurned(Entity passenger) {
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_20) && this.getControllingPassenger() != passenger) {
+            this.viaFabricPlus$clampPassengerYaw1_20_1(passenger);
+        }
+    }
+
+    @Override
+    protected void positionRider(Entity passenger, MoveFunction positionUpdater) {
+        super.positionRider(passenger, positionUpdater);
+
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_20)) {
+            this.viaFabricPlus$clampPassengerYaw1_20_1(passenger);
+        }
+    }
+
+    private void viaFabricPlus$clampPassengerYaw1_20_1(final Entity passenger) {
+        passenger.setYBodyRot(this.getYRot());
+        final float passengerYaw = passenger.getYRot();
+
+        final float deltaDegrees = Mth.wrapDegrees(passengerYaw - this.getYRot());
+        final float clampedDelta = Mth.clamp(deltaDegrees, -160.0F, 160.0F);
+        passenger.yRotO += clampedDelta - deltaDegrees;
+
+        final float newYaw = passengerYaw + clampedDelta - deltaDegrees;
+        passenger.setYRot(newYaw);
+        passenger.setYHeadRot(newYaw);
     }
 
     @Override
@@ -384,6 +414,11 @@ public class Camel extends AbstractHorse {
             this.doPlayerRide(p_249032_);
         }
 
+        // ViaFabricPlus - change interaction result for older versions
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_21_9)) {
+            return InteractionResult.SUCCESS;
+        }
+
         return InteractionResult.CONSUME;
     }
 
@@ -502,7 +537,7 @@ public class Camel extends AbstractHorse {
         return this.isBaby() ? 0.45F : 1.0F;
     }
 
-    private double getBodyAnchorAnimationYOffset(boolean p_249228_, float p_251763_, EntityDimensions p_301064_, float p_299749_) {
+    public double getBodyAnchorAnimationYOffset(boolean p_249228_, float p_251763_, EntityDimensions p_301064_, float p_299749_) {
         double d0 = p_301064_.height() - 0.375F * p_299749_;
         float f = p_299749_ * 1.43F;
         float f1 = f - p_299749_ * 0.2F;

@@ -4,6 +4,8 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import java.util.List;
 import java.util.Map;
+
+import com.viaversion.viafabricplus.features.entity.r1_8_boat.BoatModel1_8;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.ambient.BatModel;
 import net.minecraft.client.model.animal.allay.AllayModel;
@@ -136,6 +138,7 @@ public class LayerDefinitions {
 
     public static Map<ModelLayerLocation, LayerDefinition> createRoots() {
         Builder<ModelLayerLocation, LayerDefinition> builder = ImmutableMap.builder();
+        builder.put(BoatModel1_8.MODEL_LAYER, BoatModel1_8.getTexturedModelData());
         LayerDefinition layerdefinition = LayerDefinition.create(HumanoidModel.createMesh(CubeDeformation.NONE, 0.0F), 64, 64);
         ArmorModelSet<LayerDefinition> armormodelset = HumanoidModel.createArmorMeshSet(INNER_ARMOR_DEFORMATION, OUTER_ARMOR_DEFORMATION)
             .map(p_420821_ -> LayerDefinition.create(p_420821_, 64, 32));

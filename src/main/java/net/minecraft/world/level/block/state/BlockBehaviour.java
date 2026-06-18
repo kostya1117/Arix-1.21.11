@@ -3,6 +3,8 @@ package net.minecraft.world.level.block.state;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectArrayMap;
 import malte0811.ferritecore.ducks.BlockStateCacheAccess;
 import malte0811.ferritecore.impl.BlockStateCacheImpl;
@@ -43,6 +45,8 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraft.world.level.block.state.properties.Property;
+import net.minecraft.world.level.levelgen.RandomSupport;
+import net.minecraft.world.level.levelgen.Xoroshiro128PlusPlus;
 import net.minecraft.world.level.material.*;
 import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.level.redstone.Orientation;
@@ -56,6 +60,8 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.raphimc.viabedrock.api.BedrockProtocolVersion;
+import net.raphimc.vialegacy.api.LegacyProtocolVersion;
 import org.jspecify.annotations.Nullable;
 
 import java.util.*;
@@ -322,6 +328,19 @@ public abstract class BlockBehaviour implements FeatureElement {
     }
 
     protected float getDestroyProgress(BlockState p_60466_, Player p_60467_, BlockGetter p_60468_, BlockPos p_60469_) {
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(LegacyProtocolVersion.r1_4_6tor1_4_7)) {
+            final float hardness = p_60466_.getDestroySpeed(p_60468_, p_60469_);
+            if (hardness == -1.0F) {
+                return 0.0F;
+            } else {
+                if (!p_60467_.hasCorrectToolForDrops(p_60466_)) {
+                    return 1.0F / hardness / 100F;
+                } else {
+                    return p_60467_.getDestroySpeed(p_60466_) / hardness / 30F;
+                }
+            }
+        }
+
         float f = p_60466_.getDestroySpeed(p_60468_, p_60469_);
         if (f == -1.0F) {
             return 0.0F;
@@ -371,7 +390,7 @@ public abstract class BlockBehaviour implements FeatureElement {
         return this.soundType;
     }
 
-    protected ItemStack getCloneItemStack(LevelReader p_376835_, BlockPos p_375399_, BlockState p_375675_, boolean p_376021_) {
+    public ItemStack getCloneItemStack(LevelReader p_376835_, BlockPos p_375399_, BlockState p_375675_, boolean p_376021_) {
         return new ItemStack(this.asItem());
     }
 
@@ -606,7 +625,35 @@ public abstract class BlockBehaviour implements FeatureElement {
         }
 
         public float getDestroySpeed(BlockGetter p_60801_, BlockPos p_60802_) {
-            return this.destroySpeed;
+            float destroySpeed = this.destroySpeed;
+            final Block block = this.getBlock();
+
+            if (block.equals(Blocks.END_STONE_BRICKS)
+                    || block.equals(Blocks.END_STONE_BRICK_SLAB)
+                    || block.equals(Blocks.END_STONE_BRICK_STAIRS)
+                    || block.equals(Blocks.END_STONE_BRICK_WALL)) {
+                if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_14_4)) {
+                    destroySpeed = 0.8F;
+                }
+            } else if (block.equals(Blocks.PISTON)
+                    || block.equals(Blocks.STICKY_PISTON)
+                    || block.equals(Blocks.PISTON_HEAD)) {
+                if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_15_2)) {
+                    destroySpeed = 0.5F;
+                }
+            } else if (block instanceof InfestedBlock) {
+                if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_12_2)) {
+                    destroySpeed = 0.75F;
+                } else if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_16_4)) {
+                    destroySpeed = 0F;
+                }
+            } else if (block.equals(Blocks.OBSIDIAN)) {
+                if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(LegacyProtocolVersion.b1_8tob1_8_1)) {
+                    destroySpeed = 10.0F;
+                }
+            }
+
+            return destroySpeed;
         }
 
         public float getDestroyProgress(Player p_60626_, BlockGetter p_60627_, BlockPos p_60628_) {
@@ -882,9 +929,12 @@ public abstract class BlockBehaviour implements FeatureElement {
         protected abstract BlockState asState();
 
         public boolean requiresCorrectToolForDrops() {
-            return this.requiresCorrectToolForDrops;
+            if (this.getBlock() instanceof ShulkerBoxBlock && ProtocolTranslator.getTargetVersion().olderThan(ProtocolVersion.v1_14)) {
+                return true;
+            } else {
+                return this.requiresCorrectToolForDrops;
+            }
         }
-
         public boolean shouldSpawnTerrainParticles() {
             return this.spawnTerrainParticles;
         }
@@ -1238,6 +1288,10 @@ public abstract class BlockBehaviour implements FeatureElement {
             this.offsetFunction = switch (p_222980_) {
                 case NONE -> null;
                 case XZ -> (p_272565_, p_272567_) -> {
+                    if (ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.bedrockLatest)) {
+                        return viaFabricPlus$randomlyModifyPosition(p_272567_, BlockBehaviour.OffsetType.XZ);
+                    }
+
                     Block block = p_272565_.getBlock();
                     long i = Mth.getSeed(p_272567_.getX(), 0, p_272567_.getZ());
                     float f = block.getMaxHorizontalOffset();
@@ -1246,6 +1300,10 @@ public abstract class BlockBehaviour implements FeatureElement {
                     return new Vec3(d0, 0.0, d1);
                 };
                 case XYZ -> (p_272562_, p_272564_) -> {
+                    if (ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.bedrockLatest)) {
+                        return viaFabricPlus$randomlyModifyPosition(p_272564_, BlockBehaviour.OffsetType.XYZ);
+                    }
+
                     Block block = p_272562_.getBlock();
                     long i = Mth.getSeed(p_272564_.getX(), 0, p_272564_.getZ());
                     double d0 = ((float)(i >> 4 & 15L) / 15.0F - 1.0) * block.getMaxVerticalOffset();
@@ -1256,6 +1314,60 @@ public abstract class BlockBehaviour implements FeatureElement {
                 };
             };
             return this;
+        }
+        private static final float viaFabricPlus$OFFSET_MIN = -0.25f;
+        private static final float viaFabricPlus$OFFSET_MAX = 0.25f;
+        private static final int viaFabricPlus$STEPS = 16;
+
+        private static long viaFabricPlus$positionHash(final int x, final int z) {
+            final long v1 = (116129781L * z) ^ ((0x2FC20F00000001L * Integer.toUnsignedLong(x)) >> 32);
+            final long temp = (v1 * (42317861L * v1 + 11L)) >>> 16;
+            return (int) temp ^ 0x6A09E667F3BCC909L;
+        }
+
+        private static float viaFabricPlus$randomToFloat(final long random) {
+            return (random >>> 40) * 5.9604645e-8f;
+        }
+
+        private static float viaFabricPlus$calculateOffsetValue(final float min, final float max, final float random) {
+            if (min >= max) {
+                return min;
+            }
+
+            if (viaFabricPlus$STEPS == 1) {
+                return (min + max) * 0.5F;
+            } else if (viaFabricPlus$STEPS > 1) {
+                final float range = max - min;
+                final float stepSize = range / (viaFabricPlus$STEPS - 1);
+                final float index = (float) Math.floor(viaFabricPlus$STEPS * random);
+                return min + index * stepSize;
+            } else {
+                return min + (max - min) * random;
+            }
+        }
+
+        private static Vec3 viaFabricPlus$randomlyModifyPosition(final BlockPos pos, final BlockBehaviour.OffsetType type) {
+            final long seed = viaFabricPlus$positionHash(pos.getX(), pos.getZ());
+
+            final long s0 = RandomSupport.mixStafford13(seed);
+            final long s1 = RandomSupport.mixStafford13(seed + RandomSupport.GOLDEN_RATIO_64);
+
+            final Xoroshiro128PlusPlus prng = new Xoroshiro128PlusPlus(s0, s1);
+
+            final float offsetX = viaFabricPlus$calculateOffsetValue(viaFabricPlus$OFFSET_MIN, viaFabricPlus$OFFSET_MAX, viaFabricPlus$randomToFloat(prng.nextLong()));
+            final float offsetY = switch (type) {
+                case XZ -> {
+                    prng.nextLong();
+                    yield 0;
+                }
+                case XYZ -> {
+                    yield viaFabricPlus$calculateOffsetValue(-0.2f, 0, viaFabricPlus$randomToFloat(prng.nextLong()));
+                }
+                case NONE -> 0;
+            };
+
+            final float offsetZ = viaFabricPlus$calculateOffsetValue(viaFabricPlus$OFFSET_MIN, viaFabricPlus$OFFSET_MAX, viaFabricPlus$randomToFloat(prng.nextLong()));
+            return new Vec3(offsetX, offsetY, offsetZ);
         }
 
         public BlockBehaviour.Properties noTerrainParticles() {

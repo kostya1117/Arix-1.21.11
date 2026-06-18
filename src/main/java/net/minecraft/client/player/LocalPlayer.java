@@ -21,6 +21,17 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.StreamSupport;
 
+import com.viaversion.viafabricplus.injection.access.base.IConnection;
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.connection.UserConnection;
+import com.viaversion.viaversion.api.protocol.packet.PacketWrapper;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
+import com.viaversion.viaversion.api.type.Types;
+import com.viaversion.viaversion.protocols.v1_20_3to1_20_5.packet.ServerboundPackets1_20_5;
+import com.viaversion.viaversion.protocols.v1_21_4to1_21_5.packet.ServerboundPackets1_21_5;
+import com.viaversion.viaversion.protocols.v1_21_5to1_21_6.Protocol1_21_5To1_21_6;
+import com.viaversion.viaversion.protocols.v1_21to1_21_2.Protocol1_21To1_21_2;
+import com.viaversion.viaversion.protocols.v1_21to1_21_2.storage.ClientVehicleStorage;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.ClientRecipeBook;
@@ -54,6 +65,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ServerboundClientCommandPacket;
 import net.minecraft.network.protocol.game.ServerboundContainerClosePacket;
 import net.minecraft.network.protocol.game.ServerboundMovePlayerPacket;
@@ -77,12 +89,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.TickThrottler;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntitySelector;
-import net.minecraft.world.entity.HumanoidArm;
-import net.minecraft.world.entity.MoverType;
-import net.minecraft.world.entity.PlayerRideableJumping;
-import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.animal.happyghast.HappyGhast;
 import net.minecraft.world.entity.animal.nautilus.AbstractNautilus;
@@ -90,6 +97,7 @@ import net.minecraft.world.entity.player.Abilities;
 import net.minecraft.world.entity.player.Input;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.entity.vehicle.boat.AbstractBoat;
+import net.minecraft.world.entity.vehicle.boat.Boat;
 import net.minecraft.world.entity.vehicle.minecart.AbstractMinecart;
 import net.minecraft.world.entity.vehicle.minecart.MinecartCommandBlock;
 import net.minecraft.world.inventory.ClickAction;
@@ -116,11 +124,17 @@ import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.raphimc.viabedrock.api.BedrockProtocolVersion;
+import net.raphimc.vialegacy.api.LegacyProtocolVersion;
+import net.raphimc.vialegacy.protocol.release.r1_5_2tor1_6_1.Protocolr1_5_2Tor1_6_1;
+import net.raphimc.vialegacy.protocol.release.r1_5_2tor1_6_1.packet.ServerboundPackets1_5_2;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import ru.arixcompany.Arix;
 import ru.arixcompany.features.event.EventRepo;
 import ru.arixcompany.features.event.player.EventMotion;
+import ru.arixcompany.features.event.player.EventMotionPost;
+import ru.arixcompany.features.event.player.EventMoveInput;
 import ru.arixcompany.features.event.player.EventSprint;
 import ru.arixcompany.features.event.world.EventUpdate;
 import ru.arixcompany.features.module.modules.combat.aura.aiming.RotationManager;
@@ -181,6 +195,8 @@ public class LocalPlayer extends AbstractClientPlayer {
     private boolean doLimitedCrafting = false;
     public int ticksOnGround;
 
+    private boolean viaFabricPlus$lastSneaking;
+
     public LocalPlayer(
             Minecraft p_108621_,
             ClientLevel p_108622_,
@@ -197,6 +213,7 @@ public class LocalPlayer extends AbstractClientPlayer {
         this.recipeBook = p_108625_;
         this.lastSentInput = p_407393_;
         this.wasSprinting = p_108626_;
+        this.viaFabricPlus$lastSneaking = p_407393_.shift();
         this.ambientSoundHandlers.add(new UnderwaterAmbientSoundHandler(this, p_108621_.getSoundManager()));
         this.ambientSoundHandlers.add(new BubbleColumnAmbientSoundHandler(this));
         this.ambientSoundHandlers.add(new BiomeAmbientSoundsHandler(this, p_108621_.getSoundManager()));
@@ -212,17 +229,20 @@ public class LocalPlayer extends AbstractClientPlayer {
             return false;
         }
 
+        // setRotationsWhenInBoat
+        if (p_108667_ instanceof Boat && ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_18)) {
+            this.yRotO = p_108667_.getYRot();
+            this.setYRot(p_108667_.getYRot());
+            this.setYHeadRot(p_108667_.getYRot());
+        }
+
         if (p_108667_ instanceof AbstractMinecart abstractminecart) {
             this.minecraft.getSoundManager().play(new RidingMinecartSoundInstance(this, abstractminecart, true, SoundEvents.MINECART_INSIDE_UNDERWATER, 0.0F, 0.75F, 1.0F));
             this.minecraft.getSoundManager().play(new RidingMinecartSoundInstance(this, abstractminecart, false, SoundEvents.MINECART_INSIDE, 0.0F, 0.75F, 1.0F));
         } else if (p_108667_ instanceof HappyGhast happyghast) {
-            this.minecraft
-                    .getSoundManager()
-                    .play(new RidingEntitySoundInstance(this, happyghast, false, SoundEvents.HAPPY_GHAST_RIDING, happyghast.getSoundSource(), 0.0F, 1.0F, 5.0F));
+            this.minecraft.getSoundManager().play(new RidingEntitySoundInstance(this, happyghast, false, SoundEvents.HAPPY_GHAST_RIDING, happyghast.getSoundSource(), 0.0F, 1.0F, 5.0F));
         } else if (p_108667_ instanceof AbstractNautilus abstractnautilus) {
-            this.minecraft
-                    .getSoundManager()
-                    .play(new RidingEntitySoundInstance(this, abstractnautilus, true, SoundEvents.NAUTILUS_RIDING, abstractnautilus.getSoundSource(), 0.0F, 1.0F, 5.0F));
+            this.minecraft.getSoundManager().play(new RidingEntitySoundInstance(this, abstractnautilus, true, SoundEvents.NAUTILUS_RIDING, abstractnautilus.getSoundSource(), 0.0F, 1.0F, 5.0F));
         }
 
         return true;
@@ -249,13 +269,25 @@ public class LocalPlayer extends AbstractClientPlayer {
         if (this.connection.hasClientLoaded()) {
             this.dropSpamThrottler.tick();
             super.tick();
+
+            if (ProtocolTranslator.getTargetVersion().betweenInclusive(ProtocolVersion.v1_21_2, ProtocolVersion.v1_21_5)) {
+                this.viaFabricPlus$sendSneakingPacket();
+            }
+
             IBaritone baritone = BaritoneAPI.getProvider().getBaritoneForPlayer(this);
             if (baritone != null) {
                 baritone.getGameEventHandler().onPlayerUpdate(new PlayerUpdateEvent(EventState.PRE));
             }
             EventRepo.call(new EventUpdate());
+
             if (!this.lastSentInput.equals(this.input.keyPresses)) {
-                this.connection.send(new ServerboundPlayerInputPacket(this.input.keyPresses));
+                Packet<?> packet = new ServerboundPlayerInputPacket(this.input.keyPresses);
+                if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_21_5)
+                        && packet instanceof ServerboundPlayerInputPacket playerInputPacket) {
+                    this.viaFabricPlus$sendInputPacket(playerInputPacket.input());
+                } else {
+                    this.connection.send(packet);
+                }
                 this.lastSentInput = this.input.keyPresses;
             }
 
@@ -263,8 +295,38 @@ public class LocalPlayer extends AbstractClientPlayer {
                 this.connection.send(new ServerboundMovePlayerPacket.Rot(this.getYRot(), this.getXRot(), this.onGround(), this.horizontalCollision));
                 Entity entity = this.getRootVehicle();
                 if (entity != this && entity.isLocalInstanceAuthoritative()) {
-                    this.connection.send(ServerboundMoveVehiclePacket.fromEntity(entity));
-                    this.sendIsSprintingIfNeeded();
+                    // modifyPositionPacket: для <= r1_5_2 заменяем ServerboundMoveVehiclePacket на legacy пакет
+                    if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(LegacyProtocolVersion.r1_5_2)) {
+                        final UserConnection userConnection = ((IConnection) this.connection.getConnection()).viaFabricPlus$getUserConnection();
+                        userConnection.getChannel().eventLoop().execute(() -> {
+                            final PacketWrapper movePlayerPosRot = PacketWrapper.create(ServerboundPackets1_5_2.MOVE_PLAYER_POS_ROT, userConnection);
+                            movePlayerPosRot.write(Types.DOUBLE, this.getDeltaMovement().x);
+                            movePlayerPosRot.write(Types.DOUBLE, -999.0D);
+                            movePlayerPosRot.write(Types.DOUBLE, -999.0D);
+                            movePlayerPosRot.write(Types.DOUBLE, this.getDeltaMovement().z);
+                            movePlayerPosRot.write(Types.FLOAT, this.getYRot());
+                            movePlayerPosRot.write(Types.FLOAT, this.getXRot());
+                            movePlayerPosRot.write(Types.BOOLEAN, this.onGround());
+                            movePlayerPosRot.sendToServer(Protocolr1_5_2Tor1_6_1.class);
+
+                            final ClientVehicleStorage vehicleStorage = userConnection.get(ClientVehicleStorage.class);
+                            if (vehicleStorage == null) {
+                                return;
+                            }
+
+                            final PacketWrapper playerInput = PacketWrapper.create(ServerboundPackets1_20_5.PLAYER_INPUT, userConnection);
+                            playerInput.write(Types.FLOAT, vehicleStorage.sidewaysMovement());
+                            playerInput.write(Types.FLOAT, vehicleStorage.forwardMovement());
+                            playerInput.write(Types.BYTE, vehicleStorage.flags());
+                            playerInput.sendToServer(Protocol1_21To1_21_2.class);
+                        });
+                    } else {
+                        this.connection.send(ServerboundMoveVehiclePacket.fromEntity(entity));
+                    }
+
+                    if (ProtocolTranslator.getTargetVersion().newerThanOrEqualTo(ProtocolVersion.v1_19_3)) {
+                        this.sendIsSprintingIfNeeded();
+                    }
                 }
             } else {
                 this.sendPosition();
@@ -288,6 +350,10 @@ public class LocalPlayer extends AbstractClientPlayer {
 
     private void sendPosition() {
         this.sendIsSprintingIfNeeded();
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_21)) {
+            this.viaFabricPlus$sendSneakingPacket();
+        }
+
         EventMotion eventSync = new EventMotion(this.getYRot(), this.getXRot(), this.getX(), this.getY(), this.getZ(), this.onGround(), this.isSprinting());
         EventRepo.call(eventSync);
         if (this.isControlledCamera()) {
@@ -297,17 +363,35 @@ public class LocalPlayer extends AbstractClientPlayer {
             double d3 = eventSync.getYaw() - this.yRotLast;
             double d4 = eventSync.getPitch() - this.xRotLast;
             this.positionReminder++;
-            boolean flag = Mth.lengthSquared(d0, d1, d2) > Mth.square(2.0E-4) || this.positionReminder >= 20;
+
+            double threshold = ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_18)
+                    ? 9.0E-4D
+                    : Mth.square(2.0E-4);
+
+            int reminderForCheck = ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_8)
+                    ? this.positionReminder - 1
+                    : this.positionReminder;
+
+            boolean flag = Mth.lengthSquared(d0, d1, d2) > threshold || reminderForCheck >= 20;
             boolean flag1 = d3 != 0.0 || d4 != 0.0;
             if (flag && flag1) {
-                this.connection
-                        .send(new ServerboundMovePlayerPacket.PosRot(this.position(), eventSync.getYaw(), eventSync.getPitch(), this.onGround(), this.horizontalCollision));
+                this.connection.send(new ServerboundMovePlayerPacket.PosRot(this.position(), eventSync.getYaw(), eventSync.getPitch(), this.onGround(), this.horizontalCollision));
             } else if (flag) {
                 this.connection.send(new ServerboundMovePlayerPacket.Pos(this.position(), this.onGround(), this.horizontalCollision));
             } else if (flag1) {
                 this.connection.send(new ServerboundMovePlayerPacket.Rot(eventSync.getYaw(), eventSync.getPitch(), this.onGround(), this.horizontalCollision));
-            } else if (this.lastOnGround != this.onGround() || this.lastHorizontalCollision != this.horizontalCollision) {
-                this.connection.send(new ServerboundMovePlayerPacket.StatusOnly(this.onGround(), this.horizontalCollision));
+            } else {
+                boolean lastOnGroundValue;
+                if (ProtocolTranslator.getTargetVersion().betweenInclusive(LegacyProtocolVersion.r1_4_2, ProtocolVersion.v1_8)
+                        || ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(LegacyProtocolVersion.r1_2_4tor1_2_5)) {
+                    lastOnGroundValue = !this.onGround();
+                } else {
+                    lastOnGroundValue = this.lastOnGround;
+                }
+
+                if (lastOnGroundValue != this.onGround() || this.lastHorizontalCollision != this.horizontalCollision) {
+                    this.connection.send(new ServerboundMovePlayerPacket.StatusOnly(this.onGround(), this.horizontalCollision));
+                }
             }
 
             if (flag) {
@@ -327,6 +411,7 @@ public class LocalPlayer extends AbstractClientPlayer {
             this.lastOnGround = this.onGround();
             this.lastHorizontalCollision = this.horizontalCollision;
             this.autoJumpEnabled = this.minecraft.options.autoJump().get();
+            new EventMotionPost();
         }
     }
 
@@ -708,42 +793,64 @@ public class LocalPlayer extends AbstractClientPlayer {
     @Override
     public void applyInput() {
         if (this.isControlledCamera()) {
-            Vec2 vec2 = this.modifyInput(this.input.getMoveVector());
+            Vec2 vec2 = ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_21_4)
+                    ? this.input.getMoveVector()
+                    : this.modifyInput(this.input.getMoveVector());
+
             this.xxa = vec2.x;
             this.zza = vec2.y;
             this.jumping = this.input.keyPresses.jump();
             this.yBobO = this.yBob;
             this.xBobO = this.xBob;
-            this.xBob = this.xBob + (this.getXRot() - this.xBob) * 0.5F;
-            this.yBob = this.yBob + (this.getYRot() - this.yBob) * 0.5F;
-//            if (RotationManager.isRotating()) {
-//                this.xBob = (float) ((double) this.xBob + (double) (minecraft.gameRenderer.getMainCamera().xRot() - this.xBob) * 0.5D);
-//                this.yBob = (float) ((double) this.yBob + (double) (minecraft.gameRenderer.getMainCamera().yRot() - this.yBob) * 0.5D);
-//            } else {
-//            this.xBob = this.xBob + (this.getXRot() - this.xBob) * 0.5F;
-//            this.yBob = this.yBob + (this.getYRot() - this.yBob) * 0.5F;
-            //  }
+
+            if (RotationManager.getInstance().isRotating()) {
+                this.xBob = this.xBob + (minecraft.gameRenderer.getMainCamera().xRot() - this.xBob) * 0.5F;
+                this.yBob = this.yBob + (minecraft.gameRenderer.getMainCamera().yRot() - this.yBob) * 0.5F;
+            } else {
+                this.xBob = this.xBob + (this.getXRot() - this.xBob) * 0.5F;
+                this.yBob = this.yBob + (this.getYRot() - this.yBob) * 0.5F;
+            }
         } else {
             super.applyInput();
         }
     }
 
-    private Vec2 modifyInput(Vec2 p_397409_) {
-        if (p_397409_.lengthSquared() == 0.0F) {
-            return p_397409_;
+    private Vec2 modifyInput(Vec2 input) {
+        if (input.lengthSquared() == 0.0F) {
+            return input;
         }
 
-        Vec2 vec2 = p_397409_.scale(0.98F);
+        Vec2 vec2;
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_21_4)) {
+            vec2 = input;
+        } else {
+            vec2 = input.scale(0.98F);
+        }
+
         if (this.isUsingItem() && !this.isPassenger()) {
             vec2 = vec2.scale(this.itemUseSpeedMultiplier());
         }
 
-        if (this.isMovingSlowly()) {
+        ProtocolVersion version = ProtocolTranslator.getTargetVersion();
+        boolean applySneakSlowdown;
+        if (version.olderThanOrEqualTo(ProtocolVersion.v1_13_2)) {
+            applySneakSlowdown = this.input.keyPresses.shift();
+        } else if (version.olderThanOrEqualTo(ProtocolVersion.v1_14_4)) {
+            applySneakSlowdown = !this.isSpectator() && (this.input.keyPresses.shift() || this.isMovingSlowly());
+        } else {
+            applySneakSlowdown = this.isMovingSlowly();
+        }
+
+        if (applySneakSlowdown) {
             float f = (float) this.getAttributeValue(Attributes.SNEAKING_SPEED);
             vec2 = vec2.scale(f);
         }
 
-        return modifyInputSpeedForSquareMovement(vec2);
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_21_4)) {
+            return vec2;
+        } else {
+            return modifyInputSpeedForSquareMovement(vec2);
+        }
     }
 
     private static Vec2 modifyInputSpeedForSquareMovement(Vec2 p_393358_) {
@@ -787,8 +894,26 @@ public class LocalPlayer extends AbstractClientPlayer {
         this.deathTime = 0;
     }
 
+    private boolean shouldApplySneakSlowdown() {
+        ProtocolVersion version = ProtocolTranslator.getTargetVersion();
+
+        if (version.olderThanOrEqualTo(ProtocolVersion.v1_13_2)) {
+            return this.input.keyPresses.shift();
+        } else if (version.olderThanOrEqualTo(ProtocolVersion.v1_14_4)) {
+            return !this.isSpectator() && (this.input.keyPresses.shift() || this.isMovingSlowly());
+        } else {
+            return this.isMovingSlowly();
+        }
+    }
+
     @Override
     public void aiStep() {
+        final ProtocolVersion version = ProtocolTranslator.getTargetVersion();
+        boolean viaFabricPlus$sneakSprint = false;
+        if (version.olderThanOrEqualTo(ProtocolVersion.v1_21_4)) {
+            viaFabricPlus$sneakSprint = !this.input.keyPresses.shift() && !this.viaFabricPlus$isWalking1_21_4();
+        }
+
         if (this.sprintTriggerTime > 0) {
             this.sprintTriggerTime--;
         }
@@ -800,15 +925,36 @@ public class LocalPlayer extends AbstractClientPlayer {
 
         boolean flag = this.input.keyPresses.jump();
         boolean flag1 = this.input.keyPresses.shift();
-        boolean flag2 = this.input.hasForwardImpulse();
+        boolean flag2 = version.olderThanOrEqualTo(ProtocolVersion.v1_21_4)
+                ? this.viaFabricPlus$isWalking1_21_4()
+                : this.input.hasForwardImpulse();
         Abilities abilities = this.getAbilities();
+
+        // removeVehicleRequirement: ordinal=0 isPassenger() подменяется для <= 1.20
+        boolean isPassengerForCrouching = version.newerThan(ProtocolVersion.v1_20) && this.isPassenger();
+
         this.crouching = !abilities.flying
                 && !this.isSwimming()
-                && !this.isPassenger()
+                && !isPassengerForCrouching
                 && this.canPlayerFitWithinBlocksAndEntitiesWhen(Pose.CROUCHING)
                 && (this.isShiftKeyDown() || !this.isSleeping() && !this.canPlayerFitWithinBlocksAndEntitiesWhen(Pose.STANDING));
+
+        if (version.olderThanOrEqualTo(ProtocolVersion.v1_13_2)) {
+            this.crouching = this.isShiftKeyDown() && !this.isSleeping();
+        }
+
         this.input.tick();
+        EventRepo.call(new EventMoveInput());
+
         this.minecraft.getTutorial().onInput(this.input);
+
+        if (version.equals(ProtocolVersion.v1_21_4) && this.shouldStopRunSprinting()) {
+            this.setSprinting(false);
+        }
+        if (version.olderThanOrEqualTo(ProtocolVersion.v1_21_4)) {
+            this.input.moveVector = this.modifyInput(this.input.moveVector);
+        }
+
         boolean flag3 = false;
         if (this.autoJumpTime > 0) {
             this.autoJumpTime--;
@@ -823,14 +969,34 @@ public class LocalPlayer extends AbstractClientPlayer {
             this.moveTowardsClosestSpace(this.getX() + this.getBbWidth() * 0.35, this.getZ() + this.getBbWidth() * 0.35);
         }
 
-        if (flag1 || this.isSlowDueToUsingItem() && !this.isPassenger() || this.input.keyPresses.backward()) {
+        if (flag1 || this.isSlowDueToUsingItem() && !this.isPassenger() || version.newerThan(ProtocolVersion.v1_21_4) && this.input.keyPresses.backward()) {
             this.sprintTriggerTime = 0;
         }
 
-        boolean canStartSprint = this.canStartSprinting();
+        boolean canStartSprint;
+        if (version.olderThanOrEqualTo(ProtocolVersion.v1_21_4)) {
+            final boolean canStartSprinting = this.canStartSprinting();
+            final boolean onGround = this.isPassenger() ? this.getVehicle().onGround() : this.onGround();
+            if ((onGround || this.isUnderWater()) && viaFabricPlus$sneakSprint && canStartSprinting) {
+                if (this.sprintTriggerTime <= 0 && !this.minecraft.options.keySprint.isDown()) {
+                    this.sprintTriggerTime = this.minecraft.options.sprintWindow().get();
+                } else {
+                    this.setSprinting(true);
+                }
+            }
+
+            if (this.viaFabricPlus$canWaterSprint() && canStartSprinting && this.minecraft.options.keySprint.isDown()) {
+                this.setSprinting(true);
+            }
+            canStartSprint = false;
+        } else {
+            canStartSprint = this.canStartSprinting();
+        }
+
         var event0 = new EventSprint(canStartSprint, EventSprint.Source.MOVEMENT_TICK);
         EventRepo.call(event0);
         canStartSprint = event0.isSprinting();
+
         IBaritone baritone = BaritoneAPI.getProvider().getBaritoneForPlayer(this);
         if (canStartSprint) {
             if (!flag2) {
@@ -850,7 +1016,7 @@ public class LocalPlayer extends AbstractClientPlayer {
                 if (event.getState() != null) {
                     sprintKey = event.getState();
                 } else if (baritone != BaritoneAPI.getProvider().getPrimaryBaritone()) {
-                    sprintKey = false; // hitting control shouldn't make all bots sprint
+                    sprintKey = false;
                 } else {
                     sprintKey = this.input.keyPresses.sprint();
                 }
@@ -869,8 +1035,19 @@ public class LocalPlayer extends AbstractClientPlayer {
                 if (this.shouldStopSwimSprinting()) {
                     this.setSprinting(false);
                 }
-            } else if (this.shouldStopRunSprinting()) {
-                this.setSprinting(false);
+            } else {
+                boolean shouldStopRunSprinting;
+                if (version.olderThanOrEqualTo(ProtocolVersion.v1_21_4)) {
+                    shouldStopRunSprinting = this.viaFabricPlus$shouldCancelSprinting()
+                            || this.horizontalCollision && !this.minorHorizontalCollision
+                            || !this.viaFabricPlus$canWaterSprint();
+                } else {
+                    shouldStopRunSprinting = this.shouldStopRunSprinting();
+                }
+
+                if (shouldStopRunSprinting) {
+                    this.setSprinting(false);
+                }
             }
         }
 
@@ -892,10 +1069,13 @@ public class LocalPlayer extends AbstractClientPlayer {
             } else if (!flag && this.input.keyPresses.jump() && !flag3) {
                 if (this.jumpTriggerTime == 0) {
                     this.jumpTriggerTime = 7;
-                } else if (!this.isSwimming() && (this.getVehicle() == null || this.jumpableVehicle() != null)) {
+                } else if (!(version.newerThan(ProtocolVersion.v1_14_1) && this.isSwimming())
+                        && (this.getVehicle() == null || this.jumpableVehicle() != null)) {
                     abilities.flying = !abilities.flying;
                     if (abilities.flying && this.onGround()) {
-                        this.jumpFromGround();
+                        if (version.newerThanOrEqualTo(ProtocolVersion.v1_20_5)) {
+                            this.jumpFromGround();
+                        }
                     }
 
                     flag4 = true;
@@ -905,18 +1085,15 @@ public class LocalPlayer extends AbstractClientPlayer {
             }
         }
 
-//        boolean tryToStartFallFlying = this.tryToStartFallFlying();
-//        IBaritone baritones = BaritoneAPI.getProvider().getBaritoneForPlayer(this);
-//        if (baritones != null && baritones.getPathingBehavior().isPathing()) {
-//            tryToStartFallFlying = false;
-//        }
-
-        if (this.input.keyPresses.jump() && !flag4 && !flag && !this.onClimbable() && this.tryToStartFallFlying()) {
+        boolean onClimbable = version.newerThan(ProtocolVersion.v1_15_1) && this.onClimbable();
+        if (this.input.keyPresses.jump() && !flag4 && !flag && !onClimbable && this.tryToStartFallFlying()) {
             this.connection.send(new ServerboundPlayerCommandPacket(this, ServerboundPlayerCommandPacket.Action.START_FALL_FLYING));
         }
 
         this.wasFallFlying = this.isFallFlying();
-        if (this.isInWater() && this.input.keyPresses.shift() && this.isAffectedByFluids()) {
+
+        if (version.newerThan(ProtocolVersion.v1_12_2) && this.isInWater()
+                && this.input.keyPresses.shift() && this.isAffectedByFluids()) {
             this.goDownInWater();
         }
 
@@ -929,6 +1106,14 @@ public class LocalPlayer extends AbstractClientPlayer {
         }
 
         if (abilities.flying && this.isControlledCamera()) {
+            if (version.betweenInclusive(ProtocolVersion.v1_9, ProtocolVersion.v1_14_4)) {
+                if (this.input.keyPresses.shift()) {
+                    float movementSideways = (float) ((double) this.input.moveVector.x / 0.3D);
+                    float movementForward = (float) ((double) this.input.moveVector.y / 0.3D);
+                    this.input.moveVector = new Vec2(movementSideways, movementForward);
+                }
+            }
+
             int j = 0;
             if (this.input.keyPresses.shift()) {
                 j--;
@@ -978,13 +1163,104 @@ public class LocalPlayer extends AbstractClientPlayer {
         }
     }
 
+    private boolean viaFabricPlus$isWalking1_21_4() {
+        final boolean submergedInWater = ProtocolTranslator.getTargetVersion().newerThan(ProtocolVersion.v1_14_1) && this.isUnderWater();
+        return submergedInWater ? this.input.hasForwardImpulse() : this.input.moveVector.y >= 0.8;
+    }
 
     private boolean shouldStopRunSprinting() {
-        return !this.isSprintingPossible(this.getAbilities().flying) || !this.input.hasForwardImpulse() || this.horizontalCollision && !this.minorHorizontalCollision;
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_21_4)) {
+            final boolean ridingCamel = this.getVehicle() != null && this.getVehicle().getType() == EntityType.CAMEL;
+            return this.isFallFlying()
+                    || this.isMobilityRestricted()
+                    || this.isMovingSlowly()
+                    || this.isPassenger() && !ridingCamel
+                    || this.isUsingItem() && !this.isPassenger() && !this.isUnderWater();
+        } else if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_21_7)) {
+            return this.isMobilityRestricted()
+                    || this.isPassenger() && !this.vehicleCanSprint(this.getVehicle())
+                    || !this.input.hasForwardImpulse()
+                    || !this.viaFabricPlus$hasEnoughFoodToSprint1_19_1()
+                    || this.horizontalCollision && !this.minorHorizontalCollision
+                    || this.isInWater() && !this.isUnderWater();
+        }
+
+        return !this.isSprintingPossible(this.getAbilities().flying || (ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.bedrockLatest) && (this.isSwimming() || this.onGround())))
+                || !this.input.hasForwardImpulse()
+                || this.horizontalCollision && !this.minorHorizontalCollision
+                || this.shouldForceStopSprinting();
+    }
+
+    private boolean shouldForceStopSprinting() {
+        var event = new EventSprint(
+                true,
+                EventSprint.Source.MOVEMENT_TICK
+        );
+
+        EventRepo.call(event);
+        return !event.isSprinting();
     }
 
     private boolean shouldStopSwimSprinting() {
-        return !this.isSprintingPossible(true) || !this.isInWater() || !this.input.hasForwardImpulse() && !this.onGround() && !this.input.keyPresses.shift();
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_21_4)) {
+            return !this.onGround() && !this.input.keyPresses.shift() && this.viaFabricPlus$shouldCancelSprinting() || !this.isInWater();
+        } else if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_21_7)) {
+            return this.isMobilityRestricted()
+                    || this.isPassenger() && !this.vehicleCanSprint(this.getVehicle())
+                    || !this.isInWater()
+                    || !this.input.hasForwardImpulse() && !this.onGround() && !this.input.keyPresses.shift()
+                    || !this.viaFabricPlus$hasEnoughFoodToSprint1_19_1();
+        }
+
+        return !this.isSprintingPossible(true)
+                || !this.isInWater()
+                || !this.input.hasForwardImpulse() && !this.onGround() && !this.input.keyPresses.shift();
+    }
+    private void viaFabricPlus$sendSneakingPacket() {
+        final boolean sneaking = this.isShiftKeyDown();
+        if (sneaking == this.viaFabricPlus$lastSneaking) {
+            return;
+        }
+
+        final PacketWrapper sneakingPacket = PacketWrapper.create(ServerboundPackets1_21_5.PLAYER_COMMAND, ProtocolTranslator.getPlayNetworkUserConnection());
+        sneakingPacket.write(Types.VAR_INT, this.getId());
+        sneakingPacket.write(Types.VAR_INT, sneaking ? 0 : 1);
+        sneakingPacket.write(Types.VAR_INT, 0);
+        sneakingPacket.scheduleSendToServer(Protocol1_21_5To1_21_6.class);
+        this.viaFabricPlus$lastSneaking = sneaking;
+    }
+
+    private void viaFabricPlus$sendInputPacket(final Input playerInput) {
+        byte flags = 0;
+        flags = (byte) (flags | (playerInput.forward() ? 0x1 : 0));
+        flags = (byte) (flags | (playerInput.backward() ? 0x2 : 0));
+        flags = (byte) (flags | (playerInput.left() ? 0x4 : 0));
+        flags = (byte) (flags | (playerInput.right() ? 0x8 : 0));
+        flags = (byte) (flags | (playerInput.jump() ? 0x10 : 0));
+        flags = (byte) (flags | (playerInput.shift() ? 0x20 : 0));
+        flags = (byte) (flags | (playerInput.sprint() ? 0x40 : 0));
+
+        final PacketWrapper inputPacket = PacketWrapper.create(ServerboundPackets1_21_5.PLAYER_INPUT, ProtocolTranslator.getPlayNetworkUserConnection());
+        inputPacket.write(Types.BYTE, flags);
+        inputPacket.scheduleSendToServer(Protocol1_21_5To1_21_6.class);
+    }
+
+    private boolean viaFabricPlus$shouldCancelSprinting() {
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_14_1)) {
+            return !(this.input.moveVector.y >= 0.8F) || !this.viaFabricPlus$hasEnoughFoodToSprint1_19_1();
+        } else {
+            return !this.input.hasForwardImpulse() || !this.viaFabricPlus$hasEnoughFoodToSprint1_19_1();
+        }
+    }
+
+    private boolean viaFabricPlus$hasEnoughFoodToSprint1_19_1() {
+        return (ProtocolTranslator.getTargetVersion().newerThan(ProtocolVersion.v1_19_1) && this.isPassenger())
+                || this.hasEnoughFoodToDoExhaustiveManoeuvres();
+    }
+
+    private boolean viaFabricPlus$canWaterSprint() {
+        return ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_12_2)
+                || (!this.isInWater() || this.isUnderWater());
     }
 
     public Portal.Transition getActivePortalLocalTransition() {
@@ -1093,7 +1369,13 @@ public class LocalPlayer extends AbstractClientPlayer {
                 }
             }
 
-            float f12 = Mth.invSqrt(f1);
+            float f12;
+            if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_19_3)) {
+                float x = Float.intBitsToFloat(1597463007 - (Float.floatToIntBits(f1) >> 1));
+                f12 = x * (1.5F - (0.5F * x) * x * x);
+            } else {
+                f12 = Mth.invSqrt(f1);
+            }
             Vec3 vec312 = vec32.scale(f12);
             Vec3 vec313 = this.getForward();
             float f13 = (float) (vec313.x * vec312.x + vec313.z * vec312.z);
@@ -1175,6 +1457,9 @@ public class LocalPlayer extends AbstractClientPlayer {
 
     @Override
     protected boolean isHorizontalCollisionMinor(Vec3 p_197411_) {
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_17_1)) {
+            return (false);
+        }
         float f = this.getYRot() * (float) (Math.PI / 180.0);
         double d0 = Mth.sin(f);
         double d1 = Mth.cos(f);
@@ -1200,13 +1485,36 @@ public class LocalPlayer extends AbstractClientPlayer {
     }
 
     public boolean isSprintingPossible(boolean p_425414_) {
-        return !this.isMobilityRestricted() && (this.isPassenger() ? this.vehicleCanSprint(this.getVehicle()) : this.hasEnoughFoodToDoExhaustiveManoeuvres()) && (p_425414_ || !this.isInShallowWater());
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_21_9)) {
+            return !this.isMobilityRestricted()
+                    && this.viaFabricPlus$hasEnoughFoodToSprint1_19_1()
+                    && (!this.isPassenger() || this.vehicleCanSprint(this.getVehicle()))
+                    && (p_425414_ || !this.isInShallowWater());
+        }
+
+        return !this.isMobilityRestricted()
+                && (this.isPassenger() ? this.vehicleCanSprint(this.getVehicle()) : this.hasEnoughFoodToDoExhaustiveManoeuvres())
+                && (p_425414_ || !this.isInShallowWater());
     }
 
     public boolean canStartSprinting() {
+        final ProtocolVersion version = ProtocolTranslator.getTargetVersion();
+
+        if (version.olderThanOrEqualTo(ProtocolVersion.v1_21_7)) {
+            return !this.isSprinting()
+                    && (version.olderThanOrEqualTo(ProtocolVersion.v1_21_4) ? this.viaFabricPlus$isWalking1_21_4() : this.input.hasForwardImpulse())
+                    && this.viaFabricPlus$hasEnoughFoodToSprint1_19_1()
+                    && !this.isUsingItem()
+                    && !this.isMobilityRestricted()
+                    && (!(version.newerThan(ProtocolVersion.v1_19_3) && this.isPassenger()) || this.vehicleCanSprint(this.getVehicle()))
+                    && (!(version.newerThan(ProtocolVersion.v1_19_3) && this.isFallFlying()) || this.isUnderWater())
+                    && (!(this.isMovingSlowly() && version.equals(ProtocolVersion.v1_21_4)) || (this.isUnderWater() && version.equals(ProtocolVersion.v1_21_4)))
+                    && ((!version.olderThanOrEqualTo(ProtocolVersion.v1_21_4) && (!this.isInWater() || this.isUnderWater())) || version.olderThanOrEqualTo(ProtocolVersion.v1_21_4));
+        }
+
         return !this.isSprinting()
                 && this.input.hasForwardImpulse()
-                && this.isSprintingPossible(this.getAbilities().flying)
+                && this.isSprintingPossible(this.getAbilities().flying || (ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.bedrockLatest) && (this.isSwimming() || this.onGround())))
                 && !this.isSlowDueToUsingItem()
                 && (!this.isFallFlying() || this.isUnderWater())
                 && (!this.isMovingSlowly() || this.isUnderWater());

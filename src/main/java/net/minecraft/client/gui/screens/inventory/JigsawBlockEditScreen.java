@@ -1,12 +1,11 @@
 package net.minecraft.client.gui.screens.inventory;
 
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viafabricplus.settings.impl.DebugSettings;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import net.minecraft.client.GameNarrator;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.AbstractSliderButton;
-import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.components.CycleButton;
-import net.minecraft.client.gui.components.EditBox;
-import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.components.*;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.network.chat.CommonComponents;
@@ -164,6 +163,22 @@ public class JigsawBlockEditScreen extends Screen {
         );
         this.addRenderableWidget(Button.builder(CommonComponents.GUI_CANCEL, p_98964_ -> this.onCancel()).bounds(this.width / 2 + 4, 210, 150, 20).build());
         this.updateValidity();
+        if (!DebugSettings.INSTANCE.hideModernJigsawScreenFeatures.getValue()) {
+            return;
+        }
+
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_20_2)) {
+            selectionPriorityEdit.active = false;
+            placementPriorityEdit.active = false;
+        }
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_15_2)) {
+            nameEdit.active = false;
+            jointButton.active = false;
+            int index = children().indexOf(jointButton);
+            ((AbstractWidget) children().get(index + 1)).active = false; // levels slider
+            ((AbstractWidget) children().get(index + 2)).active = false; // keep jigsaws toggle
+            ((AbstractWidget) children().get(index + 3)).active = false; // generate button
+        }
     }
 
     @Override
@@ -222,6 +237,9 @@ public class JigsawBlockEditScreen extends Screen {
 
     @Override
     public void render(GuiGraphics p_282514_, int p_98956_, int p_98957_, float p_98958_) {
+        if (DebugSettings.INSTANCE.hideModernJigsawScreenFeatures.getValue() && ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_15_2)) {
+            nameEdit.setValue(targetEdit.getValue());
+        }
         super.render(p_282514_, p_98956_, p_98957_, p_98958_);
         p_282514_.drawString(this.font, POOL_LABEL, this.width / 2 - 153, 10, -6250336);
         this.poolEdit.render(p_282514_, p_98956_, p_98957_, p_98958_);

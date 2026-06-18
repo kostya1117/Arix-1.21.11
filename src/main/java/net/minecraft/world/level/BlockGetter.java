@@ -1,5 +1,7 @@
 package net.minecraft.world.level;
 
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import it.unimi.dsi.fastutil.longs.LongSet;
 import java.util.Optional;
@@ -182,8 +184,10 @@ public interface BlockGetter extends LevelHeightAccessor {
     }
 
     static boolean forEachBlockIntersectedBetween(Vec3 p_395886_, Vec3 p_397649_, AABB p_393584_, BlockGetter.BlockStepVisitor p_396917_) {
+        float epsilon = ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_21_7) ? 0.99999F : 1.0E-5F;
+
         Vec3 vec3 = p_397649_.subtract(p_395886_);
-        if (vec3.lengthSqr() < Mth.square(1.0E-5F)) {
+        if (vec3.lengthSqr() < Mth.square(epsilon)) {
             for (BlockPos blockpos2 : BlockPos.betweenClosed(p_393584_)) {
                 if (!p_396917_.visit(blockpos2, 0)) {
                     return false;

@@ -9,6 +9,8 @@ import com.mojang.serialization.codecs.RecordCodecBuilder.Instance;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -41,6 +43,7 @@ import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.raphimc.vialegacy.api.LegacyProtocolVersion;
 import org.jspecify.annotations.Nullable;
 
 public class PistonBaseBlock extends DirectionalBlock {
@@ -69,7 +72,22 @@ public class PistonBaseBlock extends DirectionalBlock {
 
     @Override
     protected VoxelShape getShape(BlockState p_60220_, BlockGetter p_60221_, BlockPos p_60222_, CollisionContext p_60223_) {
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(LegacyProtocolVersion.r1_1)) {
+            return (Shapes.block());
+        }
         return p_60220_.getValue(EXTENDED) ? SHAPES.get(p_60220_.getValue(FACING)) : Shapes.block();
+    }
+    @Override
+    public VoxelShape getOcclusionShape(BlockState state) {
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(LegacyProtocolVersion.r1_1)) {
+            if (state.getValue(PistonBaseBlock.EXTENDED)) {
+                return SHAPES.get(state.getValue(FACING));
+            } else {
+                return Shapes.block();
+            }
+        } else {
+            return super.getOcclusionShape(state);
+        }
     }
 
     @Override

@@ -10,7 +10,14 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
+import com.viaversion.viafabricplus.features.mouse_sensitivity.MouseSensitivity1_13_2;
+import com.viaversion.viafabricplus.injection.access.execute_inputs_sync.IMouseKeyboardHandlers;
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viafabricplus.settings.impl.DebugSettings;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import de.maxhenkel.voicechat.events.InputEvents;
 import lombok.Getter;
 import net.minecraft.CrashReport;
@@ -36,7 +43,7 @@ import ru.arixcompany.features.event.player.EventKey;
 import ru.arixcompany.features.event.player.EventLook;
 import ru.arixcompany.features.event.player.EventMouseScroll;
 
-public class MouseHandler {
+public class MouseHandler implements IMouseKeyboardHandlers {
     private static final Logger LOGGER = LogUtils.getLogger();
     public static final long DOUBLE_CLICK_THRESHOLD_MS = 250L;
     private final Minecraft minecraft;
@@ -64,6 +71,7 @@ public class MouseHandler {
     private double lastHandleMovementTime = Double.MIN_VALUE;
     @Getter
     private boolean mouseGrabbed;
+    private final Queue<Runnable> viaFabricPlus$pendingScreenEvents = new ConcurrentLinkedQueue<>();
 
     public MouseHandler(Minecraft p_91522_) {
         this.minecraft = p_91522_;
@@ -270,9 +278,23 @@ public class MouseHandler {
                 (p_91591_, p_91592_, p_91593_) -> this.minecraft.execute(() -> this.onMove(p_91591_, p_91592_, p_91593_)),
                 (p_420648_, p_420649_, p_420650_, p_420651_) -> {
                     MouseButtonInfo mousebuttoninfo = new MouseButtonInfo(p_420649_, p_420651_);
-                    this.minecraft.execute(() -> this.onButton(p_420648_, mousebuttoninfo, p_420650_));
+                    Runnable onButtonEvent = () -> this.onButton(p_420648_, mousebuttoninfo, p_420650_);
+
+                    if (this.minecraft.getConnection() != null && this.minecraft.screen != null && DebugSettings.INSTANCE.executeInputsSynchronously.isEnabled()) {
+                        this.viaFabricPlus$pendingScreenEvents.offer(onButtonEvent);
+                    } else {
+                        this.minecraft.execute(onButtonEvent);
+                    }
                 },
-                (p_91576_, p_91577_, p_91578_) -> this.minecraft.execute(() -> this.onScroll(p_91576_, p_91577_, p_91578_)),
+                (p_91576_, p_91577_, p_91578_) -> {
+                    Runnable onScrollEvent = () -> this.onScroll(p_91576_, p_91577_, p_91578_);
+
+                    if (this.minecraft.getConnection() != null && this.minecraft.screen != null && DebugSettings.INSTANCE.executeInputsSynchronously.isEnabled()) {
+                        this.viaFabricPlus$pendingScreenEvents.offer(onScrollEvent);
+                    } else {
+                        this.minecraft.execute(onScrollEvent);
+                    }
+                },
                 (p_340767_, p_340768_, p_340769_) -> {
                     List<Path> list = new ArrayList<>(p_340768_);
                     int i = 0;
@@ -384,7 +406,12 @@ public class MouseHandler {
     }
 
     private void turnPlayer(double p_330750_) {
-        double d2 = this.minecraft.options.sensitivity().get() * 0.6F + 0.2F;
+        double sensitivity = this.minecraft.options.sensitivity().get();
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_13_2)) {
+            sensitivity = MouseSensitivity1_13_2.get1_13SliderValue((float)sensitivity).keyFloat();
+        }
+
+        double d2 = sensitivity * 0.6F + 0.2F;
         double d3 = d2 * d2 * d2;
         double d4 = d3 * 8.0;
         double d0;
@@ -405,20 +432,17 @@ public class MouseHandler {
             d0 = this.accumulatedDX * d4;
             d1 = this.accumulatedDY * d4;
         }
-        EventLook event = new EventLook(this.minecraft.options.invertMouseX().get() ? -d0 : d0, this.minecraft.options.invertMouseY().get() ? -d1 : d1);
+        EventLook event = new EventLook(
+                this.minecraft.options.invertMouseX().get() ? -d0 : d0,
+                this.minecraft.options.invertMouseY().get() ? -d1 : d1
+        );
         EventRepo.call(event);
 
+        this.minecraft.getTutorial().onMouse(event.getYaw(), event.getPitch());
+
         if (!event.isCancelled() && this.minecraft.player != null) {
-            this.minecraft.getTutorial().onMouse(event.getYaw(), event.getPitch());
             this.minecraft.player.turn(event.getYaw(), event.getPitch());
         }
-
-//    this.minecraft.getTutorial().onMouse(d0, d1);
-//    if (this.minecraft.player != null) {
-//        this.minecraft
-//                .player
-//                .turn(this.minecraft.options.invertMouseX().get() ? -d0 : d0, this.minecraft.options.invertMouseY().get() ? -d1 : d1);
-//    }
     }
 
     public double xpos() {
@@ -474,5 +498,9 @@ public class MouseHandler {
 
 
     record LastClick(long time, Screen screen) {
+    }
+    @Override
+    public Queue<Runnable> viaFabricPlus$getPendingScreenEvents() {
+        return this.viaFabricPlus$pendingScreenEvents;
     }
 }

@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+
+import com.viaversion.viafabricplus.injection.access.base.IEditBox;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -30,7 +32,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jspecify.annotations.Nullable;
 
 
-public class EditBox extends AbstractWidget {
+public class EditBox extends AbstractWidget implements IEditBox {
     private static final WidgetSprites SPRITES = new WidgetSprites(
         Identifier.withDefaultNamespace("widget/text_field"), Identifier.withDefaultNamespace("widget/text_field_highlighted")
     );
@@ -64,6 +66,7 @@ public class EditBox extends AbstractWidget {
     private long focusedTime = Util.getMillis();
     private int textX;
     private int textY;
+    private boolean viaFabricPlus$forbiddenCharactersUnlocked = false;
 
     public EditBox(Font p_299161_, int p_299570_, int p_297565_, Component p_300284_) {
         this(p_299161_, 0, 0, p_299570_, p_297565_, p_300284_);
@@ -142,7 +145,13 @@ public class EditBox extends AbstractWidget {
         int j = Math.max(this.cursorPos, this.highlightPos);
         int k = this.maxLength - this.value.length() - (i - j);
         if (k > 0) {
-            String s = StringUtil.filterText(p_94165_);
+            String s;
+            if (this.viaFabricPlus$forbiddenCharactersUnlocked) {
+                s = p_94165_;
+            } else {
+                s = StringUtil.filterText(p_94165_);
+            }
+
             int l = s.length();
             if (k < l) {
                 if (Character.isHighSurrogate(s.charAt(k - 1))) {
@@ -364,7 +373,7 @@ public class EditBox extends AbstractWidget {
             return false;
         }
 
-        if (p_426447_.isAllowedChatCharacter()) {
+        if (this.viaFabricPlus$forbiddenCharactersUnlocked || p_426447_.isAllowedChatCharacter()) {
             if (this.isEditable) {
                 this.insertText(p_426447_.codepointAsString());
             }
@@ -502,7 +511,7 @@ public class EditBox extends AbstractWidget {
         }
     }
 
-    private int getMaxLength() {
+    public int getMaxLength() {
         return this.maxLength;
     }
 
@@ -625,5 +634,9 @@ public class EditBox extends AbstractWidget {
     
     public interface TextFormatter {
          FormattedCharSequence format(String p_427030_, int p_424083_);
+    }
+    @Override
+    public void viaFabricPlus$unlockForbiddenCharacters() {
+        this.viaFabricPlus$forbiddenCharactersUnlocked = true;
     }
 }

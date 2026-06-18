@@ -2,9 +2,13 @@ package net.minecraft.world.entity;
 
 import com.google.common.collect.ImmutableMap;
 import java.util.Map;
+
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.PlayerModelPart;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
@@ -58,9 +62,21 @@ public class Avatar extends LivingEntity {
     public boolean isModelPartShown(PlayerModelPart p_428663_) {
         return (this.getEntityData().get(DATA_PLAYER_MODE_CUSTOMISATION) & p_428663_.getMask()) == p_428663_.getMask();
     }
+    private static final EntityDimensions viaFabricPlus$sneaking_dimensions_v1_13_2 = EntityDimensions.scalable(0.6F, 1.65F).withEyeHeight(1.54F).
+            withAttachments(EntityAttachments.builder().attach(EntityAttachment.VEHICLE, Player.DEFAULT_VEHICLE_ATTACHMENT));
+
+    private static final EntityDimensions viaFabricPlus$sneaking_dimensions_v1_8 = EntityDimensions.scalable(0.6F, 1.8F).withEyeHeight(1.54F).
+            withAttachments(EntityAttachments.builder().attach(EntityAttachment.VEHICLE, Player.DEFAULT_VEHICLE_ATTACHMENT));
 
     @Override
     public EntityDimensions getDefaultDimensions(Pose p_428828_) {
+        if (p_428828_ == Pose.CROUCHING) {
+            if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_8)) {
+                return (viaFabricPlus$sneaking_dimensions_v1_8);
+            } else if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_13_2)) {
+                return (viaFabricPlus$sneaking_dimensions_v1_13_2);
+            }
+        }
         return POSES.getOrDefault(p_428828_, STANDING_DIMENSIONS);
     }
 }

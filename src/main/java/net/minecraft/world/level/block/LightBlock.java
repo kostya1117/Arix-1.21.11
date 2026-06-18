@@ -104,7 +104,7 @@ public class LightBlock extends Block implements SimpleWaterloggedBlock {
     }
 
     @Override
-    protected ItemStack getCloneItemStack(LevelReader p_310734_, BlockPos p_153665_, BlockState p_153666_, boolean p_375572_) {
+    public ItemStack getCloneItemStack(LevelReader p_310734_, BlockPos p_153665_, BlockState p_153666_, boolean p_375572_) {
         return setLightOnStack(super.getCloneItemStack(p_310734_, p_153665_, p_153666_, p_375572_), p_153666_.getValue(LEVEL));
     }
 

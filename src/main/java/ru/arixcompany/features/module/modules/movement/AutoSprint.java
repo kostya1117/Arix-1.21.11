@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import ru.arixcompany.features.event.EventHandler;
 import ru.arixcompany.features.event.EventPriority;
+import ru.arixcompany.features.event.player.EventGameTicked;
 import ru.arixcompany.features.event.player.EventMovementTick;
 import ru.arixcompany.features.event.player.EventSprint;
 import ru.arixcompany.features.event.world.EventTick;
@@ -21,9 +22,9 @@ public class AutoSprint extends Module {
         super("AutoSprint", Category.Movement);
     }
     @EventHandler
-    public void sprintHandler(EventSprint event) {
-        if ((event.getSource() == EventSprint.Source.INPUT) && canStartSprinting() && sprint) {
-            event.setSprinting(true);
+    public void sprintHandler(EventGameTicked event) {
+        if (mc.player != null && canStartSprinting() && sprint) {
+            mc.options.keySprint.setDown(true);
         }
     }
     public boolean canStartSprinting() {

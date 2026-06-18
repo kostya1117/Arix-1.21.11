@@ -1,5 +1,7 @@
 package net.minecraft.world.item;
 
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.BlockParticleOption;
@@ -96,7 +98,11 @@ public class BrushItem extends Item {
     }
 
     private HitResult calculateHitResult(Player p_311819_) {
-        return ProjectileUtil.getHitResultOnViewVector(p_311819_, EntitySelector.CAN_BE_PICKED, p_311819_.blockInteractionRange());
+        return ProjectileUtil.getHitResultOnViewVector(
+                p_311819_,
+                EntitySelector.CAN_BE_PICKED,
+                ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_20_2) ? 5D : p_311819_.blockInteractionRange()
+        );
     }
 
     private void spawnDustParticles(Level p_278327_, BlockHitResult p_278272_, BlockState p_278235_, Vec3 p_278337_, HumanoidArm p_285071_) {

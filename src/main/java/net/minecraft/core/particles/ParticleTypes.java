@@ -9,6 +9,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.resources.Identifier;
 
 public class ParticleTypes {
     public static final SimpleParticleType ANGRY_VILLAGER = register("angry_villager", false);
@@ -154,6 +155,7 @@ public class ParticleTypes {
         "block_crumble", false, BlockParticleOption::codec, BlockParticleOption::streamCodec
     );
     public static final SimpleParticleType FIREFLY = register("firefly", false);
+    public static final SimpleParticleType FOOTSTEP = registerWithId("viafabricplus:footstep", true);
     public static final Codec<ParticleOptions> CODEC = BuiltInRegistries.PARTICLE_TYPE
         .byNameCodec()
         .dispatch("type", ParticleOptions::getType, ParticleType::codec);
@@ -164,6 +166,9 @@ public class ParticleTypes {
         return Registry.register(BuiltInRegistries.PARTICLE_TYPE, p_123825_, new SimpleParticleType(p_123826_));
     }
 
+    private static SimpleParticleType registerWithId(String id, boolean alwaysSpawn) {
+        return Registry.register(BuiltInRegistries.PARTICLE_TYPE, Identifier.parse(id), new SimpleParticleType(alwaysSpawn));
+    }
     private static <T extends ParticleOptions> ParticleType<T> register(
         String p_235906_,
         boolean p_235907_,

@@ -5,6 +5,9 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.mojang.serialization.codecs.RecordCodecBuilder.Instance;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
@@ -25,6 +28,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemUseAnimation;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.consume_effects.ConsumeEffect;
 import net.minecraft.world.item.consume_effects.PlaySoundConsumeEffect;
 import net.minecraft.world.level.Level;
@@ -68,7 +72,12 @@ public record Consumable(float consumeSeconds, ItemUseAnimation animation, Holde
                 return InteractionResult.CONSUME;
             } else {
                 ItemStack itemstack = this.onConsume(p_370227_.level(), p_370227_, p_368269_);
-                return InteractionResult.CONSUME.heldItemTransformedTo(itemstack);
+
+                if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_20_5) && p_368269_.is(Items.MILK_BUCKET)) {
+                    return InteractionResult.CONSUME.heldItemTransformedTo(p_368269_.isEmpty() ? new ItemStack(Items.BUCKET) : p_368269_);
+                } else {
+                    return InteractionResult.CONSUME.heldItemTransformedTo(itemstack);
+                }
             }
         }
     }

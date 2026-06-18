@@ -46,7 +46,7 @@ public class ServerPacksSource extends BuiltInPackSource {
 
     @VisibleForTesting
     public static VanillaPackResources createVanillaPackSource() {
-        return new VanillaPackResourcesBuilder().setMetadata(BUILT_IN_METADATA).exposeNamespace("minecraft","arix","voicechat").applyDevelopmentConfig().pushJarResources().build(VANILLA_PACK_INFO);
+        return new VanillaPackResourcesBuilder().setMetadata(BUILT_IN_METADATA).exposeNamespace("minecraft","viafabricplus","arix","voicechat").applyDevelopmentConfig().pushJarResources().build(VANILLA_PACK_INFO);
     }
 
     @Override

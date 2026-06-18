@@ -1,6 +1,7 @@
 package net.minecraft.world.level.block;
 
 import com.mojang.serialization.MapCodec;
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
@@ -19,6 +20,7 @@ import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.raphimc.viabedrock.api.BedrockProtocolVersion;
 import org.jspecify.annotations.Nullable;
 
 public class LanternBlock extends Block implements SimpleWaterloggedBlock {
@@ -27,6 +29,10 @@ public class LanternBlock extends Block implements SimpleWaterloggedBlock {
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
     private static final VoxelShape SHAPE_STANDING = Shapes.or(Block.column(4.0, 7.0, 9.0), Block.column(6.0, 0.0, 7.0));
     private static final VoxelShape SHAPE_HANGING = SHAPE_STANDING.move(0.0, 0.0625, 0.0).optimize();
+
+    // ViaFabricPlus - Bedrock lantern shapes
+    private static final VoxelShape BEDROCK_SHAPE_STANDING = Shapes.box(0.3125, 0, 0.3125, 0.6875, 0.5, 0.6875);
+    private static final VoxelShape BEDROCK_SHAPE_HANGING = Shapes.box(0.3125, 0.125, 0.3125, 0.6875, 0.625, 0.6875);
 
     @Override
     public MapCodec<? extends LanternBlock> codec() {
@@ -56,7 +62,22 @@ public class LanternBlock extends Block implements SimpleWaterloggedBlock {
 
     @Override
     protected VoxelShape getShape(BlockState p_153474_, BlockGetter p_153475_, BlockPos p_153476_, CollisionContext p_153477_) {
+        // ViaFabricPlus - Bedrock lantern shape
+        if (ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.bedrockLatest)) {
+            return p_153474_.getValue(HANGING) ? BEDROCK_SHAPE_HANGING : BEDROCK_SHAPE_STANDING;
+        }
+
         return p_153474_.getValue(HANGING) ? SHAPE_HANGING : SHAPE_STANDING;
+    }
+
+    @Override
+    public VoxelShape getOcclusionShape(BlockState state) {
+        // ViaFabricPlus - Bedrock lantern occlusion shape
+        if (ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.bedrockLatest)) {
+            return state.getValue(HANGING) ? SHAPE_HANGING : SHAPE_STANDING;
+        }
+
+        return super.getOcclusionShape(state);
     }
 
     @Override
@@ -76,22 +97,22 @@ public class LanternBlock extends Block implements SimpleWaterloggedBlock {
 
     @Override
     protected BlockState updateShape(
-        BlockState p_153483_,
-        LevelReader p_362938_,
-        ScheduledTickAccess p_369863_,
-        BlockPos p_153487_,
-        Direction p_153484_,
-        BlockPos p_153488_,
-        BlockState p_153485_,
-        RandomSource p_369622_
+            BlockState p_153483_,
+            LevelReader p_362938_,
+            ScheduledTickAccess p_369863_,
+            BlockPos p_153487_,
+            Direction p_153484_,
+            BlockPos p_153488_,
+            BlockState p_153485_,
+            RandomSource p_369622_
     ) {
         if (p_153483_.getValue(WATERLOGGED)) {
             p_369863_.scheduleTick(p_153487_, Fluids.WATER, Fluids.WATER.getTickDelay(p_362938_));
         }
 
         return getConnectedDirection(p_153483_).getOpposite() == p_153484_ && !p_153483_.canSurvive(p_362938_, p_153487_)
-            ? Blocks.AIR.defaultBlockState()
-            : super.updateShape(p_153483_, p_362938_, p_369863_, p_153487_, p_153484_, p_153488_, p_153485_, p_369622_);
+                ? Blocks.AIR.defaultBlockState()
+                : super.updateShape(p_153483_, p_362938_, p_369863_, p_153487_, p_153484_, p_153488_, p_153485_, p_369622_);
     }
 
     @Override

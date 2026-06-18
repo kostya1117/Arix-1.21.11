@@ -1,6 +1,8 @@
 package net.minecraft.world.level.block;
 
 import com.mojang.serialization.MapCodec;
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
@@ -107,6 +109,9 @@ public class NoteBlock extends Block {
     protected InteractionResult useItemOn(
         ItemStack p_330444_, BlockState p_329477_, Level p_331069_, BlockPos p_335878_, Player p_329474_, InteractionHand p_328196_, BlockHitResult p_334403_
     ) {
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_19_4)) {
+            return InteractionResult.SUCCESS;
+        }
         return p_330444_.is(ItemTags.NOTE_BLOCK_TOP_INSTRUMENTS) && p_334403_.getDirection() == Direction.UP
             ? InteractionResult.PASS
             : super.useItemOn(p_330444_, p_329477_, p_331069_, p_335878_, p_329474_, p_328196_, p_334403_);

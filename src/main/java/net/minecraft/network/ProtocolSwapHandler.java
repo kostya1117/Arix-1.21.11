@@ -1,12 +1,16 @@
 package net.minecraft.network;
 
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.network.protocol.Packet;
 
 public interface ProtocolSwapHandler {
     static void handleInboundTerminalPacket(ChannelHandlerContext p_327743_, Packet<?> p_336039_) {
         if (p_336039_.isTerminal()) {
-            p_327743_.channel().config().setAutoRead(false);
+            if (ProtocolTranslator.getTargetVersion().newerThan(ProtocolVersion.v1_20_3)) {
+                p_327743_.channel().config().setAutoRead(false);
+            }
             p_327743_.pipeline().addBefore(p_327743_.name(), "inbound_config", new UnconfiguredPipelineHandler.Inbound());
             p_327743_.pipeline().remove(p_327743_.name());
         }

@@ -3,10 +3,12 @@ package net.minecraft.world.level.block;
 import com.mojang.math.OctahedralGroup;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import com.mojang.serialization.codecs.RecordCodecBuilder.Instance;
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -46,12 +48,13 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.raphimc.viabedrock.api.BedrockProtocolVersion;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jspecify.annotations.Nullable;
 
 public class BedBlock extends HorizontalDirectionalBlock implements EntityBlock {
     public static final MapCodec<BedBlock> CODEC = RecordCodecBuilder.mapCodec(
-        p_422037_ -> p_422037_.group(DyeColor.CODEC.fieldOf("color").forGetter(BedBlock::getColor), propertiesCodec()).apply(p_422037_, BedBlock::new)
+            p_422037_ -> p_422037_.group(DyeColor.CODEC.fieldOf("color").forGetter(BedBlock::getColor), propertiesCodec()).apply(p_422037_, BedBlock::new)
     );
     public static final EnumProperty<BedPart> PART = BlockStateProperties.BED_PART;
     public static final BooleanProperty OCCUPIED = BlockStateProperties.OCCUPIED;
@@ -61,6 +64,9 @@ public class BedBlock extends HorizontalDirectionalBlock implements EntityBlock 
         return Shapes.rotateHorizontal(Shapes.or(Block.column(16.0, 3.0, 9.0), voxelshape, voxelshape1));
     });
     private final DyeColor color;
+    private static final VoxelShape viaFabricPlus$shape_r1_13_2 = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 9.0D, 16.0D);
+
+    private boolean viaFabricPlus$requireOriginalShape;
 
     @Override
     public MapCodec<BedBlock> codec() {
@@ -145,6 +151,20 @@ public class BedBlock extends HorizontalDirectionalBlock implements EntityBlock 
     }
 
     private void bounceUp(Entity p_49457_) {
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_11_1)) {
+            return;
+        }
+
+        // ViaFabricPlus - Bedrock bed bounce
+        if (ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.bedrockLatest)) {
+            Vec3 velocity = p_49457_.getDeltaMovement();
+            if (velocity.y < 0.0F) {
+                double d = p_49457_ instanceof LivingEntity ? 1.0F : 0.8;
+                p_49457_.setDeltaMovement(velocity.x, Math.min(-velocity.y * 0.75F * d, 0.75F), velocity.z);
+            }
+            return;
+        }
+
         Vec3 vec3 = p_49457_.getDeltaMovement();
         if (vec3.y < 0.0) {
             double d0 = p_49457_ instanceof LivingEntity ? 1.0 : 0.8;
@@ -154,22 +174,29 @@ public class BedBlock extends HorizontalDirectionalBlock implements EntityBlock 
 
     @Override
     protected BlockState updateShape(
-        BlockState p_49525_,
-        LevelReader p_367181_,
-        ScheduledTickAccess p_361759_,
-        BlockPos p_49529_,
-        Direction p_49526_,
-        BlockPos p_49530_,
-        BlockState p_49527_,
-        RandomSource p_361707_
+            BlockState p_49525_,
+            LevelReader p_367181_,
+            ScheduledTickAccess p_361759_,
+            BlockPos p_49529_,
+            Direction p_49526_,
+            BlockPos p_49530_,
+            BlockState p_49527_,
+            RandomSource p_361707_
     ) {
         if (p_49526_ == getNeighbourDirection(p_49525_.getValue(PART), p_49525_.getValue(FACING))) {
             return p_49527_.is(this) && p_49527_.getValue(PART) != p_49525_.getValue(PART)
-                ? p_49525_.setValue(OCCUPIED, p_49527_.getValue(OCCUPIED))
-                : Blocks.AIR.defaultBlockState();
+                    ? p_49525_.setValue(OCCUPIED, p_49527_.getValue(OCCUPIED))
+                    : Blocks.AIR.defaultBlockState();
         } else {
             return super.updateShape(p_49525_, p_367181_, p_361759_, p_49529_, p_49526_, p_49530_, p_49527_, p_361707_);
         }
+    }
+    @Override
+    public VoxelShape getOcclusionShape(BlockState state) {
+        // Workaround for https://github.com/ViaVersion/ViaFabricPlus/issues/246
+        // MoreCulling is caching the culling shape and doesn't reload it, so we have to force vanilla's shape here.
+        viaFabricPlus$requireOriginalShape = true;
+        return super.getOcclusionShape(state);
     }
 
     private static Direction getNeighbourDirection(BedPart p_49534_, Direction p_49535_) {
@@ -204,6 +231,12 @@ public class BedBlock extends HorizontalDirectionalBlock implements EntityBlock 
 
     @Override
     protected VoxelShape getShape(BlockState p_49547_, BlockGetter p_49548_, BlockPos p_49549_, CollisionContext p_49550_) {
+        /*if (false && viaFabricPlus$requireOriginalShape) { // for culling
+            viaFabricPlus$requireOriginalShape = false;
+        } else*/ if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_13_2) || ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.bedrockLatest)) {
+           return viaFabricPlus$shape_r1_13_2;
+        }
+
         return SHAPES.get(getConnectedDirection(p_49547_).getOpposite());
     }
 
@@ -317,16 +350,16 @@ public class BedBlock extends HorizontalDirectionalBlock implements EntityBlock 
 
     private static int[][] bedSurroundStandUpOffsets(Direction p_49552_, Direction p_49553_) {
         return new int[][]{
-            {p_49553_.getStepX(), p_49553_.getStepZ()},
-            {p_49553_.getStepX() - p_49552_.getStepX(), p_49553_.getStepZ() - p_49552_.getStepZ()},
-            {p_49553_.getStepX() - p_49552_.getStepX() * 2, p_49553_.getStepZ() - p_49552_.getStepZ() * 2},
-            {-p_49552_.getStepX() * 2, -p_49552_.getStepZ() * 2},
-            {-p_49553_.getStepX() - p_49552_.getStepX() * 2, -p_49553_.getStepZ() - p_49552_.getStepZ() * 2},
-            {-p_49553_.getStepX() - p_49552_.getStepX(), -p_49553_.getStepZ() - p_49552_.getStepZ()},
-            {-p_49553_.getStepX(), -p_49553_.getStepZ()},
-            {-p_49553_.getStepX() + p_49552_.getStepX(), -p_49553_.getStepZ() + p_49552_.getStepZ()},
-            {p_49552_.getStepX(), p_49552_.getStepZ()},
-            {p_49553_.getStepX() + p_49552_.getStepX(), p_49553_.getStepZ() + p_49552_.getStepZ()}
+                {p_49553_.getStepX(), p_49553_.getStepZ()},
+                {p_49553_.getStepX() - p_49552_.getStepX(), p_49553_.getStepZ() - p_49552_.getStepZ()},
+                {p_49553_.getStepX() - p_49552_.getStepX() * 2, p_49553_.getStepZ() - p_49552_.getStepZ() * 2},
+                {-p_49552_.getStepX() * 2, -p_49552_.getStepZ() * 2},
+                {-p_49553_.getStepX() - p_49552_.getStepX() * 2, -p_49553_.getStepZ() - p_49552_.getStepZ() * 2},
+                {-p_49553_.getStepX() - p_49552_.getStepX(), -p_49553_.getStepZ() - p_49552_.getStepZ()},
+                {-p_49553_.getStepX(), -p_49553_.getStepZ()},
+                {-p_49553_.getStepX() + p_49552_.getStepX(), -p_49553_.getStepZ() + p_49552_.getStepZ()},
+                {p_49552_.getStepX(), p_49552_.getStepZ()},
+                {p_49553_.getStepX() + p_49552_.getStepX(), p_49553_.getStepZ() + p_49552_.getStepZ()}
         };
     }
 

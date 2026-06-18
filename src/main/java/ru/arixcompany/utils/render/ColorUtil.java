@@ -30,6 +30,55 @@ public class ColorUtil {
             }
         }, 0, 1, TimeUnit.SECONDS);
     }
+    public static int withAlpha(int color, float alphaMultiplier) {
+        int alpha = (color >>> 24) & 0xFF;
+        int scaledAlpha = Math.max(0, Math.min(255, (int) (alpha * alphaMultiplier)));
+        return (color & 0x00FFFFFF) | (scaledAlpha << 24);
+    }
+    public static int applyAlpha(int color, float alpha) {
+        int r = (color >> 16) & 0xFF;
+        int g = (color >> 8) & 0xFF;
+        int b = color & 0xFF;
+        return rgba(r, g, b, (int) (255 * alpha));
+    }
+
+    public static int fade(int index) {
+        return jumpBlend(index, 1.0f);
+    }
+
+    public static int jumpBlend(int index, float alpha) {
+        int accent = getTheme().getMain().getRGB();
+        return jumpBlend(accent, index, alpha);
+    }
+
+    public static int jumpBlend(int color, int index, float alpha) {
+        float time = (System.currentTimeMillis() % 1_000_000L) / 1000.0f;
+        float p = index * 0.0175f;
+
+        float softNoise = (float) Math.sin(p * 2.3f + time * 1.2f + Math.sin(p * 0.55f + time * 0.72f) * 1.35f);
+        float fineNoise = (float) Math.sin(p * 6.4f - time * 1.75f);
+        float fourWay = (float) Math.pow(Math.max(0.0f, Math.cos(p * 4.0f - time * 1.0f)), 2.25);
+        float counterWay = (float) Math.pow(Math.max(0.0f, Math.sin(p * 4.0f + time * 1.18f)), 2.75);
+        float mask = 0.52f + 0.20f * softNoise + 0.07f * fineNoise + 0.22f * fourWay + 0.14f * counterWay;
+        mask = Mth.clamp(mask, 0.0f, 1.0f);
+        mask = mask * mask * (3.0f - 2.0f * mask);
+        float hot = Mth.clamp((mask - 0.74f) / 0.26f, 0.0f, 1.0f);
+        hot = hot * hot * (3.0f - 2.0f * hot) * 0.72f;
+
+        int sourceAlpha = (color >> 24) & 0xFF;
+        int sourceRed = (color >> 16) & 0xFF;
+        int sourceGreen = (color >> 8) & 0xFF;
+        int sourceBlue = color & 0xFF;
+
+        float floor = 0.24f;
+        float power = floor + (1.0f - floor) * mask;
+        int red = Mth.clamp(Math.round(Mth.lerp(hot, sourceRed * power, 255.0f)), 0, 255);
+        int green = Mth.clamp(Math.round(Mth.lerp(hot, sourceGreen * power, 255.0f)), 0, 255);
+        int blue = Mth.clamp(Math.round(Mth.lerp(hot, sourceBlue * power, 255.0f)), 0, 255);
+        int outAlpha = Mth.clamp(Math.round(sourceAlpha * alpha), 0, 255);
+
+        return rgba(red, green, blue, outAlpha);
+    }
 
     public static float getRed(int color) {
         return (color >> 16 & 0xFF) / 255.0F;
@@ -72,7 +121,7 @@ public class ColorUtil {
         return getMainColor(10, 255);
     }
 
-    private static Theme getTheme() {
+    public static Theme getTheme() {
         return Gui.selectedTheme != null ? Gui.selectedTheme : Theme.PURPLE;
     }
 

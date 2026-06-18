@@ -3,6 +3,9 @@ package net.minecraft.world.item;
 import com.google.common.collect.ImmutableMap.Builder;
 import java.util.Map;
 import java.util.Optional;
+
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
@@ -58,10 +61,14 @@ public class AxeItem extends Item {
 
     @Override
     public InteractionResult useOn(UseOnContext p_40529_) {
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_12_2)) {
+            return InteractionResult.PASS;
+        }
+
         Level level = p_40529_.getLevel();
         BlockPos blockpos = p_40529_.getClickedPos();
         Player player = p_40529_.getPlayer();
-        if (playerHasBlockingItemUseIntent(p_40529_)) {
+        if (ProtocolTranslator.getTargetVersion().newerThan(ProtocolVersion.v1_20_5) && playerHasBlockingItemUseIntent(p_40529_)) {
             return InteractionResult.PASS;
         }
 

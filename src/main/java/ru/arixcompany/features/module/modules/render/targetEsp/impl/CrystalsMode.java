@@ -22,7 +22,7 @@ import ru.arixcompany.features.module.setting.implement.ValueSetting;
 import ru.arixcompany.utils.Textures;
 import ru.arixcompany.utils.animation.Animation;
 import ru.arixcompany.utils.animation.Direction;
-import ru.arixcompany.utils.animation.impl.EaseOutCubic;
+import ru.arixcompany.utils.animation.impl.cubic.EaseOutCubic;
 
 import java.awt.*;
 import java.util.List;

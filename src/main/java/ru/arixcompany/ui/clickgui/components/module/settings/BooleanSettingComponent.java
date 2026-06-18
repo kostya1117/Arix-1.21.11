@@ -7,7 +7,6 @@ import net.minecraft.client.gui.GuiGraphics;
 import ru.arixcompany.ui.clickgui.Gui;
 import ru.arixcompany.ui.clickgui.components.IComponent;
 import ru.arixcompany.features.module.setting.implement.BooleanSetting;
-import ru.arixcompany.utils.math.StringUtil;
 import ru.arixcompany.utils.render.ColorUtil;
 import ru.arixcompany.utils.render.RenderUtils;
 import ru.arixcompany.utils.render.font.FontManager;

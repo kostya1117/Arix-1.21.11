@@ -1,6 +1,9 @@
 package net.minecraft.world.level.material;
 
 import com.google.common.collect.Maps;
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viafabricplus.protocoltranslator.impl.ViaFabricPlusMappingDataLoader;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import it.unimi.dsi.fastutil.objects.Object2ByteLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.shorts.Short2BooleanMap;
 import it.unimi.dsi.fastutil.shorts.Short2BooleanOpenHashMap;
@@ -17,11 +20,7 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.DoorBlock;
-import net.minecraft.world.level.block.IceBlock;
-import net.minecraft.world.level.block.LiquidBlockContainer;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -116,8 +115,24 @@ public abstract class FlowingFluid extends Fluid {
             return false;
         } else if (p_75993_ == Direction.UP) {
             return true;
+        } else if (blockstate.getBlock() instanceof IceBlock) {
+            return false;
         } else {
-            return blockstate.getBlock() instanceof IceBlock ? false : blockstate.isFaceSturdy(p_75991_, p_75992_, p_75993_);
+            if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_11_1)) {
+                final ViaFabricPlusMappingDataLoader.Material material = ViaFabricPlusMappingDataLoader.MATERIALS.get(ViaFabricPlusMappingDataLoader.getBlockMaterial(blockstate.getBlock()));
+                return material.solid();
+            } else if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_13_2)) {
+                final Block block = blockstate.getBlock();
+                if (block instanceof ShulkerBoxBlock || block instanceof LeavesBlock || block instanceof TrapDoorBlock ||
+                        block == Blocks.BEACON || block == Blocks.CAULDRON || block == Blocks.GLASS ||
+                        block == Blocks.GLOWSTONE || block == Blocks.ICE || block == Blocks.SEA_LANTERN ||
+                        block instanceof StainedGlassBlock || block == Blocks.PISTON || block == Blocks.STICKY_PISTON ||
+                        block == Blocks.PISTON_HEAD || block instanceof StairBlock) {
+                    return false;
+                }
+            }
+
+            return blockstate.isFaceSturdy(p_75991_, p_75992_, p_75993_);
         }
     }
 

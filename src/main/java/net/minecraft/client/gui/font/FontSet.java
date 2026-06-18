@@ -5,6 +5,11 @@ import com.mojang.blaze3d.font.GlyphBitmap;
 import com.mojang.blaze3d.font.GlyphInfo;
 import com.mojang.blaze3d.font.GlyphProvider;
 import com.mojang.blaze3d.font.UnbakedGlyph;
+import com.viaversion.viafabricplus.features.font.BuiltinEmptyGlyph1_12_2;
+import com.viaversion.viafabricplus.features.font.RenderableGlyphDiff;
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viafabricplus.settings.impl.DebugSettings;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
@@ -17,6 +22,8 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.IntFunction;
 import java.util.function.Supplier;
+
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GlyphSource;
 import net.minecraft.client.gui.font.glyphs.BakedGlyph;
 import net.minecraft.client.gui.font.glyphs.EffectGlyph;
@@ -56,7 +63,7 @@ public class FontSet implements AutoCloseable {
     private List<GlyphProvider.Conditional> allProviders = List.of();
     private List<GlyphProvider> activeProviders = List.of();
     private final Int2ObjectMap<IntList> glyphsByWidth = new Int2ObjectOpenHashMap<>();
-    private final CodepointMap<FontSet.SelectedGlyphs> glyphCache = new CodepointMap<>(FontSet.SelectedGlyphs[]::new, FontSet.SelectedGlyphs[][]::new);
+    public final CodepointMap<FontSet.SelectedGlyphs> glyphCache = new CodepointMap<>(FontSet.SelectedGlyphs[]::new, FontSet.SelectedGlyphs[][]::new);
     private final IntFunction<FontSet.SelectedGlyphs> glyphGetter = this::computeGlyphInfo;
     BakedGlyph missingGlyph = INVISIBLE_MISSING_GLYPH;
     private final Supplier<BakedGlyph> missingGlyphGetter = () -> this.missingGlyph;
@@ -64,6 +71,9 @@ public class FontSet implements AutoCloseable {
     private  EffectGlyph whiteGlyph;
     private final GlyphSource anyGlyphs = new FontSet.Source(false);
     private final GlyphSource nonFishyGlyphs = new FontSet.Source(true);
+    private BakedGlyph viaFabricPlus$blankBakedGlyph1_12_2;
+    private FontSet.SelectedGlyphs viaFabricPlus$blankBakedGlyphPair1_12_2;
+    private boolean viaFabricPlus$obfuscatedLookup;
 
     public FontSet(GlyphStitcher p_428498_) {
         this.stitcher = p_428498_;
@@ -85,6 +95,12 @@ public class FontSet implements AutoCloseable {
         this.glyphCache.clear();
         this.glyphsByWidth.clear();
         this.missingGlyph = Objects.requireNonNull(SpecialGlyphs.MISSING.bake(this.stitcher));
+        // ViaFabricPlus - bake blank glyph for 1.12.2
+        this.viaFabricPlus$blankBakedGlyph1_12_2 = BuiltinEmptyGlyph1_12_2.INSTANCE.bake(this.stitcher);
+        this.viaFabricPlus$blankBakedGlyphPair1_12_2 = new FontSet.SelectedGlyphs(
+                () -> this.viaFabricPlus$blankBakedGlyph1_12_2,
+                () -> this.viaFabricPlus$blankBakedGlyph1_12_2
+        );
         this.whiteGlyph = SpecialGlyphs.WHITE.bake(this.stitcher);
     }
 
@@ -150,19 +166,56 @@ public class FontSet implements AutoCloseable {
             }
         }
 
-        return fontset$delayedbake != null ? new FontSet.SelectedGlyphs(fontset$delayedbake, this.missingGlyphGetter) : this.missingSelectedGlyphs;
+        FontSet.SelectedGlyphs result = fontset$delayedbake != null
+                ? new FontSet.SelectedGlyphs(fontset$delayedbake, this.missingGlyphGetter)
+                : this.missingSelectedGlyphs;
+
+        // ViaFabricPlus - replace missing glyph with blank glyph for 1.12.2
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_12_2)) {
+            return result == this.missingSelectedGlyphs ? this.viaFabricPlus$blankBakedGlyphPair1_12_2 : result;
+        }
+
+        return result;
     }
 
     FontSet.SelectedGlyphs getGlyph(int p_95079_) {
         FontSet.SelectedGlyphs fontset$selectedglyphs = this.glyphCache.get(p_95079_);
-        return fontset$selectedglyphs != null ? fontset$selectedglyphs : this.glyphCache.computeIfAbsent(p_95079_, this.glyphGetter);
+        FontSet.SelectedGlyphs result = fontset$selectedglyphs != null
+                ? fontset$selectedglyphs
+                : this.glyphCache.computeIfAbsent(p_95079_, this.glyphGetter);
+
+        // ViaFabricPlus - filter invisible glyphs
+        if (this.viaFabricPlus$shouldBeInvisible(p_95079_)) {
+            if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_12_2)) {
+                return this.viaFabricPlus$blankBakedGlyphPair1_12_2;
+            } else {
+                return this.missingSelectedGlyphs;
+            }
+        }
+
+        return result;
     }
 
     public BakedGlyph getRandomGlyph(RandomSource p_426508_, int p_425986_) {
+        // ViaFabricPlus - pause character filtering for obfuscated text
+        this.viaFabricPlus$obfuscatedLookup = true;
         IntList intlist = this.glyphsByWidth.get(p_425986_);
-        return intlist != null && !intlist.isEmpty() ? this.getGlyph(intlist.getInt(p_426508_.nextInt(intlist.size()))).nonFishy().get() : this.missingGlyph;
+        BakedGlyph result = intlist != null && !intlist.isEmpty()
+                ? this.getGlyph(intlist.getInt(p_426508_.nextInt(intlist.size()))).nonFishy().get()
+                : this.missingGlyph;
+        this.viaFabricPlus$obfuscatedLookup = false;
+        return result;
     }
 
+    private boolean viaFabricPlus$shouldBeInvisible(final int codePoint) {
+        if (!this.viaFabricPlus$obfuscatedLookup && DebugSettings.INSTANCE.filterNonExistingGlyphs.getValue()) {
+            return (this.stitcher.texturePrefix.equals(Minecraft.DEFAULT_FONT)
+                    || this.stitcher.texturePrefix.equals(Minecraft.UNIFORM_FONT))
+                    && !RenderableGlyphDiff.isGlyphRenderable(codePoint);
+        } else {
+            return false;
+        }
+    }
     public EffectGlyph whiteGlyph() {
         return Objects.requireNonNull(this.whiteGlyph);
     }

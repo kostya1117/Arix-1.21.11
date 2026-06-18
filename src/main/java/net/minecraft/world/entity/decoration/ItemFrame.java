@@ -1,6 +1,9 @@
 package net.minecraft.world.entity.decoration;
 
 import java.util.Objects;
+
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
@@ -102,7 +105,9 @@ public class ItemFrame extends HangingEntity {
 
     @Override
     protected AABB calculateBoundingBox(BlockPos p_343359_, Direction p_343934_) {
-        return this.createBoundingBox(p_343359_, p_343934_, this.hasFramedMap());
+        // ViaFabricPlus - change bounding box for older versions
+        return this.createBoundingBox(p_343359_, p_343934_,
+                this.hasFramedMap() && ProtocolTranslator.getTargetVersion().newerThan(ProtocolVersion.v1_21_7));
     }
 
     @Override

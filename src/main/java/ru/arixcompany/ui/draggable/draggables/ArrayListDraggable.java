@@ -10,7 +10,6 @@ import ru.arixcompany.features.module.setting.implement.BooleanSetting;
 import ru.arixcompany.utils.Colors;
 import ru.arixcompany.utils.animation.Direction;
 import ru.arixcompany.utils.math.StringUtil;
-import ru.arixcompany.utils.render.RenderUtils;
 import ru.arixcompany.utils.render.font.CustomFont;
 import ru.arixcompany.utils.render.font.FontManager;
 

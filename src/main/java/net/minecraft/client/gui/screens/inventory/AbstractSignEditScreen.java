@@ -1,6 +1,9 @@
 package net.minecraft.client.gui.screens.inventory;
 
 import java.util.stream.IntStream;
+
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.font.TextFieldHelper;
@@ -74,6 +77,9 @@ public abstract class AbstractSignEditScreen extends Screen {
     }
 
     private boolean isValid() {
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_19_4)) {
+            return (this.sign.getType().isValid(this.sign.getBlockState()));
+        }
         return this.minecraft.player != null && !this.sign.isRemoved() && !this.sign.playerIsTooFarAwayToEdit(this.minecraft.player.getUUID());
     }
 

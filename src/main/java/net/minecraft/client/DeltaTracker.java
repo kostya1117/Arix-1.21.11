@@ -3,6 +3,7 @@ package net.minecraft.client;
 import it.unimi.dsi.fastutil.floats.FloatUnaryOperator;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import ru.arixcompany.utils.math.Timer;
 
 
 public interface DeltaTracker {
@@ -39,9 +40,9 @@ public interface DeltaTracker {
         }
     }
 
-    
+
     class Timer implements DeltaTracker {
-        private float deltaTicks;
+        public float deltaTicks;
         private float deltaTickResidual;
         private float realtimeDeltaTicks;
         private float pausedDeltaTickResidual;
@@ -65,6 +66,12 @@ public interface DeltaTracker {
 
         private int advanceGameTime(long p_342679_) {
             this.deltaTicks = (float)(p_342679_ - this.lastMs) / this.targetMsptProvider.apply(this.msPerTick);
+
+            float customTimer = ru.arixcompany.utils.math.Timer.INSTANCE.getTimerSpeed();
+            if (customTimer > 0) {
+                this.deltaTicks *= customTimer;
+            }
+
             this.lastMs = p_342679_;
             this.deltaTickResidual = this.deltaTickResidual + this.deltaTicks;
             int i = (int)this.deltaTickResidual;

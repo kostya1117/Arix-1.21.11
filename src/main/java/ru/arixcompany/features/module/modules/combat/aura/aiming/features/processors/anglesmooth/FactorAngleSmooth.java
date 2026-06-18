@@ -23,36 +23,25 @@ import net.minecraft.util.Util;
 import ru.arixcompany.features.module.modules.combat.HitAura;
 import ru.arixcompany.features.module.modules.combat.aura.aiming.RotationTarget;
 import ru.arixcompany.features.module.modules.combat.aura.aiming.data.Rotation;
+import ru.arixcompany.features.module.modules.combat.aura.aiming.features.processors.RotationProcessor;
 
 /**
  * horizontal speed, vertical speed
  */
-public abstract class FactorAngleSmooth extends AngleSmooth {
+public abstract class FactorAngleSmooth implements RotationProcessor {
 
     /**
      * Calculate the factors for the rotation towards the target rotation.
      *
      * @param currentRotation The current rotation
-     * @param targetRotation The target rotation
+     * @param targetRotation  The target rotation
      * @return horizontal speed, vertical speed as float[2]
      */
     public abstract float[] calculateFactors(RotationTarget rotationTarget, Rotation currentRotation, Rotation targetRotation);
 
-@Override
-public Rotation process(RotationTarget rotationTarget, Rotation currentRotation, Rotation targetRotation) {
-    float[] factors = calculateFactors(rotationTarget, currentRotation, targetRotation);
-    return currentRotation.towardsLinear(targetRotation, factors[0], factors[1]);
-}
-
     @Override
-    public int calculateTicks(Rotation currentRotation, Rotation targetRotation) {
-        Rotation cur = currentRotation;
-        int ticks = -1;
-        do {
-            float[] factors = calculateFactors(null, cur, targetRotation);
-            cur = cur.towardsLinear(targetRotation, factors[0], factors[1]);
-            ticks++;
-        } while (!cur.approximatelyEquals(targetRotation) && ticks < 80);
-        return ticks;
+    public Rotation process(RotationTarget rotationTarget, Rotation currentRotation, Rotation targetRotation) {
+        float[] factors = calculateFactors(rotationTarget, currentRotation, targetRotation);
+        return currentRotation.towardsLinear(targetRotation, factors[0], factors[1]);
     }
 }

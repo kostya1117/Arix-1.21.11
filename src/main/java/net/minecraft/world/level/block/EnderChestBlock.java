@@ -1,6 +1,7 @@
 package net.minecraft.world.level.block;
 
 import com.mojang.serialization.MapCodec;
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -36,7 +37,10 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.raphimc.viabedrock.api.BedrockProtocolVersion;
+import net.raphimc.vialegacy.api.LegacyProtocolVersion;
 import org.jspecify.annotations.Nullable;
 
 public class EnderChestBlock extends AbstractChestBlock<EnderChestBlockEntity> implements SimpleWaterloggedBlock {
@@ -45,7 +49,7 @@ public class EnderChestBlock extends AbstractChestBlock<EnderChestBlockEntity> i
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
     private static final VoxelShape SHAPE = Block.column(14.0, 0.0, 14.0);
     private static final Component CONTAINER_TITLE = Component.translatable("container.enderchest");
-
+    private static final VoxelShape viaFabricPlus$shape_bedrock = Shapes.box(0.025, 0, 0.025, 0.975, 0.95, 0.975);
     @Override
     public MapCodec<EnderChestBlock> codec() {
         return CODEC;
@@ -65,7 +69,22 @@ public class EnderChestBlock extends AbstractChestBlock<EnderChestBlockEntity> i
 
     @Override
     protected VoxelShape getShape(BlockState p_53171_, BlockGetter p_53172_, BlockPos p_53173_, CollisionContext p_53174_) {
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(LegacyProtocolVersion.r1_4_2)) {
+            return (Shapes.block());
+        } else if (ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.bedrockLatest)) {
+            return (viaFabricPlus$shape_bedrock);
+        }
+
         return SHAPE;
+    }
+    @Override
+    public VoxelShape getOcclusionShape(BlockState state) {
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(LegacyProtocolVersion.r1_4_2)
+                || ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.bedrockLatest)) {
+            return SHAPE;
+        } else {
+            return super.getOcclusionShape(state);
+        }
     }
 
     @Override

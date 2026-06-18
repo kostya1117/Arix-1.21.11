@@ -3,6 +3,8 @@ package net.minecraft.util;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import com.viaversion.viafabricplus.features.limitation.max_chat_length.MaxChatLength;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.Nullable;
 
@@ -56,7 +58,7 @@ public class StringUtil {
     }
 
     public static String trimChatMessage(String p_216470_) {
-        return truncateStringIfNecessary(p_216470_, 256, false);
+        return truncateStringIfNecessary(p_216470_, MaxChatLength.getChatLength(), false);
     }
 
     public static boolean isAllowedChatCharacter(int p_422340_) {

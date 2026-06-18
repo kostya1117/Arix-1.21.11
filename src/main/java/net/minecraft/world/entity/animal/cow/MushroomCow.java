@@ -1,6 +1,8 @@
 package net.minecraft.world.entity.animal.cow;
 
 import com.mojang.serialization.Codec;
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import io.netty.buffer.ByteBuf;
 import java.util.Optional;
 import java.util.UUID;
@@ -21,6 +23,7 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.util.ByIdMap;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.StringRepresentable;
@@ -123,23 +126,34 @@ public class MushroomCow extends AbstractCow implements Shearable {
 
             return InteractionResult.SUCCESS;
         } else if (this.getVariant() == MushroomCow.Variant.BROWN) {
+            // ViaFabricPlus - check for item tags on older versions
+            if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_21_2)) {
+                if (!itemstack.is(ItemTags.SMALL_FLOWERS)) {
+                    return super.mobInteract(p_454203_, p_457673_);
+                }
+            }
+
             Optional<SuspiciousStewEffects> optional = this.getEffectsFromItemStack(itemstack);
             if (optional.isEmpty()) {
+                // ViaFabricPlus - direct pass on older versions
+                if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_21_2)) {
+                    return InteractionResult.PASS;
+                }
                 return super.mobInteract(p_454203_, p_457673_);
             }
 
             if (this.stewEffects != null) {
                 for (int i = 0; i < 2; i++) {
                     this.level()
-                        .addParticle(
-                            ParticleTypes.SMOKE,
-                            this.getX() + this.random.nextDouble() / 2.0,
-                            this.getY(0.5),
-                            this.getZ() + this.random.nextDouble() / 2.0,
-                            0.0,
-                            this.random.nextDouble() / 5.0,
-                            0.0
-                        );
+                            .addParticle(
+                                    ParticleTypes.SMOKE,
+                                    this.getX() + this.random.nextDouble() / 2.0,
+                                    this.getY(0.5),
+                                    this.getZ() + this.random.nextDouble() / 2.0,
+                                    0.0,
+                                    this.random.nextDouble() / 5.0,
+                                    0.0
+                            );
                 }
             } else {
                 itemstack.consume(1, p_454203_);
@@ -147,15 +161,15 @@ public class MushroomCow extends AbstractCow implements Shearable {
 
                 for (int j = 0; j < 4; j++) {
                     this.level()
-                        .addParticle(
-                            spellparticleoption,
-                            this.getX() + this.random.nextDouble() / 2.0,
-                            this.getY(0.5),
-                            this.getZ() + this.random.nextDouble() / 2.0,
-                            0.0,
-                            this.random.nextDouble() / 5.0,
-                            0.0
-                        );
+                            .addParticle(
+                                    spellparticleoption,
+                                    this.getX() + this.random.nextDouble() / 2.0,
+                                    this.getY(0.5),
+                                    this.getZ() + this.random.nextDouble() / 2.0,
+                                    0.0,
+                                    this.random.nextDouble() / 5.0,
+                                    0.0
+                            );
                 }
 
                 this.stewEffects = optional.get();

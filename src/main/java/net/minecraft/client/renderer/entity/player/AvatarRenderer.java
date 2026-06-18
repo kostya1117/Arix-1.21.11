@@ -2,6 +2,8 @@ package net.minecraft.client.renderer.entity.player;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import de.maxhenkel.voicechat.events.RenderEvents;
 import net.minecraft.client.entity.ClientAvatarEntity;
 import net.minecraft.client.entity.ClientAvatarState;
@@ -28,6 +30,7 @@ import net.minecraft.client.renderer.entity.state.AvatarRenderState;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.Identifier;
 import net.minecraft.tags.ItemTags;
@@ -35,6 +38,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Avatar;
 import net.minecraft.world.entity.HumanoidArm;
+import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.PlayerModelPart;
 import net.minecraft.world.item.CrossbowItem;
@@ -45,7 +49,9 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.SwingAnimationType;
 import net.minecraft.world.item.component.SwingAnimation;
 import net.minecraft.world.phys.Vec3;
+import net.raphimc.vialegacy.api.LegacyProtocolVersion;
 import ru.arixcompany.Arix;
+import ru.arixcompany.features.module.modules.render.ChinaHat;
 import ru.arixcompany.features.module.modules.render.CustomModels;
 import ru.arixcompany.features.module.modules.render.customModels.ICustomPlayerModelState;
 
@@ -72,6 +78,7 @@ public class AvatarRenderer<AvatarlikeEntity extends Avatar & ClientAvatarEntity
         this.addLayer(new ParrotOnShoulderLayer(this, p_426442_.getModelSet()));
         this.addLayer(new SpinAttackEffectLayer(this, p_426442_.getModelSet()));
         this.addLayer(new BeeStingerLayer<>(this, p_426442_));
+        //this.addLayer(new ChinaHat.ChinaHatLayer<>(this));
     }
 
     protected boolean shouldRenderLayers(AvatarRenderState p_431592_) {
@@ -80,7 +87,28 @@ public class AvatarRenderer<AvatarlikeEntity extends Avatar & ClientAvatarEntity
 
     public Vec3 getRenderOffset(AvatarRenderState p_428717_) {
         Vec3 vec3 = super.getRenderOffset(p_428717_);
-        return p_428717_.isCrouching ? vec3.add(0.0, p_428717_.scale * -2.0F / 16.0, 0.0) : vec3;
+
+        // disableSneakPositionOffset
+        boolean isCrouching = ProtocolTranslator.getTargetVersion().newerThan(ProtocolVersion.v1_11_1) && p_428717_.isCrouching;
+        vec3 = isCrouching ? vec3.add(0.0, p_428717_.scale * -2.0F / 16.0, 0.0) : vec3;
+
+        // modifySleepingOffset
+        if (p_428717_.pose == Pose.SLEEPING) {
+            final Direction sleepingDir = p_428717_.bedOrientation;
+            if (sleepingDir != null) {
+                if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_13_2)) {
+                    vec3 = vec3.subtract(sleepingDir.getStepX() * 0.4, 0, sleepingDir.getStepZ() * 0.4);
+                }
+                if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(LegacyProtocolVersion.b1_5tob1_5_2)) {
+                    vec3 = vec3.subtract(sleepingDir.getStepX() * 0.1, 0, sleepingDir.getStepZ() * 0.1);
+                }
+                if (ProtocolTranslator.getTargetVersion().betweenInclusive(LegacyProtocolVersion.b1_6tob1_6_6, ProtocolVersion.v1_7_6)) {
+                    vec3 = vec3.subtract(0, 0.3F, 0);
+                }
+            }
+        }
+
+        return vec3;
     }
 
     private static HumanoidModel.ArmPose getArmPose(Avatar p_424150_, HumanoidArm p_426932_) {

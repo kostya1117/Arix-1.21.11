@@ -1,6 +1,9 @@
 package net.minecraft.world.entity.vehicle.boat;
 
 import java.util.function.Supplier;
+
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import net.minecraft.core.NonNullList;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
@@ -77,6 +80,9 @@ public abstract class AbstractChestBoat extends AbstractBoat implements HasCusto
 
     @Override
     public InteractionResult interact(Player p_458305_, InteractionHand p_452194_) {
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_21_5) && p_458305_.isSecondaryUseActive()) {
+            return (this.interactWithContainerVehicle(p_458305_));
+        }
         InteractionResult interactionresult = super.interact(p_458305_, p_452194_);
         if (interactionresult != InteractionResult.PASS) {
             return interactionresult;

@@ -43,6 +43,9 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.gui.components.ChatComponent;
 import net.minecraft.client.gui.components.Tooltip;
@@ -3583,7 +3586,11 @@ public class Options {
     }
 
     public void setServerRenderDistance(int p_193771_) {
-        this.serverRenderDistance = p_193771_;
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_17_1)) {
+            this.serverRenderDistance = 0;
+        } else {
+            this.serverRenderDistance = p_193771_;
+        }
     }
 
     public int getEffectiveRenderDistance() {

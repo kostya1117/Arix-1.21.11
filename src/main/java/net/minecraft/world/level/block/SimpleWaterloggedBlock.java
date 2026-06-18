@@ -1,6 +1,9 @@
 package net.minecraft.world.level.block;
 
 import java.util.Optional;
+
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.LivingEntity;
@@ -17,12 +20,20 @@ import org.jspecify.annotations.Nullable;
 
 public interface SimpleWaterloggedBlock extends BucketPickup, LiquidBlockContainer {
     @Override
-    default boolean canPlaceLiquid( LivingEntity p_397066_, BlockGetter p_56301_, BlockPos p_56302_, BlockState p_56303_, Fluid p_56304_) {
+    default boolean canPlaceLiquid(LivingEntity p_397066_, BlockGetter p_56301_, BlockPos p_56302_, BlockState p_56303_, Fluid p_56304_) {
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_12_2)) {
+            return false;
+        }
+
         return p_56304_ == Fluids.WATER;
     }
 
     @Override
     default boolean placeLiquid(LevelAccessor p_56306_, BlockPos p_56307_, BlockState p_56308_, FluidState p_56309_) {
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_12_2)) {
+            return false;
+        }
+
         if (!p_56308_.getValue(BlockStateProperties.WATERLOGGED) && p_56309_.getType() == Fluids.WATER) {
             if (!p_56306_.isClientSide()) {
                 p_56306_.setBlock(p_56307_, p_56308_.setValue(BlockStateProperties.WATERLOGGED, true), 3);

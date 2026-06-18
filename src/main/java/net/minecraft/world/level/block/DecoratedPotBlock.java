@@ -3,6 +3,9 @@ package net.minecraft.world.level.block;
 import com.mojang.serialization.MapCodec;
 import java.util.List;
 import java.util.function.Consumer;
+
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -95,17 +98,20 @@ public class DecoratedPotBlock extends BaseEntityBlock implements SimpleWaterlog
 
     @Override
     protected InteractionResult useItemOn(
-        ItemStack p_335411_, BlockState p_334873_, Level p_328717_, BlockPos p_332886_, Player p_331165_, InteractionHand p_330433_, BlockHitResult p_330105_
+            ItemStack p_335411_, BlockState p_334873_, Level p_328717_, BlockPos p_332886_, Player p_331165_, InteractionHand p_330433_, BlockHitResult p_330105_
     ) {
+        // ViaFabricPlus - always pass on older versions
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_20_2)) {
+            return InteractionResult.PASS;
+        }
+
         if (p_328717_.getBlockEntity(p_332886_) instanceof DecoratedPotBlockEntity decoratedpotblockentity) {
             if (p_328717_.isClientSide()) {
                 return InteractionResult.SUCCESS;
             }
 
             ItemStack itemstack1 = decoratedpotblockentity.getTheItem();
-            if (!p_335411_.isEmpty() && (itemstack1.isEmpty() || ItemStack.isSameItemSameComponents(itemstack1, p_335411_) && itemstack1.getCount() < itemstack1.getMaxStackSize())
-                )
-             {
+            if (!p_335411_.isEmpty() && (itemstack1.isEmpty() || ItemStack.isSameItemSameComponents(itemstack1, p_335411_) && itemstack1.getCount() < itemstack1.getMaxStackSize())) {
                 decoratedpotblockentity.wobble(DecoratedPotBlockEntity.WobbleStyle.POSITIVE);
                 p_331165_.awardStat(Stats.ITEM_USED.get(p_335411_.getItem()));
                 ItemStack itemstack = p_335411_.consumeAndReturn(1, p_331165_);
@@ -121,12 +127,18 @@ public class DecoratedPotBlock extends BaseEntityBlock implements SimpleWaterlog
                 p_328717_.playSound(null, p_332886_, SoundEvents.DECORATED_POT_INSERT, SoundSource.BLOCKS, 1.0F, 0.7F + 0.5F * f);
                 if (p_328717_ instanceof ServerLevel serverlevel) {
                     serverlevel.sendParticles(
-                        ParticleTypes.DUST_PLUME, p_332886_.getX() + 0.5, p_332886_.getY() + 1.2, p_332886_.getZ() + 0.5, 7, 0.0, 0.0, 0.0, 0.0
+                            ParticleTypes.DUST_PLUME, p_332886_.getX() + 0.5, p_332886_.getY() + 1.2, p_332886_.getZ() + 0.5, 7, 0.0, 0.0, 0.0, 0.0
                     );
                 }
 
                 decoratedpotblockentity.setChanged();
                 p_328717_.gameEvent(p_331165_, GameEvent.BLOCK_CHANGE, p_332886_);
+
+                // ViaFabricPlus - don't swing hand on older versions
+                if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_21)) {
+                    return InteractionResult.CONSUME;
+                }
+
                 return InteractionResult.SUCCESS;
             } else {
                 return InteractionResult.TRY_WITH_EMPTY_HAND;
@@ -219,7 +231,7 @@ public class DecoratedPotBlock extends BaseEntityBlock implements SimpleWaterlog
     }
 
     @Override
-    protected ItemStack getCloneItemStack(LevelReader p_312375_, BlockPos p_300759_, BlockState p_297348_, boolean p_378578_) {
+    public ItemStack getCloneItemStack(LevelReader p_312375_, BlockPos p_300759_, BlockState p_297348_, boolean p_378578_) {
         if (p_312375_.getBlockEntity(p_300759_) instanceof DecoratedPotBlockEntity decoratedpotblockentity) {
             PotDecorations potdecorations = decoratedpotblockentity.getDecorations();
             return DecoratedPotBlockEntity.createDecoratedPotItem(potdecorations);

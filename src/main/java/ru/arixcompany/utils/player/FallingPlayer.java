@@ -1,9 +1,9 @@
-// FallingPlayer.java
 package ru.arixcompany.utils.player;
 
 import lombok.Getter;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.util.Mth;
+import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 
 import net.minecraft.client.player.LocalPlayer;
@@ -30,8 +30,6 @@ public class FallingPlayer {
     private double motionZ;
     private final float yRot;
     private int simulatedTicks = 0;
-    @Getter
-    private double predictedFallDistance; // добавлено
 
     public FallingPlayer(LocalPlayer player, double x, double y, double z,
                          double motionX, double motionY, double motionZ, float yRot) {
@@ -43,7 +41,6 @@ public class FallingPlayer {
         this.motionY = motionY;
         this.motionZ = motionZ;
         this.yRot = yRot;
-        this.predictedFallDistance = player.fallDistance; // инициализация текущим значением
     }
 
     public static FallingPlayer fromPlayer(LocalPlayer player) {
@@ -60,8 +57,6 @@ public class FallingPlayer {
     }
 
     private void calculateForTick(Vec3 rotationVec) {
-        double prevY = this.y; // сохраняем предыдущую позицию для расчета fallDistance
-
         double d = 0.08;
         boolean bl = this.motionY <= 0.0;
 
@@ -97,12 +92,13 @@ public class FallingPlayer {
             vec3d5 = vec3d5.add((rotationVec.x / k * l - vec3d5.x) * 0.1, 0.0, (rotationVec.z / k * l - vec3d5.z) * 0.1);
         }
 
+        Vec2 moveVector = this.player.input.getMoveVector();
         vec3d5 = vec3d5.add(
                 Entity.getInputVector(
                         new Vec3(
-                                this.player.input.leftImpulse * 0.98,
+                                moveVector.x * 0.98F,
                                 0.0,
-                                this.player.input.forwardImpulse * 0.98
+                                moveVector.y * 0.98F
                         ),
                         0.02F,
                         yRot
@@ -118,14 +114,6 @@ public class FallingPlayer {
         this.x += this.motionX;
         this.y += this.motionY;
         this.z += this.motionZ;
-
-        // Обновляем предиктенный fallDistance
-        if (this.motionY < 0) {
-            double fallDistance = prevY - this.y;
-            this.predictedFallDistance += (float) fallDistance;
-        } else {
-            this.predictedFallDistance = 0.0f;
-        }
 
         this.simulatedTicks++;
     }
@@ -154,7 +142,7 @@ public class FallingPlayer {
             Optional<BlockPos> supportBlock = player.level().findSupportingBlock(player, box);
 
             if (supportBlock.isPresent()) {
-                return new CollisionResult(supportBlock.get(), i, this.predictedFallDistance);
+                return new CollisionResult(supportBlock.get(), i);
             }
         }
         return null;
@@ -164,12 +152,10 @@ public class FallingPlayer {
     public static class CollisionResult {
         private final BlockPos pos;
         private final float tick;
-        private final double predictedFallDistance;
 
-        public CollisionResult(BlockPos pos, float tick, double predictedFallDistance) {
+        public CollisionResult(BlockPos pos, float tick) {
             this.pos = pos;
             this.tick = tick;
-            this.predictedFallDistance = predictedFallDistance;
         }
     }
 }

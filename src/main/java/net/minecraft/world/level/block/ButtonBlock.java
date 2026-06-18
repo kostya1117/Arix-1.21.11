@@ -7,6 +7,8 @@ import com.mojang.serialization.codecs.RecordCodecBuilder.Instance;
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
+
+import com.viaversion.viafabricplus.settings.impl.DebugSettings;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -112,8 +114,10 @@ public class ButtonBlock extends FaceAttachedHorizontalDirectionalBlock {
         p_51118_.gameEvent(p_343045_, GameEvent.BLOCK_ACTIVATE, p_51119_);
     }
 
-    protected void playSound( Player p_51068_, LevelAccessor p_51069_, BlockPos p_51070_, boolean p_51071_) {
-        p_51069_.playSound(p_51071_ ? p_51068_ : null, p_51070_, this.getSound(p_51071_), SoundSource.BLOCKS);
+    protected void playSound(@Nullable Player p_51068_, LevelAccessor p_51069_, BlockPos p_51070_, boolean p_51071_) {
+        if (!DebugSettings.INSTANCE.serversidePlaceSounds.isEnabled()) {
+            p_51069_.playSound(p_51071_ ? p_51068_ : null, p_51070_, this.getSound(p_51071_), SoundSource.BLOCKS);
+        }
     }
 
     protected SoundEvent getSound(boolean p_51102_) {

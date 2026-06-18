@@ -6,6 +6,9 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.common.collect.Table;
 import com.mojang.logging.LogUtils;
+import com.viaversion.viafabricplus.injection.access.interaction.container_clicking.IAbstractContainerMenu;
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import java.util.ArrayList;
@@ -37,7 +40,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 
-public abstract class AbstractContainerMenu {
+public abstract class AbstractContainerMenu implements IAbstractContainerMenu {
     private static final Logger LOGGER = LogUtils.getLogger();
     public static final int SLOT_CLICKED_OUTSIDE = -999;
     public static final int QUICKCRAFT_TYPE_CHARITABLE = 0;
@@ -65,10 +68,19 @@ public abstract class AbstractContainerMenu {
     private final List<ContainerListener> containerListeners = Lists.newArrayList();
     private @Nullable ContainerSynchronizer synchronizer;
     private boolean suppressRemoteUpdates;
-
+    private short viaFabricPlus$actionId = 0;
     protected AbstractContainerMenu(@Nullable MenuType<?> p_38851_, int p_38852_) {
         this.menuType = p_38851_;
         this.containerId = p_38852_;
+    }
+    @Override
+    public short viaFabricPlus$getActionId() {
+        return viaFabricPlus$actionId;
+    }
+
+    @Override
+    public short viaFabricPlus$incrementAndGetActionId() {
+        return ++viaFabricPlus$actionId;
     }
 
     protected void addInventoryHotbarSlots(Container p_368706_, int p_367313_, int p_367317_) {
@@ -625,7 +637,10 @@ public abstract class AbstractContainerMenu {
             this.getSlot(i).set(p_182412_.get(i));
         }
 
-        this.carried = p_182413_;
+        if (ProtocolTranslator.getTargetVersion().newerThanOrEqualTo(ProtocolVersion.v1_17_1)) {
+            this.carried = p_182413_;
+        }
+
         this.stateId = p_182411_;
     }
 

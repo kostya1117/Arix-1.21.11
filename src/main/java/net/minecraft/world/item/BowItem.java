@@ -2,6 +2,8 @@ package net.minecraft.world.item;
 
 import java.util.List;
 import java.util.function.Predicate;
+
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -12,6 +14,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.level.Level;
+import net.raphimc.vialegacy.api.LegacyProtocolVersion;
 import org.jspecify.annotations.Nullable;
 
 public class BowItem extends ProjectileWeaponItem {
@@ -77,16 +80,31 @@ public class BowItem extends ProjectileWeaponItem {
 
     @Override
     public int getUseDuration(ItemStack p_40680_, LivingEntity p_344246_) {
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(LegacyProtocolVersion.b1_7tob1_7_3)) {
+            return (0);
+        }
         return 72000;
     }
 
     @Override
     public ItemUseAnimation getUseAnimation(ItemStack p_40678_) {
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(LegacyProtocolVersion.b1_7tob1_7_3)) {
+           return (ItemUseAnimation.NONE);
+        }
         return ItemUseAnimation.BOW;
     }
 
     @Override
     public InteractionResult use(Level p_40672_, Player p_40673_, InteractionHand p_40674_) {
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(LegacyProtocolVersion.b1_7tob1_7_3)) {
+            final ItemStack arrowStack = p_40673_.getProjectile(p_40673_.getItemInHand(p_40674_));
+            if (arrowStack.isEmpty()) {
+                return (InteractionResult.FAIL);
+            } else {
+                arrowStack.shrink(1);
+                return (InteractionResult.PASS);
+            }
+        }
         ItemStack itemstack = p_40673_.getItemInHand(p_40674_);
         boolean flag = !p_40673_.getProjectile(itemstack).isEmpty();
         if (!p_40673_.hasInfiniteMaterials() && !flag) {

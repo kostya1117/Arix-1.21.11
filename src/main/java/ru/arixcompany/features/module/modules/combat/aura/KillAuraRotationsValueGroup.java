@@ -7,7 +7,7 @@ import ru.arixcompany.features.module.modules.combat.aura.aiming.RotationManager
 import ru.arixcompany.features.module.modules.combat.aura.aiming.RotationTarget;
 import ru.arixcompany.features.module.modules.combat.aura.aiming.data.Rotation;
 import ru.arixcompany.features.module.modules.combat.aura.aiming.features.processors.RotationProcessor;
-import ru.arixcompany.features.module.modules.combat.aura.aiming.features.processors.anglesmooth.AngleSmooth;
+import ru.arixcompany.features.module.modules.combat.aura.aiming.features.processors.anglesmooth.FactorAngleSmooth;
 import ru.arixcompany.features.module.modules.combat.aura.aiming.features.processors.anglesmooth.impl.*;
 import ru.arixcompany.features.module.modules.combat.aura.aiming.features.MovementCorrection;
 import ru.arixcompany.utils.IMinecraft;
@@ -22,7 +22,7 @@ public class KillAuraRotationsValueGroup implements IMinecraft {
         if (entity == null || mc.player == null) return false;
 
         Rotation targetRot = findRotation(entity);
-        AngleSmooth smoother;
+        FactorAngleSmooth smoother;
         if (mc.player.isFallFlying() && HitAura.elytraTarget.isValue())
             smoother = new ElytraAngleSmooth();
         else
@@ -30,7 +30,7 @@ public class KillAuraRotationsValueGroup implements IMinecraft {
         MovementCorrection correction = getCorrectionMode();
 
         RotationManager.setRotationTarget(
-                new RotationTarget(targetRot, buildProcessors(smoother), 5, 2f, correction),
+                new RotationTarget(targetRot,entity, buildProcessors(smoother), 5, 2f, correction),
                 1,
                 RotationManager.getInstance()
         );
@@ -59,7 +59,7 @@ public class KillAuraRotationsValueGroup implements IMinecraft {
         return Rotation.lookingAt(targetPos, eyes);
     }
 
-    private AngleSmooth buildAngleSmooth() {
+    private FactorAngleSmooth buildAngleSmooth() {
         return switch (HitAura.angleSmooth.getSelected()) {
             case "Интерполяция" -> new InterpolationAngleSmooth(
                     (int) HitAura.horizontalTurnSpeedMin.getValue(),
@@ -69,7 +69,6 @@ public class KillAuraRotationsValueGroup implements IMinecraft {
                     55, 85, 0.35f
             );
             case "FuntimeSnap"  -> new FuntimeSnap();
-            case "Ускорение"    -> new AccelerationAngleSmooth();
             case "SpookyTime"   -> new SpookyTimeAngleSmooth();
             default             -> new LinearAngleSmooth(
                     HitAura.horizontalTurnSpeedMin.getValue(),
@@ -80,7 +79,7 @@ public class KillAuraRotationsValueGroup implements IMinecraft {
         };
     }
 
-    private List<RotationProcessor> buildProcessors(AngleSmooth smoother) {
+    private List<RotationProcessor> buildProcessors(FactorAngleSmooth smoother) {
         List<RotationProcessor> list = new ArrayList<>();
         list.add(smoother);
         return list;

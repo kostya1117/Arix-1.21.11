@@ -3,6 +3,8 @@ package net.minecraft.client.renderer.debug;
 import com.google.common.collect.Maps;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import com.viaversion.viafabricplus.injection.access.networking.packet_handling.IGameTestBlockHighlightRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gizmos.GizmoStyle;
 import net.minecraft.gizmos.Gizmos;
@@ -13,7 +15,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 
-public class GameTestBlockHighlightRenderer {
+public class GameTestBlockHighlightRenderer implements IGameTestBlockHighlightRenderer {
     private static final int SHOW_POS_DURATION_MS = 10000;
     private static final float PADDING = 0.02F;
     private final Map<BlockPos, GameTestBlockHighlightRenderer.Marker> markers = Maps.newHashMap();
@@ -38,6 +40,10 @@ public class GameTestBlockHighlightRenderer {
         if (!p_426048_.text.isEmpty()) {
             Gizmos.billboardText(p_426048_.text, Vec3.atLowerCornerWithOffset(p_430532_, 0.5, 1.2, 0.5), TextGizmo.Style.whiteAndCentered().withScale(0.16F)).setAlwaysOnTop();
         }
+    }
+    @Override
+    public void viaFabricPlus$addMarker(final BlockPos pos, final int color, final String message, final int duration) {
+        this.markers.put(pos, new GameTestBlockHighlightRenderer.Marker(color, message, Util.getMillis() + duration));
     }
 
     

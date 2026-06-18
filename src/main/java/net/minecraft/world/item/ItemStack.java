@@ -8,6 +8,12 @@ import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.DataResult.Error;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.viaversion.viafabricplus.features.item.r1_14_4_enchantment_tooltip.Enchantments1_14_4;
+import com.viaversion.viafabricplus.injection.access.item.attack_damage.IDisplayDefault;
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viafabricplus.util.ItemUtil;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
+import com.viaversion.viaversion.protocols.v1_21_4to1_21_5.Protocol1_21_4To1_21_5;
 import io.netty.handler.codec.DecoderException;
 import io.netty.handler.codec.EncoderException;
 import java.util.List;
@@ -22,10 +28,7 @@ import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.CriteriaTriggers;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Holder;
-import net.minecraft.core.HolderSet;
-import net.minecraft.core.NonNullList;
+import net.minecraft.core.*;
 import net.minecraft.core.component.DataComponentGetter;
 import net.minecraft.core.component.DataComponentHolder;
 import net.minecraft.core.component.DataComponentMap;
@@ -35,6 +38,10 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.component.PatchedDataComponentMap;
 import net.minecraft.core.component.TypedDataComponent;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
@@ -44,6 +51,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.RegistryOps;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.Stats;
@@ -100,6 +108,7 @@ import net.minecraft.world.level.block.state.pattern.BlockInWorld;
 import net.minecraft.world.level.gameevent.GameEvent;
 import org.apache.commons.lang3.function.TriConsumer;
 import org.apache.commons.lang3.mutable.MutableBoolean;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
 public final class ItemStack implements DataComponentHolder, IItemStack {
@@ -868,11 +877,46 @@ public final class ItemStack implements DataComponentHolder, IItemStack {
     }
 
     public <T extends TooltipProvider> void addToTooltip(
-        DataComponentType<T> p_331934_, Item.TooltipContext p_333562_, TooltipDisplay p_397538_, Consumer<Component> p_334534_, TooltipFlag p_333715_
+            DataComponentType<T> p_331934_, Item.TooltipContext p_333562_, TooltipDisplay p_397538_, Consumer<Component> p_334534_, TooltipFlag p_333715_
     ) {
+        // replaceEnchantmentTooltip
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_14_4)) {
+            final CompoundTag tag = ItemUtil.getTagOrNull(this);
+            if (tag != null) {
+                if (p_331934_ == DataComponents.ENCHANTMENTS) {
+                    viaFabricPlus$appendEnchantments1_14_4("Enchantments", tag, p_333562_, p_334534_);
+                    return;
+                } else if (p_331934_ == DataComponents.STORED_ENCHANTMENTS) {
+                    viaFabricPlus$appendEnchantments1_14_4("StoredEnchantments", tag, p_333562_, p_334534_);
+                    return;
+                }
+            }
+        }
+
         T t = (T)this.get(p_331934_);
         if (t != null && p_397538_.shows(p_331934_)) {
             t.addToTooltip(p_333562_, p_334534_, p_333715_, this.components);
+        }
+    }
+
+    private void viaFabricPlus$appendEnchantments1_14_4(final String name, final CompoundTag nbt, Item.TooltipContext context, final Consumer<Component> tooltip) {
+        final HolderLookup.Provider registryLookup = context.registries();
+        final ListTag enchantments = nbt.getList(name).orElse(null);
+        if (enchantments == null) {
+            return;
+        }
+
+        for (Tag element : enchantments) {
+            final CompoundTag enchantment = (CompoundTag) element;
+            final String id = enchantment.getStringOr("id", "");
+            final java.util.Optional<ResourceKey<Enchantment>> value = Enchantments1_14_4.getOrEmpty(id);
+            value.ifPresent(e -> {
+                final int lvl = enchantment.getIntOr("lvl", 0);
+                if (registryLookup != null) {
+                    final java.util.Optional<Holder.Reference<Enchantment>> v = registryLookup.lookupOrThrow(Registries.ENCHANTMENT).get(e);
+                    v.ifPresent(enchantmentReference -> tooltip.accept(Enchantment.getFullname(enchantmentReference, Mth.clamp(lvl, Short.MIN_VALUE, Short.MAX_VALUE))));
+                }
+            });
         }
     }
 
@@ -890,9 +934,22 @@ public final class ItemStack implements DataComponentHolder, IItemStack {
     }
 
     public void addDetailsToTooltip(
-        Item.TooltipContext p_396953_, TooltipDisplay p_394554_,  Player p_393346_, TooltipFlag p_392044_, Consumer<Component> p_396200_
+            Item.TooltipContext p_396953_, TooltipDisplay p_394554_, @Nullable Player p_393346_, TooltipFlag p_392044_, Consumer<Component> p_396200_
     ) {
-        this.getItem().appendHoverText(this, p_396953_, p_394554_, p_396200_, p_392044_);
+        // hideAdditionalTooltip
+        boolean showAdditionalTooltip;
+        if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_21_4)) {
+            final CompoundTag tag = ItemUtil.getTagOrNull(this);
+            final CompoundTag backup = tag == null ? null : tag.getCompoundOrEmpty(ItemUtil.vvNbtName(Protocol1_21_4To1_21_5.class, "backup"));
+            showAdditionalTooltip = backup == null || !backup.contains("hide_additional_tooltip");
+        } else {
+            showAdditionalTooltip = true;
+        }
+
+        if (showAdditionalTooltip) {
+            this.getItem().appendHoverText(this, p_396953_, p_394554_, p_396200_, p_392044_);
+        }
+
         this.addToTooltip(DataComponents.TROPICAL_FISH_PATTERN, p_396953_, p_394554_, p_396200_, p_392044_);
         this.addToTooltip(DataComponents.INSTRUMENT, p_396953_, p_394554_, p_396200_, p_392044_);
         this.addToTooltip(DataComponents.MAP_ID, p_396953_, p_394554_, p_396200_, p_392044_);
@@ -968,6 +1025,10 @@ public final class ItemStack implements DataComponentHolder, IItemStack {
     }
 
     private void addAttributeTooltips(Consumer<Component> p_333346_, TooltipDisplay p_391795_,  Player p_332769_) {
+        final ItemStack itemStack = this;
+        final IDisplayDefault mixinDefault = (IDisplayDefault) ItemAttributeModifiers.Display.attributeModifiers();
+        mixinDefault.viaFabricPlus$setItemEnchantments(EnchantmentHelper.getEnchantmentsForCrafting(itemStack));
+
         if (p_391795_.shows(DataComponents.ATTRIBUTE_MODIFIERS)) {
             for (EquipmentSlotGroup equipmentslotgroup : EquipmentSlotGroup.values()) {
                 MutableBoolean mutableboolean = new MutableBoolean(true);
