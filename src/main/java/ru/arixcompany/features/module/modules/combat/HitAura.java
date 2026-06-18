@@ -2,8 +2,10 @@ package ru.arixcompany.features.module.modules.combat;
 
 import lombok.Getter;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.network.protocol.game.ServerboundSetCarriedItemPacket;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemUseAnimation;
@@ -137,8 +139,14 @@ public class HitAura extends Module {
                             "Ломать щит",
                             "Не бить когда ешь",
                             "Не бить в контейнере",
-                            "Райкаст"
+                            "Райкаст",
+                            "Авто булава"
                     );
+
+    public static final SelectSetting maceCharge =
+            new SelectSetting("Заряд булавы")
+                    .value("Любая", "Середина", "Максимум")
+                    .visible(() -> misc.isSelected( "Авто булава"));
 
     public static final ListSetting extraSettings =
             new ListSetting("Доп.настройка")
@@ -148,6 +156,7 @@ public class HitAura extends Module {
     @Getter
     public static LivingEntity target;
     private final TargetHandler targetHandler = new TargetHandler();
+    private int previousSlot = -1;
     private final KillAuraRotationsValueGroup rotations = new KillAuraRotationsValueGroup();
     public final TimerUtils sprintTimer = new TimerUtils();
     public int count;
@@ -216,7 +225,7 @@ public class HitAura extends Module {
                 yawAccelerationMin, yawAccelerationMax,
                 pitchAccelerationMin, pitchAccelerationMax,
                 // Targets
-                targets, misc,
+                targets, misc, maceCharge,
 
                 extraSettings
         );
@@ -244,10 +253,7 @@ public class HitAura extends Module {
     public static boolean isInHand(LivingEntity entity, ItemStack itemStack, InteractionHand hand) {
         return entity.getItemInHand(hand) == itemStack;
     }
-
-    /**
-     * Проверка блокировки на стороне сервера (с учетом кросс-версионных особенностей).
-     */
+    
     public static boolean isBlockingServerside(LivingEntity entity) {
         if (entity.isBlocking()) {
             return true;
@@ -282,6 +288,11 @@ public class HitAura extends Module {
     public void onTick(EventGameTicked e) {
         if (mc.player == null || !mc.player.isAlive()) return;
 
+        if (misc.isSelected("Авто булава") && !mc.player.onGround() && mc.player.getDeltaMovement().y < 0) {
+            handleMaceSmash();
+            return;
+        }
+
         targetHandler.updateTarget();
         target = targetHandler.getTarget();
 
@@ -290,17 +301,10 @@ public class HitAura extends Module {
 
             float rangeToHit = attackRange.getValue();
 
-            //if (AuraUtil.validDistance(target, rangeToHit)) {
-            boolean sprint = true;
-            if (!mc.player.onGround()) {
-                sprint = !mc.player.isSprinting();
+            if (AuraUtil.validDistance(target, rangeToHit)) {
+                AttackHandler.performAttack(target, misc.isSelected("Райкаст"), rangeToHit);
             }
-            //if (!this.misc.isSelected("Не бить когда ешь") || !this.isUseItems()) {
-                if (AuraUtil.validDistance(target, rangeToHit)) {
-                    AttackHandler.performAttack(target, misc.isSelected("Райкаст"), rangeToHit);
-                }
-           // }
-        } else {
+        } else if (!misc.isSelected("Авто булава")) {
             reset();
         }
     }
@@ -388,12 +392,102 @@ public class HitAura extends Module {
         return mc.player.isUsingItem();
     }
 
+    private void handleMaceSmash() {
+        LivingEntity maceTarget = findMaceTarget();
+        if (maceTarget == null) {
+            if (target != null) target = null;
+            return;
+        }
+
+        target = maceTarget;
+
+        if (mc.player.getAttackStrengthScale(0.5f) < getMaceChargeThreshold()) return;
+
+        previousSlot = -1;
+        if (!autoSwapToMace()) return;
+
+        if (skipAttack()) {
+            restoreSlot();
+            return;
+        }
+
+        float range = attackRange.getValue();
+        if (AuraUtil.validDistance(maceTarget, range)) {
+            AttackHandler.performMaceAttack(maceTarget, range, getMaceChargeThreshold());
+        }
+        restoreSlot();
+    }
+
+    public float getMaceChargeThreshold() {
+        if (maceCharge.isSelected("Любая")) return 0.0f;
+        if (maceCharge.isSelected("Середина")) return 0.5f;
+        return 0.92f;
+    }
+
+    private void restoreSlot() {
+        if (previousSlot != -1) {
+            mc.player.getInventory().selected = previousSlot;
+            mc.player.connection.send(new ServerboundSetCarriedItemPacket(previousSlot));
+            previousSlot = -1;
+        }
+    }
+
+    private boolean autoSwapToMace() {
+        if (mc.player.getMainHandItem().is(Items.MACE)) return true;
+
+        for (int i = 0; i < 9; i++) {
+            if (mc.player.getInventory().getItem(i).is(Items.MACE)) {
+                if (mc.player.getInventory().selected != i) {
+                    previousSlot = mc.player.getInventory().selected;
+                    mc.player.getInventory().selected = i;
+                    mc.player.connection.send(new ServerboundSetCarriedItemPacket(i));
+                }
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private LivingEntity findMaceTarget() {
+        LivingEntity best = null;
+        double bestDist = Double.MAX_VALUE;
+        double y = mc.player.getY();
+
+        for (Entity entity : mc.level.entitiesForRendering()) {
+            if (!(entity instanceof LivingEntity living)) continue;
+            if (!isValidMaceTarget(living, y)) continue;
+
+            double dist = mc.player.distanceToSqr(living);
+            if (dist < bestDist) {
+                bestDist = dist;
+                best = living;
+            }
+        }
+        return best;
+    }
+
+    private boolean isValidMaceTarget(LivingEntity entity, double playerY) {
+        if (entity == mc.player) return false;
+        if (!entity.isAlive()) return false;
+        if (entity.isInvulnerable()) return false;
+
+        if (entity.getY() >= playerY) return false;
+
+        double hDist = Math.sqrt(
+                Math.pow(mc.player.getX() - entity.getX(), 2) +
+                Math.pow(mc.player.getZ() - entity.getZ(), 2)
+        );
+        if (hDist > attackRange.getValue() + preRange.getValue()) return false;
+
+        return true;
+    }
 
     private boolean skipAttack() {
         return mc.screen != null && misc.isSelected("Не атакавать в контейнере")
                 && !extraSettings.isSelected("Игнорировать инвентарь")
                 || !mc.player.getMainHandItem().is(ItemTags.SWORDS)
                 && !mc.player.getMainHandItem().is(ItemTags.AXES)
+                && !mc.player.getMainHandItem().is(Items.MACE)
                 && misc.isSelected("Бить только оружием");
     }
 

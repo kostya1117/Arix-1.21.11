@@ -58,6 +58,23 @@ public final class AttackHandler implements IMinecraft {
         useEntity(target, InteractionHand.MAIN_HAND);
     }
 
+    public void performMaceAttack(LivingEntity target, float ranges, float minAttackStrength) {
+        if (target == null || mc.player == null) return;
+        if (AuraUtil.getStrictDistance(target) >= ranges) return;
+        if (!(mc.player.getAttackStrengthScale(0.5f) >= minAttackStrength)) return;
+
+        HitAura hitAura = Arix.getInstance().getModuleRepo().getModule(HitAura.class);
+
+        if (target.hurtTime > 7 && hitAura.extraSettings.isSelected("Фикс удара при HurtTime")) {
+            return;
+        }
+        if (hitAura.sprintReset.isSelected("Пакет") && hitAura.extraSettings.isSelected("Сброс спринта") && SprintServerRepo.serverSprint) {
+            disableSprint();
+        }
+
+        useEntity(target, InteractionHand.MAIN_HAND);
+    }
+
     public boolean shouldAttack() {
         if (HitAura.target == null) return false;
         if (!(mc.player.getAttackStrengthScale(0.5f) >= 0.92)) return false;
