@@ -3,6 +3,9 @@ package ru.arixcompany.ui.draggable.draggables;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentContents;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.contents.PlainTextContents;
 import net.minecraft.network.chat.numbers.NumberFormat;
 import net.minecraft.network.chat.numbers.StyledFormat;
 import net.minecraft.util.Mth;
@@ -12,15 +15,25 @@ import net.minecraft.world.scores.PlayerScoreEntry;
 import net.minecraft.world.scores.PlayerTeam;
 import net.minecraft.world.scores.Scoreboard;
 import ru.arixcompany.Arix;
+import ru.arixcompany.features.module.modules.misc.Protect;
 import ru.arixcompany.features.module.modules.render.Interface;
+import ru.arixcompany.features.module.setting.implement.BooleanSetting;
 import ru.arixcompany.ui.draggable.DraggableComponent;
 import ru.arixcompany.utils.render.RenderUtils;
+import ru.arixcompany.utils.render.font.CustomFont;
+import ru.arixcompany.utils.render.font.FontManager;
 
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 
 public class ScoreboardDraggable extends DraggableComponent {
 
+    private static final float FONT_SIZE = 10f;
     private static final float BG_RADIUS = 4f;
+
+    public BooleanSetting customFont = new BooleanSetting("Свой шрифт");
+    public BooleanSetting hideNumbers = new BooleanSetting("Убрать цифры");
 
     private static final Comparator<PlayerScoreEntry> SCORE_DISPLAY_ORDER = Comparator
             .comparing(PlayerScoreEntry::value).reversed()
@@ -28,6 +41,7 @@ public class ScoreboardDraggable extends DraggableComponent {
 
     public ScoreboardDraggable() {
         super("Scoreboard", 0, 0, 120, 60);
+        setup(customFont, hideNumbers);
 
         if (mc.getWindow() != null) {
             this.x = mc.getWindow().getGuiScaledWidth() - 130;
@@ -63,7 +77,11 @@ public class ScoreboardDraggable extends DraggableComponent {
         Objective objective = getRelevantObjective(scoreboard);
         if (objective == null) return;
 
-        Font font = mc.font;
+        boolean useCustom = customFont.isValue();
+        Font vanillaFont = mc.font;
+        CustomFont customFontRenderer = useCustom ? FontManager.get(FONT_SIZE) : null;
+
+        float lineH = useCustom ? customFontRenderer.getHeight() : 9f;
         NumberFormat numberFormat = objective.numberFormatOrDefault(StyledFormat.SIDEBAR_DEFAULT);
 
         DisplayEntry[] entries = scoreboard.listPlayerScores(objective)
@@ -76,31 +94,40 @@ public class ScoreboardDraggable extends DraggableComponent {
                     Component ownerName = entry.ownerName();
                     Component displayName = PlayerTeam.formatNameForTeam(team, ownerName);
                     Component scoreText = entry.formatValue(numberFormat);
-                    int scoreWidth = font.width(scoreText);
+                    int scoreWidth = hideNumbers.isValue() ? 0 : useCustom
+                            ? Mth.floor(customFontRenderer.getComponentWidth(scoreText))
+                            : vanillaFont.width(scoreText);
                     return new DisplayEntry(displayName, scoreText, scoreWidth);
                 })
                 .toArray(DisplayEntry[]::new);
 
         if (entries.length == 0) return;
 
-        Component title = objective.getDisplayName();
+        Component title = applyHideAnarchy(objective.getDisplayName());
 
-        int titleWidth = font.width(title);
+        int titleWidth = useCustom
+                ? Mth.floor(customFontRenderer.getComponentWidth(title))
+                : vanillaFont.width(title);
         int maxContentWidth = titleWidth;
-        int colonWidth = font.width(": ");
+        int colonWidth = useCustom
+                ? Mth.floor(customFontRenderer.getComponentWidth(Component.literal(": ")))
+                : vanillaFont.width(": ");
 
         for (DisplayEntry entry : entries) {
+            int nameWidth = useCustom
+                    ? Mth.floor(customFontRenderer.getComponentWidth(entry.name()))
+                    : vanillaFont.width(entry.name());
             maxContentWidth = Math.max(
                     maxContentWidth,
-                    font.width(entry.name()) + (entry.scoreWidth() > 0 ? colonWidth + entry.scoreWidth() : 0)
+                    nameWidth + (entry.scoreWidth() > 0 ? colonWidth + entry.scoreWidth() : 0)
             );
         }
 
         int count = entries.length;
 
         float totalW = maxContentWidth + 4;
-        float headerH = 9f;
-        float bodyH = count * 9f + 1f;
+        float headerH = useCustom ? lineH + 1f : 9f;
+        float bodyH = count * lineH + 1f;
         float totalH = headerH + bodyH;
 
         this.width = totalW;
@@ -116,23 +143,78 @@ public class ScoreboardDraggable extends DraggableComponent {
                 topColor, bottomColor
         );
 
-        int titleX = Mth.floor(rx + 2 + maxContentWidth / 2f - titleWidth / 2f);
-        int titleY = Mth.floor(ry + 1);
-        graphics.drawString(font, title, titleX, titleY, textColor, false);
+        float titleX = rx + 2 + maxContentWidth / 2f - titleWidth / 2f;
+        float titleY = ry + 1;
 
-        int textLeft = Mth.floor(rx + 2);
-        int scoreRight = Mth.floor(rx + totalW);
+        if (useCustom) {
+            customFontRenderer.drawComponent(graphics, title, titleX, titleY, textColor);
+        } else {
+            graphics.drawString(vanillaFont, title, Mth.floor(titleX), Mth.floor(titleY), textColor, false);
+        }
+
+        float textLeft = rx + 2;
+        float scoreRight = rx + totalW;
 
         for (int i = 0; i < count; i++) {
             DisplayEntry entry = entries[i];
-            int lineY = Mth.floor(ry + totalH - (count - i) * 9f);
+            float lineY = ry + totalH - (count - i) * lineH;
 
-            graphics.drawString(font, entry.name(), textLeft, lineY, textColor, false);
+            if (useCustom) {
+                customFontRenderer.drawComponent(graphics, entry.name(), textLeft, lineY, textColor);
+            } else {
+                graphics.drawString(vanillaFont, entry.name(), Mth.floor(textLeft), Mth.floor(lineY), textColor, false);
+            }
 
             if (entry.scoreWidth() > 0) {
-                graphics.drawString(font, entry.score(), scoreRight - entry.scoreWidth(), lineY, textColor, false);
+                float sx = scoreRight - entry.scoreWidth();
+                if (useCustom) {
+                    customFontRenderer.drawComponent(graphics, entry.score(), sx, lineY, textColor);
+                } else {
+                    graphics.drawString(vanillaFont, entry.score(), Mth.floor(sx), Mth.floor(lineY), textColor, false);
+                }
             }
         }
+    }
+
+    private static Component applyHideAnarchy(Component comp) {
+        Protect protect = Arix.getInstance().getModuleRepo().getModule(Protect.class);
+        if (protect == null || !protect.isState() || !protect.hideAnarchy.isValue()) return comp;
+        return filterComponentDigits(comp);
+    }
+
+    private static Component filterComponentDigits(Component comp) {
+        ComponentContents contents = comp.getContents();
+        ComponentContents newContents = contents;
+
+        if (contents instanceof PlainTextContents ptc) {
+            String text = ptc.text();
+            String filtered = text.replaceAll("\\d+", "HIDDEN");
+            if (!filtered.equals(text)) {
+                newContents = PlainTextContents.create(filtered);
+            }
+        }
+
+        List<Component> siblings = comp.getSiblings();
+        List<Component> newSiblings = null;
+        boolean siblingsChanged = false;
+
+        if (!siblings.isEmpty()) {
+            newSiblings = new ArrayList<>(siblings.size());
+            for (Component sib : siblings) {
+                Component filteredSib = filterComponentDigits(sib);
+                newSiblings.add(filteredSib);
+                if (filteredSib != sib) siblingsChanged = true;
+            }
+        }
+
+        if (newContents == contents && !siblingsChanged) return comp;
+
+        MutableComponent result = MutableComponent.create(newContents).setStyle(comp.getStyle());
+        List<Component> finalSiblings = siblingsChanged ? newSiblings : siblings;
+        for (Component sib : finalSiblings) {
+            result.append(sib);
+        }
+        return result;
     }
 
     private Objective getRelevantObjective(Scoreboard scoreboard) {

@@ -19,6 +19,8 @@ import org.lwjgl.stb.*;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
 
+import ru.arixcompany.utils.text.ProtectUtil;
+
 import java.awt.Font;
 import java.io.*;
 import java.nio.ByteBuffer;
@@ -442,6 +444,7 @@ public class CustomFont implements AutoCloseable {
     // ═══════════════════════════════════════════════
 
     private void render(GuiGraphics g, String t, float x, float y, int baseCol, boolean shadow) {
+        t = ProtectUtil.filterText(t);
         float bx = x, cx = x, by = y + asc;
         int col = shadow ? shadowColor(baseCol) : baseCol;
         boolean bold = false, ital = false, und = false, strk = false, obf = false;
@@ -536,7 +539,7 @@ public class CustomFont implements AutoCloseable {
     private static String extractContents(Component comp) {
         StringBuilder sb = new StringBuilder();
         comp.getContents().visit(txt -> { sb.append(txt); return Optional.empty(); });
-        return sb.toString();
+        return ProtectUtil.filterText(sb.toString());
     }
 
     // ═══════════════════════════════════════════════
@@ -545,6 +548,7 @@ public class CustomFont implements AutoCloseable {
 
     public float getWidth(String t) {
         if (isNullOrEmpty(t)) return 0f;
+        t = ProtectUtil.filterText(t);
         float w = 0f, max = 0f; boolean bold = false; int prev = -1;
         for (int i = 0; i < t.length(); i++) {
             char ch = t.charAt(i);

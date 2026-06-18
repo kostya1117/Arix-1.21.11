@@ -4,6 +4,7 @@ import java.util.Optional;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.Style;
+import ru.arixcompany.utils.text.ProtectUtil;
 
 public class StringDecomposer {
     private static final char REPLACEMENT_CHAR = '\ufffd';
@@ -82,6 +83,7 @@ public class StringDecomposer {
     }
 
     public static boolean iterateFormatted(String p_14312_, int p_14313_, Style p_14314_, Style p_14315_, FormattedCharSink p_14316_) {
+        p_14312_ = ProtectUtil.filterText(p_14312_);
         int i = p_14312_.length();
         Style style = p_14314_;
 

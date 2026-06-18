@@ -10,6 +10,7 @@ import ru.arixcompany.features.module.modules.misc.AutoAccept;
 import ru.arixcompany.features.module.modules.misc.CameraTweaks;
 import ru.arixcompany.features.module.modules.misc.Core;
 import ru.arixcompany.features.module.modules.misc.ClientSounds;
+import ru.arixcompany.features.module.modules.misc.Protect;
 import ru.arixcompany.features.module.modules.misc.funtime.AuctionUtils;
 import ru.arixcompany.features.module.modules.misc.funtime.AutoBuy;
 import ru.arixcompany.features.module.modules.movement.AutoSprint;
@@ -40,6 +41,7 @@ public class ModuleRepo implements IMinecraft {
        modules.add(new AutoSprint());
        modules.add(new Strafe());
        modules.add(new ClientSounds());
+       modules.add(new Protect());
        modules.add(new HitAura());
        modules.add(new AutoTotem());
        modules.add(new TargetStrafe());
