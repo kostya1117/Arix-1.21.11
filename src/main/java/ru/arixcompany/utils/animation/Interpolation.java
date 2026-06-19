@@ -2,26 +2,14 @@ package ru.arixcompany.utils.animation;
 
 import ru.arixcompany.features.module.modules.combat.aura.aiming.data.Rotation;
 
-/**
- * Utility class for easing-based interpolation working in the [-1, 1] range.
- * <p>
- * All easing curves are precomputed into a lookup table of 81 points (80 intervals)
- * covering t ∈ [-1, 1]. The coefficient for t ∈ [-1, 1] is obtained by linear
- * interpolation within the table, allowing fast and smooth evaluation.
- * <p>
- * The coefficient is defined symmetrically:
- * for t ≥ 0, coefficient = ease(|t|) where ease: [0,1] → [0,1];
- * for t < 0, coefficient = -ease(|t|).
- * This gives a natural bidirectional interpolation curve.
- */
+
 public final class Interpolation {
 
-    private static final int STEPS = 80;                      // number of intervals
-    private static final int TABLE_SIZE = STEPS + 1;          // 81 points
-    private static final double STEP_SIZE = 2.0 / STEPS;      // distance between adjacent t values
+    private static final int STEPS = 80;
+    private static final int TABLE_SIZE = STEPS + 1;
+    private static final double STEP_SIZE = 2.0 / STEPS;
     private static final double INV_STEP_SIZE = 1.0 / STEP_SIZE;
 
-    // Lookup table: [curve ordinal][mode ordinal][point index]
     private static final double[][][] TABLE;
 
     static {
@@ -33,16 +21,12 @@ public final class Interpolation {
             for (Mode mode : modes) {
                 double[] column = TABLE[curve.ordinal()][mode.ordinal()];
                 for (int i = 0; i < TABLE_SIZE; i++) {
-                    double t = -1.0 + i * STEP_SIZE;          // t in [-1, 1]
+                    double t = -1.0 + i * STEP_SIZE;
                     column[i] = computeRawCoefficient(t, curve, mode);
                 }
             }
         }
     }
-
-    // ------------------------------------------------------------------------
-    // Public enums
-    // ------------------------------------------------------------------------
 
     public enum Curve {
         LINEAR, QUAD, CUBIC, QUART, QUINT, SINE, EXPO, CIRC, ELASTIC, BACK, BOUNCE, SMOOTHSTEP, SMOOTHERSTEP
@@ -55,23 +39,13 @@ public final class Interpolation {
     private Interpolation() {
     }
 
-    // ------------------------------------------------------------------------
-    // Core coefficient lookup
-    // ------------------------------------------------------------------------
-
-    /**
-     * Returns the interpolation coefficient for the given progress {@code t}.
-     * The progress is expected to be in the range [-1, 1] (clamped if outside).
-     * The returned coefficient will also be in [-1, 1].
-     */
     public static double getRawCoefficient(double t, Curve curve, Mode mode) {
         if (Double.isNaN(t)) return 0.0;
-        // Clamp to the precomputed range
         if (t <= -1.0) return TABLE[curve.ordinal()][mode.ordinal()][0];
         if (t >= 1.0) return TABLE[curve.ordinal()][mode.ordinal()][TABLE_SIZE - 1];
 
         double[] column = TABLE[curve.ordinal()][mode.ordinal()];
-        double scaled = (t + 1.0) * INV_STEP_SIZE;             // fractional index
+        double scaled = (t + 1.0) * INV_STEP_SIZE;
         int idx = (int) scaled;
         double frac = scaled - idx;
 
@@ -80,27 +54,11 @@ public final class Interpolation {
         return v0 + frac * (v1 - v0);
     }
 
-    // ------------------------------------------------------------------------
-    // Interpolation methods
-    // ------------------------------------------------------------------------
-
-    /**
-     * Interpolates from {@code from} to {@code to} using the selected curve and mode.
-     * {@code t} is expected in [-1, 1]; values outside are clamped.
-     */
     public static double interpolate(double from, double to, double t, Curve curve, Mode mode) {
         double coefficient = getRawCoefficient(t, curve, mode);
         return Math.fma(to - from, coefficient, from);
     }
 
-    /**
-     * Interpolates between two {@link Rotation} values.
-     * Each axis is advanced independently with a speed limit.
-     * <p>
-     * All angles are assumed to be normalised to the range [-1, 1].
-     * No wrap-around is applied – if your yaw is circular you need to handle that
-     * externally before calling this method.
-     */
     public static Rotation interpolateRotation(Rotation current, Rotation target,
                                                float yawSpeed, float pitchSpeed) {
         return interpolateRotation(
@@ -110,10 +68,6 @@ public final class Interpolation {
         );
     }
 
-    /**
-     * Interpolates from raw yaw/pitch values to target values with separate speed limits.
-     * Values are clamped to [-1, 1] after interpolation.
-     */
     public static Rotation interpolateRotation(float currentYaw, float currentPitch,
                                                float targetYaw, float targetPitch,
                                                float yawSpeed, float pitchSpeed) {
@@ -128,7 +82,7 @@ public final class Interpolation {
         }
 
         float limit = Math.max(0.0f, speed);
-        float delta = target - current;                 // no wrapping needed inside [-1, 1]
+        float delta = target - current;
         float absDelta = Math.abs(delta);
 
         if (absDelta < 1.0E-4f || limit == 0.0f) {
@@ -136,7 +90,7 @@ public final class Interpolation {
         }
 
         float t = Math.min(1.0f, limit / absDelta);
-        // Always use CIRC_IN_OUT for the axis interpolation as in the original
+
         float coefficient = (float) getRawCoefficient(t, Curve.CIRC, Mode.IN_OUT);
         float result = current + delta * coefficient;
 
@@ -147,14 +101,7 @@ public final class Interpolation {
         return value < min ? min : (value > max ? max : value);
     }
 
-    // ------------------------------------------------------------------------
-    // Easing functions used only for building the lookup table
-    // ------------------------------------------------------------------------
 
-    /**
-     * Computes the coefficient for t ∈ [-1, 1] without table lookup.
-     * For t ≥ 0 the result is ease(|t|), for t < 0 it is -ease(|t|).
-     */
     private static double computeRawCoefficient(double t, Curve curve, Mode mode) {
         if (t == 0.0) return 0.0;
         if (t == 1.0) return 1.0;
@@ -179,8 +126,6 @@ public final class Interpolation {
 
         return t > 0.0 ? base : -base;
     }
-
-    // -- Original easing implementations (operating on [0,1]) -----------------
 
     private static final double PI = Math.PI;
     private static final double HALF_PI = PI / 2.0;
