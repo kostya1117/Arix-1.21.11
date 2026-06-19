@@ -1,5 +1,3 @@
-/reg vkywmutiuv
-/login cakkkkkkkkkkkkkk
 /login DrPrMHHxKi2nsGk
 /hu
 /hub
@@ -48,3 +46,5 @@
 /flu
 /fly
 /kit rabbit
+/kit
+/god

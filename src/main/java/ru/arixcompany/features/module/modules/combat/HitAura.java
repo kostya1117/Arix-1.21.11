@@ -143,11 +143,6 @@ public class HitAura extends Module {
                             "Авто булава"
                     );
 
-    public static final SelectSetting maceCharge =
-            new SelectSetting("Заряд булавы")
-                    .value("Любая", "Середина", "Максимум")
-                    .visible(() -> misc.isSelected( "Авто булава"));
-
     public static final ListSetting extraSettings =
             new ListSetting("Доп.настройка")
                     .value("Умные криты", "Сброс спринта", "Фикс удара при HurtTime",
@@ -225,7 +220,7 @@ public class HitAura extends Module {
                 yawAccelerationMin, yawAccelerationMax,
                 pitchAccelerationMin, pitchAccelerationMax,
                 // Targets
-                targets, misc, maceCharge,
+                targets, misc,
 
                 extraSettings
         );
@@ -253,7 +248,7 @@ public class HitAura extends Module {
     public static boolean isInHand(LivingEntity entity, ItemStack itemStack, InteractionHand hand) {
         return entity.getItemInHand(hand) == itemStack;
     }
-    
+
     public static boolean isBlockingServerside(LivingEntity entity) {
         if (entity.isBlocking()) {
             return true;
@@ -288,10 +283,15 @@ public class HitAura extends Module {
     public void onTick(EventGameTicked e) {
         if (mc.player == null || !mc.player.isAlive()) return;
 
-        if (misc.isSelected("Авто булава") && !mc.player.onGround() && mc.player.getDeltaMovement().y < 0) {
+        if (misc.isSelected("Авто булава") && !mc.player.onGround() && mc.player.getDeltaMovement().y < 0 && mc.player.fallDistance > 1.5f) {
+            if (!mc.player.getMainHandItem().is(Items.MACE)) {
+                autoSwapToMace();
+                return;
+            }
             handleMaceSmash();
             return;
         }
+        restoreSlot();
 
         targetHandler.updateTarget();
         target = targetHandler.getTarget();
@@ -378,6 +378,7 @@ public class HitAura extends Module {
 
     private void reset() {
         target = null;
+        restoreSlot();
         if (mc.player != null) {
             count = 0;
             if (Arix.getInstance().getModuleRepo().getModule(AutoSprint.class).isState() && !Arix.getInstance().getModuleRepo().getModule(AutoSprint.class).sprint) {
@@ -401,27 +402,12 @@ public class HitAura extends Module {
 
         target = maceTarget;
 
-        if (mc.player.getAttackStrengthScale(0.5f) < getMaceChargeThreshold()) return;
-
-        previousSlot = -1;
-        if (!autoSwapToMace()) return;
-
-        if (skipAttack()) {
-            restoreSlot();
-            return;
-        }
+        if (skipAttack()) return;
 
         float range = attackRange.getValue();
         if (AuraUtil.validDistance(maceTarget, range)) {
-            AttackHandler.performMaceAttack(maceTarget, range, getMaceChargeThreshold());
+            AttackHandler.performMaceAttack(maceTarget, range);
         }
-        restoreSlot();
-    }
-
-    public float getMaceChargeThreshold() {
-        if (maceCharge.isSelected("Любая")) return 0.0f;
-        if (maceCharge.isSelected("Середина")) return 0.5f;
-        return 0.92f;
     }
 
     private void restoreSlot() {
@@ -475,7 +461,7 @@ public class HitAura extends Module {
 
         double hDist = Math.sqrt(
                 Math.pow(mc.player.getX() - entity.getX(), 2) +
-                Math.pow(mc.player.getZ() - entity.getZ(), 2)
+                        Math.pow(mc.player.getZ() - entity.getZ(), 2)
         );
         if (hDist > attackRange.getValue() + preRange.getValue()) return false;
 

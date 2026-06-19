@@ -1,6 +1,6 @@
 version:4671
 ao:false
-biomeBlendRadius:0
+biomeBlendRadius:1
 chunkSectionFadeInTime:0.75
 cutoutLeaves:false
 enableVsync:false
@@ -15,7 +15,7 @@ glintSpeed:0.5
 glintStrength:0.75
 graphicsPreset:"custom"
 prioritizeChunkUpdates:0
-fullscreen:false
+fullscreen:true
 gamma:1.0
 guiScale:2
 maxAnisotropyBit:1
@@ -23,14 +23,14 @@ textureFiltering:0
 maxFps:260
 improvedTransparency:false
 inactivityFpsLimit:"afk"
-mipmapLevels:0
+mipmapLevels:2
 narrator:0
 particles:0
 reducedDebugInfo:false
 renderClouds:"fast"
-cloudRange:2
-renderDistance:2
-simulationDistance:5
+cloudRange:32
+renderDistance:8
+simulationDistance:6
 screenEffectScale:0.0
 soundDevice:""
 vignette:true

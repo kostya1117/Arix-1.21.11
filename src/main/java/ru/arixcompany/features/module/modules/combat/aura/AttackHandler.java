@@ -58,10 +58,9 @@ public final class AttackHandler implements IMinecraft {
         useEntity(target, InteractionHand.MAIN_HAND);
     }
 
-    public void performMaceAttack(LivingEntity target, float ranges, float minAttackStrength) {
+    public void performMaceAttack(LivingEntity target, float ranges) {
         if (target == null || mc.player == null) return;
         if (AuraUtil.getStrictDistance(target) >= ranges) return;
-        if (!(mc.player.getAttackStrengthScale(0.5f) >= minAttackStrength)) return;
 
         HitAura hitAura = Arix.getInstance().getModuleRepo().getModule(HitAura.class);
 
@@ -80,10 +79,7 @@ public final class AttackHandler implements IMinecraft {
         if (!(mc.player.getAttackStrengthScale(0.5f) >= 0.92)) return false;
         return isBestMomentToHit();
     }
-    public boolean shouldAttackS() {
-        if (HitAura.target == null) return false;
-        return mc.player.getAttackStrengthScale(0.5f) >= 0.92; // Тоже меняем здесь
-    }
+
     public boolean hasMovementRestrictions() {
         if (mc.player == null) return false;
 

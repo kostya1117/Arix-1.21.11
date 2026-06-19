@@ -15,7 +15,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import ru.arixcompany.Arix;
-import ru.arixcompany.features.module.modules.misc.Core;
+import ru.arixcompany.features.module.modules.render.Interface;
 import ru.arixcompany.features.repos.SoundRepo;
 import ru.arixcompany.utils.render.RenderUtils;
 import ru.arixcompany.utils.render.font.FontManager;
@@ -32,7 +32,7 @@ public abstract class AbstractSliderButton extends AbstractWidget.WithInactiveMe
 
     @Override
     protected void renderWidget(GuiGraphics g, int mouseX, int mouseY, float partialTicks) {
-        Core module = Arix.getInstance().getModuleRepo().getModule(Core.class);
+        Interface module = Arix.getInstance().getModuleRepo().getModule(Interface.class);
 
         if (module != null && module.isState() && module.customButtons.isValue()) {
             renderCustomSlider(g);
@@ -65,15 +65,14 @@ public abstract class AbstractSliderButton extends AbstractWidget.WithInactiveMe
             outlineColor = new Color(theme.getRed(), theme.getGreen(), theme.getBlue(), 120).getRGB();
         }
 
-        RenderUtils.fillRoundRect(x, y, w, h, radius, bgColor);
-        RenderUtils.drawRoundRectOutline(x, y, w, h, radius, 1.0f, outlineColor);
+        RenderUtils.fillRoundRect(g, x, y, w, h, radius, bgColor);
 
         float progressWidth = (float) (this.value * w);
         if (progressWidth > 4) {
             int progressColor = new Color(theme.getRed(), theme.getGreen(), theme.getBlue(), 90).getRGB();
-            RenderUtils.fillRoundRect(x, y, progressWidth, h, radius, progressColor);
+            RenderUtils.fillRoundRect(g, x, y, progressWidth, h, radius, progressColor);
 
-            RenderUtils.fillRect(x + progressWidth - 1.5f, y + 2, 1.5f, h - 4, theme.getRGB());
+            RenderUtils.fillRoundRect(g, x + progressWidth - 1.5f, y + 2, 1.5f, h - 4, 0, theme.getRGB());
         }
 
         float fontSize = 10f;
@@ -105,7 +104,7 @@ public abstract class AbstractSliderButton extends AbstractWidget.WithInactiveMe
     @Override
     public void onRelease(MouseButtonEvent event) {
         this.dragging = false;
-        Core module = Arix.getInstance().getModuleRepo().getModule(Core.class);
+        Interface module = Arix.getInstance().getModuleRepo().getModule(Interface.class);
         if (module != null && module.isState() && module.customButtons.isValue() && module.buttonSounds.isValue()) {
             SoundRepo.playButton();
         } else {
