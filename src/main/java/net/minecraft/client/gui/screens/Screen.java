@@ -77,7 +77,7 @@ public abstract class Screen extends AbstractContainerEventHandler implements Re
     private boolean initialized;
     public int width;
     public int height;
-    private final List<Renderable> renderables = Lists.newArrayList();
+    protected final List<Renderable> renderables = Lists.newArrayList();
     protected final Font font;
     private static final long NARRATE_SUPPRESS_AFTER_INIT_TIME = TimeUnit.SECONDS.toMillis(2L);
     private static final long NARRATE_DELAY_NARRATOR_ENABLED = NARRATE_SUPPRESS_AFTER_INIT_TIME;

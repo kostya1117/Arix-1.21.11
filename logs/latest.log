@@ -1,32 +1,30 @@
-[19:43:16] [Datafixer Bootstrap/INFO]: 287 Datafixer optimizations took 1366 milliseconds
-[19:43:17] [main/WARN]: Failed to add PDH Counter: \Paging File(_Total)\% Usage, Error code: 0xC0000BB8
-[19:43:17] [main/WARN]: Failed to add counter for PDH counter: \Paging File(_Total)\% Usage
-[19:43:17] [main/INFO]: Disabling further attempts to query Paging File.
-[19:43:18] [main/WARN]: COM exception: Invalid Query: SELECT PERCENTUSAGE FROM Win32_PerfRawData_PerfOS_PagingFile
-[19:43:18] [main/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeEntity.canUpdate
-[19:43:18] [main/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.logging.CrashReportExtender
-[19:43:19] [main/INFO]: [OptiFine] (Reflector) Method not present: net.minecraft.tags.ItemTags.create
-[19:43:28] [main/INFO]: Completely ignored arguments: [--userProperties, {}]
-[19:43:28] [Render thread/INFO]: Environment: Environment[sessionHost=https://sessionserver.mojang.com, servicesHost=https://api.minecraftservices.com, profilesHost=https://api.mojang.com, name=PROD]
-[19:43:28] [Render thread/INFO]: Setting user: Player642
-[19:43:28] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.settings.KeyConflictContext
-[19:43:28] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraft.client.KeyMapping.getKeyModifier
-[19:43:28] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.settings.KeyModifier
-[19:43:28] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraft.launchwrapper.Launch
-[19:43:28] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.versions.forge.ForgeVersion
-[19:43:28] [Render thread/INFO]: [voicechat] Compatibility version 20
-[19:43:29] [Via-Mappingloader-1/INFO]: Loading block connection mappings ...
-[19:43:29] [Render thread/INFO]: [voicechat] Loading plugins
-[19:43:29] [Render thread/INFO]: [voicechat] Loaded 0 plugin(s)
-[19:43:29] [Render thread/INFO]: [voicechat] Initializing plugins
-[19:43:29] [Render thread/INFO]: [voicechat] Initialized 0 plugin(s)
-[19:43:30] [Worker-Main-1/INFO]: Loading translations...
-[19:43:30] [Render thread/INFO]: [voicechat] Initializing Opus
-[19:43:30] [Worker-Main-1/INFO]: Registering protocols...
-[19:43:30] [Render thread/INFO]: [voicechat] Successfully initialized Opus
-[19:43:30] [Render thread/INFO]: [voicechat] Initializing RNNoise
-[19:43:30] [Render thread/INFO]: [voicechat] Successfully initialized RNNoise
-[19:43:30] [Download-2/ERROR]: Failed to fetch user properties
+[18:02:53] [main/WARN]: Invalid registry value type detected for PerfOS counters. Should be REG_DWORD. Ignoring: HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\PerfOS\Performance\Disable Performance Counters.
+[18:02:54] [main/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeEntity.canUpdate
+[18:02:55] [main/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.logging.CrashReportExtender
+[18:02:55] [Datafixer Bootstrap/INFO]: 287 Datafixer optimizations took 2873 milliseconds
+[18:02:56] [main/INFO]: [OptiFine] (Reflector) Method not present: net.minecraft.tags.ItemTags.create
+[18:03:14] [main/INFO]: Completely ignored arguments: [--userProperties, {}]
+[18:03:15] [Render thread/INFO]: Environment: Environment[sessionHost=https://sessionserver.mojang.com, servicesHost=https://api.minecraftservices.com, profilesHost=https://api.mojang.com, name=PROD]
+[18:03:15] [Render thread/INFO]: Setting user: Player731
+[18:03:16] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.settings.KeyConflictContext
+[18:03:16] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraft.client.KeyMapping.getKeyModifier
+[18:03:16] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.settings.KeyModifier
+[18:03:16] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraft.launchwrapper.Launch
+[18:03:16] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.versions.forge.ForgeVersion
+[18:03:16] [Render thread/INFO]: [voicechat] Compatibility version 20
+[18:03:16] [Render thread/INFO]: [voicechat] Loading plugins
+[18:03:16] [Render thread/INFO]: [voicechat] Loaded 0 plugin(s)
+[18:03:16] [Render thread/INFO]: [voicechat] Initializing plugins
+[18:03:16] [Render thread/INFO]: [voicechat] Initialized 0 plugin(s)
+[18:03:17] [Via-Mappingloader-1/INFO]: Loading block connection mappings ...
+[18:03:17] [Render thread/INFO]: [voicechat] Initializing Opus
+[18:03:18] [Render thread/INFO]: [voicechat] Successfully initialized Opus
+[18:03:18] [Render thread/INFO]: [voicechat] Initializing RNNoise
+[18:03:18] [Render thread/INFO]: [voicechat] Successfully initialized RNNoise
+[18:03:18] [Render thread/INFO]: [voicechat] Initializing Speex
+[18:03:19] [Render thread/INFO]: [voicechat] Successfully initialized Speex
+[18:03:19] [Render thread/INFO]: [voicechat] Initializing LAME
+[18:03:19] [Download-2/ERROR]: Failed to fetch user properties
 com.mojang.authlib.exceptions.InvalidCredentialsException: Status: 401
 	at com.mojang.authlib.exceptions.MinecraftClientHttpException.toAuthenticationException(MinecraftClientHttpException.java:59)
 	at com.mojang.authlib.yggdrasil.YggdrasilUserApiService.fetchProperties(YggdrasilUserApiService.java:150)
@@ -40,308 +38,308 @@ Caused by: com.mojang.authlib.exceptions.MinecraftClientHttpException: Status: 4
 	at com.mojang.authlib.minecraft.client.MinecraftClient.get(MinecraftClient.java:56)
 	at com.mojang.authlib.yggdrasil.YggdrasilUserApiService.fetchProperties(YggdrasilUserApiService.java:121)
 	... 5 more
-[19:43:30] [Render thread/INFO]: [voicechat] Initializing Speex
-[19:43:30] [Render thread/INFO]: [voicechat] Successfully initialized Speex
-[19:43:30] [Render thread/INFO]: [voicechat] Initializing LAME
-[19:43:31] [Render thread/INFO]: [voicechat] Successfully initialized LAME
-[19:43:31] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.loading.ClientModLoader
-[19:43:31] [Render thread/INFO]: Backend library: LWJGL version 3.3.3+5
-[19:43:31] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.internal.BrandingControl
-[19:43:31] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.fml.loading.ImmediateWindowHandler
-[19:43:32] [Render thread/WARN]: [OptiFine] (Reflector) java.lang.ClassNotFoundException: sun.misc.SharedSecrets
-[19:43:32] [Render thread/WARN]: [OptiFine] (Reflector) java.lang.ClassNotFoundException: jdk.internal.misc.SharedSecrets
-[19:43:32] [Render thread/WARN]: [OptiFine] (Reflector) java.lang.ClassNotFoundException: sun.misc.VM
-[19:43:32] [Render thread/WARN]: [OptiFine] (Reflector) java.lang.reflect.InaccessibleObjectException: Unable to make public static long jdk.internal.misc.VM.maxDirectMemory() accessible: module java.base does not "exports jdk.internal.misc" to unnamed module @4ddced80
-[19:43:32] [Worker-Main-1/INFO]: Started resource pack HTTP server on http://127.0.0.1:18128/
-[19:43:32] [Worker-Main-1/INFO]: ViaVersion detected lowest supported version by the proxy: c0.0.15a-1 (0)
-[19:43:32] [Worker-Main-1/INFO]: Highest supported version by the proxy: Bedrock 1.26.10 (944)
-[19:43:32] [Worker-Main-1/INFO]: Environment: Environment[sessionHost=https://sessionserver.mojang.com, servicesHost=https://api.minecraftservices.com, profilesHost=https://api.mojang.com, name=PROD]
-[19:43:33] [Render thread/INFO]: [OptiFine] 
-[19:43:33] [Render thread/INFO]: [OptiFine] OptiFine_1.21.11_HD_U_J9
-[19:43:33] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: optifine.OptiFineResourceLocator
-[19:43:33] [Render thread/INFO]: [OptiFine] Build: null
-[19:43:33] [Render thread/INFO]: [OptiFine] OS: Windows 11 (amd64) version 10.0
-[19:43:33] [Render thread/INFO]: [OptiFine] Java: 21.0.11, Amazon.com Inc.
-[19:43:33] [Render thread/INFO]: [OptiFine] VM: OpenJDK 64-Bit Server VM (mixed mode, sharing), Amazon.com Inc.
-[19:43:33] [Render thread/INFO]: [OptiFine] LWJGL: 3.4.0 Win32 WGL Null EGL OSMesa VisualC DLL
-[19:43:33] [Render thread/INFO]: [OptiFine] OpenGL: NVIDIA GeForce GTX 1080/PCIe/SSE2, version 3.3.0 NVIDIA 582.28, NVIDIA Corporation
-[19:43:33] [Render thread/INFO]: [OptiFine] OpenGL Version: 3.3.0
-[19:43:33] [Render thread/INFO]: [OptiFine] Maximum texture size: 32768x32768
-[19:43:33] [Render thread/INFO]: [Shaders] OpenGL Version: 3.3.0 NVIDIA 582.28
-[19:43:33] [Render thread/INFO]: [Shaders] Vendor:  NVIDIA Corporation
-[19:43:33] [Render thread/INFO]: [Shaders] Renderer: NVIDIA GeForce GTX 1080/PCIe/SSE2
-[19:43:33] [Render thread/INFO]: [Shaders] Capabilities:  2.0  2.1  3.0  3.2  - 
-[19:43:33] [Render thread/INFO]: [Shaders] GL_MAX_DRAW_BUFFERS: 8
-[19:43:33] [Render thread/INFO]: [Shaders] GL_MAX_COLOR_ATTACHMENTS: 8
-[19:43:33] [Render thread/INFO]: [Shaders] GL_MAX_TEXTURE_IMAGE_UNITS: 32
-[19:43:33] [Render thread/INFO]: [Shaders] Load shaders configuration.
-[19:43:33] [Render thread/INFO]: [Shaders] No shaderpack loaded.
-[19:43:33] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.fml.ModList
-[19:43:33] [Render thread/INFO]: Using optional rendering extensions: GL_ARB_buffer_storage, GL_KHR_debug, GL_ARB_vertex_attrib_binding, GL_ARB_direct_state_access, GL_EXT_texture_filter_anisotropic
-[19:43:33] [Render thread/ERROR]: Couldn't load file/fullbright-ub-1.21.zip pack metadata: Pack declares support for version newer than 64, but is missing mandatory fields min_format and max_format
-[19:43:33] [Render thread/ERROR]: Couldn't load file/fullbright-ub-1.21.zip overlays metadata: Overlay "fixes" declares support for version newer than 64, but is missing mandatory fields min_format and max_format
-[19:43:33] [VersionCheck/INFO]: [OptiFine] Checking for new version
-[19:43:33] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.ForgeHooksClient
-[19:43:33] [VersionCheck/INFO]: [OptiFine] Version found: J9
-[19:43:33] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.event.ForgeEventFactoryClient
-[19:43:33] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.gui.overlay.ForgeLayeredDraw
-[19:43:34] [Render thread/INFO]: Reloading ResourceManager: vanilla
-[19:43:34] [Render thread/INFO]: [OptiFine] *** Reloading resources ***
-[19:43:34] [Render thread/INFO]: [OptiFine] *** Reloading textures ***
-[19:43:34] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.model.geometry.GeometryLoaderManager
-[19:43:34] [Render thread/INFO]: [CHAT] [Baritone] Baritone settings file not found, resetting.
-[19:43:34] [Render thread/INFO]: [STDOUT]: [nether-pathfinder] Created temp file at C:\Users\user\AppData\Local\Temp\nether_pathfinder-x86_6414914336504978476009.dll
-[19:43:34] [Worker-Main-1/WARN]: [OptiFine] Resource not found: minecraft:shaders/post/fxaa_of_2x.json
-[19:43:34] [Worker-Main-1/WARN]: [OptiFine] Resource not found: minecraft:shaders/post/fxaa_of_4x.json
-[19:43:35] [Worker-Main-1/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/particles.png
-[19:43:35] [Worker-Main-1/INFO]: [OptiFine] Multitexture: false
-[19:43:35] [Worker-Main-2/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/decorated_pot.png
-[19:43:35] [Worker-Main-2/INFO]: [OptiFine] Multitexture: false
-[19:43:36] [Worker-Main-3/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/armor_trims.png
-[19:43:36] [Worker-Main-3/INFO]: [OptiFine] Multitexture: false
-[19:43:36] [Render thread/INFO]: [STDERR]: [nether-pathfinder] Failed to delete temp file
-[19:43:36] [Render thread/INFO]: [STDOUT]: [nether-pathfinder] Loaded shared library
-[19:43:36] [Render thread/INFO]: [voicechat] Successfully registered ViaVersion mappings
-[19:43:36] [Via Async Scheduler 0/INFO]: Finished mapping loading, shutting down loader executor.
-[19:43:36] [Worker-Main-2/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/paintings.png
-[19:43:36] [Worker-Main-2/INFO]: [OptiFine] Multitexture: false
-[19:43:37] [Worker-Main-3/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/shield_patterns.png
-[19:43:37] [Worker-Main-3/INFO]: [OptiFine] Multitexture: false
-[19:43:37] [Worker-Main-2/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/blocks.png
-[19:43:37] [Worker-Main-2/INFO]: [OptiFine] Multitexture: false
-[19:43:37] [Worker-Main-2/INFO]: [OptiFine] Register block sprites
-[19:43:37] [Worker-Main-2/INFO]: [OptiFine] ConnectedTextures: optifine/ctm/default/00_glass_white/glass_pane_white.properties
-[19:43:37] [Worker-Main-2/INFO]: [OptiFine] ConnectedTextures: optifine/ctm/default/00_glass_white/glass_white.properties
-[19:43:37] [Worker-Main-2/INFO]: [OptiFine] ConnectedTextures: optifine/ctm/default/01_glass_orange/glass_orange.properties
-[19:43:37] [Worker-Main-2/INFO]: [OptiFine] ConnectedTextures: optifine/ctm/default/01_glass_orange/glass_pane_orange.properties
-[19:43:37] [Worker-Main-2/INFO]: [OptiFine] ConnectedTextures: optifine/ctm/default/02_glass_magenta/glass_magenta.properties
-[19:43:37] [Worker-Main-2/INFO]: [OptiFine] ConnectedTextures: optifine/ctm/default/02_glass_magenta/glass_pane_magenta.properties
-[19:43:37] [Worker-Main-2/INFO]: [OptiFine] ConnectedTextures: optifine/ctm/default/03_glass_light_blue/glass_light_blue.properties
-[19:43:37] [Worker-Main-2/INFO]: [OptiFine] ConnectedTextures: optifine/ctm/default/03_glass_light_blue/glass_pane_light_blue.properties
-[19:43:37] [Worker-Main-2/INFO]: [OptiFine] ConnectedTextures: optifine/ctm/default/04_glass_yellow/glass_pane_yellow.properties
-[19:43:37] [Worker-Main-2/INFO]: [OptiFine] ConnectedTextures: optifine/ctm/default/04_glass_yellow/glass_yellow.properties
-[19:43:37] [Worker-Main-2/INFO]: [OptiFine] ConnectedTextures: optifine/ctm/default/05_glass_lime/glass_lime.properties
-[19:43:37] [Worker-Main-2/INFO]: [OptiFine] ConnectedTextures: optifine/ctm/default/05_glass_lime/glass_pane_lime.properties
-[19:43:37] [Worker-Main-2/INFO]: [OptiFine] ConnectedTextures: optifine/ctm/default/06_glass_pink/glass_pane_pink.properties
-[19:43:37] [Worker-Main-2/INFO]: [OptiFine] ConnectedTextures: optifine/ctm/default/06_glass_pink/glass_pink.properties
-[19:43:38] [Worker-Main-2/INFO]: [OptiFine] ConnectedTextures: optifine/ctm/default/07_glass_gray/glass_gray.properties
-[19:43:38] [Worker-Main-2/INFO]: [OptiFine] ConnectedTextures: optifine/ctm/default/07_glass_gray/glass_pane_gray.properties
-[19:43:38] [Worker-Main-2/INFO]: [OptiFine] ConnectedTextures: optifine/ctm/default/08_glass_light_gray/glass_light_gray.properties
-[19:43:38] [Worker-Main-2/INFO]: [OptiFine] ConnectedTextures: optifine/ctm/default/08_glass_light_gray/glass_pane_light_gray.properties
-[19:43:38] [Worker-Main-2/INFO]: [OptiFine] ConnectedTextures: optifine/ctm/default/09_glass_cyan/glass_cyan.properties
-[19:43:38] [Worker-Main-2/INFO]: [OptiFine] ConnectedTextures: optifine/ctm/default/09_glass_cyan/glass_pane_cyan.properties
-[19:43:38] [Worker-Main-2/INFO]: [OptiFine] ConnectedTextures: optifine/ctm/default/10_glass_purple/glass_pane_purple.properties
-[19:43:38] [Worker-Main-2/INFO]: [OptiFine] ConnectedTextures: optifine/ctm/default/10_glass_purple/glass_purple.properties
-[19:43:38] [Worker-Main-2/INFO]: [OptiFine] ConnectedTextures: optifine/ctm/default/11_glass_blue/glass_blue.properties
-[19:43:38] [Worker-Main-2/INFO]: [OptiFine] ConnectedTextures: optifine/ctm/default/11_glass_blue/glass_pane_blue.properties
-[19:43:38] [Worker-Main-2/INFO]: [OptiFine] ConnectedTextures: optifine/ctm/default/12_glass_brown/glass_brown.properties
-[19:43:38] [Worker-Main-2/INFO]: [OptiFine] ConnectedTextures: optifine/ctm/default/12_glass_brown/glass_pane_brown.properties
-[19:43:38] [Worker-Main-2/INFO]: [OptiFine] ConnectedTextures: optifine/ctm/default/13_glass_green/glass_green.properties
-[19:43:38] [Worker-Main-2/INFO]: [OptiFine] ConnectedTextures: optifine/ctm/default/13_glass_green/glass_pane_green.properties
-[19:43:38] [Worker-Main-2/INFO]: [OptiFine] ConnectedTextures: optifine/ctm/default/14_glass_red/glass_pane_red.properties
-[19:43:38] [Worker-Main-2/INFO]: [OptiFine] ConnectedTextures: optifine/ctm/default/14_glass_red/glass_red.properties
-[19:43:38] [Worker-Main-2/INFO]: [OptiFine] ConnectedTextures: optifine/ctm/default/15_glass_black/glass_black.properties
-[19:43:38] [Worker-Main-2/INFO]: [OptiFine] ConnectedTextures: optifine/ctm/default/15_glass_black/glass_pane_black.properties
-[19:43:38] [Worker-Main-2/INFO]: [OptiFine] ConnectedTextures: optifine/ctm/default/20_glass/glass.properties
-[19:43:38] [Worker-Main-2/INFO]: [OptiFine] ConnectedTextures: optifine/ctm/default/20_glass/glass_pane.properties
-[19:43:38] [Worker-Main-2/INFO]: [OptiFine] ConnectedTextures: optifine/ctm/default/21_tinted_glass/tinted_glass.properties
-[19:43:38] [Worker-Main-2/INFO]: [OptiFine] ConnectedTextures: optifine/ctm/default/30_bookshelf/bookshelf.properties
-[19:43:38] [Worker-Main-2/INFO]: [OptiFine] ConnectedTextures: optifine/ctm/default/40_sandstone/sandstone.properties
-[19:43:38] [Worker-Main-2/INFO]: [OptiFine] ConnectedTextures: optifine/ctm/default/41_red_sandstone/red_sandstone.properties
-[19:43:38] [Worker-Main-2/INFO]: [OptiFine] Multipass connected textures: false
-[19:43:38] [Worker-Main-2/INFO]: [OptiFine] BetterGrass: Parsing default configuration optifine/bettergrass.properties
-[19:43:38] [Worker-Main-3/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/chest.png
-[19:43:38] [Worker-Main-3/INFO]: [OptiFine] Multitexture: false
-[19:43:38] [Worker-Main-3/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/celestials.png
-[19:43:38] [Worker-Main-3/INFO]: [OptiFine] Multitexture: false
-[19:43:38] [Worker-Main-3/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/banner_patterns.png
-[19:43:38] [Worker-Main-3/INFO]: [OptiFine] Multitexture: false
-[19:43:38] [Worker-Main-3/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/beds.png
-[19:43:38] [Worker-Main-3/INFO]: [OptiFine] Multitexture: false
-[19:43:39] [Worker-Main-3/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/items.png
-[19:43:39] [Worker-Main-3/INFO]: [OptiFine] Multitexture: false
-[19:43:39] [Worker-Main-3/INFO]: [OptiFine] Register item sprites
-[19:43:40] [Worker-Main-1/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_2, 3 -> 9
-[19:43:40] [Worker-Main-1/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_1, 3 -> 9
-[19:43:40] [Worker-Main-1/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_0, 3 -> 9
-[19:43:40] [Worker-Main-1/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_11, 3 -> 9
-[19:43:40] [Worker-Main-1/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_10, 3 -> 9
-[19:43:40] [Worker-Main-1/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_9, 5 -> 10
-[19:43:40] [Worker-Main-1/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_8, 5 -> 10
-[19:43:40] [Worker-Main-1/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_3, 5 -> 10
-[19:43:40] [Worker-Main-1/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_2, 5 -> 10
-[19:43:40] [Worker-Main-1/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_1, 5 -> 10
-[19:43:40] [Worker-Main-1/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_0, 5 -> 10
-[19:43:40] [Worker-Main-1/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_7, 5 -> 10
-[19:43:40] [Worker-Main-1/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_6, 5 -> 10
-[19:43:40] [Worker-Main-1/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_5, 5 -> 10
-[19:43:40] [Worker-Main-1/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_4, 5 -> 10
-[19:43:40] [Worker-Main-1/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_11, 5 -> 10
-[19:43:40] [Worker-Main-1/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_10, 5 -> 10
-[19:43:40] [Worker-Main-1/INFO]: [OptiFine] Scaled non power of 2: minecraft:trial_omen, 5 -> 10
-[19:43:40] [Worker-Main-1/INFO]: [OptiFine] Scaled non power of 2: minecraft:raid_omen, 5 -> 10
-[19:43:40] [Worker-Main-1/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_6, 3 -> 9
-[19:43:40] [Worker-Main-1/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_5, 3 -> 9
-[19:43:40] [Worker-Main-1/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_10, 5 -> 10
-[19:43:40] [Worker-Main-1/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_4, 3 -> 9
-[19:43:40] [Worker-Main-1/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_3, 3 -> 9
-[19:43:40] [Worker-Main-1/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_9, 3 -> 9
-[19:43:40] [Worker-Main-1/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_8, 3 -> 9
-[19:43:40] [Worker-Main-1/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_11, 5 -> 10
-[19:43:40] [Worker-Main-1/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_7, 3 -> 9
-[19:43:40] [Worker-Main-1/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_7, 5 -> 10
-[19:43:40] [Worker-Main-1/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_6, 5 -> 10
-[19:43:40] [Worker-Main-1/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_9, 5 -> 10
-[19:43:40] [Worker-Main-1/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_8, 5 -> 10
-[19:43:40] [Worker-Main-1/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_1, 5 -> 10
-[19:43:40] [Worker-Main-1/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_0, 5 -> 10
-[19:43:40] [Worker-Main-1/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_3, 5 -> 10
-[19:43:40] [Worker-Main-1/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_2, 5 -> 10
-[19:43:40] [Worker-Main-1/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_5, 5 -> 10
-[19:43:40] [Worker-Main-1/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_4, 5 -> 10
-[19:43:40] [Worker-Main-1/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/gui.png
-[19:43:40] [Worker-Main-1/INFO]: [OptiFine] Multitexture: false
-[19:43:41] [Worker-Main-1/INFO]: [OptiFine] Scaled non power of 2: minecraft:container/bundle/bundle_progressbar_fill, 6 -> 12
-[19:43:41] [Worker-Main-1/INFO]: [OptiFine] Scaled non power of 2: minecraft:widget/scroller_background, 6 -> 12
-[19:43:41] [Worker-Main-1/INFO]: [OptiFine] Scaled non power of 2: minecraft:container/bundle/bundle_progressbar_full, 6 -> 12
-[19:43:41] [Worker-Main-1/INFO]: [OptiFine] Scaled non power of 2: minecraft:hud/locator_bar_arrow_up, 7 -> 14
-[19:43:41] [Worker-Main-1/INFO]: [OptiFine] Scaled non power of 2: minecraft:container/villager/scroller, 6 -> 12
-[19:43:41] [Worker-Main-1/INFO]: [OptiFine] Scaled non power of 2: minecraft:widget/scroller, 6 -> 12
-[19:43:41] [Worker-Main-1/INFO]: [OptiFine] Scaled non power of 2: minecraft:container/villager/scroller_disabled, 6 -> 12
-[19:43:41] [Worker-Main-1/INFO]: [OptiFine] Scaled non power of 2: minecraft:hud/locator_bar_arrow_down, 7 -> 14
-[19:43:41] [Worker-Main-1/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/map_decorations.png
-[19:43:41] [Worker-Main-1/INFO]: [OptiFine] Multitexture: false
-[19:43:41] [Worker-Main-1/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/signs.png
-[19:43:41] [Worker-Main-1/INFO]: [OptiFine] Multitexture: false
-[19:43:41] [Worker-Main-1/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/shulker_boxes.png
-[19:43:41] [Worker-Main-1/INFO]: [OptiFine] Multitexture: false
-[19:43:41] [Worker-Main-1/INFO]: Found unifont_all_no_pua-17.0.01.hex, loading
-[19:43:42] [Worker-Main-1/INFO]: Found unifont_jp_patch-17.0.01.hex, loading
-[19:43:42] [Worker-Main-1/INFO]: Found unifont_pua-17.0.01.hex, loading
-[19:43:44] [Worker-Main-3/INFO]: [OptiFine] Waiting for model sprites
-[19:43:46] [Worker-Main-1/INFO]: [OptiFine] CustomItems: Collecting model sprites
-[19:43:46] [Worker-Main-3/INFO]: [OptiFine] CustomItems: Registering sprites
-[19:43:49] [Render thread/INFO]: [STDOUT]: Logged as: hoclidgzu05
-[19:43:49] [Render thread/INFO]: [OptiFine] *** Reflector Forge ***
-[19:43:49] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.event.level.ChunkEvent$Load
-[19:43:49] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.event.level.ChunkEvent$Unload
-[19:43:49] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.ColorResolverManager
-[19:43:49] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.logging.CrashReportAnalyser
-[19:43:49] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.EntitySpectatorShaderManager
-[19:43:49] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.eventbus.api.bus.EventBus
-[19:43:49] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraft.client.renderer.block.model.BlockElementFace.data
-[19:43:49] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraft.world.entity.Entity.isInWaterOrSwimmable
-[19:43:49] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraft.world.entity.boss.enderdragon.EnderDragon.getParts
-[19:43:49] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeBlockState.getSoundType
-[19:43:49] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeBlockState.getStateAtViewpoint
-[19:43:49] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeBlockState.shouldDisplayFluidOverlay
-[19:43:49] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeEntity.getEyeInFluidType
-[19:43:49] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeEntity.getParts
-[19:43:49] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeEntity.hasCustomOutlineRendering
-[19:43:49] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeEntity.isMultipartEntity
-[19:43:49] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeEntity.onAddedToWorld
-[19:43:49] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeEntity.onRemovedFromWorld
-[19:43:49] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeEntity.shouldRiderSit
-[19:43:49] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.event.ForgeEventFactory
-[19:43:49] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.client.model.ForgeFaceData.calculateNormals
-[19:43:49] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.common.ForgeHooks
-[19:43:49] [Render thread/INFO]: [OptiFine] (Reflector) Field not present: net.minecraftforge.common.ForgeConfigSpec.childConfig
-[19:43:49] [Render thread/INFO]: [OptiFine] (Reflector) Field not present: net.minecraftforge.common.ForgeConfigSpec$ConfigValue.defaultSupplier
-[19:43:49] [Render thread/INFO]: [OptiFine] (Reflector) Field not present: net.minecraftforge.common.ForgeConfigSpec$ConfigValue.spec
-[19:43:49] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.ForgeConfigSpec$ConfigValue.get
-[19:43:49] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraft.world.level.chunk.ChunkAccess.getWorldForge
-[19:43:49] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.common.extensions.IForgeItemStack
-[19:43:49] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraft.client.renderer.ItemBlockRenderTypes.isFancy
-[19:43:49] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraft.client.KeyMapping.setKeyConflictContext
-[19:43:49] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraft.client.KeyMapping.setKeyModifierAndCode
-[19:43:49] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraft.client.particle.ParticleResources.getProvider
-[19:43:49] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeBlockEntity.getRenderBoundingBox
-[19:43:49] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.FramePassManager
-[19:43:49] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.ItemDecoratorHandler
-[19:43:49] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.common.MinecraftForge
-[19:43:49] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.fml.ModContainer
-[19:43:49] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.gui.ModListScreen
-[19:43:49] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.fml.ModLoader
-[19:43:49] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.gui.TitleScreenModUpdateIndicator
-[19:43:49] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.event.PlayLevelSoundEvent
-[19:43:49] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.event.RenderBlockScreenEffectEvent$OverlayType
-[19:43:49] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.event.CustomizeGuiOverlayEvent$BossEventProgress
-[19:43:49] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.event.RenderNameTagEvent
-[19:43:49] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.event.RenderTooltipEvent
-[19:43:49] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.event.RenderTooltipEvent$Pre
-[19:43:49] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.event.ScreenshotEvent
-[19:43:49] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.server.ServerLifecycleHooks
-[19:43:49] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraft.client.particle.TerrainParticle.updateSprite
-[19:43:49] [Render thread/INFO]: [OptiFine] *** Reflector Vanilla ***
-[19:43:49] [Render thread/ERROR]: Couldn't find source for VERTEX shader (arix:core/round_rect)
-[19:43:49] [Render thread/ERROR]: Couldn't find source for FRAGMENT shader (arix:core/round_rect)
-[19:43:49] [Render thread/ERROR]: Couldn't compile pipeline arix:pipeline/round_rect: vertex shader arix:core/round_rect was invalid
-[19:43:49] [Render thread/ERROR]: Couldn't find source for VERTEX shader (arix:core/round_rect_outline)
-[19:43:49] [Render thread/ERROR]: Couldn't find source for FRAGMENT shader (arix:core/round_rect_outline)
-[19:43:49] [Render thread/ERROR]: Couldn't compile pipeline arix:pipeline/round_rect_outline: vertex shader arix:core/round_rect_outline was invalid
-[19:43:49] [Render thread/INFO]: Resizing Dynamic Transforms UBO, capacity limit of 2 reached during a single frame. New capacity will be 4.
-[19:43:49] [Render thread/ERROR]: Couldn't find source for VERTEX shader (arix:core/fractal_flame)
-[19:43:49] [Render thread/ERROR]: Couldn't find source for FRAGMENT shader (arix:core/fractal_flame)
-[19:43:49] [Render thread/ERROR]: Couldn't compile pipeline arix:pipeline/fractal_flame: vertex shader arix:core/fractal_flame was invalid
-[19:43:50] [Worker-Main-2/INFO]: [OptiFine] Mipmap levels: 4
-[19:43:52] [Render thread/WARN]: arix:pipeline/round_rect_corners shader program does not use sampler Sampler0 defined in the pipeline. This might be a bug.
-[19:43:52] [Render thread/WARN]: arix:pipeline/fractal_flame shader program does not use sampler Sampler0 defined in the pipeline. This might be a bug.
-[19:43:52] [Render thread/WARN]: arix:pipeline/round_rect shader program does not use sampler Sampler0 defined in the pipeline. This might be a bug.
-[19:43:52] [Render thread/WARN]: arix:pipeline/round_rect_outline shader program does not use sampler Sampler0 defined in the pipeline. This might be a bug.
-[19:43:52] [Render thread/WARN]: arix:pipeline/circle shader program does not use sampler Sampler0 defined in the pipeline. This might be a bug.
-[19:43:52] [Render thread/INFO]: OpenAL initialized on device OpenAL Soft on Динамики (High Definition Audio Device)
-[19:43:52] [Render thread/INFO]: Sound engine started
-[19:43:52] [Render thread/INFO]: Created: 512x256x0 minecraft:textures/atlas/particles.png-atlas
-[19:43:52] [Render thread/INFO]: [OptiFine] Animated sprites: 1
-[19:43:52] [Render thread/INFO]: Created: 128x128x0 minecraft:textures/atlas/decorated_pot.png-atlas
-[19:43:52] [Render thread/INFO]: [OptiFine] Animated sprites: 0
-[19:43:52] [Render thread/INFO]: Created: 2048x1024x0 minecraft:textures/atlas/armor_trims.png-atlas
-[19:43:52] [Render thread/INFO]: [OptiFine] Animated sprites: 0
-[19:43:52] [Render thread/INFO]: Created: 512x256x0 minecraft:textures/atlas/paintings.png-atlas
-[19:43:52] [Render thread/INFO]: [OptiFine] Animated sprites: 0
-[19:43:52] [Render thread/INFO]: Created: 1024x512x0 minecraft:textures/atlas/shield_patterns.png-atlas
-[19:43:52] [Render thread/INFO]: [OptiFine] Animated sprites: 0
-[19:43:52] [Render thread/INFO]: Created: 4096x2048x4 minecraft:textures/atlas/blocks.png-atlas
-[19:43:52] [Render thread/INFO]: [OptiFine] Update block sprites
-[19:43:52] [Render thread/INFO]: [OptiFine] Animated sprites: 56
-[19:43:52] [Render thread/INFO]: Created: 512x512x0 minecraft:textures/atlas/chest.png-atlas
-[19:43:52] [Render thread/INFO]: [OptiFine] Animated sprites: 0
-[19:43:52] [Render thread/INFO]: Created: 256x128x0 minecraft:textures/atlas/celestials.png-atlas
-[19:43:52] [Render thread/INFO]: [OptiFine] Animated sprites: 0
-[19:43:52] [Render thread/INFO]: Created: 1024x512x0 minecraft:textures/atlas/banner_patterns.png-atlas
-[19:43:52] [Render thread/INFO]: [OptiFine] Animated sprites: 0
-[19:43:52] [Render thread/INFO]: Created: 512x512x0 minecraft:textures/atlas/beds.png-atlas
-[19:43:52] [Render thread/INFO]: [OptiFine] Animated sprites: 0
-[19:43:52] [Render thread/INFO]: Created: 1024x512x0 minecraft:textures/atlas/items.png-atlas
-[19:43:52] [Render thread/INFO]: [OptiFine] Update item sprites
-[19:43:52] [Render thread/INFO]: [OptiFine] Animated sprites: 0
-[19:43:52] [Render thread/INFO]: Created: 1024x1024x0 minecraft:textures/atlas/gui.png-atlas
-[19:43:52] [Render thread/INFO]: [OptiFine] Animated sprites: 5
-[19:43:52] [Render thread/INFO]: Created: 128x64x0 minecraft:textures/atlas/map_decorations.png-atlas
-[19:43:52] [Render thread/INFO]: [OptiFine] Animated sprites: 0
-[19:43:52] [Render thread/INFO]: Created: 512x256x0 minecraft:textures/atlas/signs.png-atlas
-[19:43:52] [Render thread/INFO]: [OptiFine] Animated sprites: 0
-[19:43:52] [Render thread/INFO]: Created: 512x512x0 minecraft:textures/atlas/shulker_boxes.png-atlas
-[19:43:52] [Render thread/INFO]: [OptiFine] Animated sprites: 0
-[19:43:52] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/gui.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
-[19:43:52] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/beds.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
-[19:43:52] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/paintings.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
-[19:43:52] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/shulker_boxes.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
-[19:43:52] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/signs.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
-[19:43:52] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/chest.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
-[19:43:52] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/particles.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
-[19:43:52] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/celestials.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
-[19:43:52] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/shield_patterns.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
-[19:43:52] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/decorated_pot.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
-[19:43:52] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/map_decorations.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
-[19:43:52] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/blocks.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
-[19:43:52] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/banner_patterns.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
-[19:43:52] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/armor_trims.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
-[19:43:53] [Render thread/INFO]: [OptiFine] *** Reloading custom textures ***
-[19:43:55] [Render thread/INFO]: [OptiFine] Disable Forge light pipeline
-[19:46:21] [Render thread/INFO]: [STDOUT]: Logged as: viperyy
-[19:46:25] [Render thread/INFO]: Connecting to mc.spookytime.net, 25565
-[19:46:25] [Download-3/ERROR]: Failed to retrieve profile key pair
+[18:03:19] [Render thread/INFO]: [voicechat] Successfully initialized LAME
+[18:03:19] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.loading.ClientModLoader
+[18:03:19] [Render thread/INFO]: Backend library: LWJGL version 3.3.3+5
+[18:03:19] [Worker-Main-1/INFO]: Loading translations...
+[18:03:19] [Worker-Main-1/INFO]: Registering protocols...
+[18:03:19] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.internal.BrandingControl
+[18:03:20] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.fml.loading.ImmediateWindowHandler
+[18:03:22] [Render thread/WARN]: [OptiFine] (Reflector) java.lang.ClassNotFoundException: sun.misc.SharedSecrets
+[18:03:22] [Render thread/WARN]: [OptiFine] (Reflector) java.lang.ClassNotFoundException: jdk.internal.misc.SharedSecrets
+[18:03:22] [Render thread/WARN]: [OptiFine] (Reflector) java.lang.ClassNotFoundException: sun.misc.VM
+[18:03:22] [Render thread/WARN]: [OptiFine] (Reflector) java.lang.reflect.InaccessibleObjectException: Unable to make public static long jdk.internal.misc.VM.maxDirectMemory() accessible: module java.base does not "exports jdk.internal.misc" to unnamed module @7adda9cc
+[18:03:23] [Worker-Main-1/INFO]: Started resource pack HTTP server on http://127.0.0.1:64089/
+[18:03:23] [Worker-Main-1/INFO]: ViaVersion detected lowest supported version by the proxy: c0.0.15a-1 (0)
+[18:03:23] [Worker-Main-1/INFO]: Highest supported version by the proxy: Bedrock 1.26.10 (944)
+[18:03:23] [Worker-Main-1/INFO]: Environment: Environment[sessionHost=https://sessionserver.mojang.com, servicesHost=https://api.minecraftservices.com, profilesHost=https://api.mojang.com, name=PROD]
+[18:03:27] [Via-Mappingloader-4/ERROR]: Error during loading of BedrockProtocol
+java.util.concurrent.CompletionException: java.lang.NoClassDefFoundError: io/jsonwebtoken/JwtException
+	at java.base/java.util.concurrent.CompletableFuture.encodeThrowable(CompletableFuture.java:315)
+	at java.base/java.util.concurrent.CompletableFuture.completeThrowable(CompletableFuture.java:320)
+	at java.base/java.util.concurrent.CompletableFuture$AsyncRun.run(CompletableFuture.java:1807)
+	at java.base/java.util.concurrent.CompletableFuture$AsyncRun.exec(CompletableFuture.java:1796)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:387)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1312)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1843)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1808)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:188)
+Caused by: java.lang.NoClassDefFoundError: io/jsonwebtoken/JwtException
+	at net.raphimc.viabedrock.protocol.BedrockProtocol.registerPackets(BedrockProtocol.java:90)
+	at com.viaversion.viaversion.api.protocol.AbstractProtocol.initialize(AbstractProtocol.java:117)
+	at com.viaversion.viaversion.api.protocol.AbstractProtocol.loadMappingData(AbstractProtocol.java:214)
+	at java.base/java.util.concurrent.CompletableFuture$AsyncRun.run(CompletableFuture.java:1804)
+	... 6 more
+Caused by: java.lang.ClassNotFoundException: io.jsonwebtoken.JwtException
+	at java.base/jdk.internal.loader.BuiltinClassLoader.loadClass(BuiltinClassLoader.java:641)
+	at java.base/jdk.internal.loader.ClassLoaders$AppClassLoader.loadClass(ClassLoaders.java:188)
+	at java.base/java.lang.ClassLoader.loadClass(ClassLoader.java:526)
+	... 10 more
+[18:03:27] [Render thread/INFO]: [OptiFine] 
+[18:03:27] [Render thread/INFO]: [OptiFine] OptiFine_1.21.11_HD_U_J9
+[18:03:27] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: optifine.OptiFineResourceLocator
+[18:03:27] [Render thread/INFO]: [OptiFine] Build: null
+[18:03:27] [Render thread/INFO]: [OptiFine] OS: Windows 10 (amd64) version 10.0
+[18:03:27] [Render thread/INFO]: [OptiFine] Java: 21.0.10, Microsoft
+[18:03:27] [Render thread/INFO]: [OptiFine] VM: OpenJDK 64-Bit Server VM (mixed mode, sharing), Microsoft
+[18:03:27] [Render thread/INFO]: [OptiFine] LWJGL: 3.4.0 Win32 WGL Null EGL OSMesa VisualC DLL
+[18:03:27] [Render thread/INFO]: [OptiFine] OpenGL: AMD Radeon(TM) Vega 3 Graphics , version 3.3.0 Core Profile Context 23.9.1.230821, ATI Technologies Inc.
+[18:03:27] [Via Async Scheduler 0/INFO]: Finished mapping loading, shutting down loader executor.
+[18:03:27] [Render thread/INFO]: [OptiFine] OpenGL Version: 3.3.0
+[18:03:27] [Render thread/INFO]: [OptiFine] Maximum texture size: 16384x16384
+[18:03:27] [Render thread/INFO]: [Shaders] OpenGL Version: 3.3.0 Core Profile Context 23.9.1.230821
+[18:03:27] [Render thread/INFO]: [Shaders] Vendor:  ATI Technologies Inc.
+[18:03:27] [Render thread/INFO]: [Shaders] Renderer: AMD Radeon(TM) Vega 3 Graphics 
+[18:03:27] [Render thread/INFO]: [Shaders] Capabilities:  2.0  2.1  3.0  3.2  - 
+[18:03:27] [Render thread/INFO]: [Shaders] GL_MAX_DRAW_BUFFERS: 8
+[18:03:27] [Render thread/INFO]: [Shaders] GL_MAX_COLOR_ATTACHMENTS: 8
+[18:03:27] [Render thread/INFO]: [Shaders] GL_MAX_TEXTURE_IMAGE_UNITS: 32
+[18:03:27] [Render thread/INFO]: [Shaders] Load shaders configuration.
+[18:03:27] [Render thread/INFO]: [Shaders] No shaderpack loaded.
+[18:03:27] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.fml.ModList
+[18:03:27] [Render thread/INFO]: Using optional rendering extensions: GL_ARB_buffer_storage, GL_KHR_debug, GL_ARB_vertex_attrib_binding, GL_ARB_direct_state_access, GL_EXT_texture_filter_anisotropic
+[18:03:27] [VersionCheck/INFO]: [OptiFine] Checking for new version
+[18:03:27] [Render thread/ERROR]: Couldn't load file/fullbright-ub-1.21.zip pack metadata: Pack declares support for version newer than 64, but is missing mandatory fields min_format and max_format
+[18:03:27] [Render thread/ERROR]: Couldn't load file/fullbright-ub-1.21.zip overlays metadata: Overlay "fixes" declares support for version newer than 64, but is missing mandatory fields min_format and max_format
+[18:03:27] [VersionCheck/INFO]: [OptiFine] Version found: J9
+[18:03:27] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.ForgeHooksClient
+[18:03:28] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.event.ForgeEventFactoryClient
+[18:03:29] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.gui.overlay.ForgeLayeredDraw
+[18:03:29] [Render thread/INFO]: Reloading ResourceManager: vanilla
+[18:03:29] [Render thread/INFO]: [OptiFine] *** Reloading resources ***
+[18:03:29] [Render thread/INFO]: [OptiFine] *** Reloading textures ***
+[18:03:29] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.model.geometry.GeometryLoaderManager
+[18:03:29] [Worker-Main-2/WARN]: [OptiFine] Resource not found: minecraft:shaders/post/fxaa_of_2x.json
+[18:03:29] [Worker-Main-2/WARN]: [OptiFine] Resource not found: minecraft:shaders/post/fxaa_of_4x.json
+[18:03:29] [Render thread/INFO]: [CHAT] [Baritone] Baritone settings file not found, resetting.
+[18:03:29] [Worker-Main-2/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/decorated_pot.png
+[18:03:29] [Worker-Main-2/INFO]: [OptiFine] Multitexture: false
+[18:03:29] [Worker-Main-3/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/particles.png
+[18:03:29] [Worker-Main-3/INFO]: [OptiFine] Multitexture: false
+[18:03:29] [Worker-Main-2/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/armor_trims.png
+[18:03:29] [Worker-Main-2/INFO]: [OptiFine] Multitexture: false
+[18:03:30] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_2, 3 -> 9
+[18:03:30] [Worker-Main-2/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/paintings.png
+[18:03:30] [Worker-Main-2/INFO]: [OptiFine] Multitexture: false
+[18:03:30] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_1, 3 -> 9
+[18:03:30] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_0, 3 -> 9
+[18:03:30] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_11, 3 -> 9
+[18:03:30] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_10, 3 -> 9
+[18:03:30] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_9, 5 -> 10
+[18:03:30] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_8, 5 -> 10
+[18:03:30] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_3, 5 -> 10
+[18:03:30] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_2, 5 -> 10
+[18:03:30] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_1, 5 -> 10
+[18:03:30] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_0, 5 -> 10
+[18:03:30] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_7, 5 -> 10
+[18:03:30] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_6, 5 -> 10
+[18:03:30] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_5, 5 -> 10
+[18:03:30] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_4, 5 -> 10
+[18:03:30] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_11, 5 -> 10
+[18:03:30] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:pale_oak_10, 5 -> 10
+[18:03:30] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:trial_omen, 5 -> 10
+[18:03:30] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:raid_omen, 5 -> 10
+[18:03:30] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_6, 3 -> 9
+[18:03:30] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_5, 3 -> 9
+[18:03:30] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_10, 5 -> 10
+[18:03:30] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_4, 3 -> 9
+[18:03:30] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_3, 3 -> 9
+[18:03:30] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_9, 3 -> 9
+[18:03:30] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_8, 3 -> 9
+[18:03:30] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_11, 5 -> 10
+[18:03:30] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:cherry_7, 3 -> 9
+[18:03:30] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_7, 5 -> 10
+[18:03:30] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_6, 5 -> 10
+[18:03:30] [Render thread/INFO]: [STDOUT]: [nether-pathfinder] Created temp file at C:\Users\User\AppData\Local\Temp\nether_pathfinder-x86_6410042513434280174646.dll
+[18:03:30] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_9, 5 -> 10
+[18:03:30] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_8, 5 -> 10
+[18:03:30] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_1, 5 -> 10
+[18:03:30] [Render thread/INFO]: [STDERR]: [nether-pathfinder] Failed to delete temp file
+[18:03:30] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_0, 5 -> 10
+[18:03:30] [Render thread/INFO]: [STDOUT]: [nether-pathfinder] Loaded shared library
+[18:03:30] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_3, 5 -> 10
+[18:03:30] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_2, 5 -> 10
+[18:03:30] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_5, 5 -> 10
+[18:03:30] [Worker-Main-3/INFO]: [OptiFine] Scaled non power of 2: minecraft:leaf_4, 5 -> 10
+[18:03:30] [Worker-Main-2/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/shield_patterns.png
+[18:03:30] [Worker-Main-2/INFO]: [OptiFine] Multitexture: false
+[18:03:30] [Worker-Main-2/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/chest.png
+[18:03:30] [Worker-Main-2/INFO]: [OptiFine] Multitexture: false
+[18:03:30] [Render thread/INFO]: [voicechat] Successfully registered ViaVersion mappings
+[18:03:30] [Worker-Main-2/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/celestials.png
+[18:03:30] [Worker-Main-2/INFO]: [OptiFine] Multitexture: false
+[18:03:30] [Worker-Main-2/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/banner_patterns.png
+[18:03:30] [Worker-Main-2/INFO]: [OptiFine] Multitexture: false
+[18:03:30] [Worker-Main-3/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/blocks.png
+[18:03:30] [Worker-Main-3/INFO]: [OptiFine] Multitexture: false
+[18:03:30] [Worker-Main-3/INFO]: [OptiFine] Register block sprites
+[18:03:30] [Worker-Main-3/INFO]: [OptiFine] BetterGrass: Parsing default configuration optifine/bettergrass.properties
+[18:03:30] [Worker-Main-2/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/beds.png
+[18:03:30] [Worker-Main-2/INFO]: [OptiFine] Multitexture: false
+[18:03:30] [Worker-Main-2/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/items.png
+[18:03:30] [Worker-Main-2/INFO]: [OptiFine] Multitexture: false
+[18:03:30] [Worker-Main-2/INFO]: [OptiFine] Register item sprites
+[18:03:31] [Worker-Main-1/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/gui.png
+[18:03:31] [Worker-Main-1/INFO]: [OptiFine] Multitexture: false
+[18:03:31] [Worker-Main-2/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/map_decorations.png
+[18:03:31] [Worker-Main-2/INFO]: [OptiFine] Multitexture: false
+[18:03:31] [Worker-Main-2/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/signs.png
+[18:03:31] [Worker-Main-2/INFO]: [OptiFine] Multitexture: false
+[18:03:31] [Worker-Main-2/INFO]: [OptiFine] Pre-stitch: minecraft:textures/atlas/shulker_boxes.png
+[18:03:31] [Worker-Main-2/INFO]: [OptiFine] Multitexture: false
+[18:03:31] [Worker-Main-2/INFO]: Found unifont_all_no_pua-17.0.01.hex, loading
+[18:03:31] [Worker-Main-1/INFO]: [OptiFine] Scaled non power of 2: minecraft:container/bundle/bundle_progressbar_fill, 6 -> 12
+[18:03:32] [Worker-Main-1/INFO]: [OptiFine] Scaled non power of 2: minecraft:widget/scroller_background, 6 -> 12
+[18:03:32] [Worker-Main-1/INFO]: [OptiFine] Scaled non power of 2: minecraft:container/bundle/bundle_progressbar_full, 6 -> 12
+[18:03:32] [Worker-Main-1/INFO]: [OptiFine] Scaled non power of 2: minecraft:hud/locator_bar_arrow_up, 7 -> 14
+[18:03:32] [Worker-Main-1/INFO]: [OptiFine] Scaled non power of 2: minecraft:container/villager/scroller, 6 -> 12
+[18:03:32] [Worker-Main-1/INFO]: [OptiFine] Scaled non power of 2: minecraft:widget/scroller, 6 -> 12
+[18:03:32] [Worker-Main-1/INFO]: [OptiFine] Scaled non power of 2: minecraft:container/villager/scroller_disabled, 6 -> 12
+[18:03:32] [Worker-Main-1/INFO]: [OptiFine] Scaled non power of 2: minecraft:hud/locator_bar_arrow_down, 7 -> 14
+[18:03:32] [Worker-Main-1/INFO]: Found unifont_pua-17.0.01.hex, loading
+[18:03:32] [Worker-Main-2/INFO]: Found unifont_jp_patch-17.0.01.hex, loading
+[18:03:35] [Worker-Main-2/INFO]: [OptiFine] (Reflector) Method not present: net.minecraft.client.renderer.block.model.BlockElementFace.data
+[18:04:08] [Render thread/INFO]: [STDOUT]: Logged as: dekolahei
+[18:04:09] [Render thread/WARN]: arix:pipeline/round_rect_corners shader program does not use sampler Sampler0 defined in the pipeline. This might be a bug.
+[18:04:10] [Render thread/WARN]: arix:pipeline/fractal_flame shader program does not use sampler Sampler0 defined in the pipeline. This might be a bug.
+[18:04:10] [Render thread/WARN]: arix:pipeline/round_rect shader program does not use sampler Sampler0 defined in the pipeline. This might be a bug.
+[18:04:10] [Render thread/WARN]: arix:pipeline/circle shader program does not use sampler Sampler0 defined in the pipeline. This might be a bug.
+[18:04:10] [Render thread/WARN]: arix:pipeline/round_rect_outline shader program does not use sampler Sampler0 defined in the pipeline. This might be a bug.
+[18:04:10] [Render thread/INFO]: OpenAL initialized on device OpenAL Soft on Наушники (Устройство с поддержкой High Definition Audio)
+[18:04:10] [Render thread/INFO]: Sound engine started
+[18:04:10] [Render thread/INFO]: Created: 512x256x0 minecraft:textures/atlas/particles.png-atlas
+[18:04:10] [Render thread/INFO]: [OptiFine] Animated sprites: 1
+[18:04:10] [Render thread/INFO]: Created: 128x128x0 minecraft:textures/atlas/decorated_pot.png-atlas
+[18:04:10] [Render thread/INFO]: [OptiFine] Animated sprites: 0
+[18:04:10] [Render thread/INFO]: Created: 2048x1024x0 minecraft:textures/atlas/armor_trims.png-atlas
+[18:04:10] [Render thread/INFO]: [OptiFine] Animated sprites: 0
+[18:04:10] [Render thread/INFO]: Created: 512x256x0 minecraft:textures/atlas/paintings.png-atlas
+[18:04:10] [Render thread/INFO]: [OptiFine] Animated sprites: 0
+[18:04:10] [Render thread/INFO]: Created: 1024x512x0 minecraft:textures/atlas/shield_patterns.png-atlas
+[18:04:10] [Render thread/INFO]: [OptiFine] Animated sprites: 0
+[18:04:10] [Render thread/INFO]: Created: 1024x1024x2 minecraft:textures/atlas/blocks.png-atlas
+[18:04:11] [Render thread/INFO]: [OptiFine] Update block sprites
+[18:04:11] [Render thread/INFO]: [OptiFine] Animated sprites: 56
+[18:04:11] [Render thread/INFO]: Created: 512x512x0 minecraft:textures/atlas/chest.png-atlas
+[18:04:11] [Render thread/INFO]: [OptiFine] Animated sprites: 0
+[18:04:11] [Render thread/INFO]: Created: 256x128x0 minecraft:textures/atlas/celestials.png-atlas
+[18:04:11] [Render thread/INFO]: [OptiFine] Animated sprites: 0
+[18:04:11] [Render thread/INFO]: Created: 1024x512x0 minecraft:textures/atlas/banner_patterns.png-atlas
+[18:04:11] [Render thread/INFO]: [OptiFine] Animated sprites: 0
+[18:04:11] [Render thread/INFO]: Created: 512x512x0 minecraft:textures/atlas/beds.png-atlas
+[18:04:11] [Render thread/INFO]: [OptiFine] Animated sprites: 0
+[18:04:11] [Render thread/INFO]: Created: 1024x512x0 minecraft:textures/atlas/items.png-atlas
+[18:04:11] [Render thread/INFO]: [OptiFine] Update item sprites
+[18:04:11] [Render thread/INFO]: [OptiFine] Animated sprites: 0
+[18:04:11] [Render thread/INFO]: Created: 1024x1024x0 minecraft:textures/atlas/gui.png-atlas
+[18:04:11] [Render thread/INFO]: [OptiFine] Animated sprites: 5
+[18:04:11] [Render thread/INFO]: Created: 128x64x0 minecraft:textures/atlas/map_decorations.png-atlas
+[18:04:11] [Render thread/INFO]: [OptiFine] Animated sprites: 0
+[18:04:11] [Render thread/INFO]: Created: 512x256x0 minecraft:textures/atlas/signs.png-atlas
+[18:04:11] [Render thread/INFO]: [OptiFine] Animated sprites: 0
+[18:04:11] [Render thread/INFO]: Created: 512x512x0 minecraft:textures/atlas/shulker_boxes.png-atlas
+[18:04:11] [Render thread/INFO]: [OptiFine] Animated sprites: 0
+[18:04:11] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/gui.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
+[18:04:11] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/beds.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
+[18:04:11] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/paintings.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
+[18:04:11] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/shulker_boxes.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
+[18:04:11] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/signs.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
+[18:04:11] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/chest.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
+[18:04:11] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/particles.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
+[18:04:11] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/celestials.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
+[18:04:11] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/shield_patterns.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
+[18:04:11] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/decorated_pot.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
+[18:04:11] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/map_decorations.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
+[18:04:11] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/blocks.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
+[18:04:11] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/banner_patterns.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
+[18:04:11] [Render thread/WARN]: Duplicate sprite minecraft:optifine/ctm/default/empty from atlas minecraft:textures/atlas/armor_trims.png, already defined in atlas minecraft:textures/atlas/items.png. This will be rejected in a future version
+[18:04:12] [Render thread/INFO]: [OptiFine] *** Reloading custom textures ***
+[18:04:12] [Render thread/INFO]: [OptiFine] Disable Forge light pipeline
+[18:04:12] [Render thread/INFO]: [OptiFine] *** Reflector Forge ***
+[18:04:12] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.event.level.ChunkEvent$Load
+[18:04:12] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.event.level.ChunkEvent$Unload
+[18:04:12] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.ColorResolverManager
+[18:04:12] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.logging.CrashReportAnalyser
+[18:04:12] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.EntitySpectatorShaderManager
+[18:04:12] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.eventbus.api.bus.EventBus
+[18:04:12] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraft.world.entity.Entity.isInWaterOrSwimmable
+[18:04:12] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraft.world.entity.boss.enderdragon.EnderDragon.getParts
+[18:04:12] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeBlockState.getSoundType
+[18:04:12] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeBlockState.getStateAtViewpoint
+[18:04:12] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeBlockState.shouldDisplayFluidOverlay
+[18:04:12] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeEntity.getEyeInFluidType
+[18:04:12] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeEntity.getParts
+[18:04:12] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeEntity.hasCustomOutlineRendering
+[18:04:12] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeEntity.isMultipartEntity
+[18:04:12] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeEntity.onAddedToWorld
+[18:04:12] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeEntity.onRemovedFromWorld
+[18:04:12] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeEntity.shouldRiderSit
+[18:04:12] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.event.ForgeEventFactory
+[18:04:12] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.client.model.ForgeFaceData.calculateNormals
+[18:04:12] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.common.ForgeHooks
+[18:04:12] [Render thread/INFO]: [OptiFine] (Reflector) Field not present: net.minecraftforge.common.ForgeConfigSpec.childConfig
+[18:04:12] [Render thread/INFO]: [OptiFine] (Reflector) Field not present: net.minecraftforge.common.ForgeConfigSpec$ConfigValue.defaultSupplier
+[18:04:12] [Render thread/INFO]: [OptiFine] (Reflector) Field not present: net.minecraftforge.common.ForgeConfigSpec$ConfigValue.spec
+[18:04:12] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.ForgeConfigSpec$ConfigValue.get
+[18:04:12] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraft.world.level.chunk.ChunkAccess.getWorldForge
+[18:04:12] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.common.extensions.IForgeItemStack
+[18:04:12] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraft.client.renderer.ItemBlockRenderTypes.isFancy
+[18:04:12] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraft.client.KeyMapping.setKeyConflictContext
+[18:04:12] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraft.client.KeyMapping.setKeyModifierAndCode
+[18:04:12] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraft.client.particle.ParticleResources.getProvider
+[18:04:12] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraftforge.common.extensions.IForgeBlockEntity.getRenderBoundingBox
+[18:04:12] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.FramePassManager
+[18:04:12] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.ItemDecoratorHandler
+[18:04:12] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.common.MinecraftForge
+[18:04:12] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.fml.ModContainer
+[18:04:12] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.gui.ModListScreen
+[18:04:12] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.fml.ModLoader
+[18:04:12] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.gui.TitleScreenModUpdateIndicator
+[18:04:12] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.event.PlayLevelSoundEvent
+[18:04:12] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.event.RenderBlockScreenEffectEvent$OverlayType
+[18:04:12] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.event.CustomizeGuiOverlayEvent$BossEventProgress
+[18:04:12] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.event.RenderNameTagEvent
+[18:04:12] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.event.RenderTooltipEvent
+[18:04:12] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.event.RenderTooltipEvent$Pre
+[18:04:12] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.client.event.ScreenshotEvent
+[18:04:12] [Render thread/INFO]: [OptiFine] (Reflector) Class not present: net.minecraftforge.server.ServerLifecycleHooks
+[18:04:12] [Render thread/INFO]: [OptiFine] (Reflector) Method not present: net.minecraft.client.particle.TerrainParticle.updateSprite
+[18:04:12] [Render thread/INFO]: [OptiFine] *** Reflector Vanilla ***
+[18:04:12] [Render thread/INFO]: Resizing Dynamic Transforms UBO, capacity limit of 2 reached during a single frame. New capacity will be 4.
+[18:04:18] [Netty NIO IO #1/ERROR]: An exception occurred while handling a packet
+java.io.IOException: Connection reset by peer
+	at java.base/sun.nio.ch.SocketDispatcher.write0(Native Method)
+	at java.base/sun.nio.ch.SocketDispatcher.write(SocketDispatcher.java:54)
+	at java.base/sun.nio.ch.IOUtil.writeFromNativeBuffer(IOUtil.java:137)
+	at java.base/sun.nio.ch.IOUtil.write(IOUtil.java:81)
+	at java.base/sun.nio.ch.IOUtil.write(IOUtil.java:58)
+	at java.base/sun.nio.ch.SocketChannelImpl.write(SocketChannelImpl.java:542)
+	at io.netty.channel.socket.nio.NioSocketChannel.doWrite(NioSocketChannel.java:408)
+	at io.netty.channel.AbstractChannel$AbstractUnsafe.flush0(AbstractChannel.java:802)
+	at io.netty.channel.nio.AbstractNioChannel$AbstractNioUnsafe.flush0(AbstractNioChannel.java:404)
+	at io.netty.channel.AbstractChannel$AbstractUnsafe.flush(AbstractChannel.java:766)
+	at io.netty.channel.DefaultChannelPipeline$HeadContext.flush(DefaultChannelPipeline.java:1391)
+	at io.netty.channel.AbstractChannelHandlerContext.invokeFlush0(AbstractChannelHandlerContext.java:789)
+	at io.netty.channel.AbstractChannelHandlerContext.invokeFlush(AbstractChannelHandlerContext.java:775)
+	at io.netty.channel.AbstractChannelHandlerContext.flush(AbstractChannelHandlerContext.java:761)
+	at io.netty.channel.ChannelOutboundHandlerAdapter.flush(ChannelOutboundHandlerAdapter.java:125)
+	at io.netty.channel.AbstractChannelHandlerContext.invokeFlush0(AbstractChannelHandlerContext.java:793)
+	at io.netty.channel.AbstractChannelHandlerContext.write(AbstractChannelHandlerContext.java:835)
+	at io.netty.channel.AbstractChannelHandlerContext.writeAndFlush(AbstractChannelHandlerContext.java:804)
+	at io.netty.channel.DefaultChannelPipeline.writeAndFlush(DefaultChannelPipeline.java:1041)
+	at io.netty.channel.Channel.writeAndFlush(Channel.java:262)
+	at net.minecraft.network.Connection.doSendPacket(Connection.java:460)
+	at net.minecraft.network.Connection.lambda$sendPacket$9(Connection.java:444)
+	at io.netty.util.concurrent.AbstractEventExecutor.runTask(AbstractEventExecutor.java:148)
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute(AbstractEventExecutor.java:141)
+	at io.netty.util.concurrent.SingleThreadEventExecutor.runAllTasks(SingleThreadEventExecutor.java:535)
+	at io.netty.channel.SingleThreadIoEventLoop.run(SingleThreadIoEventLoop.java:201)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$5.run(SingleThreadEventExecutor.java:1193)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+[18:04:18] [Render thread/ERROR]: Can't ping mc.funtime.su: Отключение
+[18:04:20] [Render thread/INFO]: Connecting to mc.funtime.su, 25565
+[18:04:21] [Download-2/ERROR]: Failed to retrieve profile key pair
 com.mojang.authlib.exceptions.MinecraftClientHttpException: Status: 401
 	at com.mojang.authlib.minecraft.client.MinecraftClient.readInputStream(MinecraftClient.java:103)
 	at com.mojang.authlib.minecraft.client.MinecraftClient.post(MinecraftClient.java:64)
@@ -352,431 +350,427 @@ com.mojang.authlib.exceptions.MinecraftClientHttpException: Status: 401
 	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
 	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
 	at java.base/java.lang.Thread.run(Thread.java:1583)
-[19:46:27] [Netty NIO IO #4/WARN]: (1.17.1->1.18) No light data found for chunk at -1, -1. Chunk was already loaded: false
-[19:46:27] [Netty NIO IO #4/WARN]: (1.17.1->1.18) This means another plugin is sending chunk data in a bad order, or you need to re-enable the cache-1_17-light config option.
-[19:46:27] [Netty NIO IO #4/WARN]: (1.21.4->1.21.5) Unknown heightmap type: root
-[19:46:27] [Netty NIO IO #4/WARN]: (1.17.1->1.18) No light data found for chunk at -1, 0. Chunk was already loaded: false
-[19:46:27] [Netty NIO IO #4/WARN]: (1.17.1->1.18) This means another plugin is sending chunk data in a bad order, or you need to re-enable the cache-1_17-light config option.
-[19:46:27] [Netty NIO IO #4/WARN]: (1.21.4->1.21.5) Unknown heightmap type: root
-[19:46:27] [Netty NIO IO #4/WARN]: (1.17.1->1.18) No light data found for chunk at -1, 1. Chunk was already loaded: false
-[19:46:27] [Netty NIO IO #4/WARN]: (1.17.1->1.18) This means another plugin is sending chunk data in a bad order, or you need to re-enable the cache-1_17-light config option.
-[19:46:27] [Netty NIO IO #4/WARN]: (1.21.4->1.21.5) Unknown heightmap type: root
-[19:46:27] [Netty NIO IO #4/WARN]: (1.17.1->1.18) No light data found for chunk at 0, -1. Chunk was already loaded: false
-[19:46:27] [Netty NIO IO #4/WARN]: (1.17.1->1.18) This means another plugin is sending chunk data in a bad order, or you need to re-enable the cache-1_17-light config option.
-[19:46:27] [Netty NIO IO #4/WARN]: (1.21.4->1.21.5) Unknown heightmap type: root
-[19:46:27] [Netty NIO IO #4/WARN]: (1.17.1->1.18) No light data found for chunk at 0, 0. Chunk was already loaded: false
-[19:46:27] [Netty NIO IO #4/WARN]: (1.17.1->1.18) This means another plugin is sending chunk data in a bad order, or you need to re-enable the cache-1_17-light config option.
-[19:46:27] [Netty NIO IO #4/WARN]: (1.21.4->1.21.5) Unknown heightmap type: root
-[19:46:27] [Netty NIO IO #4/WARN]: (1.17.1->1.18) No light data found for chunk at 0, 1. Chunk was already loaded: false
-[19:46:27] [Netty NIO IO #4/WARN]: (1.17.1->1.18) This means another plugin is sending chunk data in a bad order, or you need to re-enable the cache-1_17-light config option.
-[19:46:27] [Netty NIO IO #4/WARN]: (1.21.4->1.21.5) Unknown heightmap type: root
-[19:46:27] [Netty NIO IO #4/WARN]: (1.17.1->1.18) No light data found for chunk at 1, -1. Chunk was already loaded: false
-[19:46:27] [Netty NIO IO #4/WARN]: (1.17.1->1.18) This means another plugin is sending chunk data in a bad order, or you need to re-enable the cache-1_17-light config option.
-[19:46:27] [Netty NIO IO #4/WARN]: (1.21.4->1.21.5) Unknown heightmap type: root
-[19:46:27] [Netty NIO IO #4/WARN]: (1.17.1->1.18) No light data found for chunk at 1, 0. Chunk was already loaded: false
-[19:46:27] [Netty NIO IO #4/WARN]: (1.17.1->1.18) This means another plugin is sending chunk data in a bad order, or you need to re-enable the cache-1_17-light config option.
-[19:46:27] [Netty NIO IO #4/WARN]: (1.21.4->1.21.5) Unknown heightmap type: root
-[19:46:27] [Netty NIO IO #4/WARN]: (1.17.1->1.18) No light data found for chunk at 1, 1. Chunk was already loaded: false
-[19:46:27] [Netty NIO IO #4/WARN]: (1.17.1->1.18) This means another plugin is sending chunk data in a bad order, or you need to re-enable the cache-1_17-light config option.
-[19:46:27] [Netty NIO IO #4/WARN]: (1.21.4->1.21.5) Unknown heightmap type: root
-[19:46:27] [Render thread/INFO]: [STDOUT]: World seems to be a replay. Not loading Baritone cache.
-[19:46:27] [Render thread/INFO]: [voicechat] Sending secret request to the server
-[19:46:27] [Render thread/INFO]: [STDOUT]: Retrying to load Baritone cache
-[19:46:27] [Render thread/INFO]: [STDOUT]: Baritone world data dir: .\baritone\mc.spookytime.net\minecraft\overworld_256
-[19:46:27] [Render thread/INFO]: [STDOUT]: Cached world directory: .\baritone\mc.spookytime.net\minecraft\overworld_256\cache
-[19:46:27] [Render thread/INFO]: [STDOUT]: Would save waypoints to .\baritone\mc.spookytime.net\minecraft\overworld_256\waypoints
-[19:46:27] [Render thread/INFO]: Resizing Dynamic Transforms UBO, capacity limit of 4 reached during a single frame. New capacity will be 8.
-[19:46:27] [pool-6-thread-1/INFO]: [STDOUT]: Loading region -1,-1 from disk .\baritone\mc.spookytime.net\minecraft\overworld_256\cache
-[19:46:27] [Render thread/INFO]: [System] [CHAT] ➥ Идёт проверка, пожалуйста, подождите...
-[19:46:27] [Render thread/INFO]: Resizing Dynamic Transforms UBO, capacity limit of 8 reached during a single frame. New capacity will be 16.
-[19:46:28] [pool-6-thread-1/INFO]: [STDOUT]: Loaded region successfully in 405ms
-[19:46:28] [pool-6-thread-1/INFO]: [STDOUT]: Loading region -1,0 from disk .\baritone\mc.spookytime.net\minecraft\overworld_256\cache
-[19:46:28] [pool-6-thread-1/INFO]: [STDOUT]: Loaded region successfully in 565ms
-[19:46:28] [pool-6-thread-1/INFO]: [STDOUT]: Loading region 0,-1 from disk .\baritone\mc.spookytime.net\minecraft\overworld_256\cache
-[19:46:29] [pool-6-thread-1/INFO]: [STDOUT]: Loaded region successfully in 531ms
-[19:46:29] [pool-6-thread-1/INFO]: [STDOUT]: Loading region 0,0 from disk .\baritone\mc.spookytime.net\minecraft\overworld_256\cache
-[19:46:30] [Render thread/INFO]: [System] [CHAT] ➥ Идёт проверка, пожалуйста, подождите...
-[19:46:30] [Render thread/INFO]: [System] [CHAT] ➥ Идёт проверка, пожалуйста, подождите...
-[19:46:30] [pool-6-thread-1/INFO]: [STDOUT]: Loaded region successfully in 1554ms
-[19:46:32] [Render thread/INFO]: [System] [CHAT] ➥ Идёт проверка, пожалуйста, подождите...
-[19:46:33] [Render thread/INFO]: Resizing Chunk Sections UBO, capacity limit of 2 reached during a single frame. New capacity will be 4.
-[19:46:35] [Render thread/INFO]: [System] [CHAT] ➥ Идёт проверка, пожалуйста, подождите...
-[19:46:37] [Render thread/INFO]: [System] [CHAT] ➥ Идёт проверка, пожалуйста, подождите...
-[19:46:38] [Render thread/INFO]: [System] [CHAT] ➥ Идёт проверка, пожалуйста, подождите...
-[19:46:38] [Render thread/INFO]: [System] [CHAT] ➥ Идёт проверка, пожалуйста, подождите...
-[19:46:38] [Render thread/INFO]: [System] [CHAT] ➥ Вы успешно прошли проверку! :)
-[19:46:38] [Render thread/INFO]: [System] [CHAT] [✾] Зарегистрируйтесь ⇝ /reg <Пароль>
-[19:46:38] [Render thread/INFO]: [STDOUT]: World seems to be a replay. Not loading Baritone cache.
-[19:46:38] [Render thread/INFO]: [voicechat] Disconnecting from previous connection due to server change
-[19:46:38] [Render thread/INFO]: [voicechat] Clearing audio channels
-[19:46:38] [pool-6-thread-3/INFO]: [STDOUT]: Started saving the world in a new thread
-[19:46:38] [pool-6-thread-3/INFO]: [STDOUT]: Saving region -1,0 to disk .\baritone\mc.spookytime.net\minecraft\overworld_256\cache
-[19:46:38] [Render thread/INFO]: [voicechat] Sending secret request to the server
-[19:46:38] [pool-6-thread-3/INFO]: [STDOUT]: Saved region successfully
-[19:46:38] [pool-6-thread-3/INFO]: [STDOUT]: Saving region -1,-1 to disk .\baritone\mc.spookytime.net\minecraft\overworld_256\cache
-[19:46:38] [pool-6-thread-3/INFO]: [STDOUT]: Saved region successfully
-[19:46:38] [pool-6-thread-3/INFO]: [STDOUT]: Saving region 0,-1 to disk .\baritone\mc.spookytime.net\minecraft\overworld_256\cache
-[19:46:38] [pool-6-thread-3/INFO]: [STDOUT]: Saved region successfully
-[19:46:38] [pool-6-thread-3/INFO]: [STDOUT]: Saving region 0,0 to disk .\baritone\mc.spookytime.net\minecraft\overworld_256\cache
-[19:46:38] [pool-6-thread-3/INFO]: [STDOUT]: Saved region successfully
-[19:46:38] [pool-6-thread-3/INFO]: [STDOUT]: World save took 217ms
-[19:46:38] [pool-6-thread-3/INFO]: [STDOUT]: Retrying to load Baritone cache
-[19:46:38] [pool-6-thread-3/INFO]: [STDOUT]: Baritone world data dir: .\baritone\mc.spookytime.net\minecraft\overworld_256
-[19:46:39] [Render thread/INFO]: Loaded 0 advancements
-[19:46:39] [Render thread/INFO]: Resizing Chunk Sections UBO, capacity limit of 4 reached during a single frame. New capacity will be 8.
-[19:46:39] [Render thread/INFO]: Resizing Chunk Sections UBO, capacity limit of 8 reached during a single frame. New capacity will be 16.
-[19:46:40] [Render thread/INFO]: Resizing Chunk Sections UBO, capacity limit of 16 reached during a single frame. New capacity will be 32.
-[19:46:43] [Render thread/INFO]: [System] [CHAT] [✾] Зарегистрируйтесь ⇝ /reg <Пароль>
-[19:46:44] [Render thread/INFO]: [voicechat] Clearing audio channels
-[19:46:45] [Render thread/INFO]: [STDOUT]: Logged as: Kyrokerexxonx
-[19:46:48] [Render thread/INFO]: [STDOUT]: Logged as: wlhyyeo
-[19:46:49] [Render thread/INFO]: [STDOUT]: Logged as: ViP3R3n
-[19:46:50] [Render thread/ERROR]: Can't ping holytime.ru: Отключение
-[19:46:50] [Render thread/INFO]: Connecting to mc.spookytime.net, 25565
-[19:46:51] [Download-3/ERROR]: Failed to retrieve profile key pair
-com.mojang.authlib.exceptions.MinecraftClientHttpException: Status: 401
-	at com.mojang.authlib.minecraft.client.MinecraftClient.readInputStream(MinecraftClient.java:103)
-	at com.mojang.authlib.minecraft.client.MinecraftClient.post(MinecraftClient.java:64)
-	at com.mojang.authlib.yggdrasil.YggdrasilUserApiService.getKeyPair(YggdrasilUserApiService.java:61)
-	at net.minecraft.client.multiplayer.AccountProfileKeyPairManager.fetchProfileKeyPair(AccountProfileKeyPairManager.java:122)
-	at net.minecraft.client.multiplayer.AccountProfileKeyPairManager.lambda$readOrFetchProfileKeyPair$0(AccountProfileKeyPairManager.java:75)
+[18:04:23] [Render thread/INFO]: [System] [CHAT] [✾] Успешная авторизация! Приятной игры!
+[18:04:24] [Render thread/INFO]: [STDOUT]: World seems to be a replay. Not loading Baritone cache.
+[18:04:24] [Render thread/INFO]: [voicechat] Sending secret request to the server
+[18:04:24] [Render thread/WARN]: [voicechat] Failed to open audio device 'OpenAL Soft on Динамики (High Definition Audio Device)', falling back to default
+[18:04:24] [Render thread/INFO]: [STDOUT]: Retrying to load Baritone cache
+[18:04:24] [Render thread/INFO]: [STDOUT]: Baritone world data dir: .\baritone\mc.funtime.su\minecraft\overworld_384
+[18:04:24] [Render thread/INFO]: [STDOUT]: Cached world directory: .\baritone\mc.funtime.su\minecraft\overworld_384\cache
+[18:04:24] [Render thread/INFO]: [STDOUT]: Would save waypoints to .\baritone\mc.funtime.su\minecraft\overworld_384\waypoints
+[18:04:24] [Render thread/INFO]: [System] [CHAT] ╔═════ ★ FunTime.su ★ ═══╗
+[18:04:24] [Render thread/INFO]: [System] [CHAT] ║
+[18:04:24] [Render thread/INFO]: [System] [CHAT] ║ Добро пожаловать на FunTime
+[18:04:24] [Render thread/INFO]: [System] [CHAT] ║ Наши социальные сети – /links
+[18:04:24] [Render thread/INFO]: [System] [CHAT] ║ Приятной игры и новых побед!
+[18:04:24] [Render thread/INFO]: [System] [CHAT] ║
+[18:04:24] [Render thread/INFO]: [System] [CHAT] ╚═══════════════════╝
+[18:04:24] [Render thread/WARN]: Ignoring player info update for unknown player 59dd3586-b50a-387d-aa56-9c8da4d89d3d ([UPDATE_LATENCY])
+[18:04:24] [Render thread/WARN]: Ignoring player info update for unknown player 1328ae81-2622-3575-be32-1d529d8ccf07 ([UPDATE_LATENCY])
+[18:04:24] [Render thread/WARN]: Ignoring player info update for unknown player 9323a138-516e-3048-9d95-d0d93e56a8c8 ([UPDATE_LATENCY])
+[18:04:24] [Render thread/WARN]: Ignoring player info update for unknown player 2f5b34a2-758f-3486-b723-ec01e8ffcbee ([UPDATE_LATENCY])
+[18:04:24] [Render thread/WARN]: Ignoring player info update for unknown player 48d43f7f-9cdf-3560-8fe6-a112bec2bb2c ([UPDATE_LATENCY])
+[18:04:24] [Render thread/WARN]: Ignoring player info update for unknown player 5a71f179-002e-3124-8cbc-4bcaad0715b5 ([UPDATE_LATENCY])
+[18:04:24] [pool-6-thread-1/INFO]: [STDOUT]: Loading region 0,0 from disk .\baritone\mc.funtime.su\minecraft\overworld_384\cache
+[18:04:25] [pool-6-thread-1/INFO]: [STDOUT]: Loaded region successfully in 421ms
+[18:04:25] [pool-6-thread-1/INFO]: [STDOUT]: Loading region -1,0 from disk .\baritone\mc.funtime.su\minecraft\overworld_384\cache
+[18:04:25] [pool-6-thread-1/INFO]: [STDOUT]: Loaded region successfully in 158ms
+[18:04:25] [pool-6-thread-1/INFO]: [STDOUT]: Loading region 0,-1 from disk .\baritone\mc.funtime.su\minecraft\overworld_384\cache
+[18:04:25] [pool-6-thread-1/INFO]: [STDOUT]: Loaded region successfully in 126ms
+[18:04:26] [pool-6-thread-1/INFO]: [STDOUT]: Loading region -1,-1 from disk .\baritone\mc.funtime.su\minecraft\overworld_384\cache
+[18:04:26] [pool-6-thread-1/INFO]: [STDOUT]: Loaded region successfully in 110ms
+[18:04:27] [Render thread/INFO]: Resizing Dynamic Transforms UBO, capacity limit of 4 reached during a single frame. New capacity will be 8.
+[18:04:27] [Render thread/INFO]: [System] [CHAT] ** ! Внимание !\n** Чтобы ваш Аккаунт был в БЕЗОПАСНОСТИ!\n** Привяжите его к ВК: /vk \n** Или к Телеграм: /tg \n \n** ! Внимание !\n** Чтобы ваш Аккаунт был в БЕЗОПАСНОСТИ!\n** Привяжите его к ВК: /vk \n** Или к Телеграм: /tg 
+[18:04:28] [Render thread/WARN]: Ignoring player info update for unknown player 523c141c-60fb-3473-9adc-28e686e2b6c5 ([UPDATE_LATENCY])
+[18:04:35] [Render thread/WARN]: Ignoring player info update for unknown player 4d112668-fa23-3008-94b6-f8a201d22f79 ([UPDATE_LATENCY])
+[18:04:35] [Render thread/WARN]: Ignoring player info update for unknown player 4ffb2300-4c06-34e8-bf30-7ee08909b4db ([UPDATE_LATENCY])
+[18:04:35] [Render thread/WARN]: Ignoring player info update for unknown player bf38a355-48ae-3479-89d5-596375e4794a ([UPDATE_LATENCY])
+[18:04:35] [Render thread/WARN]: Ignoring player info update for unknown player 5edda198-f9ad-3d79-9882-8b20a7bbd69a ([UPDATE_LATENCY])
+[18:04:35] [Render thread/WARN]: Ignoring player info update for unknown player a0a6712b-abe4-3be9-a1dc-9da7f251ee76 ([UPDATE_LATENCY])
+[18:04:36] [Render thread/INFO]: Resizing Chunk Sections UBO, capacity limit of 2 reached during a single frame. New capacity will be 4.
+[18:04:36] [Render thread/WARN]: Ignoring player info update for unknown player c58dcf9d-4e7d-3377-be86-b7177c842713 ([UPDATE_LATENCY])
+[18:04:37] [Render thread/INFO]: Resizing Chunk Sections UBO, capacity limit of 4 reached during a single frame. New capacity will be 8.
+[18:04:37] [Worker-Main-2/ERROR]: Failed to verify signature on property Property[name=textures, value=ewogICJ0aW1lc3RhbXAiIDogMTc1MDI3ODY0MTkwMCwKICAicHJvZmlsZUlkIiA6ICIxNzRjZmRiNGEzY2I0M2I1YmZjZGU0MjRjM2JiMmM2ZSIsCiAgInByb2ZpbGVOYW1lIiA6ICJtYXJhZWwxOCIsCiAgInNpZ25hdHVyZVJlcXVpcmVkIiA6IHRydWUsCiAgInRleHR1cmVzIiA6IHsKICAgICJTS0lOIiA6IHsKICAgICAgInVybCIgOiAiaHR0cDovL3RleHR1cmVzLm1pbmVjcmFmdC5uZXQvdGV4dHVyZS9lN2E3YWU3Y2RjZjYxNmU4YjdhNDIyMWE2MjFiMjQzNTc1M2M2MGVkNmEyNThlYTA2MGRhZTMwMDJmZmU5ZTI4IiwKICAgICAgIm1ldGFkYXRhIiA6IHsKICAgICAgICAibW9kZWwiIDogInNsaW0iCiAgICAgIH0KICAgIH0KICB9Cn0=, signature=]
+java.security.SignatureException: Bad signature length: got 0 but was expecting 512
+	at java.base/sun.security.rsa.RSASignature.engineVerify(RSASignature.java:212)
+	at java.base/java.security.Signature$Delegate.engineVerify(Signature.java:1422)
+	at java.base/java.security.Signature.verify(Signature.java:790)
+	at com.mojang.authlib.yggdrasil.YggdrasilServicesKeyInfo.validateProperty(YggdrasilServicesKeyInfo.java:165)
+	at com.mojang.authlib.yggdrasil.YggdrasilMinecraftSessionService.lambda$getPropertySignatureState$0(YggdrasilMinecraftSessionService.java:185)
+	at java.base/java.util.stream.MatchOps$1MatchSink.accept(MatchOps.java:90)
+	at java.base/java.util.AbstractList$RandomAccessSpliterator.tryAdvance(AbstractList.java:708)
+	at java.base/java.util.stream.ReferencePipeline.forEachWithCancel(ReferencePipeline.java:129)
+	at java.base/java.util.stream.AbstractPipeline.copyIntoWithCancel(AbstractPipeline.java:527)
+	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:513)
+	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499)
+	at java.base/java.util.stream.MatchOps$MatchOp.evaluateSequential(MatchOps.java:230)
+	at java.base/java.util.stream.MatchOps$MatchOp.evaluateSequential(MatchOps.java:196)
+	at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:234)
+	at java.base/java.util.stream.ReferencePipeline.noneMatch(ReferencePipeline.java:642)
+	at com.mojang.authlib.yggdrasil.YggdrasilMinecraftSessionService.getPropertySignatureState(YggdrasilMinecraftSessionService.java:185)
+	at com.mojang.authlib.yggdrasil.YggdrasilMinecraftSessionService.unpackTextures(YggdrasilMinecraftSessionService.java:128)
+	at net.minecraft.client.resources.SkinManager$1.lambda$load$0(SkinManager.java:67)
 	at java.base/java.util.concurrent.CompletableFuture$AsyncSupply.run(CompletableFuture.java:1768)
-	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
-	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
-	at java.base/java.lang.Thread.run(Thread.java:1583)
-[19:46:51] [Render thread/INFO]: [STDOUT]: World seems to be a replay. Not loading Baritone cache.
-[19:46:51] [Render thread/INFO]: [voicechat] Sending secret request to the server
-[19:46:51] [pool-6-thread-4/INFO]: [STDOUT]: Started saving the world in a new thread
-[19:46:51] [pool-6-thread-4/INFO]: [STDOUT]: Saving region -1,0 to disk .\baritone\mc.spookytime.net\minecraft\overworld_256\cache
-[19:46:51] [ForkJoinPool.commonPool-worker-1/INFO]: [STDOUT]: Saving region 0,-1 to disk .\baritone\mc.spookytime.net\minecraft\overworld_256\cache
-[19:46:51] [ForkJoinPool.commonPool-worker-1/INFO]: [STDOUT]: Saved region successfully
-[19:46:51] [ForkJoinPool.commonPool-worker-1/INFO]: [STDOUT]: Saving region 0,0 to disk .\baritone\mc.spookytime.net\minecraft\overworld_256\cache
-[19:46:51] [pool-6-thread-4/INFO]: [STDOUT]: Saved region successfully
-[19:46:51] [pool-6-thread-4/INFO]: [STDOUT]: Saving region -1,-1 to disk .\baritone\mc.spookytime.net\minecraft\overworld_256\cache
-[19:46:51] [pool-6-thread-4/INFO]: [STDOUT]: Saved region successfully
-[19:46:51] [ForkJoinPool.commonPool-worker-1/INFO]: [STDOUT]: Saved region successfully
-[19:46:51] [pool-6-thread-4/INFO]: [STDOUT]: World save took 112ms
-[19:46:51] [pool-6-thread-4/INFO]: [STDOUT]: Retrying to load Baritone cache
-[19:46:51] [pool-6-thread-4/INFO]: [STDOUT]: Baritone world data dir: .\baritone\mc.spookytime.net\minecraft\overworld_256
-[19:46:52] [Render thread/INFO]: [System] [CHAT] [✾] Успешная авторизация! Приятной игры!
-[19:46:52] [Render thread/INFO]: [System] [CHAT] ╔════ ★ SpookyTime.net ★ ════╗\n║ \n║  Добро пожаловать на SpookyTime\n║  Наши социальные сети — /links\n║  Приятной игры и новых побед!\n║ \n╚══════════════════════╝
-[19:46:52] [Render thread/INFO]: Loaded 0 advancements
-[19:46:52] [Render thread/WARN]: Missing resource minecraft:entity/player/wide/makena referenced from minecraft:entity/player/wide/makena
-[19:46:52] [Render thread/INFO]: Resizing Dynamic Transforms UBO, capacity limit of 16 reached during a single frame. New capacity will be 32.
-[19:46:53] [Render thread/INFO]: Resizing Dynamic Transforms UBO, capacity limit of 32 reached during a single frame. New capacity will be 64.
-[19:46:54] [Render thread/INFO]: Resizing Chunk Sections UBO, capacity limit of 32 reached during a single frame. New capacity will be 64.
-[19:46:54] [Render thread/INFO]: [System] [CHAT] ** ! Внимание !\n** Чтобы ваш Аккаунт был в БЕЗОПАСНОСТИ!\n** Привяжите его к ВК: /vk\n** Или к Телеграм: /tg\n\n** ! Внимание !\n** Чтобы ваш Аккаунт был в БЕЗОПАСНОСТИ!\n** Привяжите его к ВК: /vk\n** Или к Телеграм: /tg
-[19:46:54] [Render thread/INFO]: Resizing Chunk Sections UBO, capacity limit of 64 reached during a single frame. New capacity will be 128.
-[19:46:57] [ForkJoinPool.commonPool-worker-1/INFO]: [STDOUT]: Saving region -1,-1 to disk .\baritone\mc.spookytime.net\minecraft\overworld_256\cache
-[19:46:57] [ForkJoinPool.commonPool-worker-2/INFO]: [STDOUT]: Saving region 0,0 to disk .\baritone\mc.spookytime.net\minecraft\overworld_256\cache
-[19:46:57] [ForkJoinPool.commonPool-worker-3/INFO]: [STDOUT]: Saving region 0,-1 to disk .\baritone\mc.spookytime.net\minecraft\overworld_256\cache
-[19:46:57] [ForkJoinPool.commonPool-worker-3/INFO]: [STDOUT]: Saved region successfully
-[19:46:57] [ForkJoinPool.commonPool-worker-1/INFO]: [STDOUT]: Saved region successfully
-[19:46:57] [pool-6-thread-2/INFO]: [STDOUT]: Saving region -1,0 to disk .\baritone\mc.spookytime.net\minecraft\overworld_256\cache
-[19:46:57] [ForkJoinPool.commonPool-worker-2/INFO]: [STDOUT]: Saved region successfully
-[19:46:57] [pool-6-thread-2/INFO]: [STDOUT]: Saved region successfully
-[19:46:57] [pool-6-thread-2/INFO]: [STDOUT]: World save took 151ms
-[19:46:58] [Render thread/INFO]: Resizing Chunk Sections UBO, capacity limit of 128 reached during a single frame. New capacity will be 256.
-[19:47:02] [Render thread/INFO]: [System] [CHAT] 
-[19:47:02] [Render thread/INFO]: [System] [CHAT]  ⚡ Наши сообщества и соц. сети /links
-[19:47:02] [Render thread/INFO]: [System] [CHAT] 
-[19:47:06] [Render thread/ERROR]: Error converting native item stack to ViaVersion 1.16.4-1.16.5 (754) item stack
-com.viaversion.viaversion.exception.CancelException$1: This packet is supposed to be cancelled; If you have debug enabled, you can ignore these
-[19:47:06] [Render thread/INFO]: [System] [CHAT] Вы были кикнуты с сервера 1duels: \n\n╔══╦══╦══╦══╦══╦══╗\n\nВЫ ЗАБАНЕНЫ!\n\nБан выдан: 19.06.2026 17:21:53\nБан от: Консоль\nВаш ник: ViP3R3n\nПо причине: [SpookyAC] Подозрение в использовании ЧИТОВ\n\nРазбан через: 4 ч 34 м\n\nОбжаловать бан:\ndiscord.gg/spookytime\n\nКупить разбан: shop.SpookyTime.net\n\n╚══╩══╩══╩══╩══╩══╝
-[19:47:06] [Render thread/INFO]: [STDOUT]: World seems to be a replay. Not loading Baritone cache.
-[19:47:06] [Render thread/INFO]: [voicechat] Disconnecting from previous connection due to server change
-[19:47:06] [Render thread/INFO]: [voicechat] Clearing audio channels
-[19:47:06] [pool-6-thread-4/INFO]: [STDOUT]: Started saving the world in a new thread
-[19:47:06] [pool-6-thread-4/INFO]: [STDOUT]: World save took 0ms
-[19:47:06] [pool-6-thread-4/INFO]: [STDOUT]: Retrying to load Baritone cache
-[19:47:06] [pool-6-thread-4/INFO]: [STDOUT]: Baritone world data dir: .\baritone\mc.spookytime.net\minecraft\overworld_256
-[19:47:06] [Render thread/INFO]: [voicechat] Sending secret request to the server
-[19:47:06] [Render thread/INFO]: [System] [CHAT] ╔════ ★ SpookyTime.net ★ ════╗\n║ \n║  Добро пожаловать на SpookyTime\n║  Наши социальные сети — /links\n║  Приятной игры и новых побед!\n║ \n╚══════════════════════╝
-[19:47:07] [Render thread/INFO]: Loaded 0 advancements
-[19:47:08] [Render thread/INFO]: [System] [CHAT] 
-[19:47:08] [Render thread/INFO]: [System] [CHAT]  ⚡ Наши сообщества и соц. сети /links
-[19:47:08] [Render thread/INFO]: [System] [CHAT] 
-[19:47:13] [Render thread/INFO]: [voicechat] Clearing audio channels
-[19:47:15] [Render thread/INFO]: [STDOUT]: Logged as: Xeno_Cry
-[19:47:16] [Render thread/INFO]: [STDOUT]: Logged as: cakkkkkkkkkkkkkk
-[19:47:17] [Render thread/ERROR]: Can't ping holytime.ru: Отключение
-[19:47:18] [Render thread/INFO]: Connecting to mc.spookytime.net, 25565
-[19:47:18] [Render thread/INFO]: [STDOUT]: World seems to be a replay. Not loading Baritone cache.
-[19:47:18] [pool-6-thread-4/INFO]: [STDOUT]: Started saving the world in a new thread
-[19:47:18] [pool-6-thread-4/INFO]: [STDOUT]: Saving region -1,0 to disk .\baritone\mc.spookytime.net\minecraft\overworld_256\cache
-[19:47:18] [Render thread/INFO]: [voicechat] Sending secret request to the server
-[19:47:18] [ForkJoinPool.commonPool-worker-1/INFO]: [STDOUT]: Saving region 0,-1 to disk .\baritone\mc.spookytime.net\minecraft\overworld_256\cache
-[19:47:18] [ForkJoinPool.commonPool-worker-2/INFO]: [STDOUT]: Saving region 0,0 to disk .\baritone\mc.spookytime.net\minecraft\overworld_256\cache
-[19:47:18] [ForkJoinPool.commonPool-worker-3/INFO]: [STDOUT]: Saving region -1,-1 to disk .\baritone\mc.spookytime.net\minecraft\overworld_256\cache
-[19:47:18] [ForkJoinPool.commonPool-worker-3/INFO]: [STDOUT]: Saved region successfully
-[19:47:18] [ForkJoinPool.commonPool-worker-1/INFO]: [STDOUT]: Saved region successfully
-[19:47:18] [ForkJoinPool.commonPool-worker-2/INFO]: [STDOUT]: Saved region successfully
-[19:47:18] [pool-6-thread-4/INFO]: [STDOUT]: Saved region successfully
-[19:47:18] [pool-6-thread-4/INFO]: [STDOUT]: World save took 149ms
-[19:47:18] [pool-6-thread-4/INFO]: [STDOUT]: Retrying to load Baritone cache
-[19:47:18] [pool-6-thread-4/INFO]: [STDOUT]: Baritone world data dir: .\baritone\mc.spookytime.net\minecraft\overworld_256
-[19:47:18] [Render thread/INFO]: [System] [CHAT] [✾] Успешная авторизация! Приятной игры!
-[19:47:18] [Render thread/INFO]: [System] [CHAT] ╔════ ★ SpookyTime.net ★ ════╗\n║ \n║  Добро пожаловать на SpookyTime\n║  Наши социальные сети — /links\n║  Приятной игры и новых побед!\n║ \n╚══════════════════════╝
-[19:47:18] [Download-6/ERROR]: Failed to retrieve profile key pair
-com.mojang.authlib.exceptions.MinecraftClientHttpException: Status: 401
-	at com.mojang.authlib.minecraft.client.MinecraftClient.readInputStream(MinecraftClient.java:103)
-	at com.mojang.authlib.minecraft.client.MinecraftClient.post(MinecraftClient.java:64)
-	at com.mojang.authlib.yggdrasil.YggdrasilUserApiService.getKeyPair(YggdrasilUserApiService.java:61)
-	at net.minecraft.client.multiplayer.AccountProfileKeyPairManager.fetchProfileKeyPair(AccountProfileKeyPairManager.java:122)
-	at net.minecraft.client.multiplayer.AccountProfileKeyPairManager.lambda$readOrFetchProfileKeyPair$0(AccountProfileKeyPairManager.java:75)
+	at java.base/java.util.concurrent.CompletableFuture$AsyncSupply.exec(CompletableFuture.java:1760)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:387)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1312)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1843)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1808)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:188)
+[18:04:38] [Render thread/INFO]: Resizing Dynamic Transforms UBO, capacity limit of 8 reached during a single frame. New capacity will be 16.
+[18:04:37] [Worker-Main-2/ERROR]: Failed to verify signature on property Property[name=textures, value=ewogICJ0aW1lc3RhbXAiIDogMTc1MDI3ODY0MTkwMCwKICAicHJvZmlsZUlkIiA6ICIxNzRjZmRiNGEzY2I0M2I1YmZjZGU0MjRjM2JiMmM2ZSIsCiAgInByb2ZpbGVOYW1lIiA6ICJtYXJhZWwxOCIsCiAgInNpZ25hdHVyZVJlcXVpcmVkIiA6IHRydWUsCiAgInRleHR1cmVzIiA6IHsKICAgICJTS0lOIiA6IHsKICAgICAgInVybCIgOiAiaHR0cDovL3RleHR1cmVzLm1pbmVjcmFmdC5uZXQvdGV4dHVyZS9lN2E3YWU3Y2RjZjYxNmU4YjdhNDIyMWE2MjFiMjQzNTc1M2M2MGVkNmEyNThlYTA2MGRhZTMwMDJmZmU5ZTI4IiwKICAgICAgIm1ldGFkYXRhIiA6IHsKICAgICAgICAibW9kZWwiIDogInNsaW0iCiAgICAgIH0KICAgIH0KICB9Cn0=, signature=]
+java.security.SignatureException: Bad signature length: got 0 but was expecting 512
+	at java.base/sun.security.rsa.RSASignature.engineVerify(RSASignature.java:212)
+	at java.base/java.security.Signature$Delegate.engineVerify(Signature.java:1422)
+	at java.base/java.security.Signature.verify(Signature.java:790)
+	at com.mojang.authlib.yggdrasil.YggdrasilServicesKeyInfo.validateProperty(YggdrasilServicesKeyInfo.java:165)
+	at com.mojang.authlib.yggdrasil.YggdrasilMinecraftSessionService.lambda$getPropertySignatureState$0(YggdrasilMinecraftSessionService.java:185)
+	at java.base/java.util.stream.MatchOps$1MatchSink.accept(MatchOps.java:90)
+	at java.base/java.util.AbstractList$RandomAccessSpliterator.tryAdvance(AbstractList.java:708)
+	at java.base/java.util.stream.ReferencePipeline.forEachWithCancel(ReferencePipeline.java:129)
+	at java.base/java.util.stream.AbstractPipeline.copyIntoWithCancel(AbstractPipeline.java:527)
+	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:513)
+	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499)
+	at java.base/java.util.stream.MatchOps$MatchOp.evaluateSequential(MatchOps.java:230)
+	at java.base/java.util.stream.MatchOps$MatchOp.evaluateSequential(MatchOps.java:196)
+	at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:234)
+	at java.base/java.util.stream.ReferencePipeline.noneMatch(ReferencePipeline.java:642)
+	at com.mojang.authlib.yggdrasil.YggdrasilMinecraftSessionService.getPropertySignatureState(YggdrasilMinecraftSessionService.java:185)
+	at com.mojang.authlib.yggdrasil.YggdrasilMinecraftSessionService.unpackTextures(YggdrasilMinecraftSessionService.java:128)
+	at net.minecraft.client.resources.SkinManager$1.lambda$load$0(SkinManager.java:67)
 	at java.base/java.util.concurrent.CompletableFuture$AsyncSupply.run(CompletableFuture.java:1768)
-	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
-	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
-	at java.base/java.lang.Thread.run(Thread.java:1583)
-[19:47:18] [Render thread/INFO]: Loaded 0 advancements
-[19:47:19] [Render thread/INFO]: [System] [CHAT] 
-[19:47:19] [Render thread/INFO]: [System] [CHAT]  ⚡ Наша группа ВК vk.com/spookytimenet
-[19:47:19] [Render thread/INFO]: [System] [CHAT] 
-[19:47:21] [Render thread/INFO]: [System] [CHAT] ** ! Внимание !\n** Чтобы ваш Аккаунт был в БЕЗОПАСНОСТИ!\n** Привяжите его к ВК: /vk\n** Или к Телеграм: /tg\n\n** ! Внимание !\n** Чтобы ваш Аккаунт был в БЕЗОПАСНОСТИ!\n** Привяжите его к ВК: /vk\n** Или к Телеграм: /tg
-[19:47:31] [Render thread/ERROR]: Error converting native item stack to ViaVersion 1.16.4-1.16.5 (754) item stack
-com.viaversion.viaversion.exception.CancelException$1: This packet is supposed to be cancelled; If you have debug enabled, you can ignore these
-[19:47:32] [Render thread/INFO]: [STDOUT]: World seems to be a replay. Not loading Baritone cache.
-[19:47:32] [pool-6-thread-4/INFO]: [STDOUT]: Started saving the world in a new thread
-[19:47:32] [ForkJoinPool.commonPool-worker-2/INFO]: [STDOUT]: Saving region 0,-1 to disk .\baritone\mc.spookytime.net\minecraft\overworld_256\cache
-[19:47:32] [pool-6-thread-4/INFO]: [STDOUT]: Saving region -1,0 to disk .\baritone\mc.spookytime.net\minecraft\overworld_256\cache
-[19:47:32] [ForkJoinPool.commonPool-worker-3/INFO]: [STDOUT]: Saving region 0,0 to disk .\baritone\mc.spookytime.net\minecraft\overworld_256\cache
-[19:47:32] [ForkJoinPool.commonPool-worker-1/INFO]: [STDOUT]: Saving region -1,-1 to disk .\baritone\mc.spookytime.net\minecraft\overworld_256\cache
-[19:47:32] [Render thread/INFO]: [voicechat] Disconnecting from previous connection due to server change
-[19:47:32] [Render thread/INFO]: [voicechat] Clearing audio channels
-[19:47:32] [ForkJoinPool.commonPool-worker-2/INFO]: [STDOUT]: Saved region successfully
-[19:47:32] [ForkJoinPool.commonPool-worker-1/INFO]: [STDOUT]: Saved region successfully
-[19:47:32] [pool-6-thread-4/INFO]: [STDOUT]: Saved region successfully
-[19:47:32] [ForkJoinPool.commonPool-worker-3/INFO]: [STDOUT]: Saved region successfully
-[19:47:32] [pool-6-thread-4/INFO]: [STDOUT]: World save took 86ms
-[19:47:32] [pool-6-thread-4/INFO]: [STDOUT]: Retrying to load Baritone cache
-[19:47:32] [pool-6-thread-4/INFO]: [STDOUT]: Baritone world data dir: .\baritone\mc.spookytime.net\minecraft\arenas_256
-[19:47:32] [pool-6-thread-4/INFO]: [STDOUT]: Cached world directory: .\baritone\mc.spookytime.net\minecraft\arenas_256\cache
-[19:47:32] [pool-6-thread-4/INFO]: [STDOUT]: Would save waypoints to .\baritone\mc.spookytime.net\minecraft\arenas_256\waypoints
-[19:47:32] [Render thread/INFO]: [voicechat] Sending secret request to the server
-[19:47:32] [Render thread/INFO]: Loaded 0 advancements
-[19:47:32] [pool-6-thread-3/INFO]: [STDOUT]: Loading region 7,7 from disk .\baritone\mc.spookytime.net\minecraft\arenas_256\cache
-[19:47:32] [Render thread/INFO]: [voicechat] Received secret
-[19:47:32] [Render thread/INFO]: [voicechat] Connecting to voice chat server: '82.26.171.28:56767'
-[19:47:32] [VoiceChatAuthenticationThread/INFO]: [voicechat] Trying to authenticate voice chat connection
-[19:47:32] [Render thread/INFO]: [STDOUT]: Baritone world data dir: .\baritone\mc.spookytime.net\minecraft\spawn_256
-[19:47:32] [Render thread/INFO]: [STDOUT]: Cached world directory: .\baritone\mc.spookytime.net\minecraft\spawn_256\cache
-[19:47:32] [Render thread/INFO]: [STDOUT]: Would save waypoints to .\baritone\mc.spookytime.net\minecraft\spawn_256\waypoints
-[19:47:32] [pool-6-thread-4/INFO]: [STDOUT]: Started saving the world in a new thread
-[19:47:32] [pool-6-thread-6/INFO]: [STDOUT]: Loading region 0,-1 from disk .\baritone\mc.spookytime.net\minecraft\spawn_256\cache
-[19:47:33] [VoiceChatConnectionThread/INFO]: [voicechat] Server acknowledged authentication
-[19:47:33] [pool-6-thread-6/INFO]: [STDOUT]: Loaded region successfully in 699ms
-[19:47:33] [pool-6-thread-6/INFO]: [STDOUT]: Loading region 0,0 from disk .\baritone\mc.spookytime.net\minecraft\spawn_256\cache
-[19:47:33] [VoiceChatAuthenticationThread/INFO]: [voicechat] Trying to validate voice chat connection
-[19:47:33] [pool-6-thread-6/INFO]: [STDOUT]: Loaded region successfully in 275ms
-[19:47:33] [pool-6-thread-6/INFO]: [STDOUT]: Loading region -1,0 from disk .\baritone\mc.spookytime.net\minecraft\spawn_256\cache
-[19:47:34] [VoiceChatConnectionThread/INFO]: [voicechat] Server acknowledged connection check
-[19:47:34] [pool-6-thread-6/INFO]: [STDOUT]: Loaded region successfully in 628ms
-[19:47:34] [pool-6-thread-6/INFO]: [STDOUT]: Loading region -1,-1 from disk .\baritone\mc.spookytime.net\minecraft\spawn_256\cache
-[19:47:34] [pool-6-thread-6/INFO]: [STDOUT]: Loaded region successfully in 60ms
-[19:47:34] [Render thread/ERROR]: Error converting native item stack to ViaVersion 1.16.4-1.16.5 (754) item stack
-com.viaversion.viaversion.exception.CancelException$1: This packet is supposed to be cancelled; If you have debug enabled, you can ignore these
-[19:47:35] [Render thread/INFO]: [System] [CHAT] [Дуэли] Ожидание противника... (Набор: Талисман Карателя)
-[19:47:35] [pool-6-thread-3/INFO]: [STDERR]: java.io.EOFException: Unexpected end of ZLIB input stream
-[19:47:35] [pool-6-thread-3/INFO]: [STDERR]: 	at java.base/java.util.zip.InflaterInputStream.fill(InflaterInputStream.java:266)
-[19:47:35] [pool-6-thread-3/INFO]: [STDERR]: 	at java.base/java.util.zip.InflaterInputStream.read(InflaterInputStream.java:175)
-[19:47:35] [pool-6-thread-3/INFO]: [STDERR]: 	at java.base/java.util.zip.GZIPInputStream.read(GZIPInputStream.java:149)
-[19:47:35] [pool-6-thread-3/INFO]: [STDERR]: 	at java.base/java.util.zip.InflaterInputStream.read(InflaterInputStream.java:123)
-[19:47:35] [pool-6-thread-3/INFO]: [STDERR]: 	at java.base/java.io.DataInputStream.readUnsignedByte(DataInputStream.java:295)
-[19:47:35] [pool-6-thread-3/INFO]: [STDERR]: 	at java.base/java.io.DataInputStream.readByte(DataInputStream.java:275)
-[19:47:35] [pool-6-thread-3/INFO]: [STDERR]: 	at baritone.cache.CachedRegion.load(CachedRegion.java:276)
-[19:47:35] [pool-6-thread-3/INFO]: [STDERR]: 	at baritone.cache.CachedWorld.lambda$getOrCreateRegion$4(CachedWorld.java:271)
-[19:47:35] [pool-6-thread-3/INFO]: [STDERR]: 	at it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap.computeIfAbsent(Long2ObjectOpenHashMap.java:455)
-[19:47:35] [pool-6-thread-3/INFO]: [STDERR]: 	at baritone.cache.CachedWorld.getOrCreateRegion(CachedWorld.java:269)
-[19:47:35] [pool-6-thread-3/INFO]: [STDERR]: 	at baritone.cache.CachedWorld.updateCachedChunk(CachedWorld.java:161)
-[19:47:35] [pool-6-thread-3/INFO]: [STDERR]: 	at baritone.cache.CachedWorld$PackerThread.run(CachedWorld.java:318)
-[19:47:35] [pool-6-thread-3/INFO]: [STDERR]: 	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
-[19:47:35] [pool-6-thread-3/INFO]: [STDERR]: 	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
-[19:47:35] [pool-6-thread-3/INFO]: [STDERR]: 	at java.base/java.lang.Thread.run(Thread.java:1583)
-[19:47:35] [pool-6-thread-4/INFO]: [STDOUT]: Saving region 7,7 to disk .\baritone\mc.spookytime.net\minecraft\arenas_256\cache
-[19:47:35] [pool-6-thread-4/INFO]: [STDOUT]: Saved region successfully
-[19:47:35] [pool-6-thread-4/INFO]: [STDOUT]: World save took 2751ms
-[19:47:35] [Render thread/INFO]: [STDOUT]: Baritone world data dir: .\baritone\mc.spookytime.net\minecraft\arenas_1_256
-[19:47:35] [Render thread/INFO]: [STDOUT]: Cached world directory: .\baritone\mc.spookytime.net\minecraft\arenas_1_256\cache
-[19:47:35] [Render thread/INFO]: [STDOUT]: Would save waypoints to .\baritone\mc.spookytime.net\minecraft\arenas_1_256\waypoints
-[19:47:35] [pool-6-thread-4/INFO]: [STDOUT]: Started saving the world in a new thread
-[19:47:35] [pool-6-thread-4/INFO]: [STDOUT]: Saving region -1,0 to disk .\baritone\mc.spookytime.net\minecraft\spawn_256\cache
-[19:47:35] [ForkJoinPool.commonPool-worker-3/INFO]: [STDOUT]: Saving region 0,-1 to disk .\baritone\mc.spookytime.net\minecraft\spawn_256\cache
-[19:47:35] [ForkJoinPool.commonPool-worker-3/INFO]: [STDOUT]: Saved region successfully
-[19:47:35] [ForkJoinPool.commonPool-worker-3/INFO]: [STDOUT]: Saving region 0,0 to disk .\baritone\mc.spookytime.net\minecraft\spawn_256\cache
-[19:47:35] [ForkJoinPool.commonPool-worker-1/INFO]: [STDOUT]: Saving region -1,-1 to disk .\baritone\mc.spookytime.net\minecraft\spawn_256\cache
-[19:47:35] [ForkJoinPool.commonPool-worker-1/INFO]: [STDOUT]: Saved region successfully
-[19:47:35] [Render thread/WARN]: Received passengers for unknown entity
-[19:47:35] [ForkJoinPool.commonPool-worker-3/INFO]: [STDOUT]: Saved region successfully
-[19:47:35] [Render thread/INFO]: [System] [CHAT] [Дуэли] Режим боя будет включен через 4 секунд.
-[19:47:36] [Render thread/INFO]: [System] [CHAT] [Дуэли] Режим боя будет включен через 3 секунд.
-[19:47:36] [pool-6-thread-4/INFO]: [STDOUT]: Saved region successfully
-[19:47:36] [pool-6-thread-4/INFO]: [STDOUT]: World save took 1395ms
-[19:47:37] [Render thread/INFO]: [System] [CHAT] [Дуэли] Режим боя будет включен через 2 секунд.
-[19:47:38] [Render thread/INFO]: [System] [CHAT] [Дуэли] Режим боя будет включен через 1 секунд.
-[19:47:39] [Render thread/INFO]: [System] [CHAT] [Дуэли] Режим боя включен, в атаку!
-[19:47:44] [Render thread/INFO]: [System] [CHAT] Ⓖ [Игрок] AwsDed1 ⇨ !я скакимто беспл визуалом всех сношу
-[19:47:49] [Render thread/INFO]: [System] [CHAT] Ⓖ [Игрок] lukian4ik ⇨ спек
-[19:48:00] [Render thread/INFO]: [System] [CHAT] Ⓖ [ɢᴏᴅ] CKOROTb TOXIC ⇨ &4&lSPEC SOFT-LEGIT
-[19:48:02] [pool-6-thread-5/INFO]: [STDOUT]: Saving region 7,7 to disk .\baritone\mc.spookytime.net\minecraft\arenas_256\cache
-[19:48:02] [pool-6-thread-5/INFO]: [STDOUT]: Saved region successfully
-[19:48:02] [pool-6-thread-5/INFO]: [STDOUT]: World save took 148ms
-[19:48:02] [pool-6-thread-7/INFO]: [STDOUT]: World save took 0ms
-[19:48:05] [pool-6-thread-9/INFO]: [STDOUT]: Saving region -2,1 to disk .\baritone\mc.spookytime.net\minecraft\arenas_1_256\cache
-[19:48:06] [Render thread/INFO]: [System] [CHAT]  \n | Нужна возможность зайти на заполненный сервер? \n | Или же возможность наказывать читеров? \n | И много других возможностей даст вам D.MODER \n
-[19:48:07] [pool-6-thread-9/INFO]: [STDOUT]: Saved region successfully
-[19:48:07] [pool-6-thread-9/INFO]: [STDOUT]: World save took 1222ms
-[19:48:07] [Render thread/INFO]: [System] [CHAT] [Дуэли] Вы потерпели поражение в этом бою! :3
-[19:48:07] [Render thread/INFO]: [System] [CHAT] §6╔
-[19:48:07] [Render thread/INFO]: [System] [CHAT] §6║ §aПобедитель§f: §efaz1kss
-[19:48:07] [Render thread/INFO]: [CHAT] [Baritone] Death position saved.
-[19:48:07] [Render thread/INFO]: [System] [CHAT] §6║ §cПроигравший§f: §ecakkkkkkkkkkkkkk
-[19:48:07] [pool-6-thread-4/INFO]: [STDOUT]: Started saving the world in a new thread
-[19:48:07] [pool-6-thread-4/INFO]: [STDOUT]: Saving region -2,1 to disk .\baritone\mc.spookytime.net\minecraft\arenas_1_256\cache
-[19:48:07] [Render thread/INFO]: [STDOUT]: Baritone world data dir: .\baritone\mc.spookytime.net\minecraft\spawn_256
-[19:48:07] [Render thread/INFO]: [System] [CHAT] §6╚
-[19:48:07] [Render thread/INFO]: [STDOUT]: Baritone world data dir: .\baritone\mc.spookytime.net\minecraft\arenas_1_256
-[19:48:08] [pool-6-thread-10/INFO]: [STDOUT]: Started saving the world in a new thread
-[19:48:08] [ForkJoinPool.commonPool-worker-1/INFO]: [STDOUT]: Saving region 0,0 to disk .\baritone\mc.spookytime.net\minecraft\spawn_256\cache
-[19:48:08] [ForkJoinPool.commonPool-worker-1/INFO]: [STDOUT]: Saved region successfully
-[19:48:08] [pool-6-thread-10/INFO]: [STDOUT]: World save took 70ms
-[19:48:09] [pool-6-thread-4/INFO]: [STDOUT]: Saved region successfully
-[19:48:09] [pool-6-thread-4/INFO]: [STDOUT]: World save took 1780ms
-[19:48:10] [pool-6-thread-4/INFO]: [STDOUT]: Started saving the world in a new thread
-[19:48:10] [pool-6-thread-4/INFO]: [STDOUT]: Saving region -2,1 to disk .\baritone\mc.spookytime.net\minecraft\arenas_1_256\cache
-[19:48:10] [Render thread/INFO]: [STDOUT]: Baritone world data dir: .\baritone\mc.spookytime.net\minecraft\spawn_256
-[19:48:12] [pool-6-thread-4/INFO]: [STDOUT]: Saved region successfully
-[19:48:12] [pool-6-thread-4/INFO]: [STDOUT]: World save took 1935ms
-[19:48:12] [Render thread/ERROR]: Error converting native item stack to ViaVersion 1.16.4-1.16.5 (754) item stack
-com.viaversion.viaversion.exception.CancelException$1: This packet is supposed to be cancelled; If you have debug enabled, you can ignore these
-[19:48:13] [Render thread/ERROR]: Error converting native item stack to ViaVersion 1.16.4-1.16.5 (754) item stack
-com.viaversion.viaversion.exception.CancelException$1: This packet is supposed to be cancelled; If you have debug enabled, you can ignore these
-[19:48:13] [Render thread/INFO]: [System] [CHAT] [Дуэли] Ожидание противника... (Набор: Сфера Хаоса)
-[19:48:14] [Render thread/INFO]: [STDOUT]: Baritone world data dir: .\baritone\mc.spookytime.net\minecraft\arenas_256
-[19:48:14] [pool-6-thread-4/INFO]: [STDOUT]: Started saving the world in a new thread
-[19:48:14] [pool-6-thread-4/INFO]: [STDOUT]: Saving region -1,0 to disk .\baritone\mc.spookytime.net\minecraft\spawn_256\cache
-[19:48:14] [pool-6-thread-3/INFO]: [STDOUT]: Loading region 15,15 from disk .\baritone\mc.spookytime.net\minecraft\arenas_256\cache
-[19:48:14] [ForkJoinPool.commonPool-worker-1/INFO]: [STDOUT]: Saving region 0,-1 to disk .\baritone\mc.spookytime.net\minecraft\spawn_256\cache
-[19:48:14] [ForkJoinPool.commonPool-worker-3/INFO]: [STDOUT]: Saving region 0,0 to disk .\baritone\mc.spookytime.net\minecraft\spawn_256\cache
-[19:48:14] [ForkJoinPool.commonPool-worker-2/INFO]: [STDOUT]: Saving region -1,-1 to disk .\baritone\mc.spookytime.net\minecraft\spawn_256\cache
-[19:48:14] [ForkJoinPool.commonPool-worker-2/INFO]: [STDOUT]: Saved region successfully
-[19:48:14] [ForkJoinPool.commonPool-worker-3/INFO]: [STDOUT]: Saved region successfully
-[19:48:14] [ForkJoinPool.commonPool-worker-1/INFO]: [STDOUT]: Saved region successfully
-[19:48:14] [Render thread/WARN]: Received passengers for unknown entity
-[19:48:14] [Render thread/INFO]: [System] [CHAT] [Дуэли] Режим боя будет включен через 4 секунд.
-[19:48:15] [pool-6-thread-4/INFO]: [STDOUT]: Saved region successfully
-[19:48:15] [pool-6-thread-4/INFO]: [STDOUT]: World save took 1073ms
-[19:48:15] [Render thread/INFO]: [System] [CHAT] ╔
-[19:48:15] [Render thread/INFO]: [System] [CHAT] ╠          ! ГОЛОСОВОЙ ЧАТ !
-[19:48:15] [Render thread/INFO]: [System] [CHAT] ╠ Теперь на сервере можно говорить!
-[19:48:15] [Render thread/INFO]: [System] [CHAT] ╠ Подробная информация /voice
-[19:48:15] [Render thread/INFO]: [System] [CHAT] ╚
-[19:48:15] [Render thread/INFO]: [System] [CHAT] [Дуэли] Режим боя будет включен через 3 секунд.
-[19:48:16] [pool-6-thread-3/INFO]: [STDOUT]: Loaded region successfully in 1969ms
-[19:48:16] [pool-6-thread-3/INFO]: [STDOUT]: Loading region 15,14 from disk .\baritone\mc.spookytime.net\minecraft\arenas_256\cache
-[19:48:16] [pool-6-thread-3/INFO]: [STDOUT]: Loaded region successfully in 184ms
-[19:48:16] [Render thread/INFO]: [System] [CHAT] [Дуэли] Режим боя будет включен через 2 секунд.
-[19:48:17] [Render thread/INFO]: [System] [CHAT] Ⓖ [ɢᴏᴅ] CKOROTb TOXIC ⇨ &4&lSPEC SOFT-LEGIT
-[19:48:17] [Render thread/INFO]: [System] [CHAT] [Дуэли] Режим боя будет включен через 1 секунд.
-[19:48:18] [Render thread/INFO]: [System] [CHAT] [Дуэли] Режим боя включен, в атаку!
-[19:48:27] [Render thread/INFO]: [System] [CHAT] Ⓖ [Игрок] Sfigopy ⇨ Plyboucde ты доиграл?:
-[19:48:27] [Render thread/INFO]: [System] [CHAT] Ⓖ [ɢᴏᴅ] jhebux SPOOKY ⇨ ez soft
-[19:48:30] [Render thread/INFO]: [System] [CHAT] Ⓖ [ɢᴏᴅ] CKOROTb TOXIC ⇨ &4&lSPEC SOFT-LEGIT
-[19:48:31] [Render thread/INFO]: [System] [CHAT] [Дуэли] Вы одержали победу в этом бою! :)
-[19:48:31] [Render thread/INFO]: [System] [CHAT] §6╔
-[19:48:31] [Render thread/INFO]: [System] [CHAT] §6║ §aПобедитель§f: §ecakkkkkkkkkkkkkk
-[19:48:31] [Render thread/INFO]: [System] [CHAT] §6║ §cПроигравший§f: §emainlaps
-[19:48:31] [Render thread/INFO]: [System] [CHAT] §6╚
-[19:48:34] [Render thread/INFO]: [System] [CHAT] Ⓖ [Игрок] piroshok_2 ⇨ сосать -ez hvh
-[19:48:34] [pool-6-thread-4/INFO]: [STDOUT]: Started saving the world in a new thread
-[19:48:34] [Render thread/INFO]: [STDOUT]: Baritone world data dir: .\baritone\mc.spookytime.net\minecraft\spawn_256
-[19:48:34] [ForkJoinPool.commonPool-worker-1/INFO]: [STDOUT]: Saving region 15,15 to disk .\baritone\mc.spookytime.net\minecraft\arenas_256\cache
-[19:48:34] [pool-6-thread-4/INFO]: [STDOUT]: Saving region 15,14 to disk .\baritone\mc.spookytime.net\minecraft\arenas_256\cache
-[19:48:34] [Render thread/WARN]: Missing resource minecraft:entity/player/slim/steve referenced from minecraft:entity/player/slim/steve
-[19:48:35] [pool-6-thread-4/INFO]: [STDOUT]: Saved region successfully
-[19:48:42] [Render thread/ERROR]: Error converting native item stack to ViaVersion 1.16.4-1.16.5 (754) item stack
-com.viaversion.viaversion.exception.CancelException$1: This packet is supposed to be cancelled; If you have debug enabled, you can ignore these
-[19:48:42] [Render thread/INFO]: [System] [CHAT] [Дуэли] Ожидание противника... (Набор: Талисман Карателя)
-[19:48:42] [pool-6-thread-10/INFO]: [STDOUT]: Started saving the world in a new thread
-[19:48:42] [Render thread/INFO]: [STDOUT]: Baritone world data dir: .\baritone\mc.spookytime.net\minecraft\arenas_1_256
-[19:48:42] [pool-6-thread-10/INFO]: [STDOUT]: Saving region -1,0 to disk .\baritone\mc.spookytime.net\minecraft\spawn_256\cache
-[19:48:42] [ForkJoinPool.commonPool-worker-3/INFO]: [STDOUT]: Saving region 0,-1 to disk .\baritone\mc.spookytime.net\minecraft\spawn_256\cache
-[19:48:42] [ForkJoinPool.commonPool-worker-2/INFO]: [STDOUT]: Saving region -1,-1 to disk .\baritone\mc.spookytime.net\minecraft\spawn_256\cache
-[19:48:43] [ForkJoinPool.commonPool-worker-3/INFO]: [STDOUT]: Saved region successfully
-[19:48:43] [ForkJoinPool.commonPool-worker-3/INFO]: [STDOUT]: Saving region 0,0 to disk .\baritone\mc.spookytime.net\minecraft\spawn_256\cache
-[19:48:43] [ForkJoinPool.commonPool-worker-2/INFO]: [STDOUT]: Saved region successfully
-[19:48:43] [pool-6-thread-8/INFO]: [STDOUT]: Loading region 18,18 from disk .\baritone\mc.spookytime.net\minecraft\arenas_1_256\cache
-[19:48:43] [ForkJoinPool.commonPool-worker-3/INFO]: [STDOUT]: Saved region successfully
-[19:48:43] [Render thread/WARN]: Received passengers for unknown entity
-[19:48:43] [Render thread/INFO]: [System] [CHAT] [Дуэли] Режим боя будет включен через 4 секунд.
-[19:48:44] [pool-6-thread-10/INFO]: [STDOUT]: Saved region successfully
-[19:48:44] [pool-6-thread-10/INFO]: [STDOUT]: World save took 1022ms
-[19:48:44] [ForkJoinPool.commonPool-worker-1/INFO]: [STDOUT]: Saved region successfully
-[19:48:44] [pool-6-thread-4/INFO]: [STDOUT]: World save took 9730ms
-[19:48:44] [Render thread/INFO]: [System] [CHAT] [Дуэли] Режим боя будет включен через 3 секунд.
-[19:48:45] [Render thread/INFO]: [System] [CHAT] [Дуэли] Режим боя будет включен через 2 секунд.
-[19:48:46] [pool-6-thread-8/INFO]: [STDOUT]: Loaded region successfully in 3380ms
-[19:48:46] [Render thread/INFO]: [System] [CHAT] [Дуэли] Режим боя будет включен через 1 секунд.
-[19:48:47] [Render thread/INFO]: [System] [CHAT] [Дуэли] Режим боя включен, в атаку!
-[19:48:54] [Render thread/INFO]: [System] [CHAT] Ⓖ [ɢᴏᴅ] jhebux SPOOKY ⇨ soso p***r
-[19:49:00] [Render thread/INFO]: [System] [CHAT] [Дуэли] Вы одержали победу в этом бою! :)
-[19:49:00] [Render thread/INFO]: [System] [CHAT] §6╔
-[19:49:00] [Render thread/INFO]: [System] [CHAT] §6║ §aПобедитель§f: §ecakkkkkkkkkkkkkk
-[19:49:00] [Render thread/INFO]: [System] [CHAT] §6║ §cПроигравший§f: §eDikii_Dima
-[19:49:00] [Render thread/INFO]: [System] [CHAT] §6╚
-[19:49:03] [Render thread/INFO]: [STDOUT]: Baritone world data dir: .\baritone\mc.spookytime.net\minecraft\spawn_256
-[19:49:03] [pool-6-thread-4/INFO]: [STDOUT]: Started saving the world in a new thread
-[19:49:03] [pool-6-thread-4/INFO]: [STDOUT]: Saving region 18,18 to disk .\baritone\mc.spookytime.net\minecraft\arenas_1_256\cache
-[19:49:05] [Render thread/INFO]: [System] [CHAT] Ⓖ [Игрок] Plyboucae1561 ⇨ вот доиграл
-[19:49:05] [Render thread/ERROR]: Error converting native item stack to ViaVersion 1.16.4-1.16.5 (754) item stack
-com.viaversion.viaversion.exception.CancelException$1: This packet is supposed to be cancelled; If you have debug enabled, you can ignore these
-[19:49:05] [Render thread/INFO]: [System] [CHAT] [Дуэли] Ожидание противника... (Набор: Талисман Карателя)
-[19:49:05] [pool-6-thread-10/INFO]: [STDOUT]: Started saving the world in a new thread
-[19:49:05] [ForkJoinPool.commonPool-worker-1/INFO]: [STDOUT]: Saving region 0,-1 to disk .\baritone\mc.spookytime.net\minecraft\spawn_256\cache
-[19:49:05] [ForkJoinPool.commonPool-worker-3/INFO]: [STDOUT]: Saving region -1,-1 to disk .\baritone\mc.spookytime.net\minecraft\spawn_256\cache
-[19:49:05] [pool-6-thread-10/INFO]: [STDOUT]: Saving region -1,0 to disk .\baritone\mc.spookytime.net\minecraft\spawn_256\cache
-[19:49:05] [ForkJoinPool.commonPool-worker-2/INFO]: [STDOUT]: Saving region 0,0 to disk .\baritone\mc.spookytime.net\minecraft\spawn_256\cache
-[19:49:05] [Render thread/INFO]: [STDOUT]: Baritone world data dir: .\baritone\mc.spookytime.net\minecraft\arenas_2_256
-[19:49:05] [Render thread/INFO]: [STDOUT]: Cached world directory: .\baritone\mc.spookytime.net\minecraft\arenas_2_256\cache
-[19:49:05] [Render thread/INFO]: [STDOUT]: Would save waypoints to .\baritone\mc.spookytime.net\minecraft\arenas_2_256\waypoints
-[19:49:05] [ForkJoinPool.commonPool-worker-3/INFO]: [STDOUT]: Saved region successfully
-[19:49:05] [ForkJoinPool.commonPool-worker-1/INFO]: [STDOUT]: Saved region successfully
-[19:49:05] [ForkJoinPool.commonPool-worker-2/INFO]: [STDOUT]: Saved region successfully
-[19:49:05] [Render thread/WARN]: Received passengers for unknown entity
-[19:49:05] [pool-6-thread-11/INFO]: [STDOUT]: Loading region -4,4 from disk .\baritone\mc.spookytime.net\minecraft\arenas_2_256\cache
-[19:49:06] [Render thread/INFO]: [System] [CHAT]  \n | Сайт для покупки доната: \n | Ссылка - shop.SpookyTime.net \n
-[19:49:06] [Render thread/INFO]: [System] [CHAT] [Дуэли] Режим боя будет включен через 4 секунд.
-[19:49:06] [pool-6-thread-10/INFO]: [STDOUT]: Saved region successfully
-[19:49:06] [pool-6-thread-10/INFO]: [STDOUT]: World save took 1200ms
-[19:49:07] [pool-6-thread-11/INFO]: [STDOUT]: Loaded region successfully in 1323ms
-[19:49:07] [pool-6-thread-11/INFO]: [STDOUT]: Loading region -4,5 from disk .\baritone\mc.spookytime.net\minecraft\arenas_2_256\cache
-[19:49:07] [Render thread/INFO]: [System] [CHAT] [Дуэли] Режим боя будет включен через 3 секунд.
-[19:49:07] [pool-6-thread-4/INFO]: [STDOUT]: Saved region successfully
-[19:49:07] [pool-6-thread-4/INFO]: [STDOUT]: World save took 4383ms
-[19:49:08] [pool-6-thread-11/INFO]: [STDOUT]: Loaded region successfully in 1146ms
-[19:49:08] [pool-6-thread-11/INFO]: [STDOUT]: Loading region -5,4 from disk .\baritone\mc.spookytime.net\minecraft\arenas_2_256\cache
-[19:49:08] [Render thread/INFO]: [System] [CHAT] [Дуэли] Режим боя будет включен через 2 секунд.
-[19:49:09] [Render thread/INFO]: [System] [CHAT] [Дуэли] Режим боя будет включен через 1 секунд.
-[19:49:09] [pool-6-thread-11/INFO]: [STDOUT]: Loaded region successfully in 1197ms
-[19:49:09] [pool-6-thread-11/INFO]: [STDOUT]: Loading region -5,5 from disk .\baritone\mc.spookytime.net\minecraft\arenas_2_256\cache
-[19:49:09] [pool-6-thread-11/INFO]: [STDOUT]: Loaded region successfully in 116ms
-[19:49:10] [Render thread/INFO]: [System] [CHAT] [Дуэли] Режим боя включен, в атаку!
-[19:49:12] [Render thread/INFO]: [System] [CHAT] Ⓖ [Игрок] Plyboucae1561 ⇨ тут есть автобай и варден
-[19:49:35] [Render thread/INFO]: [System] [CHAT] Ⓖ [Игрок] Plyboucae1561 ⇨ как будто стыку делаю прям а урон маловато
-[19:49:35] [pool-6-thread-12/INFO]: [STDOUT]: Saving region -5,4 to disk .\baritone\mc.spookytime.net\minecraft\arenas_2_256\cache
-[19:49:35] [ForkJoinPool.commonPool-worker-2/INFO]: [STDOUT]: Saving region -5,5 to disk .\baritone\mc.spookytime.net\minecraft\arenas_2_256\cache
-[19:49:35] [ForkJoinPool.commonPool-worker-1/INFO]: [STDOUT]: Saving region -4,5 to disk .\baritone\mc.spookytime.net\minecraft\arenas_2_256\cache
-[19:49:35] [ForkJoinPool.commonPool-worker-3/INFO]: [STDOUT]: Saving region -4,4 to disk .\baritone\mc.spookytime.net\minecraft\arenas_2_256\cache
-[19:49:36] [ForkJoinPool.commonPool-worker-2/INFO]: [STDOUT]: Saved region successfully
-[19:49:36] [ForkJoinPool.commonPool-worker-1/INFO]: [STDOUT]: Saved region successfully
-[19:49:36] [pool-6-thread-12/INFO]: [STDOUT]: Saved region successfully
-[19:49:38] [ForkJoinPool.commonPool-worker-3/INFO]: [STDOUT]: Saved region successfully
-[19:49:38] [pool-6-thread-12/INFO]: [STDOUT]: World save took 2469ms
-[19:49:44] [Render thread/INFO]: [System] [CHAT] [Дуэли] Вы одержали победу в этом бою! :)
-[19:49:44] [Render thread/INFO]: [System] [CHAT] §6╔
-[19:49:44] [Render thread/INFO]: [System] [CHAT] §6║ §aПобедитель§f: §ecakkkkkkkkkkkkkk
-[19:49:44] [Render thread/INFO]: [System] [CHAT] §6║ §cПроигравший§f: §etpavma
-[19:49:44] [Render thread/INFO]: [System] [CHAT] §6╚
-[19:49:45] [Render thread/INFO]: [voicechat] Clearing audio channels
-[19:49:45] [Render thread/INFO]: [voicechat] Stopping microphone thread
-[19:49:45] [Render thread/INFO]: [voicechat] Disconnecting voicechat
-[19:49:46] [Render thread/INFO]: Stopping!
+	at java.base/java.util.concurrent.CompletableFuture$AsyncSupply.exec(CompletableFuture.java:1760)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:387)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1312)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1843)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1808)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:188)
+[18:04:40] [Worker-Main-2/WARN]: Profile contained invalid signature for textures property (profile id: fca06150-b395-4794-9b78-6bc58238aa8f)
+[18:04:41] [Render thread/INFO]: Resizing Chunk Sections UBO, capacity limit of 8 reached during a single frame. New capacity will be 16.
+[18:04:42] [Render thread/INFO]: Resizing Chunk Sections UBO, capacity limit of 16 reached during a single frame. New capacity will be 32.
+[18:04:44] [Render thread/INFO]: [System] [CHAT] \n ⚡ Вы играете на FunTime! play.funtime.su\n
+[18:04:44] [Render thread/INFO]: Resizing Chunk Sections UBO, capacity limit of 32 reached during a single frame. New capacity will be 64.
+[18:04:48] [Render thread/INFO]: Resizing Chunk Sections UBO, capacity limit of 64 reached during a single frame. New capacity will be 128.
+[18:04:49] [Render thread/WARN]: Ignoring player info update for unknown player 819a25db-98af-38bb-a13d-a6b04545401e ([UPDATE_LATENCY])
+[18:04:49] [Render thread/WARN]: Ignoring player info update for unknown player 5234486c-5d01-3a5c-addc-c2db8faa33ff ([UPDATE_LATENCY])
+[18:04:49] [Render thread/WARN]: Ignoring player info update for unknown player 1571a043-5ee5-3c2d-ab0b-70e21dcffea5 ([UPDATE_LATENCY])
+[18:04:50] [Render thread/WARN]: Ignoring player info update for unknown player 88447677-87c3-33b6-943c-19f164a7c180 ([UPDATE_LATENCY])
+[18:04:52] [Render thread/INFO]: Resizing Chunk Sections UBO, capacity limit of 128 reached during a single frame. New capacity will be 256.
+[18:04:54] [Render thread/INFO]: Resizing Dynamic Transforms UBO, capacity limit of 16 reached during a single frame. New capacity will be 32.
+[18:04:54] [Render thread/INFO]: Resizing Dynamic Transforms UBO, capacity limit of 32 reached during a single frame. New capacity will be 64.
+[18:04:54] [Render thread/WARN]: Ignoring player info update for unknown player 50507ef0-87a6-3dce-bf0e-852c38ba9511 ([UPDATE_LATENCY])
+[18:04:54] [pool-6-thread-2/INFO]: [STDOUT]: Saving region -1,0 to disk .\baritone\mc.funtime.su\minecraft\overworld_384\cache
+[18:04:54] [pool-6-thread-2/INFO]: [STDOUT]: Saved region successfully
+[18:04:54] [pool-6-thread-2/INFO]: [STDOUT]: Saving region -1,-1 to disk .\baritone\mc.funtime.su\minecraft\overworld_384\cache
+[18:04:55] [pool-6-thread-2/INFO]: [STDOUT]: Saved region successfully
+[18:04:55] [pool-6-thread-2/INFO]: [STDOUT]: Saving region 0,-1 to disk .\baritone\mc.funtime.su\minecraft\overworld_384\cache
+[18:04:55] [ForkJoinPool.commonPool-worker-1/INFO]: [STDOUT]: Saving region 0,0 to disk .\baritone\mc.funtime.su\minecraft\overworld_384\cache
+[18:04:55] [ForkJoinPool.commonPool-worker-1/INFO]: [STDOUT]: Saved region successfully
+[18:04:55] [pool-6-thread-2/INFO]: [STDOUT]: Saved region successfully
+[18:04:55] [pool-6-thread-2/INFO]: [STDOUT]: World save took 876ms
+[18:04:55] [Render thread/WARN]: Ignoring player info update for unknown player 06e63685-eee0-3ea0-bc28-1fb659051b04 ([UPDATE_LATENCY])
+[18:04:56] [Render thread/WARN]: Ignoring player info update for unknown player 63291487-2814-3ca0-b8d0-9a539e153171 ([UPDATE_LATENCY])
+[18:05:01] [Render thread/WARN]: Ignoring player info update for unknown player 7076791f-add3-337a-af93-038efdf3df4a ([UPDATE_LATENCY])
+[18:05:02] [Render thread/WARN]: Ignoring player info update for unknown player 43fd957d-474e-31a3-83a7-bc75a9b7e3ea ([UPDATE_LATENCY])
+[18:05:02] [Render thread/WARN]: Ignoring player info update for unknown player 47dc4655-6970-3a1c-a1bc-ade9a15b0da3 ([UPDATE_LATENCY])
+[18:05:04] [Render thread/WARN]: Ignoring player info update for unknown player 91789c16-dd93-37c2-a5fa-c73b99b33273 ([UPDATE_LATENCY])
+[18:05:04] [Render thread/WARN]: Ignoring player info update for unknown player 1fae0400-0aab-3ff4-9888-5c3de2eeeb16 ([UPDATE_LATENCY])
+[18:05:04] [Render thread/WARN]: Ignoring player info update for unknown player 14b043d5-ce72-3587-b2d2-8b15a2103ce4 ([UPDATE_LATENCY])
+[18:05:05] [Render thread/WARN]: Ignoring player info update for unknown player f4e86411-1839-3d5c-b661-71612acae710 ([UPDATE_LATENCY])
+[18:05:07] [Render thread/INFO]: [System] [CHAT] [Отладка]: Перезагрузка всех чанков
+[18:05:08] [Render thread/INFO]: [System] [CHAT] [Отладка]: Перезагрузка всех чанков
+[18:05:13] [Render thread/WARN]: Ignoring player info update for unknown player 4473f354-d75c-324b-912b-b34bdca275ca ([UPDATE_LATENCY])
+[18:05:13] [Render thread/WARN]: Ignoring player info update for unknown player 978241db-c1cc-3209-a7b6-bbf4be038cf6 ([UPDATE_LATENCY])
+[18:05:13] [Render thread/WARN]: Ignoring player info update for unknown player d769321f-9d82-34dc-8460-865f5f45cdba ([UPDATE_LATENCY])
+[18:05:13] [Render thread/WARN]: Ignoring player info update for unknown player 7052acf7-db62-3459-a81f-f17cc3e52a6a ([UPDATE_LATENCY])
+[18:05:14] [Render thread/INFO]: [System] [CHAT] \n ⚡ Наши сообщества и соц. сети /links\n
+[18:05:14] [Render thread/WARN]: Ignoring player info update for unknown player 310b5210-de4b-36a2-ac6d-4b49654384ac ([UPDATE_LATENCY])
+[18:05:24] [Render thread/INFO]: [System] [CHAT] [Отладка]: Перезагрузка всех чанков
+[18:05:25] [Render thread/INFO]: [System] [CHAT] [Отладка]: Перезагрузка всех чанков
+[18:05:28] [Render thread/INFO]: [System] [CHAT] [Отладка]: Перезагрузка всех чанков
+[18:05:28] [Render thread/INFO]: [System] [CHAT] [Отладка]: Перезагрузка всех чанков
+[18:05:28] [Render thread/INFO]: [System] [CHAT] [Отладка]: Перезагрузка всех чанков
+[18:05:28] [Render thread/INFO]: [System] [CHAT] [Отладка]: Перезагрузка всех чанков
+[18:05:28] [Render thread/INFO]: [System] [CHAT] [Отладка]: Перезагрузка всех чанков
+[18:05:29] [Render thread/INFO]: [System] [CHAT] [Отладка]: Перезагрузка всех чанков
+[18:05:29] [Render thread/INFO]: [System] [CHAT] [Отладка]: Перезагрузка всех чанков
+[18:05:29] [Render thread/INFO]: [System] [CHAT] [Отладка]: Перезагрузка всех чанков
+[18:05:30] [Render thread/INFO]: [System] [CHAT] [Отладка]: Перезагрузка всех чанков
+[18:05:38] [Render thread/WARN]: Ignoring player info update for unknown player 13694926-47fe-310b-ac1c-c33be58bf613 ([UPDATE_LATENCY])
+[18:05:41] [Render thread/WARN]: Ignoring player info update for unknown player 29d4acdc-5940-36dc-b1a2-fa2708bc136e ([UPDATE_LATENCY])
+[18:05:41] [Render thread/WARN]: Ignoring player info update for unknown player f37b7bc0-8aa3-3c6c-be98-57705612f372 ([UPDATE_LATENCY])
+[18:05:42] [Render thread/WARN]: Ignoring player info update for unknown player 7d87c3dc-ced8-38d9-a844-a3c4b00c9063 ([UPDATE_LATENCY])
+[18:05:42] [Render thread/WARN]: Ignoring player info update for unknown player 3850b47a-c942-37b7-bb9e-009d0279bc33 ([UPDATE_LATENCY])
+[18:05:42] [Render thread/WARN]: Ignoring player info update for unknown player cf9c66f0-2404-3348-bbcb-63f1f44baba6 ([UPDATE_LATENCY])
+[18:05:42] [Render thread/WARN]: Ignoring player info update for unknown player 01efdfd9-035c-370a-9ea0-9f8dba7e31dd ([UPDATE_LATENCY])
+[18:05:43] [Render thread/WARN]: Ignoring player info update for unknown player f2a50775-89f9-31f3-80df-05b7f407c250 ([UPDATE_LATENCY])
+[18:05:44] [Render thread/INFO]: [System] [CHAT] \n ⚡ Наша группа ВК vk.com/funtime\n
+[18:05:54] [Render thread/WARN]: Ignoring player info update for unknown player 179a6a8a-e2df-3532-a233-4b62ffbf14ba ([UPDATE_LATENCY])
+[18:05:54] [Render thread/WARN]: Ignoring player info update for unknown player df865b83-5a55-38bd-909d-772a9d5560a6 ([UPDATE_LATENCY])
+[18:05:56] [Render thread/WARN]: Ignoring player info update for unknown player 74b2fb46-f142-31a2-9688-60dbc01feda7 ([UPDATE_LATENCY])
+[18:06:01] [Render thread/WARN]: Ignoring player info update for unknown player 4ed00d9b-2e57-30e1-a519-2a894de840df ([UPDATE_LATENCY])
+[18:06:01] [Render thread/WARN]: Ignoring player info update for unknown player f7ac9aa3-9bcd-3e83-b6dd-45856cda5047 ([UPDATE_LATENCY])
+[18:06:01] [Render thread/WARN]: Ignoring player info update for unknown player 62d393cd-7121-34b5-ae5b-d383f05f92b8 ([UPDATE_LATENCY])
+[18:06:02] [Render thread/WARN]: Ignoring player info update for unknown player 52686c43-fa0d-3c7a-bd3f-1a788c7f3bb1 ([UPDATE_LATENCY])
+[18:06:02] [Render thread/WARN]: Ignoring player info update for unknown player 9fc90955-87ab-3452-a757-b89bdafb06c3 ([UPDATE_LATENCY])
+[18:06:02] [Render thread/WARN]: Ignoring player info update for unknown player 67e38a1b-2a5c-31a9-867e-edc8e8fcbebb ([UPDATE_LATENCY])
+[18:06:02] [Render thread/WARN]: Ignoring player info update for unknown player 5ea07cd9-9fd3-3eb8-85b7-e0868257435a ([UPDATE_LATENCY])
+[18:06:02] [Render thread/WARN]: Ignoring player info update for unknown player 71391c81-78ac-3b44-a009-aff3cf808499 ([UPDATE_LATENCY])
+[18:06:02] [Render thread/WARN]: Ignoring player info update for unknown player f9b1a07e-651e-3cf9-9ca3-eaf1b17ccad8 ([UPDATE_LATENCY])
+[18:06:03] [Render thread/WARN]: Ignoring player info update for unknown player e1133930-578a-3f7d-a793-c80b2ae548f8 ([UPDATE_LATENCY])
+[18:06:05] [Render thread/WARN]: Ignoring player info update for unknown player 6362c3ce-fdcb-3ac9-963b-46ad68d55de3 ([UPDATE_LATENCY])
+[18:06:12] [Render thread/WARN]: Ignoring player info update for unknown player b37e68bd-bb92-324e-8153-19aee443d149 ([UPDATE_LATENCY])
+[18:06:14] [Render thread/INFO]: [System] [CHAT] \n ⚡ Наш Телеграм t.me/funtime\n
+[18:06:14] [Render thread/WARN]: Ignoring player info update for unknown player 81acfaf3-dcec-37b8-800a-c83fac0fa5b6 ([UPDATE_LATENCY])
+[18:06:16] [Render thread/WARN]: Ignoring player info update for unknown player d652c076-7b1c-3c97-b6d2-a87ded367346 ([UPDATE_LATENCY])
+[18:06:16] [Render thread/WARN]: Ignoring player info update for unknown player e263e4af-8eb8-3a16-ad0d-ce63655a9b60 ([UPDATE_LATENCY])
+[18:06:16] [Render thread/WARN]: Ignoring player info update for unknown player 1051cf9a-d397-3646-820c-86fafce04102 ([UPDATE_LATENCY])
+[18:06:16] [Render thread/WARN]: Ignoring player info update for unknown player a6f58431-812d-310d-8319-7b5798d6c178 ([UPDATE_LATENCY])
+[18:06:16] [Render thread/WARN]: Ignoring player info update for unknown player ea09a6cb-c29e-33b5-ac35-f1b0146d5f46 ([UPDATE_LATENCY])
+[18:06:16] [Render thread/WARN]: Ignoring player info update for unknown player a24af813-21b3-39f2-ae71-1d43877ace6c ([UPDATE_LATENCY])
+[18:06:16] [Render thread/WARN]: Ignoring player info update for unknown player e7e5d2b6-9429-3d91-a4e6-2aab4020ca49 ([UPDATE_LATENCY])
+[18:06:16] [Render thread/WARN]: Ignoring player info update for unknown player 56e9eaea-5405-33de-910e-ba14b6ecaa5b ([UPDATE_LATENCY])
+[18:06:17] [Render thread/WARN]: Ignoring player info update for unknown player 9a4572cf-eb07-343e-9f67-269346cf8d54 ([UPDATE_LATENCY])
+[18:06:17] [Render thread/WARN]: Ignoring player info update for unknown player 548a0134-2863-3b6f-9ac5-289a5349cd2a ([UPDATE_LATENCY])
+[18:06:44] [Render thread/INFO]: [System] [CHAT] \n ⚡ Наш Дискорд dd.FunTime.su\n
+[18:06:45] [Render thread/WARN]: Ignoring player info update for unknown player aecbb935-4a3d-3245-ae99-541bcc9c6aa8 ([UPDATE_LATENCY])
+[18:06:45] [Render thread/WARN]: Ignoring player info update for unknown player 242c04a0-ccc2-3759-9eac-23afdc64f5c2 ([UPDATE_LATENCY])
+[18:06:46] [Render thread/WARN]: Ignoring player info update for unknown player cc43140f-a47b-3a60-a6fd-f99432512876 ([UPDATE_LATENCY])
+[18:06:47] [Render thread/WARN]: Ignoring player info update for unknown player de3d66a6-a89d-321e-9ce1-20affa82de22 ([UPDATE_LATENCY])
+[18:06:59] [Render thread/WARN]: Ignoring player info update for unknown player 91a735ea-8925-3c12-aab8-922b3c0284a6 ([UPDATE_LATENCY])
+[18:06:59] [Render thread/WARN]: Ignoring player info update for unknown player 9361bbb5-ad60-3038-b9d7-152c7d8fe570 ([UPDATE_LATENCY])
+[18:06:59] [Render thread/WARN]: Ignoring player info update for unknown player 085b0aef-621f-30f4-90f9-837d1c3d5f9a ([UPDATE_LATENCY])
+[18:07:00] [Render thread/WARN]: Ignoring player info update for unknown player b37e68bd-bb92-324e-8153-19aee443d149 ([UPDATE_LATENCY])
+[18:07:01] [Render thread/WARN]: Ignoring player info update for unknown player 0aaf9ff7-10a7-3965-9d9c-108cfcac0ad7 ([UPDATE_LATENCY])
+[18:07:01] [Render thread/WARN]: Ignoring player info update for unknown player 605caa3e-c00a-38a3-bcf7-96c0df37c4c2 ([UPDATE_LATENCY])
+[18:07:09] [Render thread/WARN]: Ignoring player info update for unknown player a4d63746-529b-3472-b35e-0586116b5e52 ([UPDATE_LATENCY])
+[18:07:09] [Render thread/WARN]: Ignoring player info update for unknown player 337c50d6-a941-3b45-bbb6-545d528a739d ([UPDATE_LATENCY])
+[18:07:13] [Render thread/WARN]: Ignoring player info update for unknown player fb2b5bd1-5cdf-37a3-9f6e-f19196789c94 ([UPDATE_LATENCY])
+[18:07:14] [Render thread/INFO]: [System] [CHAT] \n ⚡ Наш Сайт FunTime.su\n
+[18:07:14] [Render thread/WARN]: Ignoring player info update for unknown player 4afe12f3-bb5a-3ca8-9a2b-d86a284912cd ([UPDATE_LATENCY])
+[18:07:14] [Render thread/WARN]: Ignoring player info update for unknown player 7d1c4447-dfe9-3ec3-aee8-aa3c355a55a3 ([UPDATE_LATENCY])
+[18:07:25] [Render thread/WARN]: Ignoring player info update for unknown player 8d6f1c5f-0486-38ca-9d60-67519cceeb22 ([UPDATE_LATENCY])
+[18:07:25] [Render thread/WARN]: Ignoring player info update for unknown player 56552c8d-a174-3826-af35-5cae467fa9b9 ([UPDATE_LATENCY])
+[18:07:26] [Render thread/WARN]: Ignoring player info update for unknown player 7e6bfd60-25cb-3076-86c8-9f9c7050ef5d ([UPDATE_LATENCY])
+[18:07:26] [Render thread/WARN]: Ignoring player info update for unknown player c86d9463-5286-3bca-b5f0-306e8b4503d0 ([UPDATE_LATENCY])
+[18:07:26] [Render thread/WARN]: Ignoring player info update for unknown player cf4805cc-5020-39de-a019-b37bc82f3729 ([UPDATE_LATENCY])
+[18:07:26] [Render thread/WARN]: Ignoring player info update for unknown player b37e68bd-bb92-324e-8153-19aee443d149 ([UPDATE_LATENCY])
+[18:07:36] [Render thread/WARN]: Ignoring player info update for unknown player 3d516b6d-d55c-3b8c-b565-36cb8a079e52 ([UPDATE_LATENCY])
+[18:07:37] [Render thread/WARN]: Ignoring player info update for unknown player 49e1ac90-6bae-353c-b7de-66df0dd317d7 ([UPDATE_LATENCY])
+[18:07:40] [Render thread/INFO]: [STDOUT]: World seems to be a replay. Not loading Baritone cache.
+[18:07:40] [Render thread/INFO]: [voicechat] Disconnecting from previous connection due to server change
+[18:07:40] [Render thread/INFO]: [voicechat] Clearing audio channels
+[18:07:40] [pool-6-thread-3/INFO]: [STDOUT]: Started saving the world in a new thread
+[18:07:40] [pool-6-thread-3/INFO]: [STDOUT]: Saving region -1,0 to disk .\baritone\mc.funtime.su\minecraft\overworld_384\cache
+[18:07:40] [pool-6-thread-3/INFO]: [STDOUT]: Saved region successfully
+[18:07:40] [Render thread/INFO]: [voicechat] Sending secret request to the server
+[18:07:40] [pool-6-thread-3/INFO]: [STDOUT]: Saving region -1,-1 to disk .\baritone\mc.funtime.su\minecraft\overworld_384\cache
+[18:07:40] [Render thread/WARN]: [voicechat] Failed to open audio device 'OpenAL Soft on Динамики (High Definition Audio Device)', falling back to default
+[18:07:40] [ForkJoinPool.commonPool-worker-3/INFO]: [STDOUT]: Saving region 0,-1 to disk .\baritone\mc.funtime.su\minecraft\overworld_384\cache
+[18:07:40] [ForkJoinPool.commonPool-worker-3/INFO]: [STDOUT]: Saved region successfully
+[18:07:40] [ForkJoinPool.commonPool-worker-3/INFO]: [STDOUT]: Saving region 0,0 to disk .\baritone\mc.funtime.su\minecraft\overworld_384\cache
+[18:07:40] [pool-6-thread-3/INFO]: [STDOUT]: Saved region successfully
+[18:07:40] [ForkJoinPool.commonPool-worker-3/INFO]: [STDOUT]: Saved region successfully
+[18:07:40] [pool-6-thread-3/INFO]: [STDOUT]: World save took 231ms
+[18:07:40] [pool-6-thread-3/INFO]: [STDOUT]: Retrying to load Baritone cache
+[18:07:40] [pool-6-thread-3/INFO]: [STDOUT]: Baritone world data dir: .\baritone\mc.funtime.su\minecraft\overworld_256
+[18:07:40] [pool-6-thread-3/INFO]: [STDOUT]: Cached world directory: .\baritone\mc.funtime.su\minecraft\overworld_256\cache
+[18:07:40] [pool-6-thread-3/INFO]: [STDOUT]: Would save waypoints to .\baritone\mc.funtime.su\minecraft\overworld_256\waypoints
+[18:07:40] [Render thread/INFO]: Loaded 0 advancements
+[18:07:40] [pool-6-thread-4/INFO]: [STDOUT]: Loading region -1,-1 from disk .\baritone\mc.funtime.su\minecraft\overworld_256\cache
+[18:07:40] [pool-6-thread-4/INFO]: [STDOUT]: Loaded region successfully in 32ms
+[18:07:40] [pool-6-thread-4/INFO]: [STDOUT]: Loading region -1,0 from disk .\baritone\mc.funtime.su\minecraft\overworld_256\cache
+[18:07:40] [pool-6-thread-4/INFO]: [STDOUT]: Loaded region successfully in 31ms
+[18:07:40] [pool-6-thread-4/INFO]: [STDOUT]: Loading region 0,-1 from disk .\baritone\mc.funtime.su\minecraft\overworld_256\cache
+[18:07:40] [pool-6-thread-4/INFO]: [STDOUT]: Loaded region successfully in 37ms
+[18:07:40] [pool-6-thread-4/INFO]: [STDOUT]: Loading region 0,0 from disk .\baritone\mc.funtime.su\minecraft\overworld_256\cache
+[18:07:40] [pool-6-thread-4/INFO]: [STDOUT]: Loaded region successfully in 56ms
+[18:07:47] [Render thread/WARN]: Ignoring player info update for unknown player e2cc845b-659f-3db4-88ae-7934f12db8c0 ([UPDATE_GAME_MODE])
+[18:07:48] [Render thread/WARN]: Ignoring player info update for unknown player 906ec9a8-3b1b-3374-b214-2e02becea6c8 ([UPDATE_GAME_MODE])
+[18:07:48] [Render thread/WARN]: Ignoring player info update for unknown player 906ec9a8-3b1b-3374-b214-2e02becea6c8 ([UPDATE_GAME_MODE])
+[18:07:48] [Render thread/WARN]: Ignoring player info update for unknown player 6420e2a8-5e0d-3917-a519-d39c279371c4 ([UPDATE_GAME_MODE])
+[18:07:58] [Render thread/WARN]: Ignoring player info update for unknown player c131afb8-2c7f-3124-a1df-a4b2eac76e63 ([UPDATE_GAME_MODE])
+[18:07:58] [Render thread/WARN]: Ignoring player info update for unknown player c131afb8-2c7f-3124-a1df-a4b2eac76e63 ([UPDATE_GAME_MODE])
+[18:07:58] [Render thread/WARN]: Ignoring player info update for unknown player 4fd6661f-d4b8-34ab-bac0-cf75109f7660 ([UPDATE_GAME_MODE])
+[18:07:58] [Render thread/WARN]: Ignoring player info update for unknown player 4fd6661f-d4b8-34ab-bac0-cf75109f7660 ([UPDATE_GAME_MODE])
+[18:07:58] [Render thread/WARN]: Ignoring player info update for unknown player f2a50775-89f9-31f3-80df-05b7f407c250 ([UPDATE_GAME_MODE])
+[18:08:10] [pool-6-thread-5/INFO]: [STDOUT]: Saving region -1,0 to disk .\baritone\mc.funtime.su\minecraft\overworld_256\cache
+[18:08:10] [ForkJoinPool.commonPool-worker-4/INFO]: [STDOUT]: Saving region -1,-1 to disk .\baritone\mc.funtime.su\minecraft\overworld_256\cache
+[18:08:10] [ForkJoinPool.commonPool-worker-3/INFO]: [STDOUT]: Saving region 0,-1 to disk .\baritone\mc.funtime.su\minecraft\overworld_256\cache
+[18:08:10] [ForkJoinPool.commonPool-worker-5/INFO]: [STDOUT]: Saving region 0,0 to disk .\baritone\mc.funtime.su\minecraft\overworld_256\cache
+[18:08:10] [ForkJoinPool.commonPool-worker-3/INFO]: [STDOUT]: Saved region successfully
+[18:08:10] [ForkJoinPool.commonPool-worker-4/INFO]: [STDOUT]: Saved region successfully
+[18:08:10] [pool-6-thread-5/INFO]: [STDOUT]: Saved region successfully
+[18:08:10] [ForkJoinPool.commonPool-worker-5/INFO]: [STDOUT]: Saved region successfully
+[18:08:10] [pool-6-thread-5/INFO]: [STDOUT]: World save took 91ms
+[18:08:30] [Render thread/WARN]: Ignoring player info update for unknown player 8e4f54ac-46e4-3c21-ba40-3ef10e867da5 ([UPDATE_GAME_MODE])
+[18:08:30] [Render thread/WARN]: Ignoring player info update for unknown player 8e4f54ac-46e4-3c21-ba40-3ef10e867da5 ([UPDATE_GAME_MODE])
+[18:08:30] [Render thread/WARN]: Ignoring player info update for unknown player 32e3d7db-ee9e-30ff-9c25-e2079c3dfe73 ([UPDATE_GAME_MODE])
+[18:08:30] [Render thread/WARN]: Ignoring player info update for unknown player 32e3d7db-ee9e-30ff-9c25-e2079c3dfe73 ([UPDATE_GAME_MODE])
+[18:08:37] [Render thread/WARN]: Ignoring player info update for unknown player e3885864-9956-37e1-9d29-7fb7b73f821d ([UPDATE_GAME_MODE])
+[18:08:37] [Render thread/WARN]: Ignoring player info update for unknown player e3885864-9956-37e1-9d29-7fb7b73f821d ([UPDATE_GAME_MODE])
+[18:08:37] [Render thread/WARN]: Ignoring player info update for unknown player b9becfba-3e43-3684-b275-98023f990d21 ([UPDATE_GAME_MODE])
+[18:08:37] [Render thread/WARN]: Ignoring player info update for unknown player b9becfba-3e43-3684-b275-98023f990d21 ([UPDATE_GAME_MODE])
+[18:08:38] [Render thread/WARN]: Ignoring player info update for unknown player af8fd135-980a-351f-a88c-4dde6e37cdcf ([UPDATE_GAME_MODE])
+[18:08:48] [Render thread/WARN]: Ignoring player info update for unknown player 1df757ec-7af3-3d72-a3b1-93f4d79ae082 ([UPDATE_GAME_MODE])
+[18:08:49] [Render thread/WARN]: Ignoring player info update for unknown player 5d5a6718-83cc-35f4-baf3-2f09be40ce14 ([UPDATE_GAME_MODE])
+[18:08:49] [Render thread/WARN]: Ignoring player info update for unknown player 5d5a6718-83cc-35f4-baf3-2f09be40ce14 ([UPDATE_GAME_MODE])
+[18:08:49] [Render thread/WARN]: Ignoring player info update for unknown player bf250d62-9dcf-3336-b27a-44b3c6350b23 ([UPDATE_GAME_MODE])
+[18:08:49] [Render thread/WARN]: Ignoring player info update for unknown player ce81f61c-db2b-35f7-bb6f-df067834f63c ([UPDATE_GAME_MODE])
+[18:08:49] [Render thread/WARN]: Ignoring player info update for unknown player ce81f61c-db2b-35f7-bb6f-df067834f63c ([UPDATE_GAME_MODE])
+[18:09:39] [Render thread/WARN]: Ignoring player info update for unknown player fb9698b8-fad8-36fd-bc47-74ea419b6a61 ([UPDATE_GAME_MODE])
+[18:09:40] [Render thread/WARN]: Ignoring player info update for unknown player 9e00d9f0-4dc5-30f4-ae3b-67cbb500def4 ([UPDATE_GAME_MODE])
+[18:09:40] [Render thread/WARN]: Ignoring player info update for unknown player 9e00d9f0-4dc5-30f4-ae3b-67cbb500def4 ([UPDATE_GAME_MODE])
+[18:09:48] [Render thread/WARN]: Ignoring player info update for unknown player 2ce2bd11-ab24-3b3a-8312-11e20b5a9e7f ([UPDATE_GAME_MODE])
+[18:09:48] [Render thread/WARN]: Ignoring player info update for unknown player 522033e7-a4eb-3633-a3a5-1aea178143ae ([UPDATE_GAME_MODE])
+[18:09:48] [Render thread/WARN]: Ignoring player info update for unknown player 9f60ca10-820d-3f22-8fbd-efb60836c75a ([UPDATE_GAME_MODE])
+[18:09:48] [Render thread/WARN]: Ignoring player info update for unknown player 9f60ca10-820d-3f22-8fbd-efb60836c75a ([UPDATE_GAME_MODE])
+[18:09:49] [Render thread/WARN]: Ignoring player info update for unknown player 622e36a3-d180-3ca3-a305-68af21f70a75 ([UPDATE_GAME_MODE])
+[18:09:49] [Render thread/WARN]: Ignoring player info update for unknown player 622e36a3-d180-3ca3-a305-68af21f70a75 ([UPDATE_GAME_MODE])
+[18:09:49] [Render thread/WARN]: Ignoring player info update for unknown player 3fc5a8f3-e84b-394d-8e82-a5b014cbd542 ([UPDATE_GAME_MODE])
+[18:09:49] [Render thread/WARN]: Ignoring player info update for unknown player 3fc5a8f3-e84b-394d-8e82-a5b014cbd542 ([UPDATE_GAME_MODE])
+[18:09:49] [Render thread/WARN]: Ignoring player info update for unknown player b05bb716-d045-3247-b899-ae8a1d106211 ([UPDATE_GAME_MODE])
+[18:09:49] [Render thread/WARN]: Ignoring player info update for unknown player a100037b-d7f6-38cf-82a9-9bb3d495deb7 ([UPDATE_GAME_MODE])
+[18:09:49] [Render thread/WARN]: Ignoring player info update for unknown player a100037b-d7f6-38cf-82a9-9bb3d495deb7 ([UPDATE_GAME_MODE])
+[18:09:49] [Render thread/WARN]: Ignoring player info update for unknown player e2cc845b-659f-3db4-88ae-7934f12db8c0 ([UPDATE_GAME_MODE])
+[18:09:49] [Render thread/WARN]: Ignoring player info update for unknown player e2cc845b-659f-3db4-88ae-7934f12db8c0 ([UPDATE_GAME_MODE])
+[18:09:49] [Render thread/WARN]: Ignoring player info update for unknown player 39f09b60-520a-3821-a74d-37a29a7c6076 ([UPDATE_GAME_MODE])
+[18:09:49] [Render thread/WARN]: Ignoring player info update for unknown player 39f09b60-520a-3821-a74d-37a29a7c6076 ([UPDATE_GAME_MODE])
+[18:10:40] [Render thread/WARN]: Ignoring player info update for unknown player 30685463-bf6d-3abd-80d5-b6af790220f2 ([UPDATE_GAME_MODE])
+[18:10:40] [Render thread/WARN]: Ignoring player info update for unknown player 30685463-bf6d-3abd-80d5-b6af790220f2 ([UPDATE_GAME_MODE])
+[18:10:48] [Render thread/WARN]: Ignoring player info update for unknown player dae3b511-d123-3212-a7bf-dd9ae410fc61 ([UPDATE_GAME_MODE])
+[18:10:48] [Render thread/WARN]: Ignoring player info update for unknown player dae3b511-d123-3212-a7bf-dd9ae410fc61 ([UPDATE_GAME_MODE])
+[18:10:50] [Render thread/WARN]: Ignoring player info update for unknown player 429b66b7-aa5e-321e-b76e-4322743d9cc3 ([UPDATE_GAME_MODE])
+[18:10:50] [Render thread/WARN]: Ignoring player info update for unknown player 429b66b7-aa5e-321e-b76e-4322743d9cc3 ([UPDATE_GAME_MODE])
+[18:10:59] [Render thread/WARN]: Ignoring player info update for unknown player c53e8316-0fae-379f-913f-fd3181672628 ([UPDATE_GAME_MODE])
+[18:10:59] [Render thread/WARN]: Ignoring player info update for unknown player c53e8316-0fae-379f-913f-fd3181672628 ([UPDATE_GAME_MODE])
+[18:10:59] [Render thread/WARN]: Ignoring player info update for unknown player 90cf22b0-0e79-3aeb-a645-a713ed905403 ([UPDATE_GAME_MODE])
+[18:10:59] [Render thread/WARN]: Ignoring player info update for unknown player 90cf22b0-0e79-3aeb-a645-a713ed905403 ([UPDATE_GAME_MODE])
+[18:11:08] [Render thread/WARN]: Ignoring player info update for unknown player 3e8b697e-e18e-39ca-ac10-29e8151b7264 ([UPDATE_GAME_MODE])
+[18:11:08] [Render thread/WARN]: Ignoring player info update for unknown player 3e8b697e-e18e-39ca-ac10-29e8151b7264 ([UPDATE_GAME_MODE])
+[18:11:09] [Render thread/WARN]: Ignoring player info update for unknown player 7211641a-fe24-32a9-a6fa-81ef0bf98c31 ([UPDATE_GAME_MODE])
+[18:11:21] [Render thread/WARN]: Ignoring player info update for unknown player f0df8bee-5382-3860-82d6-7c7887aa4618 ([UPDATE_GAME_MODE])
+[18:11:21] [Render thread/WARN]: Ignoring player info update for unknown player 866e70e9-04f9-3d06-85e6-eb440ebcbc94 ([UPDATE_GAME_MODE])
+[18:11:21] [Render thread/WARN]: Ignoring player info update for unknown player 866e70e9-04f9-3d06-85e6-eb440ebcbc94 ([UPDATE_GAME_MODE])
+[18:11:22] [Render thread/INFO]: [STDOUT]: World seems to be a replay. Not loading Baritone cache.
+[18:11:22] [Render thread/INFO]: [voicechat] Disconnecting from previous connection due to server change
+[18:11:22] [Render thread/INFO]: [voicechat] Clearing audio channels
+[18:11:22] [pool-6-thread-6/INFO]: [STDOUT]: Started saving the world in a new thread
+[18:11:22] [pool-6-thread-6/INFO]: [STDOUT]: World save took 0ms
+[18:11:22] [pool-6-thread-6/INFO]: [STDOUT]: Retrying to load Baritone cache
+[18:11:22] [pool-6-thread-6/INFO]: [STDOUT]: Baritone world data dir: .\baritone\mc.funtime.su\minecraft\overworld_384
+[18:11:22] [Render thread/INFO]: [voicechat] Sending secret request to the server
+[18:11:22] [Render thread/WARN]: [voicechat] Failed to open audio device 'OpenAL Soft on Динамики (High Definition Audio Device)', falling back to default
+[18:11:22] [Render thread/INFO]: [System] [CHAT] ╔═════ ★ FunTime.su ★ ═══╗
+[18:11:22] [Render thread/INFO]: [System] [CHAT] ║
+[18:11:22] [Render thread/INFO]: [System] [CHAT] ║ Добро пожаловать на FunTime
+[18:11:22] [Render thread/INFO]: [System] [CHAT] ║ Наши социальные сети – /links
+[18:11:22] [Render thread/INFO]: [System] [CHAT] ║ Приятной игры и новых побед!
+[18:11:22] [Render thread/INFO]: [System] [CHAT] ║
+[18:11:22] [Render thread/INFO]: [System] [CHAT] ╚═══════════════════╝
+[18:11:22] [Render thread/WARN]: Ignoring player info update for unknown player 04ad135c-6011-30ad-b888-ee6181eb589a ([UPDATE_LATENCY])
+[18:11:22] [Render thread/WARN]: Ignoring player info update for unknown player 0f6aa3f0-c93e-3685-8ebf-e4e833b04406 ([UPDATE_LATENCY])
+[18:11:22] [Worker-Main-6/ERROR]: Failed to verify signature on property Property[name=textures, value=ewogICJ0aW1lc3RhbXAiIDogMTc1MDI3ODY0MTkwMCwKICAicHJvZmlsZUlkIiA6ICIxNzRjZmRiNGEzY2I0M2I1YmZjZGU0MjRjM2JiMmM2ZSIsCiAgInByb2ZpbGVOYW1lIiA6ICJtYXJhZWwxOCIsCiAgInNpZ25hdHVyZVJlcXVpcmVkIiA6IHRydWUsCiAgInRleHR1cmVzIiA6IHsKICAgICJTS0lOIiA6IHsKICAgICAgInVybCIgOiAiaHR0cDovL3RleHR1cmVzLm1pbmVjcmFmdC5uZXQvdGV4dHVyZS9lN2E3YWU3Y2RjZjYxNmU4YjdhNDIyMWE2MjFiMjQzNTc1M2M2MGVkNmEyNThlYTA2MGRhZTMwMDJmZmU5ZTI4IiwKICAgICAgIm1ldGFkYXRhIiA6IHsKICAgICAgICAibW9kZWwiIDogInNsaW0iCiAgICAgIH0KICAgIH0KICB9Cn0=, signature=]
+java.security.SignatureException: Bad signature length: got 0 but was expecting 512
+	at java.base/sun.security.rsa.RSASignature.engineVerify(RSASignature.java:212)
+	at java.base/java.security.Signature$Delegate.engineVerify(Signature.java:1422)
+	at java.base/java.security.Signature.verify(Signature.java:790)
+	at com.mojang.authlib.yggdrasil.YggdrasilServicesKeyInfo.validateProperty(YggdrasilServicesKeyInfo.java:165)
+	at com.mojang.authlib.yggdrasil.YggdrasilMinecraftSessionService.lambda$getPropertySignatureState$0(YggdrasilMinecraftSessionService.java:185)
+	at java.base/java.util.stream.MatchOps$1MatchSink.accept(MatchOps.java:90)
+	at java.base/java.util.AbstractList$RandomAccessSpliterator.tryAdvance(AbstractList.java:708)
+	at java.base/java.util.stream.ReferencePipeline.forEachWithCancel(ReferencePipeline.java:129)
+	at java.base/java.util.stream.AbstractPipeline.copyIntoWithCancel(AbstractPipeline.java:527)
+	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:513)
+	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499)
+	at java.base/java.util.stream.MatchOps$MatchOp.evaluateSequential(MatchOps.java:230)
+	at java.base/java.util.stream.MatchOps$MatchOp.evaluateSequential(MatchOps.java:196)
+	at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:234)
+	at java.base/java.util.stream.ReferencePipeline.noneMatch(ReferencePipeline.java:642)
+	at com.mojang.authlib.yggdrasil.YggdrasilMinecraftSessionService.getPropertySignatureState(YggdrasilMinecraftSessionService.java:185)
+	at com.mojang.authlib.yggdrasil.YggdrasilMinecraftSessionService.unpackTextures(YggdrasilMinecraftSessionService.java:128)
+	at net.minecraft.client.resources.SkinManager$1.lambda$load$0(SkinManager.java:67)
+	at java.base/java.util.concurrent.CompletableFuture$AsyncSupply.run(CompletableFuture.java:1768)
+	at java.base/java.util.concurrent.CompletableFuture$AsyncSupply.exec(CompletableFuture.java:1760)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:387)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1312)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1843)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1808)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:188)
+[18:11:22] [Worker-Main-6/ERROR]: Failed to verify signature on property Property[name=textures, value=ewogICJ0aW1lc3RhbXAiIDogMTc1MDI3ODY0MTkwMCwKICAicHJvZmlsZUlkIiA6ICIxNzRjZmRiNGEzY2I0M2I1YmZjZGU0MjRjM2JiMmM2ZSIsCiAgInByb2ZpbGVOYW1lIiA6ICJtYXJhZWwxOCIsCiAgInNpZ25hdHVyZVJlcXVpcmVkIiA6IHRydWUsCiAgInRleHR1cmVzIiA6IHsKICAgICJTS0lOIiA6IHsKICAgICAgInVybCIgOiAiaHR0cDovL3RleHR1cmVzLm1pbmVjcmFmdC5uZXQvdGV4dHVyZS9lN2E3YWU3Y2RjZjYxNmU4YjdhNDIyMWE2MjFiMjQzNTc1M2M2MGVkNmEyNThlYTA2MGRhZTMwMDJmZmU5ZTI4IiwKICAgICAgIm1ldGFkYXRhIiA6IHsKICAgICAgICAibW9kZWwiIDogInNsaW0iCiAgICAgIH0KICAgIH0KICB9Cn0=, signature=]
+java.security.SignatureException: Bad signature length: got 0 but was expecting 512
+	at java.base/sun.security.rsa.RSASignature.engineVerify(RSASignature.java:212)
+	at java.base/java.security.Signature$Delegate.engineVerify(Signature.java:1422)
+	at java.base/java.security.Signature.verify(Signature.java:790)
+	at com.mojang.authlib.yggdrasil.YggdrasilServicesKeyInfo.validateProperty(YggdrasilServicesKeyInfo.java:165)
+	at com.mojang.authlib.yggdrasil.YggdrasilMinecraftSessionService.lambda$getPropertySignatureState$0(YggdrasilMinecraftSessionService.java:185)
+	at java.base/java.util.stream.MatchOps$1MatchSink.accept(MatchOps.java:90)
+	at java.base/java.util.AbstractList$RandomAccessSpliterator.tryAdvance(AbstractList.java:708)
+	at java.base/java.util.stream.ReferencePipeline.forEachWithCancel(ReferencePipeline.java:129)
+	at java.base/java.util.stream.AbstractPipeline.copyIntoWithCancel(AbstractPipeline.java:527)
+	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:513)
+	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499)
+	at java.base/java.util.stream.MatchOps$MatchOp.evaluateSequential(MatchOps.java:230)
+	at java.base/java.util.stream.MatchOps$MatchOp.evaluateSequential(MatchOps.java:196)
+	at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:234)
+	at java.base/java.util.stream.ReferencePipeline.noneMatch(ReferencePipeline.java:642)
+	at com.mojang.authlib.yggdrasil.YggdrasilMinecraftSessionService.getPropertySignatureState(YggdrasilMinecraftSessionService.java:185)
+	at com.mojang.authlib.yggdrasil.YggdrasilMinecraftSessionService.unpackTextures(YggdrasilMinecraftSessionService.java:128)
+	at net.minecraft.client.resources.SkinManager$1.lambda$load$0(SkinManager.java:67)
+	at java.base/java.util.concurrent.CompletableFuture$AsyncSupply.run(CompletableFuture.java:1768)
+	at java.base/java.util.concurrent.CompletableFuture$AsyncSupply.exec(CompletableFuture.java:1760)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:387)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1312)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1843)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1808)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:188)
+[18:11:22] [Worker-Main-6/WARN]: Profile contained invalid signature for textures property (profile id: fca06150-b395-4794-9b78-6bc58238aa8f)
+[18:11:22] [Render thread/WARN]: Ignoring player info update for unknown player ae8101e5-91e3-3f56-921a-d3842e08b644 ([UPDATE_LATENCY])
+[18:11:23] [Render thread/WARN]: Ignoring player info update for unknown player d973c26c-22b9-36e5-a097-b249c67366d8 ([UPDATE_LATENCY])
+[18:11:23] [Render thread/WARN]: Ignoring player info update for unknown player 2d2c96b5-cd25-33e5-b810-7b3c087664ec ([UPDATE_LATENCY])
+[18:11:25] [Render thread/WARN]: Ignoring player info update for unknown player bd24bf23-fb34-3b71-9fc7-9e509432ca72 ([UPDATE_LATENCY])
+[18:11:27] [Render thread/INFO]: [System] [CHAT] [Отладка]: Перезагрузка всех чанков
+[18:11:28] [Render thread/INFO]: [System] [CHAT] [Отладка]: Перезагрузка всех чанков
+[18:11:31] [Render thread/INFO]: [System] [CHAT] [Отладка]: Перезагрузка всех чанков
+[18:11:31] [Render thread/INFO]: [System] [CHAT] [Отладка]: Перезагрузка всех чанков
+[18:11:31] [Render thread/INFO]: [System] [CHAT] [Отладка]: Перезагрузка всех чанков
+[18:11:32] [Render thread/INFO]: [System] [CHAT] [Отладка]: Перезагрузка всех чанков
+[18:11:33] [Render thread/INFO]: [System] [CHAT] [Отладка]: Перезагрузка всех чанков
+[18:11:33] [Render thread/INFO]: [System] [CHAT] [Отладка]: Перезагрузка всех чанков
+[18:11:35] [Render thread/INFO]: [System] [CHAT] [Отладка]: Перезагрузка всех чанков
+[18:11:36] [Render thread/INFO]: [System] [CHAT] [Отладка]: Перезагрузка всех чанков
+[18:11:38] [Render thread/INFO]: [System] [CHAT] [Отладка]: Перезагрузка всех чанков
+[18:11:39] [Render thread/INFO]: [System] [CHAT] [Отладка]: Перезагрузка всех чанков
+[18:11:39] [Render thread/INFO]: [System] [CHAT] [Отладка]: Перезагрузка всех чанков
+[18:11:39] [Render thread/INFO]: [System] [CHAT] [Отладка]: Перезагрузка всех чанков
+[18:11:40] [Render thread/WARN]: Ignoring player info update for unknown player 5ab3db20-8475-3763-a974-cabf1468d6c4 ([UPDATE_LATENCY])
+[18:11:40] [Render thread/INFO]: [System] [CHAT] [Отладка]: Перезагрузка всех чанков
+[18:11:40] [Render thread/INFO]: [System] [CHAT] [Отладка]: Перезагрузка всех чанков
+[18:11:43] [Render thread/INFO]: [System] [CHAT] [Отладка]: Перезагрузка всех чанков
+[18:11:44] [Render thread/INFO]: [System] [CHAT] [Отладка]: Перезагрузка всех чанков
+[18:11:44] [Render thread/INFO]: [System] [CHAT] \n ⚡ Наша группа ВК vk.com/funtime\n
+[18:11:44] [Render thread/INFO]: [System] [CHAT] [Отладка]: Перезагрузка всех чанков
+[18:11:46] [Render thread/INFO]: [System] [CHAT] [Отладка]: Перезагрузка всех чанков
+[18:11:47] [Render thread/INFO]: [System] [CHAT] [Отладка]: Перезагрузка всех чанков
+[18:11:50] [Render thread/INFO]: [System] [CHAT] [Отладка]: Перезагрузка всех чанков
+[18:11:51] [Render thread/INFO]: [System] [CHAT] [Отладка]: Перезагрузка всех чанков
+[18:11:54] [Render thread/INFO]: [System] [CHAT] [Отладка]: Перезагрузка всех чанков
+[18:11:55] [Render thread/WARN]: Ignoring player info update for unknown player 0f723586-c0c3-3c6e-a916-74eb2bcc0962 ([UPDATE_LATENCY])
+[18:11:55] [Render thread/INFO]: [System] [CHAT] [Отладка]: Перезагрузка всех чанков
+[18:11:55] [Render thread/INFO]: [System] [CHAT] [Отладка]: Перезагрузка всех чанков
+[18:11:55] [Render thread/WARN]: Ignoring player info update for unknown player a6717688-4d12-3995-b046-5c048723882e ([UPDATE_LATENCY])
+[18:11:57] [Render thread/WARN]: Ignoring player info update for unknown player c6243bd0-5733-384c-9ba3-bf1eb9ec14b8 ([UPDATE_LATENCY])
+[18:11:58] [Render thread/INFO]: [System] [CHAT] [Отладка]: Перезагрузка всех чанков
+[18:11:58] [Render thread/INFO]: [System] [CHAT] [Отладка]: Перезагрузка всех чанков
+[18:11:58] [Render thread/INFO]: [System] [CHAT] [Отладка]: Перезагрузка всех чанков
+[18:11:59] [Render thread/INFO]: [System] [CHAT] [Отладка]: Перезагрузка всех чанков
+[18:11:59] [Render thread/INFO]: [System] [CHAT] [Отладка]: Перезагрузка всех чанков
+[18:12:03] [Render thread/WARN]: Ignoring player info update for unknown player 218c2ff8-f25a-3b12-8642-c2fedcdb7939 ([UPDATE_LATENCY])
+[18:12:03] [Render thread/WARN]: Ignoring player info update for unknown player 65e42604-e85b-34ad-93e7-d1cf9fadb296 ([UPDATE_LATENCY])
+[18:12:03] [Render thread/WARN]: Ignoring player info update for unknown player a6d14286-7451-3d9c-b1b1-b972e7620ed2 ([UPDATE_LATENCY])
+[18:12:03] [Render thread/INFO]: [System] [CHAT] [Отладка]: Перезагрузка всех чанков
+[18:12:04] [Render thread/INFO]: [System] [CHAT] [Отладка]: Перезагрузка всех чанков
+[18:12:04] [Render thread/WARN]: Ignoring player info update for unknown player aa7d4742-c223-3513-9ca7-e02d3feccc9d ([UPDATE_LATENCY])
+[18:12:04] [Render thread/WARN]: Ignoring player info update for unknown player a8f77617-6cf0-362a-8a0b-39782150b321 ([UPDATE_LATENCY])
+[18:12:09] [Render thread/INFO]: Stopping!
+[18:12:09] [Render thread/INFO]: [voicechat] Clearing audio channels

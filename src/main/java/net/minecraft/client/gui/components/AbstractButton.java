@@ -15,7 +15,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.util.ARGB;
 import org.jspecify.annotations.Nullable;
 import ru.arixcompany.Arix;
-import ru.arixcompany.features.module.modules.misc.Core;
+import ru.arixcompany.features.module.modules.render.Interface;
 import ru.arixcompany.features.repos.SoundRepo;
 import ru.arixcompany.utils.render.RenderUtils;
 import ru.arixcompany.utils.render.font.FontManager;
@@ -36,7 +36,7 @@ public abstract class AbstractButton extends AbstractWidget.WithInactiveMessage 
 
     @Override
     public void playDownSound(SoundManager manager) {
-        Core module = Arix.getInstance().getModuleRepo().getModule(Core.class);
+        Interface module = Arix.getInstance().getModuleRepo().getModule(Interface.class);
         if (module.isState() && module.customButtons.isValue() && module.buttonSounds.isValue()) {
             SoundRepo.playButton();
         } else {
@@ -46,7 +46,7 @@ public abstract class AbstractButton extends AbstractWidget.WithInactiveMessage 
 
     @Override
     protected final void renderWidget(GuiGraphics g, int mouseX, int mouseY, float partialTicks) {
-        Core module = Arix.getInstance().getModuleRepo().getModule(Core.class);
+        Interface module = Arix.getInstance().getModuleRepo().getModule(Interface.class);
 
         if (module.isState() && module.customButtons.isValue()) {
             renderCustomContents(g, mouseX, mouseY, partialTicks);
@@ -76,8 +76,7 @@ public abstract class AbstractButton extends AbstractWidget.WithInactiveMessage 
             textColor = 0xFFD0D0D0;
         }
 
-        RenderUtils.fillRoundRect(getX(), getY(), getWidth(), getHeight(), 4f, bgColor);
-        RenderUtils.drawRoundRectOutline(getX(), getY(), getWidth(), getHeight(), 4f, 1.0f, outlineColor);
+        RenderUtils.fillRoundRect(g, getX(), getY(), getWidth(), getHeight(), 4f, bgColor);
 
         float fontSize = 10f;
         Component label = this.getMessage();

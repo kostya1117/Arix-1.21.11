@@ -435,6 +435,10 @@ public class Gui {
 
     private void renderChat(GuiGraphics p_329202_, DeltaTracker p_342328_) {
         if (!this.chat.isChatFocused()) {
+            if (ru.arixcompany.ui.draggable.draggables.ChatDraggable.isCustomChatActive()) {
+                return;
+            }
+
             Window window = this.minecraft.getWindow();
             int i = Mth.floor(this.minecraft.mouseHandler.getScaledXPos(window));
             int j = Mth.floor(this.minecraft.mouseHandler.getScaledYPos(window));

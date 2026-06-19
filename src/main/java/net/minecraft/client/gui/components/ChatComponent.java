@@ -58,7 +58,7 @@ public class ChatComponent {
     private final ArrayListDeque<String> recentChat = new ArrayListDeque<>(100);
     public final List<GuiMessage> allMessages = Lists.newArrayList();
     public final List<GuiMessage.Line> trimmedMessages = Lists.newArrayList();
-    private int chatScrollbarPos;
+    public int chatScrollbarPos;
     private boolean newMessageSinceScroll;
     private ChatComponent. Draft latestDraft;
     private  ChatScreen preservedScreen;

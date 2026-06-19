@@ -185,7 +185,7 @@ public abstract class AbstractContainerScreen<T extends AbstractContainerMenu> e
         if (this.hoveredSlot != null && this.hoveredSlot.hasItem()) {
             for (ItemSlotMouseAction itemslotmouseaction : this.itemSlotMouseActions) {
                 if (itemslotmouseaction.matches(this.hoveredSlot)
-                    && itemslotmouseaction.onMouseScrolled(p_364454_, p_367273_, this.hoveredSlot.index, this.hoveredSlot.getItem())) {
+                        && itemslotmouseaction.onMouseScrolled(p_364454_, p_367273_, this.hoveredSlot.index, this.hoveredSlot.getItem())) {
                     return true;
                 }
             }
@@ -211,7 +211,7 @@ public abstract class AbstractContainerScreen<T extends AbstractContainerMenu> e
             ItemStack itemstack = this.hoveredSlot.getItem();
             if (this.menu.getCarried().isEmpty() || this.showTooltipWithItemInHand(itemstack)) {
                 p_283594_.setTooltipForNextFrame(
-                    this.font, this.getTooltipFromContainerItem(itemstack), itemstack.getTooltipImage(), p_282171_, p_281909_, itemstack.get(DataComponents.TOOLTIP_STYLE)
+                        this.font, this.getTooltipFromContainerItem(itemstack), itemstack.getTooltipImage(), p_282171_, p_281909_, itemstack.get(DataComponents.TOOLTIP_STYLE)
                 );
             }
         }
@@ -712,7 +712,7 @@ public abstract class AbstractContainerScreen<T extends AbstractContainerMenu> e
         super.onClose();
     }
 
-    
+
     record SnapbackData(ItemStack item, Vector2i start, Vector2i end, long time) {
     }
 }

@@ -168,6 +168,8 @@ import ru.arixcompany.Arix;
 import ru.arixcompany.features.event.EventRepo;
 import ru.arixcompany.features.event.render.EventRender3D;
 import ru.arixcompany.features.module.modules.render.BlockHighLight;
+import ru.arixcompany.features.module.modules.render.ChunkAnimator;
+import ru.arixcompany.features.module.modules.render.chunkanimator.ChunkAnimHandler;
 import ru.arixcompany.utils.math.ProjectUtils;
 
 public class LevelRenderer implements ResourceManagerReloadListener, AutoCloseable {
@@ -550,6 +552,9 @@ public class LevelRenderer implements ResourceManagerReloadListener, AutoCloseab
 
     public void addRecentlyCompiledSection(SectionRenderDispatcher.RenderSection p_301248_) {
         this.sectionOcclusionGraph.schedulePropagationFrom(p_301248_);
+        if (ChunkAnimator.shouldAnimate()) {
+            ChunkAnimHandler.register(p_301248_.getRenderOrigin());
+        }
     }
 
 //    private Frustum prepareCullFrustum(Matrix4f p_254341_, Matrix4f p_332544_, Vec3 p_253766_) {
@@ -1499,12 +1504,21 @@ private Frustum prepareCullFrustum(Matrix4f p_254341_, Matrix4f p_332544_, Vec3 
                     } else {
                         if (k == -1) {
                             k = list1.size();
+                            int ax = blockpos.getX();
+                            int ay = blockpos.getY();
+                            int az = blockpos.getZ();
+                            if (ChunkAnimator.shouldAnimate()) {
+                                ChunkAnimHandler.Offset offset = ChunkAnimHandler.getOffset(blockpos, p_409433_, p_409487_, p_408168_);
+                                ax -= offset.x;
+                                ay -= offset.y;
+                                az -= offset.z;
+                            }
                             list1.add(
                                 new DynamicUniforms.ChunkSectionInfo(
                                     new Matrix4f(p_407733_),
-                                    blockpos.getX(),
-                                    blockpos.getY(),
-                                    blockpos.getZ(),
+                                    ax,
+                                    ay,
+                                    az,
                                     sectionrenderdispatcher$rendersection.getVisibility(j),
                                     i1,
                                     j1,

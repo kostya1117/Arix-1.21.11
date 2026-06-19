@@ -10,6 +10,7 @@ import ru.arixcompany.Arix;
 import ru.arixcompany.ui.draggable.DraggableComponent;
 import ru.arixcompany.features.module.modules.render.Interface;
 import ru.arixcompany.utils.render.font.CustomFont;
+import ru.arixcompany.utils.Colors;
 import ru.arixcompany.utils.render.font.FontManager;
 import static ru.arixcompany.utils.render.ColorUtil.argb;
 
@@ -76,7 +77,7 @@ public class BossBarDraggable extends DraggableComponent {
             float progress = Mth.clamp(event.getProgress(), 0f, 1f);
 
             int accent     = getBossColor(event.getColor(), alpha);
-            int bgColor    = argb(18,  18,  18,  alpha * 0.85f);
+            int bgColor    = Colors.bgPrimary(alpha * 0.85f);
             int barBg      = argb(40,  40,  40,  alpha * 0.95f);
             int textColor  = argb(255, 255, 255, alpha);
             int notchColor = argb(0,   0,   0,   alpha * 0.5f);

@@ -2,8 +2,10 @@ package ru.arixcompany.features.module.modules.combat;
 
 import lombok.Getter;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.network.protocol.game.ServerboundSetCarriedItemPacket;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemUseAnimation;
@@ -148,6 +150,7 @@ public class HitAura extends Module {
     @Getter
     public static LivingEntity target;
     private final TargetHandler targetHandler = new TargetHandler();
+    private int previousSlot = -1;
     private final KillAuraRotationsValueGroup rotations = new KillAuraRotationsValueGroup();
     public final TimerUtils sprintTimer = new TimerUtils();
     public int count;
@@ -245,9 +248,6 @@ public class HitAura extends Module {
         return entity.getItemInHand(hand) == itemStack;
     }
 
-    /**
-     * Проверка блокировки на стороне сервера (с учетом кросс-версионных особенностей).
-     */
     public static boolean isBlockingServerside(LivingEntity entity) {
         if (entity.isBlocking()) {
             return true;
@@ -290,17 +290,10 @@ public class HitAura extends Module {
 
             float rangeToHit = attackRange.getValue();
 
-            //if (AuraUtil.validDistance(target, rangeToHit)) {
-            boolean sprint = true;
-            if (!mc.player.onGround()) {
-                sprint = !mc.player.isSprinting();
+            if (AuraUtil.validDistance(target, rangeToHit)) {
+                AttackHandler.performAttack(target, misc.isSelected("Райкаст"), rangeToHit);
             }
-            //if (!this.misc.isSelected("Не бить когда ешь") || !this.isUseItems()) {
-                if (AuraUtil.validDistance(target, rangeToHit)) {
-                    AttackHandler.performAttack(target, misc.isSelected("Райкаст"), rangeToHit);
-                }
-           // }
-        } else {
+        } else if (!misc.isSelected("Авто булава")) {
             reset();
         }
     }
@@ -384,30 +377,28 @@ public class HitAura extends Module {
         this.sprintTimer.setTime(0L);
     }
 
-    public boolean isUseItems() {
-        return mc.player.isUsingItem();
-    }
+    private boolean isValidMaceTarget(LivingEntity entity, double playerY) {
+        if (entity == mc.player) return false;
+        if (!entity.isAlive()) return false;
+        if (entity.isInvulnerable()) return false;
 
+        if (entity.getY() >= playerY) return false;
+
+        double hDist = Math.sqrt(
+                Math.pow(mc.player.getX() - entity.getX(), 2) +
+                        Math.pow(mc.player.getZ() - entity.getZ(), 2)
+        );
+        if (hDist > attackRange.getValue() + preRange.getValue()) return false;
+
+        return true;
+    }
 
     private boolean skipAttack() {
         return mc.screen != null && misc.isSelected("Не атакавать в контейнере")
                 && !extraSettings.isSelected("Игнорировать инвентарь")
                 || !mc.player.getMainHandItem().is(ItemTags.SWORDS)
                 && !mc.player.getMainHandItem().is(ItemTags.AXES)
+                && !mc.player.getMainHandItem().is(Items.MACE)
                 && misc.isSelected("Бить только оружием");
-    }
-
-    public static boolean canAttackNow() {
-        if (mc.player == null) return false;
-
-        if (mc.player.isUsingItem() && !(mc.player.getActiveItem().getItem() instanceof ShieldItem)) {
-            return false;
-        }
-
-        if (mc.screen != null && !extraSettings.isSelected("Игнорировать инвентарь")) {
-            return false;
-        }
-
-        return true;
     }
 }
