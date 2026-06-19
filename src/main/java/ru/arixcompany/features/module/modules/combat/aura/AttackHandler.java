@@ -60,12 +60,12 @@ public final class AttackHandler implements IMinecraft {
 
     public boolean shouldAttack() {
         if (HitAura.target == null) return false;
-        if (!(mc.player.getAttackStrengthScale(0.5f) >= 0.92)) return false;
+        if (!(mc.player.getAttackStrengthScale(0.5f) >= currentCooldownThreshold)) return false;
         return isBestMomentToHit();
     }
     public boolean shouldAttackS() {
         if (HitAura.target == null) return false;
-        return mc.player.getAttackStrengthScale(0.5f) >= 0.92; // Тоже меняем здесь
+        return mc.player.getAttackStrengthScale(0.5f) >= currentCooldownThreshold; // Тоже меняем здесь
     }
     public boolean hasMovementRestrictions() {
         if (mc.player == null) return false;
@@ -225,7 +225,7 @@ public final class AttackHandler implements IMinecraft {
             return 0.0f;
         }
 
-        float durationToWait = player.getCurrentItemAttackStrengthDelay() * 0.92F - 0.5F;
+        float durationToWait = player.getCurrentItemAttackStrengthDelay() * currentCooldownThreshold - 0.5F;
         float waitedDuration = (float) player.attackStrengthTicker;
 
         return Math.max(durationToWait - waitedDuration, 0.0f);
@@ -250,7 +250,7 @@ public final class AttackHandler implements IMinecraft {
             mc.player.swing(hand);
        // }
 
-        //  currentCooldownThreshold = generateHumanCooldown();
+          currentCooldownThreshold = generateHumanCooldown();
 
         if (hitAura.misc.isSelected("Ломать щит")) {
             if (target instanceof Player entity) {
@@ -294,7 +294,7 @@ public final class AttackHandler implements IMinecraft {
 
     public boolean shouldAttack(LivingEntity target, boolean rayCast, boolean distanceCheck, float ranges) {
         if (distanceCheck && target != null && !AuraUtil.validDistance(target, ranges)) return false;
-        if (!(mc.player.getAttackStrengthScale(0.5f) >= 0.92)) return false;
+        if (!(mc.player.getAttackStrengthScale(0.5f) >= currentCooldownThreshold)) return false;
 
         boolean valid = isBestMomentToHit();
         if (valid && rayCast) {

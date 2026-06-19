@@ -1293,7 +1293,6 @@ public class Minecraft extends ReentrantBlockableEventLoop<Runnable> implements 
             this.toastManager.update();
             profilerfiller.popPush("mouse");
             this.mouseHandler.handleAccumulatedMovement();
-            EventRepo.call(new EventGameTick());
             profilerfiller.popPush("render");
             long i = Util.getNanos();
             if (!this.debugEntries.isCurrentlyEnabled(DebugScreenEntries.GPU_UTILIZATION) && !this.metricsRecorder.isRecording()) {
@@ -1772,7 +1771,6 @@ public class Minecraft extends ReentrantBlockableEventLoop<Runnable> implements 
 
     public void tick() {
         TickLoopTaskExecutor.onTickLoopStart();
-        EventRepo.call(new EventGameTicked());
         this.tickProvider = TickEvent.createNextProvider();
 
         for (IBaritone baritone : BaritoneAPI.getProvider().getAllBaritones()) {
@@ -1787,6 +1785,8 @@ public class Minecraft extends ReentrantBlockableEventLoop<Runnable> implements 
         if (this.level != null && !this.pause) {
             this.level.tickRateManager().tick();
         }
+
+        EventRepo.call(new EventGameTicked());
 
         if (this.rightClickDelay > 0) {
             this.rightClickDelay--;

@@ -10,6 +10,7 @@ import ru.arixcompany.features.module.modules.combat.aura.aiming.features.proces
 import ru.arixcompany.features.module.modules.combat.aura.aiming.features.processors.anglesmooth.FactorAngleSmooth;
 import ru.arixcompany.features.module.modules.combat.aura.aiming.features.processors.anglesmooth.impl.*;
 import ru.arixcompany.features.module.modules.combat.aura.aiming.features.MovementCorrection;
+import ru.arixcompany.features.module.modules.combat.aura.utils.BoxPoints;
 import ru.arixcompany.utils.IMinecraft;
 import ru.arixcompany.utils.math.PredictUtils;
 
@@ -53,7 +54,8 @@ public class KillAuraRotationsValueGroup implements IMinecraft {
         if (mc.player.isFallFlying() && HitAura.elytraTarget.isValue()) {
             targetPos = PredictUtils.predict(entity,4);
         } else {
-            targetPos = new Vec3(entity.getX(), entity.getY() + lengthY * 0.5, entity.getZ());
+          //  targetPos = new Vec3(entity.getX(), entity.getY() + lengthY * 0.5, entity.getZ());
+            targetPos = BoxPoints.getBestVectorOnEntityBox(entity.getBoundingBox());
         }
 
         return Rotation.lookingAt(targetPos, eyes);

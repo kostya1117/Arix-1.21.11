@@ -106,7 +106,7 @@ public class RotationManager extends Component implements RequestHandler.Request
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
-    public void onTick(EventGameTicked event) {
+    public void onTick(EventGameTick event) {
         if (mc.player == null) return;
         EventRepo.call(new EventRotationUpdate());
         update();
@@ -185,11 +185,18 @@ public class RotationManager extends Component implements RequestHandler.Request
     public static void setPlayerRotation(Rotation rotation) {
         Rotation normalizedRotation = rotation.normalize();
 
-        mc.player.xRotO = mc.player.xRot;
-        mc.player.yRotO = mc.player.yRot;
+        float newYaw = normalizedRotation.yaw();
+        float newPitch = Mth.clamp(normalizedRotation.pitch(), -90.0F, 90.0F);
 
-        mc.player.yRot = normalizedRotation.yaw();
-        mc.player.xRot = normalizedRotation.pitch();
+        float deltaYaw = Mth.wrapDegrees(newYaw - mc.player.getYRot());
+        float deltaPitch = newPitch - mc.player.getXRot();
+
+        mc.player.setYRot(mc.player.getYRot() + deltaYaw);
+        mc.player.setXRot(mc.player.getXRot() + deltaPitch);
+
+        mc.player.yRotO += deltaYaw;
+        mc.player.xRotO += deltaPitch;
+        mc.player.xRotO = Mth.clamp(mc.player.xRotO, -90.0F, 90.0F);
     }
 
 
@@ -203,19 +210,12 @@ public class RotationManager extends Component implements RequestHandler.Request
         if (active.movementCorrection == MovementCorrection.CHANGE_LOOK) {
             if (playerRotation == null || currentRotation == null) return;
             var timerSpeed = Timer.INSTANCE.getTimerSpeed();
-            Rotation interpolated = playerRotation.interpolateTo(currentRotation, /*event.getTickDelta() * timerSpeed*/ timerSpeed * mc.gameRenderer.getMainCamera().getPartialTickTime());
+            float partialTick = timerSpeed * mc.gameRenderer.getMainCamera().getPartialTickTime();
 
-//            mc.player.setYRot(interpolated.yaw());
-//            mc.player.setXRot(interpolated.pitch());
+            Rotation interpolated = playerRotation.interpolateToSmooth(currentRotation, partialTick);
+
             setPlayerRotation(interpolated);
         }
-//        if (active.movementCorrection == MovementCorrection.SILENT) {
-//            if (playerRotation == null || currentRotation == null) return;
-//            Rotation interpolated = previousRotation.interpolateToNoYaw(currentRotation,mc.gameRenderer.getMainCamera().getPartialTickTime());
-//
-//            mc.player.setYRot(interpolated.yaw());
-//            mc.player.setXRot(interpolated.pitch());
-//        }
     }
 
     @EventHandler

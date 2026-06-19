@@ -42,6 +42,7 @@ import ru.arixcompany.features.event.EventRepo;
 import ru.arixcompany.features.event.player.EventKey;
 import ru.arixcompany.features.event.player.EventLook;
 import ru.arixcompany.features.event.player.EventMouseScroll;
+import ru.arixcompany.features.event.world.EventGameTick;
 
 public class MouseHandler implements IMouseKeyboardHandlers {
     private static final Logger LOGGER = LogUtils.getLogger();
@@ -440,6 +441,7 @@ public class MouseHandler implements IMouseKeyboardHandlers {
 
         this.minecraft.getTutorial().onMouse(event.getYaw(), event.getPitch());
 
+        EventRepo.call(new EventGameTick());
         if (!event.isCancelled() && this.minecraft.player != null) {
             this.minecraft.player.turn(event.getYaw(), event.getPitch());
         }

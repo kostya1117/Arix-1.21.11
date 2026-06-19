@@ -126,6 +126,9 @@
       <root url="jar://$PROJECT_DIR$/lib/registry-5-3.2.2-SNAPSHOT.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/httpclient-1.9.2.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/ViaLegacy-3.0.16.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jjwt-api-0.13.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jjwt-gson-0.13.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jjwt-impl-0.13.0.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

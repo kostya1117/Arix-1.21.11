@@ -18,6 +18,7 @@
  */
 package ru.arixcompany.features.module.modules.combat.aura.aiming.data;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
@@ -131,35 +132,6 @@ public record Rotation(float yaw, float pitch, boolean isNormalized) implements 
                 angleDifference(other.pitch, this.pitch)
         );
     }
-
-//    public Rotation towardsLinear(Rotation other, float horizontalFactor, float verticalFactor) {
-//        RotationDelta diff = this.rotationDeltaTo(other);
-//
-//        Interpolate.StepProfile p = Interpolate.PROFILES.getOrDefault(HitAura.interrot.getSelected(), Interpolate.PROFILES.get("Линейное"));
-//
-//        float yawStep = Interpolate.applyStep(diff.deltaYaw(), horizontalFactor, p);
-//        float pitchStep = Interpolate.applyStep(diff.deltaPitch(), verticalFactor, p);
-//
-//        return this.add(yawStep, pitchStep);
-//    }
-//public Rotation towardsLinear(Rotation other, float horizontalFactor, float verticalFactor) {
-//        RotationDelta diff = rotationDeltaTo(other);
-//
-//        float yawStep = horizontalFactor;
-//        float pitchStep = verticalFactor;
-//
-//        if (Math.abs(diff.deltaYaw()) < yawStep) {
-//            yawStep = Math.abs(diff.deltaYaw());
-//        }
-//        if (Math.abs(diff.deltaPitch()) < pitchStep) {
-//            pitchStep = Math.abs(diff.deltaPitch());
-//        }
-//
-//        return new Rotation(
-//                this.yaw + Math.copySign(yawStep, diff.deltaYaw()),
-//                Mth.clamp(this.pitch + Math.copySign(pitchStep, diff.deltaPitch()), -90f, 90f)
-//        );
-//    }
 public Rotation towardsLinear(Rotation other, float horizontalFactor, float verticalFactor) {
     RotationDelta diff = rotationDeltaTo(other);
 
@@ -178,6 +150,25 @@ public Rotation towardsLinear(Rotation other, float horizontalFactor, float vert
 
     return new Rotation(this.yaw + yawStep, this.pitch + pitchStep);
 }
+
+
+    /**
+     * Interpolates toward other rotation using sensitivity-based factor.
+     * Mimics real mouse movement speed. Uses Mth.rotLerp for proper yaw wrapping.
+     * 8.0F * 0.15F = 1.2F makes the speed exactly proportional to Minecraft's GCD.
+     */
+    public Rotation interpolateToSmooth(Rotation other, float partialTick) {
+        double f = mc.options.sensitivity().get() * 0.6D + 0.2F;
+        float factor = (float) (f * f * f * 8.0F * 0.15F) * partialTick;
+
+        double d2 = Minecraft.getInstance().options.sensitivity().get() * 0.6F + 0.2F;
+        float interpolationFactor = (float) (Math.pow(d2, 3) * 8.0F * 0.15F * partialTick);
+
+        return new Rotation(
+                Mth.rotLerp(interpolationFactor, this.yaw, other.yaw),
+                Mth.lerp(interpolationFactor, this.pitch, other.pitch)
+        );
+    }
 
     public Rotation towardsLinearElytra(Rotation other, float horizontalFactor, float verticalFactor) {
         RotationDelta diff = rotationDeltaTo(other);

@@ -494,6 +494,21 @@ public abstract class Entity implements SyncedDataHolder, DebugValueSource, Name
             this.vehicle.onPassengerTurned(this);
         }
     }
+    public void turnNorm(ru.arixcompany.features.module.modules.combat.aura.aiming.data.Rotation rotation) {
+        double p_19885_ = rotation.yaw();
+        double p_19886_ = rotation.pitch();
+        float f = (float)p_19886_;
+        float f1 = (float)p_19885_;
+        this.setXRot(this.getXRot() + f);
+        this.setYRot(this.getYRot() + f1);
+        this.setXRot(Mth.clamp(this.getXRot(), -90.0F, 90.0F));
+        this.xRotO += f;
+        this.yRotO += f1;
+        this.xRotO = Mth.clamp(this.xRotO, -90.0F, 90.0F);
+        if (this.vehicle != null) {
+            this.vehicle.onPassengerTurned(this);
+        }
+    }
 
     public void updateDataBeforeSync() {
     }
