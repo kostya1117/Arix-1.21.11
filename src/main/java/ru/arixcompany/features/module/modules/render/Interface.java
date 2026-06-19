@@ -16,7 +16,8 @@ public class Interface extends Module {
                     "Зелья",
                     "Скорбоард"
                     ,"ТаргетХуд",
-                    "Уведомления");
+                    "Уведомления",
+                    "Чат");
 
     public BooleanSetting customButtons = new BooleanSetting("Кастомные кнопки");
     public BooleanSetting buttonSounds = new BooleanSetting("Звуки кнопок")

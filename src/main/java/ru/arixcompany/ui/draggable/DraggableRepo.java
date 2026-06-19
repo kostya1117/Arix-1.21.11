@@ -29,6 +29,8 @@ public class DraggableRepo {
     private HotkeysDraggable hotkeys;
     @Getter
     private PotionsDraggable potions;
+    @Getter
+    private ChatDraggable chat;
 
     private IDraggable draggingComponent;
 
@@ -43,6 +45,7 @@ public class DraggableRepo {
         alert = register(new AlertDraggable());
         hotkeys = register(new HotkeysDraggable());
         potions = register(new PotionsDraggable());
+        chat = register(new ChatDraggable());
     }
 
     public <T extends IDraggable> T register(T c) {

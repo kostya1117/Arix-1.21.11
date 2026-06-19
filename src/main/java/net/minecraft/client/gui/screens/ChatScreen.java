@@ -123,17 +123,23 @@ public class ChatScreen extends Screen {
         Arix.getInstance().getDraggableRepo().releaseAll();
     }
 
+    protected boolean shouldSkipChatRender() {
+        return false;
+    }
+
     @Override
     public void render(GuiGraphics g, int mouseX, int mouseY, float delta) {
         g.fill(2, this.height - 14, this.width - 2, this.height - 2,
                 this.minecraft.options.getBackgroundColor(Integer.MIN_VALUE));
 
-        this.minecraft.gui.getChat().render(
-                g, this.font,
-                this.minecraft.gui.getGuiTicks(),
-                mouseX, mouseY, true,
-                this.insertionClickMode()
-        );
+        if (!shouldSkipChatRender()) {
+            this.minecraft.gui.getChat().render(
+                    g, this.font,
+                    this.minecraft.gui.getGuiTicks(),
+                    mouseX, mouseY, true,
+                    this.insertionClickMode()
+            );
+        }
 
         super.render(g, mouseX, mouseY, delta);
 
@@ -141,7 +147,7 @@ public class ChatScreen extends Screen {
         renderDraggables(g, mouseX, mouseY, delta);
     }
 
-    private void renderDraggables(GuiGraphics g, int mouseX, int mouseY, float delta) {
+    protected void renderDraggables(GuiGraphics g, int mouseX, int mouseY, float delta) {
         DraggableRepo repo = Arix.getInstance().getDraggableRepo();
         if (repo == null) return;
 
@@ -328,7 +334,7 @@ public class ChatScreen extends Screen {
         return false;
     }
 
-    private boolean insertionClickMode() {
+    protected boolean insertionClickMode() {
         return this.minecraft.hasShiftDown();
     }
 

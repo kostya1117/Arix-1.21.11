@@ -57,11 +57,11 @@ public class InventoryScreen extends AbstractRecipeBookScreen<InventoryMenu> {
         super.containerTick();
         if (this.minecraft.player.hasInfiniteMaterials()) {
             this.minecraft
-                .setScreen(
-                    new CreativeModeInventoryScreen(
-                        this.minecraft.player, this.minecraft.player.connection.enabledFeatures(), this.minecraft.options.operatorItemsTab().get()
-                    )
-                );
+                    .setScreen(
+                            new CreativeModeInventoryScreen(
+                                    this.minecraft.player, this.minecraft.player.connection.enabledFeatures(), this.minecraft.options.operatorItemsTab().get()
+                            )
+                    );
         }
     }
 
@@ -69,11 +69,11 @@ public class InventoryScreen extends AbstractRecipeBookScreen<InventoryMenu> {
     protected void init() {
         if (this.minecraft.player.hasInfiniteMaterials()) {
             this.minecraft
-                .setScreen(
-                    new CreativeModeInventoryScreen(
-                        this.minecraft.player, this.minecraft.player.connection.enabledFeatures(), this.minecraft.options.operatorItemsTab().get()
-                    )
-                );
+                    .setScreen(
+                            new CreativeModeInventoryScreen(
+                                    this.minecraft.player, this.minecraft.player.connection.enabledFeatures(), this.minecraft.options.operatorItemsTab().get()
+                            )
+                    );
         } else {
             super.init();
         }
@@ -121,16 +121,16 @@ public class InventoryScreen extends AbstractRecipeBookScreen<InventoryMenu> {
     }
 
     public static void renderEntityInInventoryFollowsMouse(
-        GuiGraphics p_282802_,
-        int p_275688_,
-        int p_275245_,
-        int p_275535_,
-        int p_301381_,
-        int p_299741_,
-        float p_275604_,
-        float p_275546_,
-        float p_300682_,
-        LivingEntity p_275689_
+            GuiGraphics p_282802_,
+            int p_275688_,
+            int p_275245_,
+            int p_275535_,
+            int p_301381_,
+            int p_299741_,
+            float p_275604_,
+            float p_275546_,
+            float p_300682_,
+            LivingEntity p_275689_
     ) {
         float f = (p_275688_ + p_275535_) / 2.0F;
         float f1 = (p_275245_ + p_301381_) / 2.0F;

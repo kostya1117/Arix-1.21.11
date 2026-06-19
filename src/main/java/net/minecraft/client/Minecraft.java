@@ -1111,7 +1111,11 @@ public class Minecraft extends ReentrantBlockableEventLoop<Runnable> implements 
                 this.gui.setChatDisabledByPlayerShown(minecraft$chatstatus == Minecraft.ChatStatus.DISABLED_BY_PROFILE);
             }
         } else {
-            this.gui.getChat().openScreen(p_424408_, ChatScreen::new);
+            if (ru.arixcompany.ui.draggable.draggables.ChatDraggable.isCustomChatActive()) {
+                this.gui.getChat().openScreen(p_424408_, net.minecraft.client.gui.screens.CustomChatScreen::new);
+            } else {
+                this.gui.getChat().openScreen(p_424408_, ChatScreen::new);
+            }
         }
     }
 

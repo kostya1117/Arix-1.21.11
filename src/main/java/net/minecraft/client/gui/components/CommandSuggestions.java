@@ -46,16 +46,16 @@ import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentUtils;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec2;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jspecify.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 import ru.arixcompany.Arix;
 import ru.arixcompany.features.command.CommandRepo;
+import ru.arixcompany.utils.render.font.CustomFont;
 
 
 public class CommandSuggestions {
@@ -86,6 +86,7 @@ public class CommandSuggestions {
     private boolean allowSuggestions;
     boolean keepSuggestions;
     private boolean allowHiding = true;
+    private CustomFont customFont;
 
     public CommandSuggestions(
         Minecraft p_93871_,
@@ -121,6 +122,10 @@ public class CommandSuggestions {
 
     public void setAllowHiding(boolean p_301612_) {
         this.allowHiding = p_301612_;
+    }
+
+    public void setCustomFont(CustomFont font) {
+        this.customFont = font;
     }
 
     public boolean keyPressed(KeyEvent p_424182_) {
@@ -514,9 +519,22 @@ public class CommandSuggestions {
         for (FormattedCharSequence formattedcharsequence : this.commandUsage) {
             int j = this.anchorToBottom ? this.screen.height - 14 - 13 - 12 * i : 72 + 12 * i;
             p_282763_.fill(this.commandUsagePosition - 1, j, this.commandUsagePosition + this.commandUsageWidth + 1, j + 12, this.fillColor);
-            p_282763_.drawString(this.font, formattedcharsequence, this.commandUsagePosition, j + 2, -1);
+            if (customFont != null) {
+                customFont.drawComponent(p_282763_, toComponent(formattedcharsequence), this.commandUsagePosition, j + 2, -1);
+            } else {
+                p_282763_.drawString(this.font, formattedcharsequence, this.commandUsagePosition, j + 2, -1);
+            }
             i++;
         }
+    }
+
+    private static Component toComponent(FormattedCharSequence seq) {
+        MutableComponent root = Component.literal("");
+        seq.accept((index, style, codePoint) -> {
+            root.append(Component.literal(new String(Character.toChars(codePoint))).withStyle(style));
+            return true;
+        });
+        return root;
     }
 
     public Component getNarrationMessage() {
@@ -622,13 +640,24 @@ public class CommandSuggestions {
                     flag4 = true;
                 }
 
-                p_282264_.drawString(
-                    CommandSuggestions.this.font,
-                    suggestion.getText(),
-                    this.rect.getX() + 1,
-                    this.rect.getY() + 2 + 12 * l,
-                    l + this.offset == this.current ? -256 : -5592406
-                );
+                int sugColor = l + this.offset == this.current ? -256 : -5592406;
+                if (CommandSuggestions.this.customFont != null) {
+                    CommandSuggestions.this.customFont.drawString(
+                        p_282264_,
+                        suggestion.getText(),
+                        this.rect.getX() + 1,
+                        this.rect.getY() + 2 + 12 * l,
+                        sugColor
+                    );
+                } else {
+                    p_282264_.drawString(
+                        CommandSuggestions.this.font,
+                        suggestion.getText(),
+                        this.rect.getX() + 1,
+                        this.rect.getY() + 2 + 12 * l,
+                        sugColor
+                    );
+                }
             }
 
             if (flag4) {

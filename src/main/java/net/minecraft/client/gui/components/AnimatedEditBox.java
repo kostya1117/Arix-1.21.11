@@ -3,6 +3,7 @@ package net.minecraft.client.gui.components;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
@@ -10,6 +11,7 @@ import net.minecraft.util.Util;
 import ru.arixcompany.utils.animation.Animation;
 import ru.arixcompany.utils.animation.Direction;
 import ru.arixcompany.utils.animation.impl.quad.EaseInOutQuad;
+import ru.arixcompany.utils.render.font.CustomFont;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +21,7 @@ public class AnimatedEditBox extends EditBox {
     private static final float Y_OFFSET = 4f;
 
     private final Font font;
+    private CustomFont customFont;
     private final List<CharAnim> charAnims = new ArrayList<>();
     private String lastRenderedValue = "";
 
@@ -29,6 +32,7 @@ public class AnimatedEditBox extends EditBox {
     private Component hint;
     private String suggestion;
     private int highlightPos;
+    private int cursorHeight = 9;
 
     public AnimatedEditBox(Font font, int x, int y, int w, int h, Component msg) {
         super(font, x, y, w, h, msg);
@@ -78,6 +82,13 @@ public class AnimatedEditBox extends EditBox {
         lastRenderedValue = current;
     }
 
+    public void setCustomFont(CustomFont font) {
+        this.customFont = font;
+        if (font != null) {
+            this.cursorHeight = (int) font.getHeight();
+        }
+    }
+
     @Override
     public void renderWidget(GuiGraphics g, int mouseX, int mouseY, float delta) {
         if (!this.isVisible()) return;
@@ -103,8 +114,23 @@ public class AnimatedEditBox extends EditBox {
 
         String fullValue = this.getValue();
         int    dispPos   = getDisplayPosReflect();
-        String visible   = this.font.plainSubstrByWidth(fullValue.substring(dispPos), innerW);
-        int    visLen    = visible.length();
+        String visible;
+        int    visLen;
+        if (customFont != null) {
+            String sub = fullValue.substring(dispPos);
+            float w = 0;
+            int count = 0;
+            for (int i = 0; i < sub.length(); i++) {
+                w += customFont.getWidth(sub.charAt(i));
+                if (w > innerW) break;
+                count++;
+            }
+            visible = sub.substring(0, count);
+            visLen = count;
+        } else {
+            visible = this.font.plainSubstrByWidth(fullValue.substring(dispPos), innerW);
+            visLen = visible.length();
+        }
 
         int     cursorIdx    = this.getCursorPosition() - dispPos;
         boolean cursorInView = cursorIdx >= 0 && cursorIdx <= visLen;
@@ -140,30 +166,48 @@ public class AnimatedEditBox extends EditBox {
                 renderChar(g, anim.ch, cx, baseY, yOff, animAlpha, baseTextColor, dispPos + rendered);
             }
 
-            cx += this.font.width(String.valueOf(anim.ch));
+            cx += customFont != null ? (int) customFont.getWidth(anim.ch) : this.font.width(String.valueOf(anim.ch));
             rendered++;
         }
 
         if (rendered == cursorIdx || cursorIdx >= visLen) cursorX = cx;
 
         if (fullValue.isEmpty() && !this.isFocused() && this.hint != null) {
-            g.drawString(this.font, this.hint, baseX, baseY, baseTextColor, textShadow);
+            if (customFont != null) {
+                customFont.drawComponent(g, this.hint, baseX, baseY, baseTextColor, textShadow);
+            } else {
+                g.drawString(this.font, this.hint, baseX, baseY, baseTextColor, textShadow);
+            }
         }
 
         if (this.suggestion != null
                 && fullValue.length() < getMaxLengthReflect()
                 && this.getCursorPosition() >= fullValue.length()) {
-            g.drawString(this.font, this.suggestion, cursorX - 1, baseY, 0xFF7F7F7F, textShadow);
+            if (customFont != null) {
+                customFont.drawString(g, this.suggestion, cursorX - 1, baseY, 0xFF7F7F7F, textShadow);
+            } else {
+                g.drawString(this.font, this.suggestion, cursorX - 1, baseY, 0xFF7F7F7F, textShadow);
+            }
         }
 
         int highlightIdx = Mth.clamp(this.highlightPos - dispPos, 0, visLen);
         if (highlightIdx != cursorIdx && cursorInView) {
-            int highlightX = baseX + this.font.width(visible.substring(0, highlightIdx));
+            int highlightX;
+            if (customFont != null) {
+                float w = 0;
+                for (int i = 0; i < highlightIdx; i++) {
+                    char ch = i < visible.length() ? visible.charAt(i) : ' ';
+                    w += customFont.getWidth(ch);
+                }
+                highlightX = baseX + (int) w;
+            } else {
+                highlightX = baseX + this.font.width(visible.substring(0, highlightIdx));
+            }
             g.textHighlight(
                     Math.min(cursorX,    this.getX() + this.width),
                     baseY - 1,
                     Math.min(highlightX - 1, this.getX() + this.width),
-                    baseY + 1 + 9,
+                    baseY + 1 + cursorHeight,
                     true
             );
         }
@@ -172,9 +216,13 @@ public class AnimatedEditBox extends EditBox {
             boolean atEnd = this.getCursorPosition() >= fullValue.length()
                     && fullValue.length() < getMaxLengthReflect();
             if (atEnd) {
-                g.drawString(this.font, "_", cursorX, baseY, baseTextColor, textShadow);
+                if (customFont != null) {
+                    customFont.drawString(g, "_", cursorX, baseY, baseTextColor, textShadow);
+                } else {
+                    g.drawString(this.font, "_", cursorX, baseY, baseTextColor, textShadow);
+                }
             } else {
-                g.fill(cursorX, baseY - 1, cursorX + 1, baseY + 1 + 9, baseTextColor);
+                g.fill(cursorX, baseY - 1, cursorX + 1, baseY + 1 + cursorHeight, baseTextColor);
             }
         }
     }
@@ -189,8 +237,21 @@ public class AnimatedEditBox extends EditBox {
 
         g.pose().pushMatrix();
         g.pose().translate(0f, yOffset);
-        g.drawString(this.font, seq, x, y, color, textShadow);
+        if (customFont != null) {
+            customFont.drawComponent(g, toComponent(seq), x, y, color, textShadow);
+        } else {
+            g.drawString(this.font, seq, x, y, color, textShadow);
+        }
         g.pose().popMatrix();
+    }
+
+    private static Component toComponent(FormattedCharSequence seq) {
+        MutableComponent root = Component.literal("");
+        seq.accept((index, style, codePoint) -> {
+            root.append(Component.literal(new String(Character.toChars(codePoint))).withStyle(style));
+            return true;
+        });
+        return root;
     }
 
     private static int ensureFullAlpha(int color) {
