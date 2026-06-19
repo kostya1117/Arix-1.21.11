@@ -24,9 +24,6 @@ public class PlayerInventoryComponent implements IMinecraft {
     private boolean executed;
     private boolean sprintBlocked;
 
-    /**
-     * Вызывай каждый тик.
-     */
     public void onUpdate() {
         if (mc.player == null || mc.level == null) {
             clear();
@@ -42,16 +39,13 @@ public class PlayerInventoryComponent implements IMinecraft {
             return;
         }
 
-        // Если задача еще не запущена
         if (!active) {
-            // Если игрок не двигается — можно выполнить сразу
             if (!shouldDelay()) {
                 runCurrentTask();
                 finishCurrentTask();
                 return;
             }
 
-            // Если двигается — блокируем спринт и ждем
             active = true;
             executed = false;
             sprintBlocked = true;
@@ -60,34 +54,25 @@ public class PlayerInventoryComponent implements IMinecraft {
             return;
         }
 
-        // Пока ждем / держим пост-паузу — продолжаем душить спринт
         suppressSprint();
 
         long elapsed = timer.getElapsed();
 
-        // Выполняем задачу после preDelay
         if (!executed && elapsed >= currentTask.preDelay) {
             executed = true;
             runCurrentTask();
             timer.reset();
         }
 
-        // Ждем postDelay после выполнения и отпускаем
         if (executed && timer.getElapsed() >= currentTask.postDelay) {
             finishCurrentTask();
         }
     }
 
-    /**
-     * Стандартная задача: 100мс до, 100мс после.
-     */
     public void addTask(Runnable task) {
         addTask(task, DEFAULT_PRE_DELAY, DEFAULT_POST_DELAY);
     }
 
-    /**
-     * Кастомные задержки.
-     */
     public void addTask(Runnable task, long preDelay, long postDelay) {
         if (task == null) return;
 

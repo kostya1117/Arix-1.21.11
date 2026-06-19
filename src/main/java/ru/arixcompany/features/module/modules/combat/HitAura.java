@@ -139,8 +139,7 @@ public class HitAura extends Module {
                             "Ломать щит",
                             "Не бить когда ешь",
                             "Не бить в контейнере",
-                            "Райкаст",
-                            "Авто булава"
+                            "Райкаст"
                     );
 
     public static final ListSetting extraSettings =
@@ -283,16 +282,6 @@ public class HitAura extends Module {
     public void onTick(EventGameTicked e) {
         if (mc.player == null || !mc.player.isAlive()) return;
 
-        if (misc.isSelected("Авто булава") && !mc.player.onGround() && mc.player.getDeltaMovement().y < 0 && mc.player.fallDistance > 1.5f) {
-            if (!mc.player.getMainHandItem().is(Items.MACE)) {
-                autoSwapToMace();
-                return;
-            }
-            handleMaceSmash();
-            return;
-        }
-        restoreSlot();
-
         targetHandler.updateTarget();
         target = targetHandler.getTarget();
 
@@ -378,7 +367,6 @@ public class HitAura extends Module {
 
     private void reset() {
         target = null;
-        restoreSlot();
         if (mc.player != null) {
             count = 0;
             if (Arix.getInstance().getModuleRepo().getModule(AutoSprint.class).isState() && !Arix.getInstance().getModuleRepo().getModule(AutoSprint.class).sprint) {
@@ -387,69 +375,6 @@ public class HitAura extends Module {
         }
 
         this.sprintTimer.setTime(0L);
-    }
-
-    public boolean isUseItems() {
-        return mc.player.isUsingItem();
-    }
-
-    private void handleMaceSmash() {
-        LivingEntity maceTarget = findMaceTarget();
-        if (maceTarget == null) {
-            if (target != null) target = null;
-            return;
-        }
-
-        target = maceTarget;
-
-        if (skipAttack()) return;
-
-        float range = attackRange.getValue();
-        if (AuraUtil.validDistance(maceTarget, range)) {
-            AttackHandler.performMaceAttack(maceTarget, range);
-        }
-    }
-
-    private void restoreSlot() {
-        if (previousSlot != -1) {
-            mc.player.getInventory().selected = previousSlot;
-            mc.player.connection.send(new ServerboundSetCarriedItemPacket(previousSlot));
-            previousSlot = -1;
-        }
-    }
-
-    private boolean autoSwapToMace() {
-        if (mc.player.getMainHandItem().is(Items.MACE)) return true;
-
-        for (int i = 0; i < 9; i++) {
-            if (mc.player.getInventory().getItem(i).is(Items.MACE)) {
-                if (mc.player.getInventory().selected != i) {
-                    previousSlot = mc.player.getInventory().selected;
-                    mc.player.getInventory().selected = i;
-                    mc.player.connection.send(new ServerboundSetCarriedItemPacket(i));
-                }
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private LivingEntity findMaceTarget() {
-        LivingEntity best = null;
-        double bestDist = Double.MAX_VALUE;
-        double y = mc.player.getY();
-
-        for (Entity entity : mc.level.entitiesForRendering()) {
-            if (!(entity instanceof LivingEntity living)) continue;
-            if (!isValidMaceTarget(living, y)) continue;
-
-            double dist = mc.player.distanceToSqr(living);
-            if (dist < bestDist) {
-                bestDist = dist;
-                best = living;
-            }
-        }
-        return best;
     }
 
     private boolean isValidMaceTarget(LivingEntity entity, double playerY) {
@@ -475,19 +400,5 @@ public class HitAura extends Module {
                 && !mc.player.getMainHandItem().is(ItemTags.AXES)
                 && !mc.player.getMainHandItem().is(Items.MACE)
                 && misc.isSelected("Бить только оружием");
-    }
-
-    public static boolean canAttackNow() {
-        if (mc.player == null) return false;
-
-        if (mc.player.isUsingItem() && !(mc.player.getActiveItem().getItem() instanceof ShieldItem)) {
-            return false;
-        }
-
-        if (mc.screen != null && !extraSettings.isSelected("Игнорировать инвентарь")) {
-            return false;
-        }
-
-        return true;
     }
 }
