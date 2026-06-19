@@ -18,4 +18,5 @@ public class Textures implements IMinecraft {
     public static final Identifier heart = Identifier.arix("images/particles/heart.png");
     public static final Identifier snowflake = Identifier.arix("images/particles/snowflake.png");
     public static final Identifier star = Identifier.arix("images/particles/star.png");
+    public static final Identifier cape = Identifier.arix("images/cape.png");
 }
