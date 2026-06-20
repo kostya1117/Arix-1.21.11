@@ -21,6 +21,7 @@ import ru.arixcompany.features.module.modules.combat.aura.aiming.data.Rotation;
 import ru.arixcompany.features.module.modules.combat.aura.aiming.features.MovementCorrection;
 import ru.arixcompany.features.module.modules.combat.aura.rotation.Component;
 import ru.arixcompany.features.module.modules.combat.HitAura;
+import ru.arixcompany.utils.math.MathUtils;
 import ru.arixcompany.utils.math.Timer;
 import ru.arixcompany.utils.player.MoveUtils;
 

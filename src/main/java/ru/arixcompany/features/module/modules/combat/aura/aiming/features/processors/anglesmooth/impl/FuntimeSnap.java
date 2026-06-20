@@ -8,7 +8,6 @@ import ru.arixcompany.features.module.modules.combat.aura.aiming.RotationTarget;
 import ru.arixcompany.features.module.modules.combat.aura.aiming.data.Rotation;
 import ru.arixcompany.features.module.modules.combat.aura.aiming.features.processors.anglesmooth.FactorAngleSmooth;
 import ru.arixcompany.utils.IMinecraft;
-import ru.arixcompany.utils.animation.Interpolation;
 import ru.arixcompany.utils.math.MathUtils;
 
 public class FuntimeSnap extends FactorAngleSmooth implements IMinecraft {
@@ -105,35 +104,6 @@ public class FuntimeSnap extends FactorAngleSmooth implements IMinecraft {
 
         return new float[]{ baseYawSpeed, basePitchSpeed };
     }
-
-    private float calculateFactorWithCurve(float rotationDifference) {
-        float t = Math.min(rotationDifference / 180, 1.0f);
-        float exponent = 1;
-        float adjustedT = (float) Math.pow(t, exponent);
-
-        float curve = (float) Interpolation.interpolate(
-                0.0, 1.0, adjustedT,
-                Interpolation.Curve.CUBIC,
-                Interpolation.Mode.OUT
-        );
-
-        return Math.min(curve, 1.0f);
-    }
-
-    private float calculateFactorWithCurve2(float rotationDifference) {
-        float t = Math.min(rotationDifference / 90, 1.0f);
-        float exponent = 1;
-        float adjustedT = (float) Math.pow(t, exponent);
-
-        float curve = (float) Interpolation.interpolate(
-                0.0, 1.0, adjustedT,
-                Interpolation.Curve.CUBIC,
-                Interpolation.Mode.OUT
-        );
-
-        return Math.min(curve, 1.0f);
-    }
-
 
     @Override
     public Rotation process(RotationTarget rotationTarget, Rotation currentRotation, Rotation targetRotation) {

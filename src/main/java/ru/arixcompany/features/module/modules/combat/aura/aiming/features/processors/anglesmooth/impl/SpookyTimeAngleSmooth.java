@@ -9,11 +9,9 @@ import ru.arixcompany.features.module.modules.combat.aura.aiming.RotationTarget;
 import ru.arixcompany.features.module.modules.combat.aura.aiming.data.Rotation;
 import ru.arixcompany.features.module.modules.combat.aura.aiming.features.processors.anglesmooth.FactorAngleSmooth;
 import ru.arixcompany.utils.IMinecraft;
-import ru.arixcompany.utils.animation.Interpolation;
 import ru.arixcompany.utils.math.MathUtils;
 import ru.arixcompany.utils.math.Randomizer;
 
-import javax.swing.text.html.HTML;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class SpookyTimeAngleSmooth extends FactorAngleSmooth implements IMinecraft {
@@ -28,7 +26,7 @@ public class SpookyTimeAngleSmooth extends FactorAngleSmooth implements IMinecra
     }
 
     public SpookyTimeAngleSmooth() {
-        this(55, 85);
+        this(85, 110);
     }
 
     @Override
@@ -37,7 +35,7 @@ public class SpookyTimeAngleSmooth extends FactorAngleSmooth implements IMinecra
         float pitchDiff = Mth.abs(targetRotation.pitch() - currentRotation.pitch());
 
         float baseYawSpeed = randomizer.nextFloat(yawSpeedMin, yawSpeedMax);
-        float basePitchSpeed = computePitchAccel() / 10;
+        float basePitchSpeed = computePitchAccel() / 3;
 
         LivingEntity target = HitAura.target;
 //        if (target != null && mc.player != null) {
@@ -74,15 +72,15 @@ public class SpookyTimeAngleSmooth extends FactorAngleSmooth implements IMinecra
 //
 //        if (mc.player != null && AttackHandler.anyEntityOnRay(new Rotation(mc.player.getYRot(),mc.player.getXRot(),true), HitAura.target, HitAura.attackRange.getValue() + HitAura.preRange.getValue())) { // Убедитесь, что метод rayTrace() реализован в вашем классе
 //            if (now >= nextOffsetUpdateTime) {
-//                float maxYawOffset = randomizer.nextFloat(1,13);
-//                float maxPitchOffset = randomizer.nextFloat(15,20);
+//                float maxYawOffset = randomizer.nextFloat(1,13) * 5;
+//                float maxPitchOffset = randomizer.nextFloat(1,20) * 5;
 //                targetYawOffset = ThreadLocalRandom.current().nextFloat() * maxYawOffset;
 //                targetPitchOffset = ThreadLocalRandom.current().nextFloat() * maxPitchOffset;
 //
 //                targetYawOffset = Mth.clamp(targetYawOffset, -maxYawOffset, maxYawOffset);
 //                targetPitchOffset = Mth.clamp(targetPitchOffset, -maxPitchOffset, maxPitchOffset);
 //
-//                nextOffsetUpdateTime = now + 120 + randomizer.nextInt(1,90);
+//                nextOffsetUpdateTime = now + 1200 + randomizer.nextInt(10,900);
 //            }
 //        } else {
 //            targetYawOffset = 0f;
@@ -91,7 +89,7 @@ public class SpookyTimeAngleSmooth extends FactorAngleSmooth implements IMinecra
 //
 //        Rotation jitteredTarget = new Rotation(
 //                targetRotation.yaw() + targetYawOffset,
-//                Mth.clamp(targetRotation.pitch(), -90f, 90f) // Не даем сломать шею
+//                Mth.clamp(targetRotation.pitch() + targetPitchOffset, -90f, 90f) // Не даем сломать шею
 //        );
 //
 //        //jitteredTarget = fixDeltaNonVanillaMouse(jitteredTarget.yaw(),jitteredTarget.pitch());
@@ -102,13 +100,13 @@ public class SpookyTimeAngleSmooth extends FactorAngleSmooth implements IMinecra
 
     @Override
     public Rotation process(RotationTarget rotationTarget, Rotation currentRotation, Rotation targetRotation) {
-        double t = Util.getNanos() / 1.0E9 * Mth.PI2;
+        double t = Util.getNanos() / 1.0E9 * Mth.PI2 * 4;
         float yawJitter;
         float pitchJitter;
 
         if (mc.player != null && AttackHandler.anyEntityOnRay(new Rotation(mc.player.getYRot(), mc.player.getXRot(), true), HitAura.target, HitAura.attackRange.getValue() + HitAura.preRange.getValue())) { // Убедитесь, что метод rayTrace() реализован в вашем классе
-            yawJitter = 7 * Mth.sin(t);
-            pitchJitter = 4 * Mth.cos(t);
+            yawJitter = 15 * Mth.sin(t);
+            pitchJitter = 8 * Mth.cos(t);
             //pitchJitter = 0;
         } else {
             yawJitter = 0f;
@@ -162,7 +160,7 @@ public class SpookyTimeAngleSmooth extends FactorAngleSmooth implements IMinecra
 
         float range = HitAura.attackRange.getValue() + HitAura.preRange.getValue();
         return AttackHandler.anyEntityOnRay(new Rotation(mc.player.getYRot(),mc.player.getXRot(),true), target, range)
-                ? randomizer.nextFloat(1, 4)
-                : randomizer.nextFloat(8, 10);
+                ? randomizer.nextFloat(1, 3)
+                : randomizer.nextFloat(4, 7);
     }
 }

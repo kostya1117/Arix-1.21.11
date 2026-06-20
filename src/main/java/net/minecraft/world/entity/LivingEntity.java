@@ -18,6 +18,10 @@ import com.viaversion.viafabricplus.features.entity.attribute.EnchantmentAttribu
 import com.viaversion.viafabricplus.features.entity.riding_offset.EntityRidingOffsetsPre1_20_2;
 import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
 import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
+import dev.tr7zw.waveycapes.delegate.PlayerDelegate;
+import dev.tr7zw.waveycapes.versionless.CapeHolder;
+import dev.tr7zw.waveycapes.versionless.sim.BasicSimulation;
+import dev.tr7zw.waveycapes.versionless.util.Vector3;
 import it.unimi.dsi.fastutil.doubles.DoubleDoubleImmutablePair;
 import it.unimi.dsi.fastutil.objects.Object2LongMap;
 import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap;
@@ -37,6 +41,9 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+
+import lombok.Getter;
+import lombok.Setter;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -157,7 +164,7 @@ import ru.arixcompany.features.event.EventRepo;
 import ru.arixcompany.features.event.player.EventDamage;
 import ru.arixcompany.features.module.modules.render.NoRender;
 
-public abstract class LivingEntity extends Entity implements Attackable, WaypointTransmitter {
+public abstract class LivingEntity extends Entity implements Attackable, WaypointTransmitter, CapeHolder {
     private static final Logger LOGGER = LogUtils.getLogger();
     private static final String TAG_ACTIVE_EFFECTS = "active_effects";
     public static final String TAG_ATTRIBUTES = "attributes";
@@ -292,6 +299,15 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
         this.yHeadRot = this.getYRot();
         this.brain = this.makeBrain(EMPTY_BRAIN);
     }
+    @Getter
+    @Setter
+    private BasicSimulation simulation;
+
+    @Getter
+    @Setter
+    private Vector3 lastPlayerAnimatorPosition = new Vector3();
+
+    private boolean dirty = false;
 
     @Override
     public  LivingEntity asLivingEntity() {
@@ -2881,6 +2897,27 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
 
         this.refreshDirtyAttributes();
         this.elytraAnimationState.tick();
+        if (this instanceof net.minecraft.world.entity.Avatar) {
+            var entity = (net.minecraft.world.entity.Avatar) (Object) this;
+            //? } else {
+        /*
+         if (!((Object) this instanceof AbstractClientPlayer)) {
+            return;
+         }
+         var entity = (AbstractClientPlayer) (Object) this;
+        *///? }
+            updateSimulation(16);
+            PlayerDelegate playerDelegate = new PlayerDelegate(entity);
+            if (dirty) {
+                dirty = false;
+                simulation.applyMovement(new Vector3(1f, 1f, 0));
+                for (int i = 0; i < 5; i++) { // quickly doing a few simulation steps to get the cape int a stable
+                    // configuration
+                    simulate(playerDelegate);
+                }
+            }
+            simulate(playerDelegate);
+        }
     }
 
     public boolean wasRecentlyStabbed(Entity p_453379_, int p_453316_) {
@@ -4105,5 +4142,14 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
     }
 
     public record Fallsounds(SoundEvent small, SoundEvent big) {
+    }
+
+    @Override
+    public void setDirty() {
+        this.dirty = true;
+    }
+    @Override
+    public UUID getWCUUID() {
+        return getUUID();
     }
 }

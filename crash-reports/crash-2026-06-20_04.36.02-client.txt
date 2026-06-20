@@ -1,0 +1,168 @@
+---- Minecraft Crash Report ----
+// You should try our sister game, Minceraft!
+
+Time: 2026-06-20 04:36:03
+Description: Rendering entity in world
+
+java.lang.NullPointerException: Cannot invoke "dev.tr7zw.waveycapes.versionless.sim.BasicSimulation.getPoints()" because "simulation" is null
+	at net.minecraft.client.renderer.entity.layers.CapeLayer.modifyPoseStackSimulation(CapeLayer.java:294)
+	at net.minecraft.client.renderer.entity.layers.CapeLayer.modifyPoseStack(CapeLayer.java:265)
+	at net.minecraft.client.renderer.entity.layers.CapeLayer.renderSmoothCape(CapeLayer.java:105)
+	at net.minecraft.client.renderer.entity.layers.CapeLayer.submit(CapeLayer.java:82)
+	at net.minecraft.client.renderer.entity.layers.CapeLayer.submit(CapeLayer.java:34)
+	at net.minecraft.client.renderer.entity.LivingEntityRenderer.submit(LivingEntityRenderer.java:162)
+	at net.minecraft.client.renderer.entity.LivingEntityRenderer.submit(LivingEntityRenderer.java:57)
+	at net.minecraft.client.renderer.entity.EntityRenderDispatcher.submit(EntityRenderDispatcher.java:182)
+	at net.minecraft.client.renderer.LevelRenderer.submitEntities(LevelRenderer.java:1204)
+	at net.minecraft.client.renderer.LevelRenderer.lambda$addMainPass$2(LevelRenderer.java:919)
+	at com.mojang.blaze3d.framegraph.FrameGraphBuilder.execute(FrameGraphBuilder.java:71)
+	at net.minecraft.client.renderer.LevelRenderer.renderLevel(LevelRenderer.java:791)
+	at net.minecraft.client.renderer.GameRenderer.renderLevel(GameRenderer.java:1007)
+	at net.minecraft.client.renderer.GameRenderer.render(GameRenderer.java:667)
+	at net.minecraft.client.Minecraft.runTick(Minecraft.java:1316)
+	at net.minecraft.client.Minecraft.run(Minecraft.java:905)
+	at net.minecraft.client.main.Main.main(Main.java:226)
+	at mcp.client.Start.main(Start.java:15)
+
+
+A detailed walkthrough of the error, its code path and all known details is as follows:
+---------------------------------------------------------------------------------------
+
+-- Head --
+Thread: Render thread
+Stacktrace:
+	at net.minecraft.client.renderer.entity.layers.CapeLayer.modifyPoseStackSimulation(CapeLayer.java:294)
+	at net.minecraft.client.renderer.entity.layers.CapeLayer.modifyPoseStack(CapeLayer.java:265)
+	at net.minecraft.client.renderer.entity.layers.CapeLayer.renderSmoothCape(CapeLayer.java:105)
+	at net.minecraft.client.renderer.entity.layers.CapeLayer.submit(CapeLayer.java:82)
+	at net.minecraft.client.renderer.entity.layers.CapeLayer.submit(CapeLayer.java:34)
+	at net.minecraft.client.renderer.entity.LivingEntityRenderer.submit(LivingEntityRenderer.java:162)
+
+-- EntityRenderState being rendered --
+Details:
+	EntityRenderState: net.minecraft.client.renderer.entity.state.AvatarRenderState
+	Entity's Exact location: 18.44, 75.00, 0.58
+Stacktrace:
+	at net.minecraft.client.renderer.entity.EntityRenderDispatcher.submit(EntityRenderDispatcher.java:182)
+	at net.minecraft.client.renderer.LevelRenderer.submitEntities(LevelRenderer.java:1204)
+	at net.minecraft.client.renderer.LevelRenderer.lambda$addMainPass$2(LevelRenderer.java:919)
+	at com.mojang.blaze3d.framegraph.FrameGraphBuilder.execute(FrameGraphBuilder.java:71)
+	at net.minecraft.client.renderer.LevelRenderer.renderLevel(LevelRenderer.java:791)
+	at net.minecraft.client.renderer.GameRenderer.renderLevel(GameRenderer.java:1007)
+	at net.minecraft.client.renderer.GameRenderer.render(GameRenderer.java:667)
+	at net.minecraft.client.Minecraft.runTick(Minecraft.java:1316)
+	at net.minecraft.client.Minecraft.run(Minecraft.java:905)
+	at net.minecraft.client.main.Main.main(Main.java:226)
+	at mcp.client.Start.main(Start.java:15)
+
+-- Renderer details --
+Details:
+	Assigned renderer: net.minecraft.client.renderer.entity.player.AvatarRenderer@39d72393
+Stacktrace:
+	at net.minecraft.client.renderer.entity.EntityRenderDispatcher.fillRendererDetails(EntityRenderDispatcher.java:227)
+	at net.minecraft.client.renderer.entity.EntityRenderDispatcher.submit(EntityRenderDispatcher.java:221)
+	at net.minecraft.client.renderer.LevelRenderer.submitEntities(LevelRenderer.java:1204)
+	at net.minecraft.client.renderer.LevelRenderer.lambda$addMainPass$2(LevelRenderer.java:919)
+	at com.mojang.blaze3d.framegraph.FrameGraphBuilder.execute(FrameGraphBuilder.java:71)
+	at net.minecraft.client.renderer.LevelRenderer.renderLevel(LevelRenderer.java:791)
+	at net.minecraft.client.renderer.GameRenderer.renderLevel(GameRenderer.java:1007)
+	at net.minecraft.client.renderer.GameRenderer.render(GameRenderer.java:667)
+	at net.minecraft.client.Minecraft.runTick(Minecraft.java:1316)
+	at net.minecraft.client.Minecraft.run(Minecraft.java:905)
+	at net.minecraft.client.main.Main.main(Main.java:226)
+	at mcp.client.Start.main(Start.java:15)
+
+-- Uptime --
+Details:
+	JVM uptime: 106.024s
+	Wall uptime: 90.001s
+	High-res time: 85.170s
+	Client ticks: 1212 ticks / 60.600s
+
+-- Affected level --
+Details:
+	All players: 17 total; LocalPlayer{name=nutuxzutxi, id=202960, pos=(6.361932325795712, 75.0, -4.083439645821356), mode=SURVIVAL, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x0000028889569968@f43d6b3}, RemotePlayer{name=lolidss, id=202628, pos=(7.653284790426753, 75.0, -4.430226113235364), mode=SURVIVAL, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x0000028889569968@f43d6b3}, RemotePlayer{name=SuvereniUzi, id=189031, pos=(5.267578125, 75.0, -0.383056640625), mode=SURVIVAL, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x0000028889569968@f43d6b3}, RemotePlayer{name=fsdfddsfh6, id=191758, pos=(11.914306640625, 75.5, -11.699999988079071), mode=SURVIVAL, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x0000028889569968@f43d6b3}, RemotePlayer{name=TSy5oLd, id=187478, pos=(-10.654900463609767, 76.0, -8.17248831210307), mode=SURVIVAL, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x0000028889569968@f43d6b3}, RemotePlayer{name=sopli_mortisa, id=196559, pos=(15.200027352298356, 75.0, 0.5753134941526309), mode=SURVIVAL, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x0000028889569968@f43d6b3}, RemotePlayer{name=SVYAT520520, id=199314, pos=(13.395847653940057, 75.0, 0.5587786225421041), mode=SURVIVAL, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x0000028889569968@f43d6b3}, RemotePlayer{name=lalalala322, id=196544, pos=(14.2236328125, 75.0, -0.026123046875), mode=SURVIVAL, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x0000028889569968@f43d6b3}, RemotePlayer{name=dumik1488, id=193382, pos=(6.264385956671944, 76.11900934290064, -2.6665112115938867), mode=SURVIVAL, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x0000028889569968@f43d6b3}, RemotePlayer{name=Brayzzi, id=168504, pos=(18.441938196112297, 75.0, 0.5752067444256391), mode=SURVIVAL, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x0000028889569968@f43d6b3}, RemotePlayer{name=hhefner0001, id=151845, pos=(16.01081272943656, 75.0, 6.036564240712518), mode=SURVIVAL, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x0000028889569968@f43d6b3}, RemotePlayer{name=R0sms, id=201157, pos=(20.403379969988812, 75.0, 0.5613893647663143), mode=SURVIVAL, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x0000028889569968@f43d6b3}, RemotePlayer{name=night_cody25, id=196290, pos=(20.074059003665123, 75.0, 2.497254171489198), mode=SURVIVAL, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x0000028889569968@f43d6b3}, RemotePlayer{name=husosinka, id=192954, pos=(12.34130859375, 75.0, -1.7763671875), mode=SURVIVAL, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x0000028889569968@f43d6b3}, RemotePlayer{name=wallaxi, id=200264, pos=(-15.644771004995212, 76.01106282793272, 21.128994997794965), mode=SURVIVAL, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x0000028889569968@f43d6b3}, RemotePlayer{name=olyx1012233, id=137261, pos=(-4.244718679946611, 75.0, -22.495462639410455), mode=SURVIVAL, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x0000028889569968@f43d6b3}, RemotePlayer{name=flopezloko, id=196636, pos=(18.441938196112297, 75.0, 0.5752067444256391), mode=SURVIVAL, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x0000028889569968@f43d6b3}
+	Chunk stats: 289, 169
+	Level dimension: minecraft:spawn
+	Level spawn location: World: (0,75,0), Section: (at 0,11,0 in 0,4,0; chunk contains blocks 0,0,0 to 15,255,15), Region: (0,0; contains chunks 0,0 to 31,31, blocks 0,0,0 to 511,255,511)
+	Level time: 27261 game time, 5000 day time
+	Server brand: §6Spooky§cTime.net <- §6Spooky§cCore 1.16.5
+	Server type: Non-integrated multiplayer server
+	Tracked entity count: 47
+
+-- Last reload --
+Details:
+	Reload number: 1
+	Reload reason: initial
+	Finished: Yes
+	Packs: vanilla
+
+-- System Details --
+Details:
+	Minecraft Version: 1.21.11
+	Minecraft Version ID: 1.21.11
+	Operating System: Windows 11 (amd64) version 10.0
+	Java Version: 21.0.11, Amazon.com Inc.
+	Java VM Version: OpenJDK 64-Bit Server VM (mixed mode, sharing), Amazon.com Inc.
+	Memory: 456130560 bytes (435 MiB) / 1002438656 bytes (956 MiB) up to 4271898624 bytes (4074 MiB)
+	CPUs: 4
+	Processor Vendor: GenuineIntel
+	Processor Name: Intel(R) Core(TM) i5-4460  CPU @ 3.20GHz
+	Identifier: Intel64 Family 6 Model 60 Stepping 3
+	Microarchitecture: Haswell (Client)
+	Frequency (GHz): 3.19
+	Number of physical packages: 1
+	Number of physical CPUs: 4
+	Number of logical CPUs: 4
+	Graphics card #0 name: NVIDIA GeForce GTX 1080
+	Graphics card #0 vendor: NVIDIA
+	Graphics card #0 VRAM (MiB): 8192.00
+	Graphics card #0 deviceId: VideoController1
+	Graphics card #0 versionInfo: 32.0.15.8228
+	Memory slot #0 capacity (MiB): 8192.00
+	Memory slot #0 clockSpeed (GHz): 1.60
+	Memory slot #0 type: DDR3
+	Memory slot #1 capacity (MiB): 8192.00
+	Memory slot #1 clockSpeed (GHz): 1.60
+	Memory slot #1 type: DDR3
+	Virtual memory max (MiB): 30113.52
+	Virtual memory used (MiB): 16995.72
+	Swap memory total (MiB): 13824.00
+	Swap memory used (MiB): 0.00
+	Space in storage for jna.tmpdir (MiB): <path not set>
+	Space in storage for org.lwjgl.system.SharedLibraryExtractPath (MiB): <path not set>
+	Space in storage for io.netty.native.workdir (MiB): <path not set>
+	Space in storage for java.io.tmpdir (MiB): available: 2011.71, total: 476108.00
+	Space in storage for workdir (MiB): available: 2011.71, total: 476108.00
+	JVM Flags: 0 total; 
+	Debug Flags: 0 total; 
+	Launched Version: mcp
+	Backend library: LWJGL version 3.3.3+5
+	Backend API: NVIDIA GeForce GTX 1080/PCIe/SSE2 GL version 3.3.0 NVIDIA 582.28, NVIDIA Corporation
+	Window size: 1920x1009
+	GFLW Platform: win32
+	Render Extensions: GL_ARB_buffer_storage, GL_KHR_debug, GL_ARB_vertex_attrib_binding, GL_ARB_direct_state_access, GL_EXT_texture_filter_anisotropic
+	GL debug messages: 
+	Is Modded: Definitely; Client brand changed to 'optifine'
+	Universe: 400921fb54442d18
+	Type: Client (map_client.txt)
+	Transparency: regular
+	Render Distance: 5/16 chunks
+	Resource Packs: vanilla
+	Current Language: ru_ru
+	Locale: ru_RU
+	System encoding: Cp1251
+	File encoding: UTF-8
+	CPU: 4x Intel(R) Core(TM) i5-4460 CPU @ 3.20GHz
+	OptiFine Version: OptiFine_1.21.11_HD_U_J9
+	OptiFine Build: null
+	Render Distance Chunks: 16
+	Mipmaps: 4
+	Anisotropic Filtering: 1
+	Antialiasing: 0
+	Multitexture: false
+	Shaders: null
+	OpenGlVersion: 3.3.0 NVIDIA 582.28
+	OpenGlRenderer: NVIDIA GeForce GTX 1080/PCIe/SSE2
+	OpenGlVendor: NVIDIA Corporation
+	CpuCount: 4

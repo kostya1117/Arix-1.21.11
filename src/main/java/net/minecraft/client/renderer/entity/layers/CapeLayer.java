@@ -1,19 +1,24 @@
 package net.minecraft.client.renderer.entity.layers;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
-import net.minecraft.client.model.HumanoidModel;
+import dev.tr7zw.transition.mc.MathUtil;
+import dev.tr7zw.transition.mc.VertexConsumerUtil;
+import dev.tr7zw.transition.mc.entitywrapper.PlayerWrapper;
+import dev.tr7zw.waveycapes.NMSUtil;
+import dev.tr7zw.waveycapes.WaveyCapesBase;
+import dev.tr7zw.waveycapes.support.SupportManager;
+import dev.tr7zw.waveycapes.versionless.*;
+import dev.tr7zw.waveycapes.versionless.sim.BasicSimulation;
+import dev.tr7zw.waveycapes.versionless.util.Vector3;
+import dev.tr7zw.waveycapes.versionless.util.Vector4;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.EntityModelSet;
-import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.model.geom.ModelPart;
-import net.minecraft.client.model.geom.PartPose;
-import net.minecraft.client.model.geom.builders.CubeDeformation;
-import net.minecraft.client.model.geom.builders.CubeListBuilder;
-import net.minecraft.client.model.geom.builders.MeshDefinition;
-import net.minecraft.client.model.geom.builders.PartDefinition;
-import net.minecraft.client.model.player.PlayerCapeModel;
 import net.minecraft.client.model.player.PlayerModel;
 import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.state.AvatarRenderState;
@@ -23,181 +28,336 @@ import net.minecraft.client.resources.model.EquipmentAssetManager;
 import net.minecraft.client.resources.model.EquipmentClientInfo;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.Identifier;
-import net.minecraft.util.Mth;
-import net.minecraft.world.entity.player.PlayerSkin;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.equipment.Equippable;
-import net.optifine.util.PlayerUtils;
-import ru.arixcompany.features.module.modules.render.Cape;
-import ru.arixcompany.features.module.modules.render.cape.CapeMovement;
-import ru.arixcompany.features.module.modules.render.cape.WindMode;
-import ru.arixcompany.features.module.modules.render.cape.sim.BasicSimulation;
-import ru.arixcompany.features.module.modules.render.cape.util.Vector3;
+import org.joml.Matrix4f;
+import org.joml.Vector4f;
 import ru.arixcompany.utils.Textures;
 
 public class CapeLayer extends RenderLayer<AvatarRenderState, PlayerModel> {
-    private final HumanoidModel<AvatarRenderState> model;
     private final EquipmentAssetManager equipmentAssets;
-    private ModelPart[] customCape;
 
-    public CapeLayer(RenderLayerParent<AvatarRenderState, PlayerModel> p_116602_, EntityModelSet p_364158_, EquipmentAssetManager p_378632_) {
-        super(p_116602_);
-        this.model = new PlayerCapeModel(p_364158_.bakeLayer(ModelLayers.PLAYER_CAPE));
-        this.equipmentAssets = p_378632_;
+    private static final int PART_COUNT = 16;
+    private final ModelPart[] customCape = NMSUtil.buildCape(64, 64, x -> 0, y -> y);
+
+    private static final float CAPE_WIDTH = 10F / 16F;
+    private static final float CAPE_HEIGHT = 1F;
+    private static final float CAPE_DEPTH = 1F / 16F;
+
+    public CapeLayer(RenderLayerParent<AvatarRenderState, PlayerModel> parent, EntityModelSet modelSet, EquipmentAssetManager equipmentAssets) {
+        super(parent);
+        this.equipmentAssets = equipmentAssets;
     }
 
-    private boolean hasLayer(ItemStack p_362441_, EquipmentClientInfo.LayerType p_377432_) {
-        Equippable equippable = p_362441_.get(DataComponents.EQUIPPABLE);
+    private boolean hasLayer(ItemStack stack, EquipmentClientInfo.LayerType layerType) {
+        Equippable equippable = stack.get(DataComponents.EQUIPPABLE);
         if (equippable != null && !equippable.assetId().isEmpty()) {
-            EquipmentClientInfo equipmentclientinfo = this.equipmentAssets.get(equippable.assetId().get());
-            return !equipmentclientinfo.getLayers(p_377432_).isEmpty();
-        } else {
-            return false;
+            EquipmentClientInfo info = this.equipmentAssets.get(equippable.assetId().get());
+            return !info.getLayers(layerType).isEmpty();
         }
+        return false;
     }
 
-    public void submit(PoseStack p_431599_, SubmitNodeCollector p_430860_, int p_427257_, AvatarRenderState p_428454_, float p_429917_, float p_424453_) {
-        if (p_428454_.isInvisible || !p_428454_.showCape) return;
+    public void submit(PoseStack poseStack, SubmitNodeCollector collector, int light, AvatarRenderState state, float delta, float partialTick) {
+        if (state.isInvisible || !state.showCape) return;
 
-        PlayerSkin playerskin = p_428454_.skin;
-        AbstractClientPlayer abstractclientplayer = p_428454_.entity instanceof AbstractClientPlayer ? (AbstractClientPlayer)p_428454_.entity : null;
+        AbstractClientPlayer player = state.entity instanceof AbstractClientPlayer ? (AbstractClientPlayer) state.entity : null;
+        if (player == null) return;
+        if (this.hasLayer(state.chestEquipment, EquipmentClientInfo.LayerType.WINGS)) return;
 
-        if (Cape.isEnabled()) {
-            if (Cape.shouldRender(p_428454_.entity)) {
-                renderWaveyCape(p_431599_, p_430860_, p_427257_, p_428454_, abstractclientplayer);
-            }
-            return;
-        }
+        if (!prepareCape(state)) return;
 
-        Identifier identifier = abstractclientplayer != null ? abstractclientplayer.getLocationCape() : PlayerUtils.getTexturePath(playerskin.cape());
-        if (identifier != null && !this.hasLayer(p_428454_.chestEquipment, EquipmentClientInfo.LayerType.WINGS)) {
-            p_431599_.pushPose();
-            if (this.hasLayer(p_428454_.chestEquipment, EquipmentClientInfo.LayerType.HUMANOID)) {
-                p_431599_.translate(0.0F, -0.053125F, 0.06875F);
-            }
-            p_430860_.submitModel(
-                this.model, p_428454_, p_431599_, RenderTypes.entitySolid(identifier), p_427257_, OverlayTexture.NO_OVERLAY, p_428454_.outlineColor, null
-            );
-            p_431599_.popPose();
-        }
-    }
-
-    private void renderWaveyCape(PoseStack poseStack, SubmitNodeCollector collector, int light, AvatarRenderState state, AbstractClientPlayer player) {
-        if (this.hasLayer(state.chestEquipment, EquipmentClientInfo.LayerType.WINGS) || player == null) return;
-
-        if (customCape == null || customCape.length != Cape.CAPE_PART_COUNT) {
-            buildMesh();
-        }
-
-        boolean useSimulation = Cape.getMovement() != CapeMovement.VANILLA && player.capeSimulation != null && !player.capeSimulation.empty();
         Identifier capeTexture = Textures.cape;
+        MultiBufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
+        VertexConsumer bufferBuilder = bufferSource.getBuffer(RenderTypes.entityTranslucent(capeTexture));
 
-        for (int part = 0; part < Cape.CAPE_PART_COUNT; part++) {
-            ModelPart modelPart = customCape[part];
-            if (useSimulation) {
-                modifyPoseStackSimulation(poseStack, player.capeSimulation, player, state, part);
-            } else {
-                modifyPoseStackVanilla(poseStack, player, state, part);
-            }
-            collector.submitModelPart(modelPart, poseStack, RenderTypes.entityCutout(capeTexture), light, OverlayTexture.NO_OVERLAY, null);
+        float deltaa = Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(false);
+
+        poseStack.pushPose();
+        getParentModel().body.translateAndRotate(poseStack);
+
+        if (this.hasLayer(state.chestEquipment, EquipmentClientInfo.LayerType.HUMANOID)) {
+            poseStack.translate(0.0F, -0.053125F, 0.06875F);
+        }
+
+        PoseStack stack = new PoseStack();
+        stack.last().set(poseStack.last());
+
+        if (ModBase.config.capeStyle == CapeStyle.SMOOTH) {
+            renderSmoothCape(stack, bufferBuilder, state, deltaa, light);
+        } else {
+            renderBasicCape(stack, bufferBuilder, state, deltaa, light);
+        }
+
+        poseStack.popPose();
+    }
+
+    private boolean prepareCape(AvatarRenderState capeRenderInfo) {
+        CapeHolder holder = (CapeHolder) capeRenderInfo.entity;
+        holder.updateSimulation(PART_COUNT);
+        return true;
+    }
+
+    private void renderBasicCape(PoseStack poseStack, VertexConsumer bufferBuilder, AvatarRenderState capeRenderInfo, float delta, int light) {
+        for (int part = 0; part < PART_COUNT; part++) {
+            modifyPoseStack(poseStack, capeRenderInfo, delta, part);
+            customCape[part].render(poseStack, bufferBuilder, light, OverlayTexture.NO_OVERLAY);
             poseStack.popPose();
         }
     }
 
-    private void buildMesh() {
-        customCape = new ModelPart[Cape.CAPE_PART_COUNT];
-        MeshDefinition meshDefinition = new MeshDefinition();
-        PartDefinition partDefinition = meshDefinition.getRoot();
-        for (int i = 0; i < Cape.CAPE_PART_COUNT; i++) {
-            partDefinition.addOrReplaceChild("customCape_" + i,
-                CubeListBuilder.create().texOffs(0, (int)(i * (16f / Cape.CAPE_PART_COUNT)))
-                    .addBox(-5.0F, i * (16f / Cape.CAPE_PART_COUNT), -1.0F,
-                        10.0F, (16f / Cape.CAPE_PART_COUNT), 1.0F,
-                        CubeDeformation.NONE, 1.0F, 0.5F),
-                PartPose.offset(0.0F, 0.0F, 0.0F));
+    private void renderSmoothCape(PoseStack poseStack, VertexConsumer bufferBuilder, AvatarRenderState capeRenderInfo,
+                                  float delta, int light) {
+        //? if < 1.21.5 {
+        /*
+         RenderSystem.enableBlend();
+         RenderSystem.defaultBlendFunc();
+        *///? }
+
+        float alpha = SupportManager.getAlphaSupplier().get();
+
+        /*float capeWidth = 10F / 16F;
+        float capeHeight = 1.0F;
+        float capeDepth = 1F / 16F;*/
+
+        Matrix4f[] positionMatrices = new Matrix4f[PART_COUNT];
+        Vector3[] frontNormalVecs = new Vector3[PART_COUNT];
+        Vector3[] backNormalVecs = new Vector3[PART_COUNT];
+        for (int part = 0; part < PART_COUNT; part++) {
+            modifyPoseStack(poseStack, capeRenderInfo, delta, part);
+            positionMatrices[part] = new Matrix4f(poseStack.last().pose());
+            frontNormalVecs[part] = getNormalVec(positionMatrices[Math.max(part - 1, 0)],
+                    positionMatrices[Math.max(part - 1, 0)], positionMatrices[part],
+                    new Vector3(CAPE_WIDTH / 2F, part * (CAPE_HEIGHT / PART_COUNT), -CAPE_DEPTH),
+                    new Vector3(-CAPE_WIDTH / 2F, part * (CAPE_HEIGHT / PART_COUNT), -CAPE_DEPTH),
+                    new Vector3(CAPE_WIDTH / 2F, (part + 1) * (CAPE_HEIGHT / PART_COUNT), -CAPE_DEPTH),
+                    light == 15728880);
+            backNormalVecs[part] = getNormalVec(positionMatrices[Math.max(part - 1, 0)],
+                    positionMatrices[Math.max(part - 1, 0)], positionMatrices[part],
+                    new Vector3(CAPE_WIDTH / 2F, (part + 1) * (CAPE_HEIGHT / PART_COUNT), 0),
+                    new Vector3(-CAPE_WIDTH / 2F, (part + 1) * (CAPE_HEIGHT / PART_COUNT), 0),
+                    new Vector3(CAPE_WIDTH / 2F, part * (CAPE_HEIGHT / PART_COUNT), 0), light == 15728880);
+
+            poseStack.popPose();
         }
-        ModelPart baked = partDefinition.bake(64, 64);
-        for (int i = 0; i < Cape.CAPE_PART_COUNT; i++) {
-            customCape[i] = baked.getChild("customCape_" + i);
+
+        for (int part = 0; part < PART_COUNT; part++) {
+            if (part == 0) {
+                float minU = 1 / 64F;
+                float maxU = 11 / 64F;
+
+                float minV = 0;
+                float maxV = 1 / 32F;
+
+                Vector3 normalVec = getNormalVec(positionMatrices[0], positionMatrices[0], positionMatrices[0],
+                        new Vector3(CAPE_WIDTH / 2, 0, 0), new Vector3(-CAPE_WIDTH / 2, 0, 0),
+                        new Vector3(CAPE_WIDTH / 2, 0, CAPE_DEPTH), light == 15728880);
+
+                VertexConsumerUtil.addVertex(bufferBuilder, positionMatrices[0], CAPE_WIDTH / 2, 0, 0, maxU, maxV,
+                        OverlayTexture.NO_OVERLAY, light, normalVec.x, normalVec.y, normalVec.z, alpha);
+                VertexConsumerUtil.addVertex(bufferBuilder, positionMatrices[0], -CAPE_WIDTH / 2, 0, 0, minU, maxV,
+                        OverlayTexture.NO_OVERLAY, light, normalVec.x, normalVec.y, normalVec.z, alpha);
+                VertexConsumerUtil.addVertex(bufferBuilder, positionMatrices[0], -CAPE_WIDTH / 2, 0, -CAPE_DEPTH, minU,
+                        minV, OverlayTexture.NO_OVERLAY, light, normalVec.x, normalVec.y, normalVec.z, alpha);
+                VertexConsumerUtil.addVertex(bufferBuilder, positionMatrices[0], CAPE_WIDTH / 2, 0, -CAPE_DEPTH, maxU,
+                        minV, OverlayTexture.NO_OVERLAY, light, normalVec.x, normalVec.y, normalVec.z, alpha);
+            }
+
+            if (part == PART_COUNT - 1) {
+                float minU = 11 / 64F;
+                float maxU = 21 / 64F;
+
+                float minV = 0;
+                float maxV = 1 / 32F;
+
+                Vector3 normalVec = getNormalVec(positionMatrices[part], positionMatrices[part], positionMatrices[part],
+                        new Vector3(CAPE_WIDTH / 2F, CAPE_HEIGHT, -CAPE_DEPTH),
+                        new Vector3(-CAPE_WIDTH / 2F, CAPE_HEIGHT, -CAPE_DEPTH),
+                        new Vector3(CAPE_WIDTH / 2F, CAPE_HEIGHT, 0), light == 15728880);
+
+                VertexConsumerUtil.addVertex(bufferBuilder, positionMatrices[part], CAPE_WIDTH / 2F, CAPE_HEIGHT,
+                        -CAPE_DEPTH, maxU, minV, OverlayTexture.NO_OVERLAY, light, normalVec.x, normalVec.y,
+                        normalVec.z, alpha);
+                VertexConsumerUtil.addVertex(bufferBuilder, positionMatrices[part], -CAPE_WIDTH / 2F, CAPE_HEIGHT,
+                        -CAPE_DEPTH, minU, minV, OverlayTexture.NO_OVERLAY, light, normalVec.x, normalVec.y,
+                        normalVec.z, alpha);
+                VertexConsumerUtil.addVertex(bufferBuilder, positionMatrices[part], -CAPE_WIDTH / 2F, CAPE_HEIGHT, 0,
+                        minU, maxV, OverlayTexture.NO_OVERLAY, light, normalVec.x, normalVec.y, normalVec.z, alpha);
+                VertexConsumerUtil.addVertex(bufferBuilder, positionMatrices[part], CAPE_WIDTH / 2F, CAPE_HEIGHT, 0,
+                        maxU, maxV, OverlayTexture.NO_OVERLAY, light, normalVec.x, normalVec.y, normalVec.z, alpha);
+            }
+
+            float minU = 0;
+            float maxU = 1 / 64F;
+
+            float minV = (1 / 32F) * (part + 1);
+            float maxV = minV + (1 / 32F);
+
+            Vector3 normalVec = getNormalVec(positionMatrices[part], positionMatrices[part],
+                    positionMatrices[Math.max(part - 1, 0)],
+                    new Vector3(-CAPE_WIDTH / 2F, (part + 1) * (CAPE_HEIGHT / PART_COUNT), 0),
+                    new Vector3(-CAPE_WIDTH / 2F, (part + 1) * (CAPE_HEIGHT / PART_COUNT), -CAPE_DEPTH),
+                    new Vector3(-CAPE_WIDTH / 2F, part * (CAPE_HEIGHT / PART_COUNT), 0), light == 15728880);
+
+            VertexConsumerUtil.addVertex(bufferBuilder, positionMatrices[part], -CAPE_WIDTH / 2F,
+                    (part + 1) * (CAPE_HEIGHT / PART_COUNT), 0, minU, maxV, OverlayTexture.NO_OVERLAY, light,
+                    normalVec.x, normalVec.y, normalVec.z, alpha);
+            VertexConsumerUtil.addVertex(bufferBuilder, positionMatrices[part], -CAPE_WIDTH / 2F,
+                    (part + 1) * (CAPE_HEIGHT / PART_COUNT), -CAPE_DEPTH, maxU, maxV, OverlayTexture.NO_OVERLAY, light,
+                    normalVec.x, normalVec.y, normalVec.z, alpha);
+            VertexConsumerUtil.addVertex(bufferBuilder, positionMatrices[Math.max(part - 1, 0)], -CAPE_WIDTH / 2F,
+                    part * (CAPE_HEIGHT / PART_COUNT), -CAPE_DEPTH, maxU, minV, OverlayTexture.NO_OVERLAY, light,
+                    normalVec.x, normalVec.y, normalVec.z, alpha);
+            VertexConsumerUtil.addVertex(bufferBuilder, positionMatrices[Math.max(part - 1, 0)], -CAPE_WIDTH / 2F,
+                    part * (CAPE_HEIGHT / PART_COUNT), 0, minU, minV, OverlayTexture.NO_OVERLAY, light, normalVec.x,
+                    normalVec.y, normalVec.z, alpha);
+
+            minU = 11 / 64F;
+            maxU = 12 / 64F;
+
+            normalVec = getNormalVec(positionMatrices[part], positionMatrices[part],
+                    positionMatrices[Math.max(part - 1, 0)],
+                    new Vector3(CAPE_WIDTH / 2F, (part + 1) * (CAPE_HEIGHT / PART_COUNT), -CAPE_DEPTH),
+                    new Vector3(CAPE_WIDTH / 2F, (part + 1) * (CAPE_HEIGHT / PART_COUNT), 0),
+                    new Vector3(CAPE_WIDTH / 2F, part * (CAPE_HEIGHT / PART_COUNT), -CAPE_DEPTH), light == 15728880);
+
+            VertexConsumerUtil.addVertex(bufferBuilder, positionMatrices[part], CAPE_WIDTH / 2F,
+                    (part + 1) * (CAPE_HEIGHT / PART_COUNT), -CAPE_DEPTH, minU, maxV, OverlayTexture.NO_OVERLAY, light,
+                    normalVec.x, normalVec.y, normalVec.z, alpha);
+            VertexConsumerUtil.addVertex(bufferBuilder, positionMatrices[part], CAPE_WIDTH / 2F,
+                    (part + 1) * (CAPE_HEIGHT / PART_COUNT), 0, maxU, maxV, OverlayTexture.NO_OVERLAY, light,
+                    normalVec.x, normalVec.y, normalVec.z, alpha);
+            VertexConsumerUtil.addVertex(bufferBuilder, positionMatrices[Math.max(part - 1, 0)], CAPE_WIDTH / 2F,
+                    part * (CAPE_HEIGHT / PART_COUNT), 0, maxU, minV, OverlayTexture.NO_OVERLAY, light, normalVec.x,
+                    normalVec.y, normalVec.z, alpha);
+            VertexConsumerUtil.addVertex(bufferBuilder, positionMatrices[Math.max(part - 1, 0)], CAPE_WIDTH / 2F,
+                    part * (CAPE_HEIGHT / PART_COUNT), -CAPE_DEPTH, minU, minV, OverlayTexture.NO_OVERLAY, light,
+                    normalVec.x, normalVec.y, normalVec.z, alpha);
+
+            minU = 1 / 64F;
+            maxU = 11 / 64F;
+
+            Vector3 normalVecTop = frontNormalVecs[part].clone().add(frontNormalVecs[Math.max(part - 1, 0)]).div(2);
+            Vector3 normalVecBottom = frontNormalVecs[part].clone()
+                    .add(frontNormalVecs[Math.min(part + 1, PART_COUNT - 1)]).div(2);
+
+            VertexConsumerUtil.addVertex(bufferBuilder, positionMatrices[Math.max(part - 1, 0)], CAPE_WIDTH / 2,
+                    part * (CAPE_HEIGHT / PART_COUNT), -CAPE_DEPTH, maxU, minV, OverlayTexture.NO_OVERLAY, light,
+                    normalVecTop.x, normalVecTop.y, normalVecTop.z, alpha);
+            VertexConsumerUtil.addVertex(bufferBuilder, positionMatrices[Math.max(part - 1, 0)], -CAPE_WIDTH / 2,
+                    part * (CAPE_HEIGHT / PART_COUNT), -CAPE_DEPTH, minU, minV, OverlayTexture.NO_OVERLAY, light,
+                    normalVecTop.x, normalVecTop.y, normalVecTop.z, alpha);
+            VertexConsumerUtil.addVertex(bufferBuilder, positionMatrices[part], -CAPE_WIDTH / 2,
+                    (part + 1) * (CAPE_HEIGHT / PART_COUNT), -CAPE_DEPTH, minU, maxV, OverlayTexture.NO_OVERLAY, light,
+                    normalVecBottom.x, normalVecBottom.y, normalVecBottom.z, alpha);
+            VertexConsumerUtil.addVertex(bufferBuilder, positionMatrices[part], CAPE_WIDTH / 2,
+                    (part + 1) * (CAPE_HEIGHT / PART_COUNT), -CAPE_DEPTH, maxU, maxV, OverlayTexture.NO_OVERLAY, light,
+                    normalVecBottom.x, normalVecBottom.y, normalVecBottom.z, alpha);
+
+            minU = 12 / 64F;
+            maxU = 22 / 64F;
+
+            normalVecTop = backNormalVecs[part].clone().add(backNormalVecs[Math.max(part - 1, 0)]).div(2);
+            normalVecBottom = backNormalVecs[part].clone().add(backNormalVecs[Math.min(part + 1, PART_COUNT - 1)])
+                    .div(2);
+
+            VertexConsumerUtil.addVertex(bufferBuilder, positionMatrices[Math.max(part - 1, 0)], CAPE_WIDTH / 2,
+                    part * (CAPE_HEIGHT / PART_COUNT), 0, minU, maxV, OverlayTexture.NO_OVERLAY, light, normalVecTop.x,
+                    normalVecTop.y, normalVecTop.z, alpha);
+            VertexConsumerUtil.addVertex(bufferBuilder, positionMatrices[Math.max(part - 1, 0)], -CAPE_WIDTH / 2,
+                    part * (CAPE_HEIGHT / PART_COUNT), 0, maxU, maxV, OverlayTexture.NO_OVERLAY, light, normalVecTop.x,
+                    normalVecTop.y, normalVecTop.z, alpha);
+            VertexConsumerUtil.addVertex(bufferBuilder, positionMatrices[part], -CAPE_WIDTH / 2,
+                    (part + 1) * (CAPE_HEIGHT / PART_COUNT), 0, maxU, minV, OverlayTexture.NO_OVERLAY, light,
+                    normalVecBottom.x, normalVecBottom.y, normalVecBottom.z, alpha);
+            VertexConsumerUtil.addVertex(bufferBuilder, positionMatrices[part], CAPE_WIDTH / 2,
+                    (part + 1) * (CAPE_HEIGHT / PART_COUNT), 0, minU, minV, OverlayTexture.NO_OVERLAY, light,
+                    normalVecBottom.x, normalVecBottom.y, normalVecBottom.z, alpha);
         }
     }
 
-    private void modifyPoseStackVanilla(PoseStack poseStack, AbstractClientPlayer player, AvatarRenderState state, int part) {
+    private void modifyPoseStack(PoseStack poseStack, AvatarRenderState capeRenderInfo, float h, int part) {
+        if (WaveyCapesBase.config.capeMovement != CapeMovement.VANILLA) {
+            modifyPoseStackSimulation(poseStack, capeRenderInfo, h, part);
+            return;
+        }
+        //? if < 1.21.2 {
+        /*
+         modifyPoseStackVanilla(poseStack, (AbstractClientPlayer) capeRenderInfo.getEntity(), h, part);
+        *///? } else {
+
+        var renderState = capeRenderInfo;
         poseStack.pushPose();
         poseStack.translate(0.0D, 0.0D, 0.125D);
+        //? if >= 1.21.9 {
 
-        double d = Mth.lerp(1f, player.avatarState().getInterpolatedCloakX(1f), player.avatarState().getInterpolatedCloakX(1f));
-        double e = Mth.lerp(1f, player.avatarState().getInterpolatedCloakY(1f), player.avatarState().getInterpolatedCloakY(1f));
-        double m = Mth.lerp(1f, player.avatarState().getInterpolatedCloakZ(1f), player.avatarState().getInterpolatedCloakZ(1f));
-
-        d -= Mth.lerp(1f, player.xo, player.getX());
-        e -= Mth.lerp(1f, player.yo, player.getY());
-        m -= Mth.lerp(1f, player.zo, player.getZ());
-
-        float n = player.yBodyRotO + player.yBodyRot - player.yBodyRotO;
-        double o = Mth.sin(n * 0.017453292F);
-        double p = -Mth.cos(n * 0.017453292F);
-
-        float height = (float) e * 10.0F;
-        height = Mth.clamp(height, -6.0F, 32.0F);
-        float swing = (float) (d * o + m * p) * easeOutSine(1.0F / Cape.CAPE_PART_COUNT * part) * 100;
-        swing = Mth.clamp(swing, 0.0F, 150.0F * easeOutSine(1F / Cape.CAPE_PART_COUNT * part));
-        float sidewaysRotationOffset = (float) (d * p - m * o) * 100.0F;
-        sidewaysRotationOffset = Mth.clamp(sidewaysRotationOffset, -20.0F, 20.0F);
-
-        float t = Mth.lerp(1f, player.avatarState().getInterpolatedBob(1f), player.avatarState().getInterpolatedBob(1f));
-        height += Mth.sin(Mth.lerp(1f, player.avatarState().getInterpolatedWalkDistance(1f), player.avatarState().getInterpolatedWalkDistance(1f)) * 6.0F) * 32.0F * t;
-
-        if (player.isCrouching()) {
-            height += 25.0F;
-            poseStack.translate(0, 0.15F, 0);
-        }
-
-        float naturalWindSwing = getNatrualWindSwing(part);
-
-        poseStack.mulPose(Axis.XP.rotationDegrees(6.0F + swing / 2.0F + height + naturalWindSwing));
-        poseStack.mulPose(Axis.ZP.rotationDegrees(sidewaysRotationOffset / 2.0F));
-        poseStack.mulPose(Axis.YP.rotationDegrees(180.0F - sidewaysRotationOffset / 2.0F));
+        var entity = capeRenderInfo.entity;
+        //? } else {
+        /*
+         var entity = capeRenderInfo.getEntity();
+        *///? }
+        poseStack.mulPose(MathUtil.XP.rotationDegrees(6.0F + renderState.capeLean / 2.0F + renderState.capeFlap
+                + getNatrualWindSwing(part, entity.isUnderWater())));
+        poseStack.mulPose(MathUtil.ZP.rotationDegrees(renderState.capeLean2 / 2.0F));
+        poseStack.mulPose(MathUtil.YP.rotationDegrees(180.0F - renderState.capeLean2 / 2.0F));
+        //? }
     }
 
-    private void modifyPoseStackSimulation(PoseStack poseStack, BasicSimulation simulation, AbstractClientPlayer player, AvatarRenderState state, int part) {
+    private void modifyPoseStackSimulation(PoseStack poseStack, AvatarRenderState capeRenderInfo, float delta, int part) {
+        //? if >= 1.21.9 {
+
+        var entity = capeRenderInfo.entity;
+        //? } else {
+        /*
+         var entity = capeRenderInfo.getEntity();
+        *///? }
+        BasicSimulation simulation = ((CapeHolder) entity).getSimulation();
         poseStack.pushPose();
         poseStack.translate(0.0D, 0.0D, 0.125D);
 
-        float delta = 1f;
         float x = simulation.getPoints().get(part).getLerpX(delta) - simulation.getPoints().get(0).getLerpX(delta);
-        if (x > 0) x = 0;
-        float y = simulation.getPoints().get(0).getLerpY(delta) - part - simulation.getPoints().get(part).getLerpY(delta);
+        if (x > 0) {
+            x = 0;
+        }
+        float y = simulation.getPoints().get(0).getLerpY(delta) - part
+                - simulation.getPoints().get(part).getLerpY(delta);
         float z = simulation.getPoints().get(0).getLerpZ(delta) - simulation.getPoints().get(part).getLerpZ(delta);
 
         float sidewaysRotationOffset = 0;
         float partRotation = getRotation(delta, part, simulation);
 
         float height = 0;
-        if (player.isCrouching()) {
-            height += 25.0F;
-            poseStack.translate(0, 0.15F, 0);
-        }
+        //        if (abstractClientPlayer.isCrouching()) {
+        //            height += 25.0F;
+        //            poseStack.translate(0, 0.15F, 0);
+        //        }
 
-        float naturalWindSwing = getNatrualWindSwing(part);
+        float naturalWindSwing = getNatrualWindSwing(part, entity.isUnderWater());
 
-        poseStack.mulPose(Axis.XP.rotationDegrees(6.0F + height + naturalWindSwing));
-        poseStack.mulPose(Axis.ZP.rotationDegrees(sidewaysRotationOffset / 2.0F));
-        poseStack.mulPose(Axis.YP.rotationDegrees(180.0F - sidewaysRotationOffset / 2.0F));
-        poseStack.translate(-z / Cape.CAPE_PART_COUNT, y / Cape.CAPE_PART_COUNT, x / Cape.CAPE_PART_COUNT);
-        poseStack.translate(0, 0.48F / 16, -0.48F / 16);
-        poseStack.translate(0, part * 1f / Cape.CAPE_PART_COUNT, 0);
-        poseStack.mulPose(Axis.XP.rotationDegrees(-partRotation));
-        poseStack.translate(0, -part * 1f / Cape.CAPE_PART_COUNT, 0);
-        poseStack.translate(0, -0.48F / 16, 0.48F / 16);
+        // vanilla rotating and wind
+        poseStack.mulPose(MathUtil.XP.rotationDegrees(6.0F + height + naturalWindSwing));
+        poseStack.mulPose(MathUtil.ZP.rotationDegrees(sidewaysRotationOffset / 2.0F));
+        poseStack.mulPose(MathUtil.YP.rotationDegrees(180.0F - sidewaysRotationOffset / 2.0F));
+        poseStack.translate(-z / PART_COUNT, y / PART_COUNT, x / PART_COUNT); // movement from the simulation
+        // offsetting so the rotation is on the cape part
+        // float offset = (float) (part * (16 / partCount))/16; // to fold the entire
+        // cape into one position for debugging
+        poseStack.translate(0, /*-offset*/ +(0.48 / 16), -(0.48 / 16)); // (0.48/16)
+        poseStack.translate(0, part * 1f / PART_COUNT, part * (0) / PART_COUNT);
+        poseStack.mulPose(MathUtil.XP.rotationDegrees(-partRotation)); // apply actual rotation
+        // undoing the rotation
+        poseStack.translate(0, -part * 1f / PART_COUNT, -part * (0) / PART_COUNT);
+        poseStack.translate(0, -(0.48 / 16), (0.48 / 16));
+
     }
 
     private float getRotation(float delta, int part, BasicSimulation simulation) {
-        if (part == Cape.CAPE_PART_COUNT - 1) return getRotation(delta, part - 1, simulation);
-        float angle = (float) getAngle(
-            simulation.getPoints().get(part).getLerpedPos(delta),
-            simulation.getPoints().get(part + 1).getLerpedPos(delta));
-        return angle;
+        if (part == PART_COUNT - 1) {
+            return getRotation(delta, part - 1, simulation);
+        }
+        return (float) getAngle(simulation.getPoints().get(part).getLerpedPos(delta),
+                simulation.getPoints().get(part + 1).getLerpedPos(delta));
     }
 
     private double getAngle(Vector3 a, Vector3 b) {
@@ -205,14 +365,80 @@ public class CapeLayer extends RenderLayer<AvatarRenderState, PlayerModel> {
         return Math.toDegrees(Math.atan2(angle.x, angle.y)) + 180;
     }
 
-    private float getNatrualWindSwing(int part) {
-        if (Cape.getWindMode() != WindMode.WAVES) return 0;
-        long highlightedPart = (System.currentTimeMillis() / 3) % 360;
-        float relativePart = (float) (part + 1) / Cape.CAPE_PART_COUNT;
-        return (float) (Math.sin(Math.toRadians((relativePart) * 360 - highlightedPart)) * 3);
+    //? if < 1.21.2 {
+    /*
+        private void modifyPoseStackVanilla(PoseStack poseStack, AbstractClientPlayer abstractClientPlayer, float h,
+                int part) {
+            poseStack.pushPose();
+            poseStack.translate(0.0D, 0.0D, 0.125D);
+           double d = Mth.lerp(h, abstractClientPlayer.xCloakO, abstractClientPlayer.xCloak)
+                   - Mth.lerp(h, abstractClientPlayer.xo, abstractClientPlayer.getX());
+           double e = Mth.lerp(h, abstractClientPlayer.yCloakO, abstractClientPlayer.yCloak)
+                    - Mth.lerp(h, abstractClientPlayer.yo, abstractClientPlayer.getY());
+           double m = Mth.lerp(h, abstractClientPlayer.zCloakO, abstractClientPlayer.zCloak)
+                   - Mth.lerp(h, abstractClientPlayer.zo, abstractClientPlayer.getZ());
+           float n = abstractClientPlayer.yBodyRotO + abstractClientPlayer.yBodyRot - abstractClientPlayer.yBodyRotO;
+           double o = Mth.sin(n * 0.017453292F);
+           double p = -Mth.cos(n * 0.017453292F);
+           float height = (float) e * 10.0F;
+            height = Mth.clamp(height, -6.0F, 32.0F);
+           float swing = (float) (d * o + m * p) * easeOutSine(1.0F / PART_COUNT * part) * 100;
+           swing = Mth.clamp(swing, 0.0F, 150.0F * easeOutSine(1F / PART_COUNT * part));
+           float sidewaysRotationOffset = (float) (d * p - m * o) * 100.0F;
+           sidewaysRotationOffset = Mth.clamp(sidewaysRotationOffset, -20.0F, 20.0F);
+           float t = Mth.lerp(h, abstractClientPlayer.oBob, abstractClientPlayer.bob);
+           height += Mth.sin(Mth.lerp(h, abstractClientPlayer.walkDistO, abstractClientPlayer.walkDist) * 6.0F) * 32.0F
+                   * t;
+            //        if (abstractClientPlayer.isCrouching()) {
+           //            height += 25.0F;
+           //            poseStack.translate(0, 0.15F, 0);
+           //        }
+
+           float naturalWindSwing = getNatrualWindSwing(part, abstractClientPlayer.isUnderWater());
+
+           poseStack.mulPose(MathUtil.XP.rotationDegrees(6.0F + swing / 2.0F + height + naturalWindSwing));
+           poseStack.mulPose(MathUtil.ZP.rotationDegrees(sidewaysRotationOffset / 2.0F));
+           poseStack.mulPose(MathUtil.YP.rotationDegrees(180.0F - sidewaysRotationOffset / 2.0F));
+       }
+
+     private static float easeOutSine(float x) {
+        return Mth.sin((float) ((x * Math.PI) / 2f));
+     }
+    *///? }
+
+    private float getNatrualWindSwing(int part, boolean underwater) {
+        long highlightedPart = (System.currentTimeMillis() / (underwater ? 9 : 3)) % 360;
+        float relativePart = (float) (part + 1) / PART_COUNT;
+        if (WaveyCapesBase.config.windMode == WindMode.WAVES) {
+            return (float) (Math.sin(Math.toRadians((relativePart) * 360 - (highlightedPart))) * 3);
+        }
+        return 0;
     }
 
-    private static float easeOutSine(float x) {
-        return Mth.sin((x * Mth.PI) / 2f);
+    private static Vector3 getNormalVec(Matrix4f matrix1, Matrix4f matrix2, Matrix4f matrix3, Vector3 vector1,
+                                        Vector3 vector2, Vector3 vector3, boolean inverse) {
+        Vector3 vector1Transformed = transform(matrix1, new Vector4(vector1.x, vector1.y, vector1.z, 1)).toVec3();
+        Vector3 vector2Transformed = transform(matrix2, new Vector4(vector2.x, vector2.y, vector2.z, 1)).toVec3();
+        Vector3 vector3Transformed = transform(matrix3, new Vector4(vector3.x, vector3.y, vector3.z, 1)).toVec3();
+
+        vector2Transformed.subtract(vector1Transformed);
+        vector3Transformed.subtract(vector1Transformed);
+
+        vector2Transformed.cross(vector3Transformed);
+        vector2Transformed.normalize();
+        return inverse ? vector2Transformed.mul(-1) : vector2Transformed;
+    }
+
+    private static Vector4 transform(Matrix4f matrix, Vector4 vector) {
+        //? if >= 1.19.3 {
+
+        Vector4f vector4f = matrix.transform(new Vector4f(vector.x, vector.y, vector.z, vector.w));
+        return new Vector4(vector4f.x, vector4f.y, vector4f.z, vector4f.w);
+        //? } else {
+        /*
+         Vector4f vector4f = new Vector4f(vector.x, vector.y, vector.z, vector.w);
+         vector4f.transform(matrix);
+         return new Vector4(vector4f.x(), vector4f.y(), vector4f.z(), vector4f.w());
+        *///? }
     }
 }

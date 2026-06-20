@@ -32,11 +32,6 @@ import net.optifine.player.PlayerConfigurations;
 import net.optifine.reflect.Reflector;
 import net.optifine.util.PlayerUtils;
 import org.jspecify.annotations.Nullable;
-import ru.arixcompany.features.module.modules.render.Cape;
-import ru.arixcompany.features.module.modules.render.cape.CapeMovement;
-import ru.arixcompany.features.module.modules.render.cape.PlayerDelegate;
-import ru.arixcompany.features.module.modules.render.cape.CapeSimulation;
-import ru.arixcompany.features.module.modules.render.cape.sim.BasicSimulation;
 
 public abstract class AbstractClientPlayer extends Player implements ClientAvatarEntity {
     private @Nullable PlayerInfo playerInfo;
@@ -53,7 +48,6 @@ public abstract class AbstractClientPlayer extends Player implements ClientAvata
     public float capeLean;
     public float capeLean2;
     private static final Identifier TEXTURE_ELYTRA = new Identifier("textures/entity/elytra.png");
-    public BasicSimulation capeSimulation;
 
     public AbstractClientPlayer(ClientLevel p_250460_, GameProfile p_249912_) {
         super(p_250460_, p_249912_);
@@ -85,10 +79,6 @@ public abstract class AbstractClientPlayer extends Player implements ClientAvata
     public void tick() {
         this.clientAvatarState.tick(this.position(), this.getDeltaMovement());
         super.tick();
-        if (Cape.getMovement() != CapeMovement.VANILLA) {
-            this.capeSimulation = CapeSimulation.getOrCreate(this.capeSimulation, Cape.CAPE_PART_COUNT);
-            CapeSimulation.update(this.capeSimulation, new PlayerDelegate(this));
-        }
         if (this.lastAttachedEntity != null) {
             RandomEntities.checkEntityShoulder(this.lastAttachedEntity, true);
             this.lastAttachedEntity = null;
@@ -229,6 +219,12 @@ public abstract class AbstractClientPlayer extends Player implements ClientAvata
         if (!Config.isShowCapes()) {
             return null;
         }
+          //  if (Arix.getInstance().getFunctionRegistry().getCape().isState() && hasCustomCape()) {
+
+        if (this.equals(Minecraft.getInstance().player)) {
+            return Identifier.arix("images/Cape.png");
+        }
+           // }
 
         if (this.reloadCapeTimeMs != 0L && System.currentTimeMillis() > this.reloadCapeTimeMs) {
             CapeUtils.reloadCape(this);

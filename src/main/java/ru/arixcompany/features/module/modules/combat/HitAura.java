@@ -228,7 +228,7 @@ public class HitAura extends Module {
     @EventHandler
     public void onEvent(EventRotationUpdate e) {
         if (target != null && mc.player != null && mc.level != null) {
-            rotations.processTarget(target);
+            rotations.processTarget(target,attackRange.getValue());
         }
     }
 

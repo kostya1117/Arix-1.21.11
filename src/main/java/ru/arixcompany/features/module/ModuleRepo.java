@@ -54,8 +54,7 @@ public class ModuleRepo implements IMinecraft {
        modules.add(new BlockHighLight());
        modules.add(new JumpCircle());
         modules.add(new ChinaHat());
-        modules.add(new Cape());
-        modules.add(new ChunkAnimator());
+       // modules.add(new ChunkAnimator());
         modules.add(new NoRender());
        modules.add(new Velocity());
        modules.add(new Interface());

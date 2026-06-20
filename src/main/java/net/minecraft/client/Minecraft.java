@@ -274,10 +274,7 @@ import ru.arixcompany.Arix;
 import ru.arixcompany.features.event.EventRepo;
 import ru.arixcompany.features.event.player.EventGameTicked;
 import ru.arixcompany.features.event.player.EventShield;
-import ru.arixcompany.features.event.world.EventGameTick;
-import ru.arixcompany.features.event.world.EventPostTick;
-import ru.arixcompany.features.event.world.EventPreTick;
-import ru.arixcompany.features.event.world.EventTick;
+import ru.arixcompany.features.event.world.*;
 import ru.arixcompany.features.module.modules.combat.HitAura;
 import ru.arixcompany.utils.player.TickLoopTaskExecutor;
 
@@ -2357,6 +2354,10 @@ public class Minecraft extends ReentrantBlockableEventLoop<Runnable> implements 
 
     private void updateLevelInEngines(@Nullable ClientLevel p_91325_) {
         this.updateLevelInEngines(p_91325_, true);
+        if (p_91325_ != null) {
+            Minecraft client = (Minecraft) (Object) this;
+            EventRepo.call(new EventWorldChange(client,p_91325_));
+        }
     }
 
     private void updateLevelInEngines(@Nullable ClientLevel p_455017_, boolean p_459891_) {

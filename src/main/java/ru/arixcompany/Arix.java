@@ -1,6 +1,9 @@
 package ru.arixcompany;
 
+import astryxion.chunkanimator.ChunkAnimator;
 import de.maxhenkel.voicechat.integration.ViaVersionCompatibility;
+import dev.tr7zw.waveycapes.WaveyCapesBase;
+import dev.tr7zw.waveycapes.WaveyCapesMod;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.NonFinal;
@@ -70,6 +73,10 @@ public class Arix implements IMinecraft {
     ScriptRepo scriptRepo;
     @NonFinal
     ParticleSystem particleSystem;
+    @NonFinal
+    WaveyCapesBase modBase;
+    @NonFinal
+    ChunkAnimator chunkAnimator;
 
     public Arix() {
         instance = this;
@@ -106,6 +113,10 @@ public class Arix implements IMinecraft {
 
         appleskin.client.HUDOverlayHandler.init();
         appleskin.client.TooltipOverlayHandler.init();
+        modBase = new WaveyCapesMod();
+        modBase.init();
+        chunkAnimator = new ChunkAnimator();
+        chunkAnimator.init();
         Runtime.getRuntime().addShutdownHook(new Thread(this::onExit));
     }
 

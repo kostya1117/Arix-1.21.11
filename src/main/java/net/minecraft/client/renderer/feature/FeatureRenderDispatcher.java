@@ -1,5 +1,10 @@
 package net.minecraft.client.renderer.feature;
 
+import com.mojang.blaze3d.vertex.PoseStack;
+import dev.tr7zw.transition.mc.entitywrapper.PlayerWrapper;
+import dev.tr7zw.waveycapes.CapeNodeCollector;
+import dev.tr7zw.waveycapes.WaveyCapesBase;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.OutlineBufferSource;
@@ -7,9 +12,6 @@ import net.minecraft.client.renderer.SubmitNodeCollection;
 import net.minecraft.client.renderer.SubmitNodeStorage;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.resources.model.AtlasManager;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-
 
 public class FeatureRenderDispatcher implements AutoCloseable {
     private final SubmitNodeStorage submitNodeStorage;
@@ -32,13 +34,13 @@ public class FeatureRenderDispatcher implements AutoCloseable {
     private final ParticleFeatureRenderer particleFeatureRenderer = new ParticleFeatureRenderer();
 
     public FeatureRenderDispatcher(
-        SubmitNodeStorage p_429441_,
-        BlockRenderDispatcher p_430298_,
-        MultiBufferSource.BufferSource p_424449_,
-        AtlasManager p_430924_,
-        OutlineBufferSource p_427574_,
-        MultiBufferSource.BufferSource p_426687_,
-        Font p_431145_
+            SubmitNodeStorage p_429441_,
+            BlockRenderDispatcher p_430298_,
+            MultiBufferSource.BufferSource p_424449_,
+            AtlasManager p_430924_,
+            OutlineBufferSource p_427574_,
+            MultiBufferSource.BufferSource p_426687_,
+            Font p_431145_
     ) {
         this.submitNodeStorage = p_429441_;
         this.blockRenderDispatcher = p_430298_;
@@ -63,6 +65,18 @@ public class FeatureRenderDispatcher implements AutoCloseable {
             this.customFeatureRenderer.render(submitnodecollection, this.bufferSource);
             this.particleFeatureRenderer.render(submitnodecollection);
         }
+
+//        CapeNodeCollector collector = WaveyCapesBase.INSTANCE.getCapeNodeCollector();
+//        PoseStack sharedStack = new PoseStack();
+//        float delta = Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(false);
+//        for (CapeNodeCollector.CapeNode cape : collector.getCapes()) {
+//            sharedStack.last().set(cape.pose());
+//            sharedStack.pushPose();
+//            WaveyCapesBase.INSTANCE.getRenderer().render(new PlayerWrapper(cape.state()), sharedStack,
+//                    this.bufferSource, cape.packedLight(), delta);
+//            sharedStack.popPose();
+//        }
+//        collector.clear();
 
         this.submitNodeStorage.clear();
     }

@@ -1,0 +1,49 @@
+package dev.tr7zw.waveycapes;
+
+import dev.tr7zw.waveycapes.delegate.PlayerDelegate;
+import dev.tr7zw.waveycapes.support.AnimationSupport;
+import dev.tr7zw.waveycapes.support.SupportManager;
+import dev.tr7zw.waveycapes.versionless.ModBase;
+import dev.tr7zw.waveycapes.versionless.nms.MinecraftPlayer;
+import dev.tr7zw.waveycapes.versionless.util.Vector3;
+import lombok.Getter;
+
+public class WaveyCapesBase extends ModBase {
+
+    @Getter
+    public static WaveyCapesBase INSTANCE;
+
+    //? if >= 1.21.9 {
+
+    @Getter
+    private final CapeNodeCollector capeNodeCollector = new CapeNodeCollector();
+    //? }
+    @Getter
+    private final CustomCapeRenderer renderer = new CustomCapeRenderer();
+
+    public void init() {
+        INSTANCE = this;
+        super.init();
+        initSupportHooks();
+    }
+
+    @Override
+    public Vector3 applyModAnimations(MinecraftPlayer player, Vector3 pos) {
+//        for (AnimationSupport sup : SupportManager.animationSupport) {
+//            pos = sup.applyAnimationChanges(((PlayerDelegate) player).getPlayer(), 0, pos);
+//        }
+        return pos;
+    }
+
+    @Override
+    public void initSupportHooks() {
+        //? if >= 1.80.0 {
+        /*
+        if (doesClassExist("dev.kosmx.playerAnim.core.impl.AnimationProcessor")) {
+            SupportManager.animationSupport.add(new PlayerAnimatorSupport());
+            LOGGER.info("Wavey Capes loaded PlayerAnimator support!");
+        }
+        *///? }
+    }
+
+}

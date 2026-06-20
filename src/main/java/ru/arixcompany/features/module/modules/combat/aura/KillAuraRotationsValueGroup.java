@@ -19,10 +19,10 @@ import java.util.List;
 
 public class KillAuraRotationsValueGroup implements IMinecraft {
 
-    public boolean processTarget(LivingEntity entity) {
+    public boolean processTarget(LivingEntity entity,float distanceattack) {
         if (entity == null || mc.player == null) return false;
 
-        Rotation targetRot = findRotation(entity);
+        Rotation targetRot = findRotation(entity,distanceattack);
         FactorAngleSmooth smoother;
         if (mc.player.isFallFlying() && HitAura.elytraTarget.isValue())
             smoother = new ElytraAngleSmooth();
@@ -46,19 +46,16 @@ public class KillAuraRotationsValueGroup implements IMinecraft {
         };
     }
 
-    private Rotation findRotation(LivingEntity entity) {
-        Vec3 eyes = mc.player.getEyePosition(1);
-        double lengthY = entity.getBoundingBox().getYsize();
+    private Rotation findRotation(LivingEntity entity,float distanceattack) {
+        Vec3 eyes = mc.player.getEyePosition();
 
         Vec3 targetPos;
         if (mc.player.isFallFlying() && HitAura.elytraTarget.isValue()) {
             targetPos = PredictUtils.predict(entity,4);
-        } else {
-          //  targetPos = new Vec3(entity.getX(), entity.getY() + lengthY * 0.5, entity.getZ());
-            targetPos = BoxPoints.getBestVectorOnEntityBox(entity.getBoundingBox());
+            return Rotation.lookingAt(targetPos, eyes);
         }
 
-        return Rotation.lookingAt(targetPos, eyes);
+        return Rotation.calculateToEntity(entity);
     }
 
     private FactorAngleSmooth buildAngleSmooth() {

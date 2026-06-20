@@ -49,11 +49,6 @@ public class SpiritsMode extends TargetEspMode {
     public void render(EventRender3D event, LivingEntity target, float tickDelta) {
         animation.setDirection(target != null ? Direction.FORWARDS : Direction.BACKWARDS);
 
-        if (animation.getOutput() <= 0.0f) {
-            lastTarget = null;
-            return;
-        }
-
         if (target != null) {
             if (lastTarget == null) {
                 currentTime = System.currentTimeMillis();
@@ -64,7 +59,7 @@ public class SpiritsMode extends TargetEspMode {
         if (lastTarget == null) return;
 
         long now = System.currentTimeMillis();
-        animationProgress += (4L * (now - currentTime)) / 600.0f;
+        animationProgress += (4L * (now - currentTime)) / 650f;
         currentTime = now;
 
         Vec3 cam = mc.gameRenderer.getMainCamera().position();
@@ -104,7 +99,7 @@ public class SpiritsMode extends TargetEspMode {
                     float py = (float) (heightOffset + 0.3f * Math.sin(animationProgress + j * 0.2f) + 0.2f * i);
                     float pz = radius * (float) Math.cos(f2 - n5);
 
-                    float particleScale = animVal * (0.006f + j / 2000.0f);
+                    float particleScale = animVal * (0.005f + j / 2100f);
 
                     matrices.pushPose();
                     matrices.translate(x + px, y + py, z + pz);

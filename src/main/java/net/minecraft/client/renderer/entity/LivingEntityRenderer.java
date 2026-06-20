@@ -6,11 +6,15 @@ import com.mojang.math.Axis;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import dev.tr7zw.waveycapes.support.ModSupport;
+import dev.tr7zw.waveycapes.support.SupportManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.player.PlayerModel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.entity.layers.CapeLayer;
 import net.minecraft.client.renderer.entity.layers.CustomHeadLayer;
 import net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
@@ -67,6 +71,14 @@ public abstract class LivingEntityRenderer<T extends LivingEntity, S extends Liv
     }
 
     public final boolean addLayer(RenderLayer<S, M> p_115327_) {
+//        if (p_115327_ instanceof CapeLayer) {
+//            return false;
+//        }
+//        for (ModSupport support : SupportManager.getSupportedMods()) {
+//            if (support.blockFeatureRenderer(p_115327_)) {
+//                return false;
+//            }
+//        }
         return this.layers.add(p_115327_);
     }
 

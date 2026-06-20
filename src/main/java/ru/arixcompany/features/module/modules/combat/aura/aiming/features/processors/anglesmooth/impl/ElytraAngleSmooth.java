@@ -1,15 +1,10 @@
 package ru.arixcompany.features.module.modules.combat.aura.aiming.features.processors.anglesmooth.impl;
 
 import net.minecraft.util.Mth;
-import net.minecraft.util.Util;
-import net.minecraft.world.entity.LivingEntity;
-import ru.arixcompany.features.module.modules.combat.HitAura;
-import ru.arixcompany.features.module.modules.combat.aura.AttackHandler;
 import ru.arixcompany.features.module.modules.combat.aura.aiming.RotationTarget;
 import ru.arixcompany.features.module.modules.combat.aura.aiming.data.Rotation;
 import ru.arixcompany.features.module.modules.combat.aura.aiming.features.processors.anglesmooth.FactorAngleSmooth;
 import ru.arixcompany.utils.IMinecraft;
-import ru.arixcompany.utils.animation.Interpolation;
 import ru.arixcompany.utils.math.Randomizer;
 
 public class ElytraAngleSmooth extends FactorAngleSmooth implements IMinecraft {

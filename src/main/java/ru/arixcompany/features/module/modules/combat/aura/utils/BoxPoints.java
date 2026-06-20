@@ -1,111 +1,90 @@
 package ru.arixcompany.features.module.modules.combat.aura.utils;
 
-import lombok.experimental.UtilityClass;
-import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.ClipContext;
+import net.minecraft.client.player.LocalPlayer;
+import lombok.experimental.UtilityClass;
 import ru.arixcompany.utils.IMinecraft;
 
 @UtilityClass
 public class BoxPoints implements IMinecraft {
 
-    private static final double BOX_OFFSET = 0.01;
-    private static final double DISTANCE_FACTOR = 5.0;
-
-    public static Vec3 getBestVectorOnEntityBox(AABB aabb) {
-        return getBestVectorOnEntityBox(aabb, true);
-    }
-
-    public static Vec3 getBestVectorOnEntityBox(AABB aabb, boolean multipoints) {
+    /**
+     * @param target - Энтити (цель), чтобы мы могли получить её прошлую и текущую позицию
+     * @param auraDistance - Дистанция твоей киллауры (distance.getValue())
+     * @param canAttack - Готов ли удар (this.canAttack(0))
+     */
+    public static Vec3 getTargetVector(Entity target, double auraDistance, boolean canAttack) {
         LocalPlayer player = mc.player;
 
-        if (player == null) {
+        if (player == null || target == null || mc.level == null) {
             return Vec3.ZERO;
         }
 
-        if (aabb == null) {
-            return player.getEyePosition();
-        }
+        AABB box = target.getBoundingBox();
+        Vec3 eyePos = player.getEyePosition(); // в новых версиях 1.0F не нужно передавать
+        double step = 0.1D;
 
-        if (mc.level == null) {
-            return getCenter(aabb);
-        }
+        Vec3 bestVec = null;
+        double closestDistance = Double.MAX_VALUE;
 
-        Vec3 eye = player.getEyePosition();
-        Vec3 base = getCenter(aabb);
+        // 1. Ищем ближайшую точку на хитбоксе (твой брутфорс)
+        for (double x = box.minX; x <= box.maxX; x += step) {
+            for (double y = box.minY; y <= box.maxY; y += step) {
+                for (double z = box.minZ; z <= box.maxZ; z += step) {
+                    Vec3 sample = new Vec3(x, y, z);
+                    double dist = eyePos.distanceTo(sample); // Тут оставляем distanceTo, как в твоем коде
 
-        if (!multipoints || isVisible(player, eye, base)) {
-            return base;
-        }
-
-        Vec3 best = findClosestVisiblePoint(aabb.inflate(-BOX_OFFSET), player, eye);
-        return best != null ? best : base;
-    }
-
-    private static Vec3 findClosestVisiblePoint(AABB aabb, LocalPlayer player, Vec3 eye) {
-        Vec3 center = getCenter(aabb);
-
-        double factor = 1.0 - Math.min(player.position().distanceTo(center) / DISTANCE_FACTOR, 1.0);
-        int pointsXZ = lerp(5, 17, factor);
-        int pointsY = lerp(6, 24, factor);
-
-        Vec3 bestPoint = null;
-        double bestDistanceSqr = Double.MAX_VALUE;
-
-        for (int xi = 0; xi < pointsXZ; xi++) {
-            double x = lerp(aabb.minX, aabb.maxX, xi / (double) (pointsXZ - 1));
-
-            for (int zi = 0; zi < pointsXZ; zi++) {
-                double z = lerp(aabb.minZ, aabb.maxZ, zi / (double) (pointsXZ - 1));
-
-                for (int yi = 0; yi < pointsY; yi++) {
-                    double y = lerp(aabb.minY, aabb.maxY, yi / (double) (pointsY - 1));
-
-                    Vec3 point = new Vec3(x, y, z);
-
-                    if (!isVisible(player, eye, point)) {
-                        continue;
-                    }
-
-                    double distanceSqr = eye.distanceToSqr(point);
-                    if (distanceSqr < bestDistanceSqr) {
-                        bestDistanceSqr = distanceSqr;
-                        bestPoint = point;
+                    if (dist < closestDistance) {
+                        closestDistance = dist;
+                        bestVec = sample;
                     }
                 }
             }
         }
 
-        return bestPoint;
+        Vec3 check = new Vec3(
+                target.getX() - target.xo,
+                target.getY() - target.yo,
+                target.getZ() - target.zo
+        );
+
+        Vec3 xyi = canAttack ? Vec3.ZERO : check;
+
+        // Считаем центр бокса
+        Vec3 center = new Vec3(
+                (box.minX + box.maxX) / 2.0,
+                (box.minY + box.maxY) / 2.0,
+                (box.minZ + box.maxZ) / 2.0
+        );
+
+        // Центр с учетом предикта
+        Vec3 predictedCenter = center.add(xyi);
+
+        // 3. Логика проверок (переписал твой кусок 1 в 1)
+        boolean isDistanceValid = !(eyePos.distanceTo(predictedCenter) > (auraDistance));
+        boolean isNotVisible = isHitBoxNotVisible(player, eyePos, center);
+
+        boolean condition = (bestVec == null || isDistanceValid) && (bestVec == null || isNotVisible);
+
+        // Возвращаем итоговый вектор
+        return predictedCenter;
     }
 
-    private static boolean isVisible(LocalPlayer player, Vec3 from, Vec3 to) {
-        HitResult result = mc.level.clip(new ClipContext(
-                from,
-                to,
+    private static boolean isHitBoxNotVisible(LocalPlayer player, Vec3 eyePos, Vec3 targetPos) {
+        ClipContext context = new ClipContext(
+                eyePos,
+                targetPos,
                 ClipContext.Block.COLLIDER,
                 ClipContext.Fluid.NONE,
                 player
-        ));
-
-        return result.getType() != HitResult.Type.BLOCK;
-    }
-
-    private static Vec3 getCenter(AABB aabb) {
-        return new Vec3(
-                (aabb.minX + aabb.maxX) * 0.5,
-                (aabb.minY + aabb.maxY) * 0.5,
-                (aabb.minZ + aabb.maxZ) * 0.5
         );
-    }
 
-    private static int lerp(int a, int b, double t) {
-        return a + (int) Math.round(t * (b - a));
-    }
+        HitResult result = mc.level.clip(context);
 
-    private static double lerp(double a, double b, double t) {
-        return a + t * (b - a);
+        return result.getType() == HitResult.Type.BLOCK;
     }
 }

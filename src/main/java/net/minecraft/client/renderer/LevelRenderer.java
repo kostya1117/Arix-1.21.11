@@ -168,8 +168,6 @@ import ru.arixcompany.Arix;
 import ru.arixcompany.features.event.EventRepo;
 import ru.arixcompany.features.event.render.EventRender3D;
 import ru.arixcompany.features.module.modules.render.BlockHighLight;
-import ru.arixcompany.features.module.modules.render.ChunkAnimator;
-import ru.arixcompany.features.module.modules.render.chunkanimator.ChunkAnimHandler;
 import ru.arixcompany.utils.math.ProjectUtils;
 
 public class LevelRenderer implements ResourceManagerReloadListener, AutoCloseable {
@@ -550,11 +548,9 @@ public class LevelRenderer implements ResourceManagerReloadListener, AutoCloseab
         this.sectionOcclusionGraph.addSectionsInFrustum(frustumIn, this.visibleSections, this.nearbyVisibleSections, updateRenderInfos, maxChunkDistance);
     }
 
-    public void addRecentlyCompiledSection(SectionRenderDispatcher.RenderSection p_301248_) {
+    public void addRecentlyCompiledSection(net.minecraft.client.renderer.chunk.SectionRenderDispatcher.RenderSection p_301248_) {
         this.sectionOcclusionGraph.schedulePropagationFrom(p_301248_);
-        if (ChunkAnimator.shouldAnimate()) {
-            ChunkAnimHandler.register(p_301248_.getRenderOrigin());
-        }
+        astryxion.chunkanimator.ChunkAnimator.instance.animationHandler.setOrigin(p_301248_.getRenderOrigin());
     }
 
 //    private Frustum prepareCullFrustum(Matrix4f p_254341_, Matrix4f p_332544_, Vec3 p_253766_) {
@@ -1451,7 +1447,7 @@ private Frustum prepareCullFrustum(Matrix4f p_254341_, Matrix4f p_332544_, Vec3 
         }
     }
 
-    public ChunkSectionsToRender prepareChunkRenders(Matrix4fc p_407733_, double p_409433_, double p_409487_, double p_408168_) {
+    public ChunkSectionsToRender prepareChunkRenders(org.joml.Matrix4fc p_407733_, double p_409433_, double p_409487_, double p_408168_) {
         ObjectListIterator<SectionRenderDispatcher.RenderSection> objectlistiterator = this.renderInfosTerrain.listIterator(0);
         EnumMap<ChunkSectionLayer, List<RenderPass.Draw<GpuBufferSlice[]>>> enummap = this.enumMapLayerDraws;
         int i = 0;
@@ -1480,6 +1476,11 @@ private Frustum prepareCullFrustum(Matrix4f p_254341_, Matrix4f p_332544_, Vec3 
             SectionRenderDispatcher.RenderSection sectionrenderdispatcher$rendersection = objectlistiterator.next();
             SectionMesh sectionmesh = sectionrenderdispatcher$rendersection.getSectionMesh();
             BlockPos blockpos = sectionrenderdispatcher$rendersection.getRenderOrigin();
+
+            final astryxion.chunkanimator.handler.AnimationHandler.Offset offset = astryxion.chunkanimator.ChunkAnimator.instance.animationHandler.preRender(
+                    new astryxion.chunkanimator.handler.PreRenderContext(blockpos)
+            );
+
             long j = Util.getMillis();
             int k = -1;
 
@@ -1495,37 +1496,34 @@ private Frustum prepareCullFrustum(Matrix4f p_254341_, Matrix4f p_332544_, Vec3 
 
                     if (flag1 && sectionbuffers.getVboRegion() != null) {
                         this.regionLayerRenderer
-                            .addSection(
-                                chunksectionlayer1,
-                                sectionrenderdispatcher$rendersection.regionX,
-                                sectionrenderdispatcher$rendersection.regionZ,
-                                sectionbuffers
-                            );
+                                .addSection(
+                                        chunksectionlayer1,
+                                        sectionrenderdispatcher$rendersection.regionX,
+                                        sectionrenderdispatcher$rendersection.regionZ,
+                                        sectionbuffers
+                                );
                     } else {
                         if (k == -1) {
                             k = list1.size();
-                            int ax = blockpos.getX();
-                            int ay = blockpos.getY();
-                            int az = blockpos.getZ();
-                            if (ChunkAnimator.shouldAnimate()) {
-                                ChunkAnimHandler.Offset offset = ChunkAnimHandler.getOffset(blockpos, p_409433_, p_409487_, p_408168_);
-                                ax -= offset.x;
-                                ay -= offset.y;
-                                az -= offset.z;
+
+                            org.joml.Matrix4f animatedMatrix = new org.joml.Matrix4f(p_407733_);
+                            if (offset.x() != 0 || offset.y() != 0 || offset.z() != 0) {
+                                animatedMatrix.translate(offset.x(), offset.y(), offset.z());
                             }
+
                             list1.add(
-                                new DynamicUniforms.ChunkSectionInfo(
-                                    new Matrix4f(p_407733_),
-                                    ax,
-                                    ay,
-                                    az,
-                                    sectionrenderdispatcher$rendersection.getVisibility(j),
-                                    i1,
-                                    j1,
-                                    p_409433_,
-                                    p_409487_,
-                                    p_408168_
-                                )
+                                    new DynamicUniforms.ChunkSectionInfo(
+                                            animatedMatrix,
+                                            blockpos.getX(),
+                                            blockpos.getY(),
+                                            blockpos.getZ(),
+                                            sectionrenderdispatcher$rendersection.getVisibility(j),
+                                            i1,
+                                            j1,
+                                            p_409433_,
+                                            p_409487_,
+                                            p_408168_
+                                    )
                             );
                         }
 
@@ -1545,19 +1543,19 @@ private Frustum prepareCullFrustum(Matrix4f p_254341_, Matrix4f p_332544_, Vec3 
 
                         int l = k;
                         enummap.get(chunksectionlayer1)
-                            .add(
-                                new RenderPass.Draw<>(
-                                    0,
-                                    sectionbuffers.getVertexBuffer(),
-                                    gpubuffer,
-                                    vertexformat$indextype,
-                                    0,
-                                    sectionbuffers.getIndexCount(),
-                                    (buffers2In, uploader2In) -> uploader2In.upload("ChunkSection", buffers2In[l]),
-                                    null,
-                                    sectionbuffers.getMultiTextureData()
-                                )
-                            );
+                                .add(
+                                        new RenderPass.Draw<>(
+                                                0,
+                                                sectionbuffers.getVertexBuffer(),
+                                                gpubuffer,
+                                                vertexformat$indextype,
+                                                0,
+                                                sectionbuffers.getIndexCount(),
+                                                (buffers2In, uploader2In) -> uploader2In.upload("ChunkSection", buffers2In[l]),
+                                                null,
+                                                sectionbuffers.getMultiTextureData()
+                                        )
+                                );
                     }
                 }
             }
@@ -1567,7 +1565,7 @@ private Frustum prepareCullFrustum(Matrix4f p_254341_, Matrix4f p_332544_, Vec3 
             this.regionLayerRenderer.finishPrepare(p_407733_, p_409433_, p_409487_, p_408168_, list1, enummap);
         }
 
-        GpuBufferSlice[] agpubufferslice = RenderSystem.getDynamicUniforms().writeChunkSections(list1.toArray(new DynamicUniforms.ChunkSectionInfo[0]));
+        GpuBufferSlice[] agpubufferslice = com.mojang.blaze3d.systems.RenderSystem.getDynamicUniforms().writeChunkSections(list1.toArray(new DynamicUniforms.ChunkSectionInfo[0]));
         return new ChunkSectionsToRender(gputextureview, enummap, i, agpubufferslice);
     }
 

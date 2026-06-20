@@ -1,0 +1,164 @@
+---- Minecraft Crash Report ----
+// Surprise! Haha. Well, this is awkward.
+
+Time: 2026-06-20 00:31:35
+Description: Ticking entity
+
+java.lang.NullPointerException: Cannot read field "capeMovement" because "dev.tr7zw.waveycapes.versionless.ModBase.config" is null
+	at dev.tr7zw.waveycapes.versionless.CapeHolder.createSimulation(CapeHolder.java:54)
+	at dev.tr7zw.waveycapes.versionless.CapeHolder.updateSimulation(CapeHolder.java:30)
+	at net.minecraft.world.entity.LivingEntity.tick(LivingEntity.java:2909)
+	at net.minecraft.world.entity.player.Player.tick(Player.java:270)
+	at net.minecraft.client.player.AbstractClientPlayer.tick(AbstractClientPlayer.java:81)
+	at net.minecraft.client.player.RemotePlayer.tick(RemotePlayer.java:43)
+	at net.minecraft.client.multiplayer.ClientLevel.tickNonPassenger(ClientLevel.java:409)
+	at net.minecraft.world.level.Level.guardEntityTick(Level.java:515)
+	at net.minecraft.client.multiplayer.ClientLevel.lambda$tickEntities$7(ClientLevel.java:378)
+	at net.minecraft.world.level.entity.EntityTickList.forEach(EntityTickList.java:55)
+	at net.minecraft.client.multiplayer.ClientLevel.tickEntities(ClientLevel.java:376)
+	at net.minecraft.client.Minecraft.tick(Minecraft.java:1886)
+	at net.minecraft.client.Minecraft.runTick(Minecraft.java:1277)
+	at net.minecraft.client.Minecraft.run(Minecraft.java:905)
+	at net.minecraft.client.main.Main.main(Main.java:226)
+	at mcp.client.Start.main(Start.java:15)
+
+
+A detailed walkthrough of the error, its code path and all known details is as follows:
+---------------------------------------------------------------------------------------
+
+-- Head --
+Thread: Render thread
+Stacktrace:
+	at dev.tr7zw.waveycapes.versionless.CapeHolder.createSimulation(CapeHolder.java:54)
+	at dev.tr7zw.waveycapes.versionless.CapeHolder.updateSimulation(CapeHolder.java:30)
+	at net.minecraft.world.entity.LivingEntity.tick(LivingEntity.java:2909)
+	at net.minecraft.world.entity.player.Player.tick(Player.java:270)
+	at net.minecraft.client.player.AbstractClientPlayer.tick(AbstractClientPlayer.java:81)
+	at net.minecraft.client.player.RemotePlayer.tick(RemotePlayer.java:43)
+	at net.minecraft.client.multiplayer.ClientLevel.tickNonPassenger(ClientLevel.java:409)
+	at net.minecraft.world.level.Level.guardEntityTick(Level.java:515)
+	at net.minecraft.client.multiplayer.ClientLevel.lambda$tickEntities$7(ClientLevel.java:378)
+	at net.minecraft.world.level.entity.EntityTickList.forEach(EntityTickList.java:55)
+	at net.minecraft.client.multiplayer.ClientLevel.tickEntities(ClientLevel.java:376)
+
+-- Entity being ticked --
+Details:
+	Entity Type: minecraft:player (net.minecraft.client.player.RemotePlayer)
+	Entity ID: -501
+	Entity Name: §8-501
+	Entity's Exact location: -3.50, 70.80, 19.50
+	Entity's Block location: World: (-4,70,19), Section: (at 12,6,3 in -1,4,1; chunk contains blocks -16,0,16 to -1,255,31), Region: (-1,0; contains chunks -32,0 to -1,31, blocks -512,0,0 to -1,255,511)
+	Entity's Momentum: 0.00, 0.00, 0.00
+	Entity's Passengers: []
+	Entity's Vehicle: null
+Stacktrace:
+	at net.minecraft.world.level.Level.guardEntityTick(Level.java:515)
+	at net.minecraft.client.multiplayer.ClientLevel.lambda$tickEntities$7(ClientLevel.java:378)
+	at net.minecraft.world.level.entity.EntityTickList.forEach(EntityTickList.java:55)
+	at net.minecraft.client.multiplayer.ClientLevel.tickEntities(ClientLevel.java:376)
+	at net.minecraft.client.Minecraft.tick(Minecraft.java:1886)
+	at net.minecraft.client.Minecraft.runTick(Minecraft.java:1277)
+	at net.minecraft.client.Minecraft.run(Minecraft.java:905)
+	at net.minecraft.client.main.Main.main(Main.java:226)
+	at mcp.client.Start.main(Start.java:15)
+
+-- Uptime --
+Details:
+	JVM uptime: 129.566s
+	Wall uptime: 104.120s
+	High-res time: 93.313s
+	Client ticks: 935 ticks / 46.750s
+Stacktrace:
+	at net.minecraft.client.Minecraft.fillReport(Minecraft.java:2464)
+	at net.minecraft.client.Minecraft.emergencySaveAndCrash(Minecraft.java:969)
+	at net.minecraft.client.Minecraft.run(Minecraft.java:925)
+	at net.minecraft.client.main.Main.main(Main.java:226)
+	at mcp.client.Start.main(Start.java:15)
+
+-- Affected level --
+Details:
+	All players: 15 total; LocalPlayer{name=nutuxzutxi, id=2196044, pos=(0.49468318424933044, 70.0, 0.5341489444939074), mode=ADVENTURE, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x000001f6b4537998@67ea9e9}, RemotePlayer{name=§8-501, id=-501, pos=(-3.5, 70.8, 19.5), mode=null, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x000001f6b4537998@67ea9e9}, RemotePlayer{name=Haraktarnyck1234, id=2195775, pos=(-0.29915374109048454, 69.0, 13.104939415881944), mode=ADVENTURE, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x000001f6b4537998@67ea9e9}, RemotePlayer{name=§8-502, id=-502, pos=(4.5, 70.8, 19.5), mode=null, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x000001f6b4537998@67ea9e9}, RemotePlayer{name=Tor123456789000, id=2120629, pos=(0.49468318424933044, 70.0, 0.5341489444939074), mode=ADVENTURE, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x000001f6b4537998@67ea9e9}, RemotePlayer{name=sawe222, id=1748928, pos=(0.49468318424933044, 70.0, 0.5341489444939074), mode=ADVENTURE, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x000001f6b4537998@67ea9e9}, RemotePlayer{name=Borya7, id=2149769, pos=(0.49468318424933044, 70.0, 0.5341489444939074), mode=ADVENTURE, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x000001f6b4537998@67ea9e9}, RemotePlayer{name=tooskd, id=2195597, pos=(0.49468318424933044, 70.0, 0.5341489444939074), mode=ADVENTURE, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x000001f6b4537998@67ea9e9}, RemotePlayer{name=f3st88, id=2186173, pos=(0.49468318424933044, 70.0, 0.5341489444939074), mode=ADVENTURE, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x000001f6b4537998@67ea9e9}, RemotePlayer{name=pytirybley, id=2173974, pos=(1.2723787464186116, 70.0, 4.367926304147875), mode=ADVENTURE, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x000001f6b4537998@67ea9e9}, RemotePlayer{name=§8-503, id=-503, pos=(0.5, 70.8, 20.5), mode=null, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x000001f6b4537998@67ea9e9}, RemotePlayer{name=Plaksa, id=2196135, pos=(0.49468318424933044, 70.0, 0.5341489444939074), mode=ADVENTURE, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x000001f6b4537998@67ea9e9}, RemotePlayer{name=zakhar2112, id=2196313, pos=(0.49468318424933044, 70.0, 0.5341489444939074), mode=ADVENTURE, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x000001f6b4537998@67ea9e9}, RemotePlayer{name=PizdaFreeKit, id=2196402, pos=(0.49468318424933044, 70.0, 0.5341489444939074), mode=ADVENTURE, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x000001f6b4537998@67ea9e9}, RemotePlayer{name=cr_C2TbO3, id=2196403, pos=(0.49468318424933044, 70.0, 0.5341489444939074), mode=ADVENTURE, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x000001f6b4537998@67ea9e9}
+	Chunk stats: 441, 289
+	Level dimension: minecraft:overworld
+	Level spawn location: World: (0,93,0), Section: (at 0,13,0 in 0,5,0; chunk contains blocks 0,0,0 to 15,255,15), Region: (0,0; contains chunks 0,0 to 31,31, blocks 0,0,0 to 511,255,511)
+	Level time: 158548 game time, 48000 day time
+	Server brand: §6Spooky§cTime.net <- §6Spooky§cCore 1.16.5
+	Server type: Non-integrated multiplayer server
+	Tracked entity count: 160
+
+-- Last reload --
+Details:
+	Reload number: 1
+	Reload reason: initial
+	Finished: Yes
+	Packs: vanilla
+
+-- System Details --
+Details:
+	Minecraft Version: 1.21.11
+	Minecraft Version ID: 1.21.11
+	Operating System: Windows 11 (amd64) version 10.0
+	Java Version: 21.0.11, Amazon.com Inc.
+	Java VM Version: OpenJDK 64-Bit Server VM (mixed mode, sharing), Amazon.com Inc.
+	Memory: 52367112 bytes (49 MiB) / 580911104 bytes (554 MiB) up to 4271898624 bytes (4074 MiB)
+	CPUs: 4
+	Processor Vendor: GenuineIntel
+	Processor Name: Intel(R) Core(TM) i5-4460  CPU @ 3.20GHz
+	Identifier: Intel64 Family 6 Model 60 Stepping 3
+	Microarchitecture: Haswell (Client)
+	Frequency (GHz): 3.19
+	Number of physical packages: 1
+	Number of physical CPUs: 4
+	Number of logical CPUs: 4
+	Graphics card #0 name: NVIDIA GeForce GTX 1080
+	Graphics card #0 vendor: NVIDIA
+	Graphics card #0 VRAM (MiB): 8192.00
+	Graphics card #0 deviceId: VideoController1
+	Graphics card #0 versionInfo: 32.0.15.8228
+	Memory slot #0 capacity (MiB): 8192.00
+	Memory slot #0 clockSpeed (GHz): 1.60
+	Memory slot #0 type: DDR3
+	Memory slot #1 capacity (MiB): 8192.00
+	Memory slot #1 clockSpeed (GHz): 1.60
+	Memory slot #1 type: DDR3
+	Virtual memory max (MiB): 30113.52
+	Virtual memory used (MiB): 19687.69
+	Swap memory total (MiB): 13824.00
+	Swap memory used (MiB): 0.00
+	Space in storage for jna.tmpdir (MiB): <path not set>
+	Space in storage for org.lwjgl.system.SharedLibraryExtractPath (MiB): <path not set>
+	Space in storage for io.netty.native.workdir (MiB): <path not set>
+	Space in storage for java.io.tmpdir (MiB): available: 4608.77, total: 476108.00
+	Space in storage for workdir (MiB): available: 4608.77, total: 476108.00
+	JVM Flags: 0 total; 
+	Debug Flags: 0 total; 
+	Launched Version: mcp
+	Backend library: LWJGL version 3.3.3+5
+	Backend API: NVIDIA GeForce GTX 1080/PCIe/SSE2 GL version 3.3.0 NVIDIA 582.28, NVIDIA Corporation
+	Window size: 1920x1009
+	GFLW Platform: win32
+	Render Extensions: GL_ARB_buffer_storage, GL_KHR_debug, GL_ARB_vertex_attrib_binding, GL_ARB_direct_state_access, GL_EXT_texture_filter_anisotropic
+	GL debug messages: 
+	Is Modded: Definitely; Client brand changed to 'optifine'
+	Universe: 400921fb54442d18
+	Type: Client (map_client.txt)
+	Transparency: regular
+	Render Distance: 7/8 chunks
+	Resource Packs: vanilla
+	Current Language: ru_ru
+	Locale: ru_RU
+	System encoding: Cp1251
+	File encoding: UTF-8
+	CPU: 4x Intel(R) Core(TM) i5-4460 CPU @ 3.20GHz
+	OptiFine Version: OptiFine_1.21.11_HD_U_J9
+	OptiFine Build: null
+	Render Distance Chunks: 8
+	Mipmaps: 2
+	Anisotropic Filtering: 1
+	Antialiasing: 0
+	Multitexture: false
+	Shaders: null
+	OpenGlVersion: 3.3.0 NVIDIA 582.28
+	OpenGlRenderer: NVIDIA GeForce GTX 1080/PCIe/SSE2
+	OpenGlVendor: NVIDIA Corporation
+	CpuCount: 4

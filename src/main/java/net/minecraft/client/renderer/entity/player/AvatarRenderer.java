@@ -5,6 +5,7 @@ import com.mojang.math.Axis;
 import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
 import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import de.maxhenkel.voicechat.events.RenderEvents;
+import dev.tr7zw.waveycapes.renderlayers.CustomCapeRenderLayer;
 import net.minecraft.client.entity.ClientAvatarEntity;
 import net.minecraft.client.entity.ClientAvatarState;
 import net.minecraft.client.model.HumanoidModel;
@@ -72,12 +73,13 @@ public class AvatarRenderer<AvatarlikeEntity extends Avatar & ClientAvatarEntity
         this.addLayer(new PlayerItemInHandLayer<>(this));
         this.addLayer(new ArrowLayer<>(this, p_426442_));
         this.addLayer(new Deadmau5EarsLayer(this, p_426442_.getModelSet()));
-        this.addLayer(new CapeLayer(this, p_426442_.getModelSet(), p_426442_.getEquipmentAssets()));
+       this.addLayer(new CapeLayer(this, p_426442_.getModelSet(), p_426442_.getEquipmentAssets()));
         this.addLayer(new CustomHeadLayer<>(this, p_426442_.getModelSet(), p_426442_.getPlayerSkinRenderCache()));
         this.addLayer(new WingsLayer<>(this, p_426442_.getModelSet(), p_426442_.getEquipmentRenderer()));
         this.addLayer(new ParrotOnShoulderLayer(this, p_426442_.getModelSet()));
         this.addLayer(new SpinAttackEffectLayer(this, p_426442_.getModelSet()));
         this.addLayer(new BeeStingerLayer<>(this, p_426442_));
+        //addLayer(new CustomCapeRenderLayer(this));
         //this.addLayer(new ChinaHat.ChinaHatLayer<>(this));
     }
 

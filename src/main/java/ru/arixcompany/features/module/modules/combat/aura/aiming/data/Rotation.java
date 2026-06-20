@@ -22,6 +22,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
+import org.joml.Vector3d;
 import ru.arixcompany.Arix;
 import ru.arixcompany.features.module.modules.combat.HitAura;
 import ru.arixcompany.features.module.modules.combat.aura.aiming.RotationManager;
@@ -76,6 +77,30 @@ public record Rotation(float yaw, float pitch, boolean isNormalized) implements 
                 Mth.wrapDegrees((float) (-Math.toDegrees(Math.atan2(diffY, Math.hypot(diffX, diffZ)))))
         );
     }
+
+
+    public static Rotation calculateToPosition(Vector3d from, Vector3d to) {
+        Vector3d direction = to.sub(from, new Vector3d());
+
+        double horizontalDistance = Math.sqrt(direction.x * direction.x + direction.z * direction.z);
+        float yaw = (float) Math.toDegrees(Math.atan2(-direction.x, direction.z));
+        float pitch = (float) Math.toDegrees(Math.atan2(-direction.y, horizontalDistance));
+
+        return new Rotation(yaw, pitch);
+    }
+
+    public static Rotation calculateToEntity(Entity entity) {
+        if (mc.player == null) return Rotation.ZERO;
+
+        Vec3 playerPosVec3 = mc.player.getEyePosition(1.0f);
+        Vector3d playerPos = new Vector3d(playerPosVec3.x, playerPosVec3.y, playerPosVec3.z);
+
+        Vec3 entityPosVec3 = entity.getBoundingBox().getCenter();
+        Vector3d entityPos = new Vector3d(entityPosVec3.x, entityPosVec3.y, entityPosVec3.z);
+
+        return calculateToPosition(playerPos, entityPos);
+    }
+
 
     /**
      * Fixes GCD and Modulo 360° at yaw
@@ -158,9 +183,6 @@ public Rotation towardsLinear(Rotation other, float horizontalFactor, float vert
      * 8.0F * 0.15F = 1.2F makes the speed exactly proportional to Minecraft's GCD.
      */
     public Rotation interpolateToSmooth(Rotation other, float partialTick) {
-        double f = mc.options.sensitivity().get() * 0.6D + 0.2F;
-        float factor = (float) (f * f * f * 8.0F * 0.15F) * partialTick;
-
         double d2 = Minecraft.getInstance().options.sensitivity().get() * 0.6F + 0.2F;
         float interpolationFactor = (float) (Math.pow(d2, 3) * 8.0F * 0.15F * partialTick);
 

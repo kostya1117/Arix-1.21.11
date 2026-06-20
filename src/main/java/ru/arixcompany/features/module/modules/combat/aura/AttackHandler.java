@@ -36,7 +36,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 @UtilityClass
 public final class AttackHandler implements IMinecraft {
-    private float currentCooldownThreshold = generateHumanCooldown();
+    private float currentCooldownThreshold = 0.9f;
     Randomizer randomizer = new Randomizer();
     HitAura hitAura = Arix.getInstance().getModuleRepo().getModule(HitAura.class);
     public void performAttack(LivingEntity target, boolean rayCast, float ranges) {
@@ -60,12 +60,12 @@ public final class AttackHandler implements IMinecraft {
 
     public boolean shouldAttack() {
         if (HitAura.target == null) return false;
-        if (!(mc.player.getAttackStrengthScale(0.5f) >= currentCooldownThreshold)) return false;
+        if (!(mc.player.getAttackStrengthScale(0.5f) > currentCooldownThreshold)) return false;
         return isBestMomentToHit();
     }
     public boolean shouldAttackS() {
         if (HitAura.target == null) return false;
-        return mc.player.getAttackStrengthScale(0.5f) >= currentCooldownThreshold; // Тоже меняем здесь
+        return mc.player.getAttackStrengthScale(0.5f) > currentCooldownThreshold; // Тоже меняем здесь
     }
     public boolean hasMovementRestrictions() {
         if (mc.player == null) return false;
@@ -250,7 +250,7 @@ public final class AttackHandler implements IMinecraft {
             mc.player.swing(hand);
        // }
 
-          currentCooldownThreshold = generateHumanCooldown();
+          //currentCooldownThreshold = generateHumanCooldown();
 
         if (hitAura.misc.isSelected("Ломать щит")) {
             if (target instanceof Player entity) {
@@ -294,7 +294,7 @@ public final class AttackHandler implements IMinecraft {
 
     public boolean shouldAttack(LivingEntity target, boolean rayCast, boolean distanceCheck, float ranges) {
         if (distanceCheck && target != null && !AuraUtil.validDistance(target, ranges)) return false;
-        if (!(mc.player.getAttackStrengthScale(0.5f) >= currentCooldownThreshold)) return false;
+        if (!(mc.player.getAttackStrengthScale(0.5f) > currentCooldownThreshold)) return false;
 
         boolean valid = isBestMomentToHit();
         if (valid && rayCast) {
