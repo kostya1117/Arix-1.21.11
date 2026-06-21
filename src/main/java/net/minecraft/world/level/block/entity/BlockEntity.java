@@ -4,6 +4,9 @@ import com.mojang.logging.LogUtils;
 import com.mojang.serialization.Codec;
 import java.util.HashSet;
 import java.util.Set;
+
+import dev.tr7zw.entityculling.versionless.EntityCullingVersionlessBase;
+import dev.tr7zw.entityculling.versionless.access.Cullable;
 import net.minecraft.CrashReportCategory;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -38,7 +41,7 @@ import net.minecraftforge.common.extensions.IForgeBlockEntity;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 
-public abstract class BlockEntity extends CapabilityProvider.BlockEntities implements IForgeBlockEntity, DebugValueSource {
+public abstract class BlockEntity extends CapabilityProvider.BlockEntities implements IForgeBlockEntity, DebugValueSource, Cullable {
     private static final Codec<BlockEntityType<?>> TYPE_CODEC = BuiltInRegistries.BLOCK_ENTITY_TYPE.byNameCodec();
     private static final Logger LOGGER = LogUtils.getLogger();
     private final BlockEntityType<?> type;
@@ -351,5 +354,45 @@ public abstract class BlockEntity extends CapabilityProvider.BlockEntities imple
         public String get() {
             return this.blockEntity.getNameForReporting() + "@" + this.blockEntity.getBlockPos();
         }
+    }
+    private long lasttime = 0;
+    private boolean culled = false;
+    private boolean outOfCamera = false;
+
+    @Override
+    public void setTimeout() {
+        lasttime = System.currentTimeMillis() + 1000;
+    }
+
+    @Override
+    public boolean isForcedVisible() {
+        return lasttime > System.currentTimeMillis();
+    }
+
+    @Override
+    public void setCulled(boolean value) {
+        this.culled = value;
+        if (!value) {
+            setTimeout();
+        }
+    }
+
+    @Override
+    public boolean isCulled() {
+        if (!EntityCullingVersionlessBase.enabled)
+            return false;
+        return culled;
+    }
+
+    @Override
+    public void setOutOfCamera(boolean value) {
+        this.outOfCamera = value;
+    }
+
+    @Override
+    public boolean isOutOfCamera() {
+        if (!EntityCullingVersionlessBase.enabled)
+            return false;
+        return outOfCamera;
     }
 }

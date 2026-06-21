@@ -1,0 +1,172 @@
+---- Minecraft Network Protocol Error Report ----
+// I heard pigeons are more reliable
+
+Time: 2026-06-21 18:10:36
+Description: Packet handling error
+
+io.netty.handler.codec.DecoderException: Received unknown packet id 24
+	at net.minecraft.network.codec.IdDispatchCodec.decode(IdDispatchCodec.java:40)
+	at net.minecraft.network.codec.IdDispatchCodec.decode(IdDispatchCodec.java:13)
+	at net.minecraft.network.PacketDecoder.decode(PacketDecoder.java:28)
+	at io.netty.handler.codec.ByteToMessageDecoder.decodeRemovalReentryProtection(ByteToMessageDecoder.java:530)
+	at io.netty.handler.codec.ByteToMessageDecoder.callDecode(ByteToMessageDecoder.java:469)
+	at io.netty.handler.codec.ByteToMessageDecoder.channelRead(ByteToMessageDecoder.java:290)
+	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:356)
+	at io.netty.handler.flow.FlowControlHandler.dequeue(FlowControlHandler.java:201)
+	at io.netty.handler.flow.FlowControlHandler.read(FlowControlHandler.java:138)
+	at com.viaversion.viafabricplus.protocoltranslator.netty.NoReadFlowControlHandler.read(NoReadFlowControlHandler.java:32)
+	at io.netty.channel.AbstractChannelHandlerContext.read(AbstractChannelHandlerContext.java:725)
+	at io.netty.channel.DefaultChannelPipeline.read(DefaultChannelPipeline.java:1025)
+	at io.netty.channel.DefaultChannelPipeline.read(DefaultChannelPipeline.java:45)
+	at io.netty.channel.Channel.read(Channel.java:245)
+	at io.netty.channel.DefaultChannelConfig.setAutoRead(DefaultChannelConfig.java:341)
+	at io.netty.channel.socket.DefaultSocketChannelConfig.setAutoRead(DefaultSocketChannelConfig.java:314)
+	at io.netty.channel.socket.DefaultSocketChannelConfig.setAutoRead(DefaultSocketChannelConfig.java:37)
+	at net.minecraft.network.UnconfiguredPipelineHandler.lambda$setupInboundHandler$0(UnconfiguredPipelineHandler.java:26)
+	at net.minecraft.network.UnconfiguredPipelineHandler$Inbound.write(UnconfiguredPipelineHandler.java:54)
+	at io.netty.channel.AbstractChannelHandlerContext.write(AbstractChannelHandlerContext.java:825)
+	at io.netty.channel.AbstractChannelHandlerContext.write(AbstractChannelHandlerContext.java:752)
+	at io.netty.handler.codec.MessageToByteEncoder.write(MessageToByteEncoder.java:120)
+	at io.netty.channel.AbstractChannelHandlerContext.write(AbstractChannelHandlerContext.java:827)
+	at io.netty.channel.AbstractChannelHandlerContext.write(AbstractChannelHandlerContext.java:752)
+	at io.netty.handler.codec.MessageToByteEncoder.write(MessageToByteEncoder.java:120)
+	at io.netty.channel.AbstractChannelHandlerContext.write(AbstractChannelHandlerContext.java:827)
+	at io.netty.channel.AbstractChannelHandlerContext.write(AbstractChannelHandlerContext.java:752)
+	at io.netty.handler.codec.MessageToMessageEncoder.write(MessageToMessageEncoder.java:102)
+	at io.netty.channel.AbstractChannelHandlerContext.write(AbstractChannelHandlerContext.java:827)
+	at io.netty.channel.AbstractChannelHandlerContext.write(AbstractChannelHandlerContext.java:752)
+	at io.netty.handler.codec.MessageToByteEncoder.write(MessageToByteEncoder.java:120)
+	at io.netty.channel.AbstractChannelHandlerContext.write(AbstractChannelHandlerContext.java:827)
+	at io.netty.channel.AbstractChannelHandlerContext.write(AbstractChannelHandlerContext.java:752)
+	at io.netty.channel.ChannelOutboundHandlerAdapter.write(ChannelOutboundHandlerAdapter.java:113)
+	at net.minecraft.network.Connection$2.write(Connection.java:687)
+	at io.netty.channel.AbstractChannelHandlerContext.write(AbstractChannelHandlerContext.java:827)
+	at io.netty.channel.AbstractChannelHandlerContext$WriteTask.run(AbstractChannelHandlerContext.java:1136)
+	at io.netty.util.concurrent.AbstractEventExecutor.runTask(AbstractEventExecutor.java:148)
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute(AbstractEventExecutor.java:141)
+	at io.netty.util.concurrent.SingleThreadEventExecutor.runAllTasks(SingleThreadEventExecutor.java:535)
+	at io.netty.channel.SingleThreadIoEventLoop.run(SingleThreadIoEventLoop.java:201)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$5.run(SingleThreadEventExecutor.java:1193)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+
+
+A detailed walkthrough of the error, its code path and all known details is as follows:
+---------------------------------------------------------------------------------------
+
+-- Head --
+Thread: Netty NIO IO #4
+Stacktrace:
+	at net.minecraft.network.PacketListener.fillCrashReport(PacketListener.java:33)
+
+-- Connection --
+Details:
+	Protocol: configuration
+	Flow: CLIENTBOUND
+	Is Local: false
+	Server type: OTHER
+	Server brand: BotFilter (git:BungeeCord-Bootstrap:1.21-R0.5-SNAPSHOT:7f8b350:unknown) <- UniverseSpigot
+Stacktrace:
+	at net.minecraft.network.PacketListener.fillCrashReport(PacketListener.java:33)
+	at net.minecraft.network.protocol.PacketUtils.fillCrashReport(PacketUtils.java:47)
+	at net.minecraft.client.multiplayer.ClientCommonPacketListenerImpl.storeDisconnectionReport(ClientCommonPacketListenerImpl.java:148)
+	at net.minecraft.client.multiplayer.ClientCommonPacketListenerImpl.createDisconnectionInfo(ClientCommonPacketListenerImpl.java:136)
+	at net.minecraft.network.Connection.exceptionCaught(Connection.java:220)
+	at io.netty.channel.AbstractChannelHandlerContext.invokeExceptionCaught(AbstractChannelHandlerContext.java:289)
+	at io.netty.channel.AbstractChannelHandlerContext.fireExceptionCaught(AbstractChannelHandlerContext.java:271)
+	at io.netty.channel.ChannelHandlerAdapter.exceptionCaught(ChannelHandlerAdapter.java:92)
+	at com.viaversion.viaversion.platform.ViaEncodeHandler.exceptionCaught(ViaEncodeHandler.java:64)
+	at io.netty.channel.AbstractChannelHandlerContext.invokeExceptionCaught(AbstractChannelHandlerContext.java:289)
+	at io.netty.channel.AbstractChannelHandlerContext.fireExceptionCaught(AbstractChannelHandlerContext.java:271)
+	at io.netty.channel.ChannelInboundHandlerAdapter.exceptionCaught(ChannelInboundHandlerAdapter.java:143)
+	at io.netty.channel.AbstractChannelHandlerContext.invokeExceptionCaught(AbstractChannelHandlerContext.java:289)
+	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:359)
+	at io.netty.handler.flow.FlowControlHandler.dequeue(FlowControlHandler.java:201)
+	at io.netty.handler.flow.FlowControlHandler.read(FlowControlHandler.java:138)
+	at com.viaversion.viafabricplus.protocoltranslator.netty.NoReadFlowControlHandler.read(NoReadFlowControlHandler.java:32)
+	at io.netty.channel.AbstractChannelHandlerContext.read(AbstractChannelHandlerContext.java:725)
+	at io.netty.channel.DefaultChannelPipeline.read(DefaultChannelPipeline.java:1025)
+	at io.netty.channel.DefaultChannelPipeline.read(DefaultChannelPipeline.java:45)
+	at io.netty.channel.Channel.read(Channel.java:245)
+	at io.netty.channel.DefaultChannelConfig.setAutoRead(DefaultChannelConfig.java:341)
+	at io.netty.channel.socket.DefaultSocketChannelConfig.setAutoRead(DefaultSocketChannelConfig.java:314)
+	at io.netty.channel.socket.DefaultSocketChannelConfig.setAutoRead(DefaultSocketChannelConfig.java:37)
+	at net.minecraft.network.UnconfiguredPipelineHandler.lambda$setupInboundHandler$0(UnconfiguredPipelineHandler.java:26)
+	at net.minecraft.network.UnconfiguredPipelineHandler$Inbound.write(UnconfiguredPipelineHandler.java:54)
+	at io.netty.channel.AbstractChannelHandlerContext.write(AbstractChannelHandlerContext.java:825)
+	at io.netty.channel.AbstractChannelHandlerContext.write(AbstractChannelHandlerContext.java:752)
+	at io.netty.handler.codec.MessageToByteEncoder.write(MessageToByteEncoder.java:120)
+	at io.netty.channel.AbstractChannelHandlerContext.write(AbstractChannelHandlerContext.java:827)
+	at io.netty.channel.AbstractChannelHandlerContext.write(AbstractChannelHandlerContext.java:752)
+	at io.netty.handler.codec.MessageToByteEncoder.write(MessageToByteEncoder.java:120)
+	at io.netty.channel.AbstractChannelHandlerContext.write(AbstractChannelHandlerContext.java:827)
+	at io.netty.channel.AbstractChannelHandlerContext.write(AbstractChannelHandlerContext.java:752)
+	at io.netty.handler.codec.MessageToMessageEncoder.write(MessageToMessageEncoder.java:102)
+	at io.netty.channel.AbstractChannelHandlerContext.write(AbstractChannelHandlerContext.java:827)
+	at io.netty.channel.AbstractChannelHandlerContext.write(AbstractChannelHandlerContext.java:752)
+	at io.netty.handler.codec.MessageToByteEncoder.write(MessageToByteEncoder.java:120)
+	at io.netty.channel.AbstractChannelHandlerContext.write(AbstractChannelHandlerContext.java:827)
+	at io.netty.channel.AbstractChannelHandlerContext.write(AbstractChannelHandlerContext.java:752)
+	at io.netty.channel.ChannelOutboundHandlerAdapter.write(ChannelOutboundHandlerAdapter.java:113)
+	at net.minecraft.network.Connection$2.write(Connection.java:687)
+	at io.netty.channel.AbstractChannelHandlerContext.write(AbstractChannelHandlerContext.java:827)
+	at io.netty.channel.AbstractChannelHandlerContext$WriteTask.run(AbstractChannelHandlerContext.java:1136)
+	at io.netty.util.concurrent.AbstractEventExecutor.runTask(AbstractEventExecutor.java:148)
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute(AbstractEventExecutor.java:141)
+	at io.netty.util.concurrent.SingleThreadEventExecutor.runAllTasks(SingleThreadEventExecutor.java:535)
+	at io.netty.channel.SingleThreadIoEventLoop.run(SingleThreadIoEventLoop.java:201)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$5.run(SingleThreadEventExecutor.java:1193)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+
+-- System Details --
+Details:
+	Minecraft Version: 1.21.11
+	Minecraft Version ID: 1.21.11
+	Operating System: Windows 11 (amd64) version 10.0
+	Java Version: 21.0.11, Amazon.com Inc.
+	Java VM Version: OpenJDK 64-Bit Server VM (mixed mode, sharing), Amazon.com Inc.
+	Memory: 824052528 bytes (785 MiB) / 2480930816 bytes (2366 MiB) up to 4271898624 bytes (4074 MiB)
+	CPUs: 4
+	Processor Vendor: GenuineIntel
+	Processor Name: Intel(R) Core(TM) i5-4460  CPU @ 3.20GHz
+	Identifier: Intel64 Family 6 Model 60 Stepping 3
+	Microarchitecture: Haswell (Client)
+	Frequency (GHz): 3.19
+	Number of physical packages: 1
+	Number of physical CPUs: 4
+	Number of logical CPUs: 4
+	Graphics card #0 name: NVIDIA GeForce GTX 1080
+	Graphics card #0 vendor: NVIDIA
+	Graphics card #0 VRAM (MiB): 8192.00
+	Graphics card #0 deviceId: VideoController1
+	Graphics card #0 versionInfo: 32.0.15.8228
+	Memory slot #0 capacity (MiB): 8192.00
+	Memory slot #0 clockSpeed (GHz): 1.60
+	Memory slot #0 type: DDR3
+	Memory slot #1 capacity (MiB): 8192.00
+	Memory slot #1 clockSpeed (GHz): 1.60
+	Memory slot #1 type: DDR3
+	Virtual memory max (MiB): 30113.52
+	Virtual memory used (MiB): 21742.38
+	Swap memory total (MiB): 13824.00
+	Swap memory used (MiB): 0.00
+	Space in storage for jna.tmpdir (MiB): <path not set>
+	Space in storage for org.lwjgl.system.SharedLibraryExtractPath (MiB): <path not set>
+	Space in storage for io.netty.native.workdir (MiB): <path not set>
+	Space in storage for java.io.tmpdir (MiB): available: 1567.56, total: 476108.00
+	Space in storage for workdir (MiB): available: 1567.56, total: 476108.00
+	JVM Flags: 0 total; 
+	Debug Flags: 0 total; 
+	OptiFine Version: OptiFine_1.21.11_HD_U_J9
+	OptiFine Build: null
+	Render Distance Chunks: 16
+	Mipmaps: 4
+	Anisotropic Filtering: 1
+	Antialiasing: 0
+	Multitexture: false
+	Shaders: null
+	OpenGlVersion: 3.3.0 NVIDIA 582.28
+	OpenGlRenderer: NVIDIA GeForce GTX 1080/PCIe/SSE2
+	OpenGlVendor: NVIDIA Corporation
+	CpuCount: 4

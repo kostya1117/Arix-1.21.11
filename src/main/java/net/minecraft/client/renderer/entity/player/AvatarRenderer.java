@@ -264,7 +264,7 @@ public class AvatarRenderer<AvatarlikeEntity extends Avatar & ClientAvatarEntity
         );
     }
 
-    protected boolean shouldShowName(AvatarlikeEntity p_429595_, double p_429961_) {
+    public boolean shouldShowName(AvatarlikeEntity p_429595_, double p_429961_) {
         return super.shouldShowName(p_429595_, p_429961_) && (p_429595_.shouldShowName() || p_429595_.hasCustomName() && p_429595_ == this.entityRenderDispatcher.crosshairPickEntity);
     }
 

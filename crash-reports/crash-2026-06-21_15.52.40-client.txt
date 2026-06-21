@@ -1,0 +1,162 @@
+---- Minecraft Crash Report ----
+// You're mean.
+
+Time: 2026-06-21 15:52:41
+Description: Rendering entity in world
+
+java.lang.NullPointerException: Cannot invoke "net.minecraft.world.entity.Entity.isInvisible()" because "entityLiving" is null
+	at net.optifine.player.PlayerItemsLayer.renderEquippedItems(PlayerItemsLayer.java:30)
+	at net.optifine.player.PlayerItemsLayer.submit(PlayerItemsLayer.java:25)
+	at net.minecraft.client.renderer.entity.LivingEntityRenderer.submit(LivingEntityRenderer.java:153)
+	at net.minecraft.client.renderer.entity.LivingEntityRenderer.submit(LivingEntityRenderer.java:55)
+	at net.minecraft.client.renderer.entity.EntityRenderDispatcher.submit(EntityRenderDispatcher.java:182)
+	at net.minecraft.client.renderer.LevelRenderer.submitEntities(LevelRenderer.java:1207)
+	at net.minecraft.client.renderer.LevelRenderer.lambda$addMainPass$2(LevelRenderer.java:921)
+	at com.mojang.blaze3d.framegraph.FrameGraphBuilder.execute(FrameGraphBuilder.java:71)
+	at net.minecraft.client.renderer.LevelRenderer.renderLevel(LevelRenderer.java:793)
+	at net.minecraft.client.renderer.GameRenderer.renderLevel(GameRenderer.java:1007)
+	at net.minecraft.client.renderer.GameRenderer.render(GameRenderer.java:667)
+	at net.minecraft.client.Minecraft.runTick(Minecraft.java:1312)
+	at net.minecraft.client.Minecraft.run(Minecraft.java:901)
+	at net.minecraft.client.main.Main.main(Main.java:226)
+	at mcp.client.Start.main(Start.java:15)
+
+
+A detailed walkthrough of the error, its code path and all known details is as follows:
+---------------------------------------------------------------------------------------
+
+-- Head --
+Thread: Render thread
+Stacktrace:
+	at net.optifine.player.PlayerItemsLayer.renderEquippedItems(PlayerItemsLayer.java:30)
+	at net.optifine.player.PlayerItemsLayer.submit(PlayerItemsLayer.java:25)
+	at net.minecraft.client.renderer.entity.LivingEntityRenderer.submit(LivingEntityRenderer.java:153)
+
+-- EntityRenderState being rendered --
+Details:
+	EntityRenderState: net.minecraft.client.renderer.entity.state.AvatarRenderState
+	Entity's Exact location: -1994.87, -26.00, -1986.20
+Stacktrace:
+	at net.minecraft.client.renderer.entity.EntityRenderDispatcher.submit(EntityRenderDispatcher.java:182)
+	at net.minecraft.client.renderer.LevelRenderer.submitEntities(LevelRenderer.java:1207)
+	at net.minecraft.client.renderer.LevelRenderer.lambda$addMainPass$2(LevelRenderer.java:921)
+	at com.mojang.blaze3d.framegraph.FrameGraphBuilder.execute(FrameGraphBuilder.java:71)
+	at net.minecraft.client.renderer.LevelRenderer.renderLevel(LevelRenderer.java:793)
+	at net.minecraft.client.renderer.GameRenderer.renderLevel(GameRenderer.java:1007)
+	at net.minecraft.client.renderer.GameRenderer.render(GameRenderer.java:667)
+	at net.minecraft.client.Minecraft.runTick(Minecraft.java:1312)
+	at net.minecraft.client.Minecraft.run(Minecraft.java:901)
+	at net.minecraft.client.main.Main.main(Main.java:226)
+	at mcp.client.Start.main(Start.java:15)
+
+-- Renderer details --
+Details:
+	Assigned renderer: net.minecraft.client.renderer.entity.player.AvatarRenderer@16f8ee2b
+Stacktrace:
+	at net.minecraft.client.renderer.entity.EntityRenderDispatcher.fillRendererDetails(EntityRenderDispatcher.java:227)
+	at net.minecraft.client.renderer.entity.EntityRenderDispatcher.submit(EntityRenderDispatcher.java:221)
+	at net.minecraft.client.renderer.LevelRenderer.submitEntities(LevelRenderer.java:1207)
+	at net.minecraft.client.renderer.LevelRenderer.lambda$addMainPass$2(LevelRenderer.java:921)
+	at com.mojang.blaze3d.framegraph.FrameGraphBuilder.execute(FrameGraphBuilder.java:71)
+	at net.minecraft.client.renderer.LevelRenderer.renderLevel(LevelRenderer.java:793)
+	at net.minecraft.client.renderer.GameRenderer.renderLevel(GameRenderer.java:1007)
+	at net.minecraft.client.renderer.GameRenderer.render(GameRenderer.java:667)
+	at net.minecraft.client.Minecraft.runTick(Minecraft.java:1312)
+	at net.minecraft.client.Minecraft.run(Minecraft.java:901)
+	at net.minecraft.client.main.Main.main(Main.java:226)
+	at mcp.client.Start.main(Start.java:15)
+
+-- Uptime --
+Details:
+	JVM uptime: 866.479s
+	Wall uptime: 853.380s
+	High-res time: 851.070s
+	Client ticks: 16417 ticks / 820.850s
+
+-- Affected level --
+Details:
+	All players: 7 total; LocalPlayer{name=Kyrokerexxonx, id=2050574, pos=(-1995.3501251388093, -26.0, -1982.699999988079), mode=SURVIVAL, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x000001e144568000@4515e118}, RemotePlayer{name=JAWISINI, id=1892134, pos=(-2012.622802734375, -5.0, -2011.966552734375), mode=SURVIVAL, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x000001e144568000@4515e118}, RemotePlayer{name=1wanttowatch, id=2014467, pos=(-1994.9190582689196, -25.99754050925926, -1986.2871743608325), mode=SURVIVAL, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x000001e144568000@4515e118}, RemotePlayer{name=Tr0chka, id=2050646, pos=(-1995.2285001150017, -25.091910271730537, -1985.7961515776485), mode=SURVIVAL, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x000001e144568000@4515e118}, RemotePlayer{name=ItrealNoME, id=1727751, pos=(-2010.79052734375, -16.5, -1978.2676595052083), mode=SURVIVAL, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x000001e144568000@4515e118}, RemotePlayer{name=Nawichypizda, id=2051163, pos=(-1997.8888964668786, -25.495804398148145, -1984.6538424931475), mode=SURVIVAL, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x000001e144568000@4515e118}, RemotePlayer{name=ONALDURIVIY, id=1935458, pos=(-1999.0862178096065, -8.0, -1997.523310908565), mode=SURVIVAL, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x000001e144568000@4515e118}
+	Chunk stats: 441, 265
+	Level dimension: minecraft:overworld
+	Level spawn location: World: (0,54,0), Section: (at 0,6,0 in 0,3,0; chunk contains blocks 0,-64,0 to 15,319,15), Region: (0,0; contains chunks 0,0 to 31,31, blocks 0,-64,0 to 511,319,511)
+	Level time: 39514192 game time, 39514192 day time
+	Server brand: BotFilter (git:BungeeCord-Bootstrap:1.21-R0.5-SNAPSHOT:7f8b350:unknown) <- UniverseSpigot
+	Server type: Non-integrated multiplayer server
+	Tracked entity count: 62
+
+-- Last reload --
+Details:
+	Reload number: 2
+	Reload reason: manual
+	Finished: Yes
+	Packs: vanilla, server/00000000/f81d4fae-7dec-11d0-a765-00a0c91e6bf6
+
+-- System Details --
+Details:
+	Minecraft Version: 1.21.11
+	Minecraft Version ID: 1.21.11
+	Operating System: Windows 11 (amd64) version 10.0
+	Java Version: 21.0.11, Amazon.com Inc.
+	Java VM Version: OpenJDK 64-Bit Server VM (mixed mode, sharing), Amazon.com Inc.
+	Memory: 323172232 bytes (308 MiB) / 1109393408 bytes (1058 MiB) up to 4271898624 bytes (4074 MiB)
+	CPUs: 4
+	Processor Vendor: GenuineIntel
+	Processor Name: Intel(R) Core(TM) i5-4460  CPU @ 3.20GHz
+	Identifier: Intel64 Family 6 Model 60 Stepping 3
+	Microarchitecture: Haswell (Client)
+	Frequency (GHz): 3.19
+	Number of physical packages: 1
+	Number of physical CPUs: 4
+	Number of logical CPUs: 4
+	Graphics card #0 name: NVIDIA GeForce GTX 1080
+	Graphics card #0 vendor: NVIDIA
+	Graphics card #0 VRAM (MiB): 8192.00
+	Graphics card #0 deviceId: VideoController1
+	Graphics card #0 versionInfo: 32.0.15.8228
+	Memory slot #0 capacity (MiB): 8192.00
+	Memory slot #0 clockSpeed (GHz): 1.60
+	Memory slot #0 type: DDR3
+	Memory slot #1 capacity (MiB): 8192.00
+	Memory slot #1 clockSpeed (GHz): 1.60
+	Memory slot #1 type: DDR3
+	Virtual memory max (MiB): 30113.52
+	Virtual memory used (MiB): 18619.28
+	Swap memory total (MiB): 13824.00
+	Swap memory used (MiB): 0.00
+	Space in storage for jna.tmpdir (MiB): <path not set>
+	Space in storage for org.lwjgl.system.SharedLibraryExtractPath (MiB): <path not set>
+	Space in storage for io.netty.native.workdir (MiB): <path not set>
+	Space in storage for java.io.tmpdir (MiB): available: 1625.23, total: 476108.00
+	Space in storage for workdir (MiB): available: 1625.23, total: 476108.00
+	JVM Flags: 0 total; 
+	Debug Flags: 0 total; 
+	Launched Version: mcp
+	Backend library: LWJGL version 3.3.3+5
+	Backend API: NVIDIA GeForce GTX 1080/PCIe/SSE2 GL version 3.3.0 NVIDIA 582.28, NVIDIA Corporation
+	Window size: 1920x1009
+	GFLW Platform: win32
+	Render Extensions: GL_ARB_buffer_storage, GL_KHR_debug, GL_ARB_vertex_attrib_binding, GL_ARB_direct_state_access, GL_EXT_texture_filter_anisotropic
+	GL debug messages: 
+	Is Modded: Definitely; Client brand changed to 'optifine'
+	Universe: 400921fb54442d18
+	Type: Client (map_client.txt)
+	Transparency: regular
+	Render Distance: 7/16 chunks
+	Resource Packs: vanilla, server/00000000/f81d4fae-7dec-11d0-a765-00a0c91e6bf6
+	Current Language: ru_ru
+	Locale: ru_RU
+	System encoding: Cp1251
+	File encoding: UTF-8
+	CPU: 4x Intel(R) Core(TM) i5-4460 CPU @ 3.20GHz
+	OptiFine Version: OptiFine_1.21.11_HD_U_J9
+	OptiFine Build: null
+	Render Distance Chunks: 16
+	Mipmaps: 4
+	Anisotropic Filtering: 1
+	Antialiasing: 0
+	Multitexture: false
+	Shaders: null
+	OpenGlVersion: 3.3.0 NVIDIA 582.28
+	OpenGlRenderer: NVIDIA GeForce GTX 1080/PCIe/SSE2
+	OpenGlVendor: NVIDIA Corporation
+	CpuCount: 4

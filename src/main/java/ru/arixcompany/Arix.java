@@ -2,6 +2,7 @@ package ru.arixcompany;
 
 import astryxion.chunkanimator.ChunkAnimator;
 import de.maxhenkel.voicechat.integration.ViaVersionCompatibility;
+import dev.tr7zw.entityculling.EntityCullingMod;
 import dev.tr7zw.waveycapes.WaveyCapesBase;
 import dev.tr7zw.waveycapes.WaveyCapesMod;
 import lombok.Getter;
@@ -32,6 +33,9 @@ import ru.arixcompany.utils.IMinecraft;
 import ru.arixcompany.utils.render.particle.ParticleSystem;
 import ru.arixcompany.utils.render.shader.ShadersRepo;
 import ru.arixcompany.utils.render.font.FontManager;
+import squeek.appleskin.client.HUDOverlayHandler;
+import squeek.appleskin.client.TooltipOverlayHandler;
+import team.creative.itemphysiclite.ItemPhysicLite;
 
 import java.io.File;
 
@@ -77,6 +81,10 @@ public class Arix implements IMinecraft {
     WaveyCapesBase modBase;
     @NonFinal
     ChunkAnimator chunkAnimator;
+    @NonFinal
+    ItemPhysicLite itemPhysicLite;
+    @NonFinal
+    EntityCullingMod entityCullingMod;
 
     public Arix() {
         instance = this;
@@ -111,12 +119,18 @@ public class Arix implements IMinecraft {
         EventRepo.register(this);
         initialized = true;
 
-        appleskin.client.HUDOverlayHandler.init();
-        appleskin.client.TooltipOverlayHandler.init();
+        HUDOverlayHandler.init();
+        TooltipOverlayHandler.init();
         modBase = new WaveyCapesMod();
         modBase.init();
         chunkAnimator = new ChunkAnimator();
         chunkAnimator.init();
+        itemPhysicLite = new ItemPhysicLite();
+        itemPhysicLite.init();
+        entityCullingMod = new EntityCullingMod();
+        entityCullingMod.initModloader();
+        entityCullingMod.onInitialize();
+
         Runtime.getRuntime().addShutdownHook(new Thread(this::onExit));
     }
 

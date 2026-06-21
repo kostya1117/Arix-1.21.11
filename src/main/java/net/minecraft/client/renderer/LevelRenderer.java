@@ -27,6 +27,10 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.SheetedDecalTextureGenerator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.blaze3d.vertex.VertexFormat;
+import dev.tr7zw.entityculling.EntityCullingModBase;
+import dev.tr7zw.entityculling.NMSCullingHelper;
+import dev.tr7zw.entityculling.versionless.access.Cullable;
+import dev.tr7zw.transition.mc.GeneralUtil;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
@@ -77,6 +81,7 @@ import net.minecraft.client.renderer.debug.DebugRenderer;
 import net.minecraft.client.renderer.debug.GameTestBlockHighlightRenderer;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.ItemFrameRenderer;
+import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.client.renderer.feature.FeatureRenderDispatcher;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
@@ -112,6 +117,7 @@ import net.minecraft.world.attribute.EnvironmentAttributes;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Display;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.BlockGetter;
@@ -1146,6 +1152,7 @@ private Frustum prepareCullFrustum(Matrix4f p_254341_, Matrix4f p_332544_, Vec3 
     }
 
     public void extractVisibleEntities(Camera p_427759_, Frustum p_430259_, DeltaTracker p_428460_, LevelRenderState p_424777_) {
+        EntityCullingModBase.instance.frustum = p_430259_;
         Vec3 vec3 = p_427759_.position();
         double d0 = vec3.x();
         double d1 = vec3.y();
@@ -1410,9 +1417,65 @@ private Frustum prepareCullFrustum(Matrix4f p_254341_, Matrix4f p_332544_, Vec3 
         }
     }
 
-    public EntityRenderState extractEntity(Entity p_427314_, float p_423106_) {
-        return this.entityRenderDispatcher.extractEntity(p_427314_, p_423106_);
+    public EntityRenderState extractEntity(Entity entity, float partialTick) {
+        if (!EntityCullingModBase.instance.config.skipEntityCulling) {
+            Cullable cullable = (Cullable) entity;
+
+            if (!cullable.isForcedVisible() && cullable.isCulled() && !NMSCullingHelper.ignoresCulling(entity)) {
+                EntityCullingModBase.instance.skippedEntities++;
+
+                EntityRenderState state = new EntityRenderState();
+                state.entityType = EntityType.INTERACTION;
+
+                if (EntityCullingModBase.instance.config.renderNametagsThroughWalls && entity.shouldShowName()) {
+                    if (entity instanceof LivingEntity living) {
+                        var renderer = Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(living);
+                        double d = GeneralUtil.getCameraEntity().distanceToSqr(entity);
+
+                        if (renderer instanceof LivingEntityRenderer accessor
+                                && accessor.shouldShowName(living, d) && !entity.isDiscrete()) { // INFO: The discrete check happens in the rendering itself, so it needs to be checked here as well
+                            net.minecraft.network.chat.Component display;
+                            if (entity instanceof net.minecraft.client.entity.ClientAvatarEntity avatar
+                                    && d < 100
+                                    && (display = avatar.belowNameDisplay()) != null) {
+                                var avatarState = new net.minecraft.client.renderer.entity.state.AvatarRenderState();
+                                avatarState.entityType = EntityType.PLAYER;
+                                avatarState.scoreText = display;
+                                avatarState.isInvisibleToPlayer = true;
+                                state = avatarState;
+                            }
+
+                            state.nameTag = entity.getDisplayName();
+                            state.nameTagAttachment = entity.getAttachments().getNullable(
+                                    net.minecraft.world.entity.EntityAttachment.NAME_TAG,
+                                    0,
+                                    entity.getYRot(partialTick)
+                            );
+                        }
+                    } else {
+                        state.nameTag = entity.getDisplayName();
+                        state.nameTagAttachment = entity.getAttachments().getNullable(
+                                net.minecraft.world.entity.EntityAttachment.NAME_TAG,
+                                0,
+                                entity.getYRot(partialTick)
+                        );
+                    }
+                }
+
+                state.x = net.minecraft.util.Mth.lerp(partialTick, entity.xOld, entity.getX());
+                state.y = net.minecraft.util.Mth.lerp(partialTick, entity.yOld, entity.getY());
+                state.z = net.minecraft.util.Mth.lerp(partialTick, entity.zOld, entity.getZ());
+                state.isInvisible = true;
+                return state;
+            }
+
+            EntityCullingModBase.instance.renderedEntities++;
+            cullable.setOutOfCamera(false);
+        }
+
+        return this.entityRenderDispatcher.extractEntity(entity, partialTick);
     }
+
 
     private void scheduleTranslucentSectionResort(Vec3 p_362155_) {
         if (!this.visibleSections.isEmpty()) {

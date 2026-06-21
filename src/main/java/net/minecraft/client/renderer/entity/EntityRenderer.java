@@ -2,9 +2,12 @@ package net.minecraft.client.renderer.entity;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import java.util.ArrayList;
+
+import dev.tr7zw.entityculling.access.EntityRendererInter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.LightTexture;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
@@ -42,7 +45,7 @@ import net.optifine.util.Either;
 import ru.arixcompany.Arix;
 import ru.arixcompany.features.module.modules.render.Esp;
 
-public abstract class EntityRenderer<T extends Entity, S extends EntityRenderState> implements IEntityRenderer {
+public abstract class EntityRenderer<T extends Entity, S extends EntityRenderState> implements IEntityRenderer, EntityRendererInter<T> {
     private static final float SHADOW_POWER_FALLOFF_Y = 0.5F;
     private static final float MAX_SHADOW_RADIUS = 32.0F;
     public static final float NAMETAG_SCALE = 0.025F;
@@ -434,5 +437,81 @@ public abstract class EntityRenderer<T extends Entity, S extends EntityRenderSta
     @Override
     public void setLocationTextureCustom(Identifier locationTextureCustom) {
         this.locationTextureCustom = locationTextureCustom;
+    }
+    @Override
+    public boolean shadowShouldShowName(T entity) {
+        //? if <= 1.21.1 {
+        /*
+         return shouldShowName(entity);
+        *///? } else {
+
+        return ((EntityRenderer) (Object) this).createRenderState(entity, 0).nameTag != null;
+        //? }
+    }
+
+    @Override
+    public void shadowRenderNameTag(T entity, Component component, PoseStack poseStack,
+                                    MultiBufferSource multiBufferSource, int light, float delta) {
+        //? if >= 1.21.9 {
+
+        //? } else if >= 1.21.2 {
+        /*
+         renderNameTag(((EntityRenderer) (Object) this).createRenderState(entity, delta), component, poseStack,
+                multiBufferSource, light);
+        *///? } else if >= 1.20.5 {
+        /*
+         renderNameTag(entity, component, poseStack, multiBufferSource, light, delta);
+        *///? } else {
+        /*
+         renderNameTag(entity, component, poseStack, multiBufferSource, light);
+        *///? }
+    }
+
+    //? if <= 1.21.1 {
+    /*
+     @Shadow
+     public abstract boolean shouldShowName(T entity);
+    *///? }
+
+    //? if < 1.21.9 {
+    /*
+     //? if >= 1.21.2 {
+
+         @Shadow
+         public abstract void renderNameTag(net.minecraft.client.renderer.entity.state.EntityRenderState entityRenderState,
+                 Component component, PoseStack poseStack, MultiBufferSource multiBufferSource, int i);
+     //? } else if >= 1.20.5 {
+    /^
+         @Shadow
+      public abstract void renderNameTag(T entity, Component component, PoseStack poseStack,
+      MultiBufferSource multiBufferSource, int i, float f);
+     ^///? } else {
+    /^
+         @Shadow
+         public abstract void renderNameTag(T entity, Component component, PoseStack poseStack,
+      MultiBufferSource multiBufferSource, int i);
+     ^///? }
+    *///? }
+
+    @Override
+    public boolean entityCullingIgnoresCulling(T entity) {
+        //? if <= 1.21.1 {
+        /*
+         return entity.noCulling;
+        *///? } else {
+
+        return !affectedByCulling(entity);
+        //? }
+    }
+
+    @Override
+    public AABB entityCullingGetCullingBox(T entity) {
+        //? if <= 1.21.1 {
+        /*
+         return entity.getBoundingBoxForCulling();
+        *///? } else {
+
+        return getBoundingBoxForCulling(entity);
+        //? }
     }
 }

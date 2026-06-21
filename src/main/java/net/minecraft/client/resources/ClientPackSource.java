@@ -35,7 +35,7 @@ public class ClientPackSource extends BuiltInPackSource {
     private static final BuiltInMetadata BUILT_IN_METADATA = BuiltInMetadata.of(PackMetadataSection.CLIENT_TYPE, VERSION_METADATA_SECTION);
     public static final String HIGH_CONTRAST_PACK = "high_contrast";
     private static final Map<String, Component> SPECIAL_PACK_NAMES = Map.of(
-        "programmer_art", Component.translatable("resourcePack.programmer_art.name"), "high_contrast", Component.translatable("resourcePack.high_contrast.name")
+        "programmer_art", Component.translatable("resourcePack.programmer_art.name"), HIGH_CONTRAST_PACK, Component.translatable("resourcePack.high_contrast.name")
     );
     private static final PackLocationInfo VANILLA_PACK_INFO = new PackLocationInfo(
         "vanilla", Component.translatable("resourcePack.vanilla.name"), PackSource.BUILT_IN, Optional.of(CORE_PACK_INFO)
@@ -66,7 +66,7 @@ public class ClientPackSource extends BuiltInPackSource {
     }
 
     private static VanillaPackResources createVanillaPackSource(Path p_250749_) {
-        VanillaPackResourcesBuilder vanillapackresourcesbuilder = new VanillaPackResourcesBuilder().setMetadata(BUILT_IN_METADATA).exposeNamespace("minecraft","viafabricplus","voicechat","arix");
+        VanillaPackResourcesBuilder vanillapackresourcesbuilder = new VanillaPackResourcesBuilder().setMetadata(BUILT_IN_METADATA).exposeNamespace("minecraft","entityculling","viafabricplus","voicechat","arix");
         return vanillapackresourcesbuilder.applyDevelopmentConfig().pushJarResources().pushAssetPath(PackType.CLIENT_RESOURCES, p_250749_).build(VANILLA_PACK_INFO);
     }
 

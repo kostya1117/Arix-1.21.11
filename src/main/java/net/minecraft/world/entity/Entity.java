@@ -14,6 +14,8 @@ import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
 import com.viaversion.viafabricplus.settings.impl.DebugSettings;
 import com.viaversion.viaversion.api.connection.UserConnection;
 import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
+import dev.tr7zw.entityculling.versionless.EntityCullingVersionlessBase;
+import dev.tr7zw.entityculling.versionless.access.Cullable;
 import it.unimi.dsi.fastutil.floats.FloatArraySet;
 import it.unimi.dsi.fastutil.floats.FloatArrays;
 import it.unimi.dsi.fastutil.floats.FloatSet;
@@ -169,10 +171,11 @@ import ru.arixcompany.features.event.EventRepo;
 import ru.arixcompany.features.event.player.EventOnMovePost;
 import ru.arixcompany.features.module.modules.player.NoPush;
 import ru.arixcompany.features.module.modules.render.NoRender;
+import team.creative.itemphysiclite.mixin.EntityAccessor;
 
 import static ru.arixcompany.utils.IMinecraft.mc;
 
-public abstract class Entity implements SyncedDataHolder, DebugValueSource, Nameable, ItemOwner, SlotProvider, EntityAccess, ScoreHolder, DataComponentGetter, IEntity {
+public abstract class Entity implements SyncedDataHolder, DebugValueSource, Nameable, ItemOwner, SlotProvider, EntityAccess, ScoreHolder, DataComponentGetter, IEntity, EntityAccessor, Cullable {
     private static final Logger LOGGER = LogUtils.getLogger();
     public static final String TAG_ID = "id";
     public static final String TAG_UUID = "UUID";
@@ -326,6 +329,7 @@ public abstract class Entity implements SyncedDataHolder, DebugValueSource, Name
         this.setPos(0.0, 0.0, 0.0);
         this.eyeHeight = this.dimensions.eyeHeight();
     }
+
 
     public boolean isColliding(BlockPos p_20040_, BlockState p_20041_) {
         VoxelShape voxelshape = p_20041_.getCollisionShape(this.level(), p_20040_, CollisionContext.of(this)).move(p_20040_);
@@ -4448,5 +4452,49 @@ public abstract class Entity implements SyncedDataHolder, DebugValueSource, Name
         public boolean shouldSave() {
             return this.save;
         }
+    }
+
+   public Vec3 getStuckSpeedMultiplier() {
+      return stuckSpeedMultiplier;
+   }
+    private long lasttime = 0;
+    private boolean culled = false;
+    private boolean outOfCamera = false;
+
+    @Override
+    public void setTimeout() {
+        lasttime = System.currentTimeMillis() + 1000;
+    }
+
+    @Override
+    public boolean isForcedVisible() {
+        return lasttime > System.currentTimeMillis();
+    }
+
+    @Override
+    public void setCulled(boolean value) {
+        this.culled = value;
+        if (!value) {
+            setTimeout();
+        }
+    }
+
+    @Override
+    public boolean isCulled() {
+        if (!EntityCullingVersionlessBase.enabled)
+            return false;
+        return culled;
+    }
+
+    @Override
+    public void setOutOfCamera(boolean value) {
+        this.outOfCamera = value;
+    }
+
+    @Override
+    public boolean isOutOfCamera() {
+        if (!EntityCullingVersionlessBase.enabled)
+            return false;
+        return outOfCamera;
     }
 }

@@ -26,7 +26,7 @@ public class SpookyTimeAngleSmooth extends FactorAngleSmooth implements IMinecra
     }
 
     public SpookyTimeAngleSmooth() {
-        this(85, 110);
+        this(3, 9);
     }
 
     @Override
@@ -35,7 +35,7 @@ public class SpookyTimeAngleSmooth extends FactorAngleSmooth implements IMinecra
         float pitchDiff = Mth.abs(targetRotation.pitch() - currentRotation.pitch());
 
         float baseYawSpeed = randomizer.nextFloat(yawSpeedMin, yawSpeedMax);
-        float basePitchSpeed = computePitchAccel() / 3;
+        float basePitchSpeed = computePitchAccel();
 
         LivingEntity target = HitAura.target;
 //        if (target != null && mc.player != null) {
@@ -100,13 +100,13 @@ public class SpookyTimeAngleSmooth extends FactorAngleSmooth implements IMinecra
 
     @Override
     public Rotation process(RotationTarget rotationTarget, Rotation currentRotation, Rotation targetRotation) {
-        double t = Util.getNanos() / 1.0E9 * Mth.PI2 * 4;
+        double t = Util.getNanos() / 1.0E9 * Mth.PI2 * 2;
         float yawJitter;
         float pitchJitter;
 
         if (mc.player != null && AttackHandler.anyEntityOnRay(new Rotation(mc.player.getYRot(), mc.player.getXRot(), true), HitAura.target, HitAura.attackRange.getValue() + HitAura.preRange.getValue())) { // Убедитесь, что метод rayTrace() реализован в вашем классе
-            yawJitter = 15 * Mth.sin(t);
-            pitchJitter = 8 * Mth.cos(t);
+            yawJitter = 10 * Mth.sin(t);
+            pitchJitter = 5 * Mth.cos(t);
             //pitchJitter = 0;
         } else {
             yawJitter = 0f;
@@ -160,7 +160,7 @@ public class SpookyTimeAngleSmooth extends FactorAngleSmooth implements IMinecra
 
         float range = HitAura.attackRange.getValue() + HitAura.preRange.getValue();
         return AttackHandler.anyEntityOnRay(new Rotation(mc.player.getYRot(),mc.player.getXRot(),true), target, range)
-                ? randomizer.nextFloat(1, 3)
-                : randomizer.nextFloat(4, 7);
+                ? randomizer.nextFloat(0.3f, 1)
+                : randomizer.nextFloat(1, 2);
     }
 }

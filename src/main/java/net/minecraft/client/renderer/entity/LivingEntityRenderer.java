@@ -7,8 +7,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import dev.tr7zw.waveycapes.support.ModSupport;
-import dev.tr7zw.waveycapes.support.SupportManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.player.PlayerModel;
@@ -55,8 +53,8 @@ import ru.arixcompany.features.repos.FriendRepo;
 import ru.arixcompany.utils.IMinecraft;
 
 public abstract class LivingEntityRenderer<T extends LivingEntity, S extends LivingEntityRenderState, M extends EntityModel<? super S>>
-    extends EntityRenderer<T, S>
-    implements RenderLayerParent<S, M>, IMinecraft {
+        extends EntityRenderer<T, S>
+        implements RenderLayerParent<S, M>, IMinecraft { // Убрано LivingEntityRendererAccessor
     private static final float EYE_BED_OFFSET = 0.1F;
     public M model;
     protected final ItemModelResolver itemModelResolver;
@@ -71,14 +69,6 @@ public abstract class LivingEntityRenderer<T extends LivingEntity, S extends Liv
     }
 
     public final boolean addLayer(RenderLayer<S, M> p_115327_) {
-//        if (p_115327_ instanceof CapeLayer) {
-//            return false;
-//        }
-//        for (ModSupport support : SupportManager.getSupportedMods()) {
-//            if (support.blockFeatureRenderer(p_115327_)) {
-//                return false;
-//            }
-//        }
         return this.layers.add(p_115327_);
     }
 
@@ -96,6 +86,7 @@ public abstract class LivingEntityRenderer<T extends LivingEntity, S extends Liv
             return aabb;
         }
     }
+
     public void submit(S p_427824_, PoseStack p_423787_, SubmitNodeCollector p_424901_, CameraRenderState p_422963_) {
         if (!Reflector.ForgeEventFactoryClient_onRenderLivingPre.exists()
                 || !Reflector.ForgeEventFactoryClient_onRenderLivingPre.callBoolean(p_427824_, this, p_423787_, p_424901_, p_422963_)) {
@@ -226,16 +217,11 @@ public abstract class LivingEntityRenderer<T extends LivingEntity, S extends Liv
 
     private static float sleepDirectionToRotation(Direction p_115329_) {
         switch (p_115329_) {
-            case SOUTH:
-                return 90.0F;
-            case WEST:
-                return 0.0F;
-            case NORTH:
-                return 270.0F;
-            case EAST:
-                return 180.0F;
-            default:
-                return 0.0F;
+            case SOUTH: return 90.0F;
+            case WEST: return 0.0F;
+            case NORTH: return 270.0F;
+            case EAST: return 180.0F;
+            default: return 0.0F;
         }
     }
 
@@ -255,10 +241,7 @@ public abstract class LivingEntityRenderer<T extends LivingEntity, S extends Liv
         if (p_370120_.deathTime > 0.0F) {
             float f = (p_370120_.deathTime - 1.0F) / 20.0F * 1.6F;
             f = Mth.sqrt(f);
-            if (f > 1.0F) {
-                f = 1.0F;
-            }
-
+            if (f > 1.0F) f = 1.0F;
             p_115318_.mulPose(Axis.ZP.rotationDegrees(f * this.getFlipDegrees()));
         } else if (p_370120_.isAutoSpinAttack) {
             p_115318_.mulPose(Axis.XP.rotationDegrees(-90.0F - p_370120_.xRot));
@@ -286,9 +269,8 @@ public abstract class LivingEntityRenderer<T extends LivingEntity, S extends Liv
     protected void scale(S p_363445_, PoseStack p_115315_) {
     }
 
-    protected boolean shouldShowName(T p_115333_, double p_365822_) {
+    public boolean shouldShowName(T p_115333_, double p_365822_) {
         if (p_115333_.isDiscrete()) {
-            float f = 32.0F;
             if (p_365822_ >= 1024.0) {
                 return false;
             }
@@ -303,16 +285,13 @@ public abstract class LivingEntityRenderer<T extends LivingEntity, S extends Liv
             if (team != null) {
                 Team.Visibility team$visibility = team.getNameTagVisibility();
                 switch (team$visibility) {
-                    case ALWAYS:
-                        return flag;
-                    case NEVER:
-                        return false;
+                    case ALWAYS: return flag;
+                    case NEVER: return false;
                     case HIDE_FOR_OTHER_TEAMS:
                         return team1 == null ? flag : team.isAlliedTo(team1) && (team.canSeeFriendlyInvisibles() || flag);
                     case HIDE_FOR_OWN_TEAM:
                         return team1 == null ? flag : !team.isAlliedTo(team1) && flag;
-                    default:
-                        return true;
+                    default: return true;
                 }
             }
         }
@@ -400,7 +379,7 @@ public abstract class LivingEntityRenderer<T extends LivingEntity, S extends Liv
         boolean seeInvisiblesEnabled = false;
         try {
             SeeInvisibles seeInvisibles = Arix.getInstance().getModuleRepo().getModule(SeeInvisibles.class);
-            if (seeInvisibles != null && seeInvisibles.isState() && !p_363057_.isArmorStand) {  // ДОБАВЛЕНА ПРОВЕРКА
+            if (seeInvisibles != null && seeInvisibles.isState() && !p_363057_.isArmorStand) {
                 seeInvisiblesEnabled = true;
             }
         } catch (Exception ignored) {}
@@ -413,13 +392,11 @@ public abstract class LivingEntityRenderer<T extends LivingEntity, S extends Liv
     private static float solveBodyRot(LivingEntity p_367822_, float p_362662_, float p_362007_) {
         if (p_367822_.getVehicle() instanceof LivingEntity livingentity) {
             float f2 = Mth.rotLerp(p_362007_, livingentity.yBodyRotO, livingentity.yBodyRot);
-            float f = 85.0F;
             float f1 = Mth.clamp(Mth.wrapDegrees(p_362662_ - f2), -85.0F, 85.0F);
             f2 = p_362662_ - f1;
             if (Math.abs(f1) > 50.0F) {
                 f2 += f1 * 0.2F;
             }
-
             return f2;
         } else {
             return Mth.rotLerp(p_362007_, p_367822_.yBodyRotO, p_367822_.yBodyRot);
@@ -433,19 +410,16 @@ public abstract class LivingEntityRenderer<T extends LivingEntity, S extends Liv
 
     public <T extends RenderLayer> List<T> getLayers(Class<T> cls) {
         List<RenderLayer> list = new ArrayList<>();
-
         for (RenderLayer renderlayer : this.layers) {
             if (cls.isInstance(renderlayer)) {
                 list.add(renderlayer);
             }
         }
-
         return (List<T>)list;
     }
 
     public void removeLayers(Class cls) {
         Iterator iterator = this.layers.iterator();
-
         while (iterator.hasNext()) {
             RenderLayer renderlayer = (RenderLayer)iterator.next();
             if (cls.isInstance(renderlayer)) {
@@ -471,7 +445,6 @@ public abstract class LivingEntityRenderer<T extends LivingEntity, S extends Liv
                 return i;
             }
         }
-
         return -1;
     }
 
@@ -485,21 +458,10 @@ public abstract class LivingEntityRenderer<T extends LivingEntity, S extends Liv
             int overlay,
             int color
     ) {
-        if (!(state instanceof ICustomPlayerModelState customState)) {
-            return false;
-        }
-
-        if (!customState.hasCustomModel()) {
-            return false;
-        }
-
-        if (!(state instanceof AvatarRenderState playerState)) {
-            return false;
-        }
-
-        if (!(this.model instanceof PlayerModel playerModel)) {
-            return false;
-        }
+        if (!(state instanceof ICustomPlayerModelState customState)) return false;
+        if (!customState.hasCustomModel()) return false;
+        if (!(state instanceof AvatarRenderState playerState)) return false;
+        if (!(this.model instanceof PlayerModel playerModel)) return false;
 
         playerModel.setupAnim(playerState);
 

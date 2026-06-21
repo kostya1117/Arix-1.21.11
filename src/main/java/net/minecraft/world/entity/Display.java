@@ -333,15 +333,15 @@ public abstract class Display extends Entity {
         return this.entityData.get(DATA_SHADOW_STRENGTH_ID);
     }
 
-    private void setWidth(float p_270741_) {
+    public void setWidth(float p_270741_) {
         this.entityData.set(DATA_WIDTH_ID, p_270741_);
     }
 
-    private float getWidth() {
+    public float getWidth() {
         return this.entityData.get(DATA_WIDTH_ID);
     }
 
-    private void setHeight(float p_270716_) {
+    public void setHeight(float p_270716_) {
         this.entityData.set(DATA_HEIGHT_ID, p_270716_);
     }
 
@@ -366,7 +366,7 @@ public abstract class Display extends Entity {
         return f2;
     }
 
-    private float getHeight() {
+    public float getHeight() {
         return this.entityData.get(DATA_HEIGHT_ID);
     }
 

@@ -49,6 +49,7 @@ public class RotationManager extends Component implements RequestHandler.Request
     public static Rotation currentRotation = null;
     public static Rotation previousRotation = null;
     public static Rotation playerRotation = null;
+    public static Rotation realRotation = null;
     public static Rotation actualServerRotation = Rotation.ZERO;
     public static Rotation theoreticalServerRotation = Rotation.ZERO;
 
@@ -115,9 +116,12 @@ public class RotationManager extends Component implements RequestHandler.Request
 
     public void update() {
         if (getActiveRotationTarget() != null && getActiveRotationTarget().movementCorrection == MovementCorrection.SILENT) {
-            playerRotation = new Rotation(mc.gameRenderer.getMainCamera().yRot(), mc.gameRenderer.getMainCamera().xRot());
+          //  playerRotation = new Rotation(mc.gameRenderer.getMainCamera().yRot(), mc.gameRenderer.getMainCamera().xRot());
+            playerRotation = new Rotation(mc.player.getYRot(), mc.player.getXRot(), true);
+            realRotation = new Rotation(mc.gameRenderer.getMainCamera().yRot(), mc.gameRenderer.getMainCamera().xRot());
         } else {
             playerRotation = new Rotation(mc.player.getYRot(), mc.player.getXRot(), true);
+            realRotation = new Rotation(mc.gameRenderer.getMainCamera().yRot(), mc.gameRenderer.getMainCamera().xRot());
         }
 
         RotationTarget rotationTarget = getRotationTarget();
@@ -125,24 +129,22 @@ public class RotationManager extends Component implements RequestHandler.Request
         if (activeRotationTarget == null) return;
 
         if (isRotatingAllowed(activeRotationTarget)) {
-            Rotation fromRotation = (currentRotation != null) ? currentRotation : playerRotation;
+            Rotation fromRotation = (currentRotation != null) ? currentRotation : realRotation;
             Rotation rotation = activeRotationTarget.towards(fromRotation, rotationTarget == null).normalize();
-            float diff = rotation.angleTo(playerRotation);
+            float diff = rotation.angleTo(realRotation);
 
             if (rotationTarget == null && (activeRotationTarget.movementCorrection == MovementCorrection.CHANGE_LOOK
                     || activeRotationTarget.processors.isEmpty()
                     || diff <= activeRotationTarget.resetThreshold)) {
 
                 if (currentRotation != null) {
-//                    if (activeRotationTarget.movementCorrection == MovementCorrection.SILENT) {
-//                        float yawDiff = Mth.wrapDegrees(freeYaw - mc.player.yRot);
-//                        mc.player.setYRot(mc.player.yRot + yawDiff);
-//                        mc.player.setXRot(freePitch);
-//                        // playerRotation = new Rotation(mc.gameRenderer.getMainCamera().yRot(),mc.gameRenderer.getMainCamera().xRot(),true);
-//                    }
                     if (activeRotationTarget.movementCorrection == MovementCorrection.SILENT) {
-                        float yawDiff = Mth.wrapDegrees(freeYaw - mc.player.getYRot());
-                        setPlayerRotation(mc.player.getYRot() + yawDiff, freePitch, true);
+                        var timerSpeed = Timer.INSTANCE.getTimerSpeed();
+                        float partialTick = timerSpeed * mc.gameRenderer.getMainCamera().getPartialTickTime();
+
+                        Rotation interpolated = realRotation.interpolateToSmooth(new Rotation(freeYaw, freePitch,true), partialTick);
+
+                        setPlayerRotation(interpolated);
                     }
                 }
                 setCurrentRotation(null);
@@ -150,12 +152,13 @@ public class RotationManager extends Component implements RequestHandler.Request
             } else {
                 setCurrentRotation(rotation);
 
-//                if (activeRotationTarget.movementCorrection == MovementCorrection.SILENT) {
-//                    mc.player.setYRot(currentRotation.yaw());
-//                    mc.player.setXRot(currentRotation.pitch());
-//                }
                 if (activeRotationTarget.movementCorrection == MovementCorrection.SILENT) {
-                    setPlayerRotation(currentRotation.yaw(), currentRotation.pitch(), true);
+                    var timerSpeed = Timer.INSTANCE.getTimerSpeed();
+                    float partialTick = timerSpeed * mc.gameRenderer.getMainCamera().getPartialTickTime();
+
+                    Rotation interpolated = playerRotation.interpolateToSmooth(currentRotation, partialTick);
+
+                    setPlayerRotation(interpolated);
                 }
 
                 previousRotationTarget = activeRotationTarget;
@@ -164,24 +167,6 @@ public class RotationManager extends Component implements RequestHandler.Request
 
         rotationTargetHandler.tick();
     }
-
-
-    public static void setPlayerRotation(float yaw, float pitch, boolean updatePrevious) {
-        if (mc.player == null) return;
-
-        mc.player.setYRot(yaw);
-        mc.player.setXRot(Mth.clamp(pitch, -90.0F, 90.0F));
-
-        if (updatePrevious) {
-            float deltaYaw = yaw - mc.player.getYRot();
-            float deltaPitch = pitch - mc.player.getXRot();
-
-            mc.player.yRotO += deltaYaw;
-            mc.player.xRotO += deltaPitch;
-            mc.player.xRotO = Mth.clamp(mc.player.xRotO, -90.0F, 90.0F);
-        }
-    }
-
 
     public static void setPlayerRotation(Rotation rotation) {
         Rotation normalizedRotation = rotation.normalize();

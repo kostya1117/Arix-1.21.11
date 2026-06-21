@@ -32,6 +32,8 @@ import net.optifine.player.PlayerConfigurations;
 import net.optifine.reflect.Reflector;
 import net.optifine.util.PlayerUtils;
 import org.jspecify.annotations.Nullable;
+import ru.arixcompany.utils.Textures;
+import ru.arixcompany.features.repos.FriendRepo;
 
 public abstract class AbstractClientPlayer extends Player implements ClientAvatarEntity {
     private @Nullable PlayerInfo playerInfo;
@@ -216,15 +218,16 @@ public abstract class AbstractClientPlayer extends Player implements ClientAvata
     }
 
     public @Nullable Identifier getLocationCape() {
-        if (!Config.isShowCapes()) {
+        if (!Config.isShowCapes() || Minecraft.getInstance().player == null || playerInfo == null) {
             return null;
         }
-          //  if (Arix.getInstance().getFunctionRegistry().getCape().isState() && hasCustomCape()) {
 
-        if (this.equals(Minecraft.getInstance().player)) {
-            return Identifier.arix("images/Cape.png");
+        boolean isLocalPlayer = this.equals(Minecraft.getInstance().player);
+        boolean isFriend = FriendRepo.isFriend(playerInfo.getProfile().name());
+
+        if (isLocalPlayer || isFriend) {
+            return Textures.cape;
         }
-           // }
 
         if (this.reloadCapeTimeMs != 0L && System.currentTimeMillis() > this.reloadCapeTimeMs) {
             CapeUtils.reloadCape(this);
@@ -232,7 +235,9 @@ public abstract class AbstractClientPlayer extends Player implements ClientAvata
             PlayerConfigurations.setPlayerConfiguration(this.getNameClear(), null);
         }
 
-        return this.locationOfCape != null ? this.locationOfCape : PlayerUtils.getTexturePath(this.getSkin().cape());
+        return this.locationOfCape != null
+                ? this.locationOfCape
+                : PlayerUtils.getTexturePath(this.getSkin().cape());
     }
 
     public Identifier getLocationElytra() {

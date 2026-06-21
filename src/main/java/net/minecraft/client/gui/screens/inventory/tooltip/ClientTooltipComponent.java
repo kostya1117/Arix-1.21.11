@@ -5,6 +5,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.inventory.tooltip.BundleTooltip;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
+import squeek.appleskin.client.TooltipOverlayHandler;
 
 
 public interface ClientTooltipComponent {
@@ -20,7 +21,7 @@ public interface ClientTooltipComponent {
             );
             case shulkerview.ShulkerViewTooltipComponent shulkerView ->
                 new shulkerview.ShulkerViewClientTooltipComponent(shulkerView);
-            case appleskin.client.TooltipOverlayHandler.FoodOverlay foodOverlay -> foodOverlay;
+            case TooltipOverlayHandler.FoodOverlay foodOverlay -> foodOverlay;
             default -> throw new IllegalArgumentException("Unknown TooltipComponent");
         };
     }

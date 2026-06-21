@@ -5,6 +5,9 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
+
+import dev.tr7zw.entityculling.EntityCullingModBase;
+import dev.tr7zw.entityculling.versionless.access.Cullable;
 import net.minecraft.CrashReport;
 import net.minecraft.CrashReportCategory;
 import net.minecraft.ReportedException;
@@ -76,25 +79,46 @@ public class BlockEntityRenderDispatcher implements ResourceManagerReloadListene
     }
 
     public <E extends BlockEntity, S extends BlockEntityRenderState> @Nullable S tryExtractRenderState(
-        E p_425295_, float p_430180_, ModelFeatureRenderer.@Nullable CrumblingOverlay p_424456_
+            E blockEntity, float partialTick, ModelFeatureRenderer.@Nullable CrumblingOverlay overlay
     ) {
-        BlockEntityRenderer<E, S> blockentityrenderer = this.getRenderer(p_425295_);
-        if (blockentityrenderer == null) {
-            return null;
+        BlockEntityRenderer<E, S> renderer = this.getRenderer(blockEntity);
+
+        if (!EntityCullingModBase.instance.config.skipBlockEntityCulling && renderer != null) {
+            if (renderer.shouldRenderOffScreen()) {
+                EntityCullingModBase.instance.renderedBlockEntities++;
+            } else {
+                var frustum = EntityCullingModBase.instance.frustum;
+                if (EntityCullingModBase.instance.config.blockEntityFrustumCulling
+                        && frustum != null
+                        && !frustum.isVisible(EntityCullingModBase.instance.setupAABB(blockEntity, blockEntity.getBlockPos()))) {
+                    EntityCullingModBase.instance.skippedBlockEntities++;
+                    return null;
+                }
+
+                if (blockEntity instanceof Cullable cullable) {
+                    if (!cullable.isForcedVisible() && cullable.isCulled()) {
+                        EntityCullingModBase.instance.skippedBlockEntities++;
+                        return null;
+                    }
+
+                    EntityCullingModBase.instance.renderedBlockEntities++;
+                    cullable.setOutOfCamera(false);
+                }
+            }
         }
 
-        if (!p_425295_.hasLevel() || !p_425295_.getType().isValid(p_425295_.getBlockState())) {
+        if (renderer == null) {
             return null;
-        }
-
-        if (!blockentityrenderer.shouldRender(p_425295_, this.cameraPos)) {
+        } else if (!blockEntity.hasLevel() || !blockEntity.getType().isValid(blockEntity.getBlockState())) {
             return null;
+        } else if (!renderer.shouldRender(blockEntity, this.cameraPos)) {
+            return null;
+        } else {
+            Vec3 vec3 = this.cameraPos;
+            S state = renderer.createRenderState();
+            renderer.extractRenderState(blockEntity, state, partialTick, vec3, overlay);
+            return state;
         }
-
-        Vec3 vec3 = this.cameraPos;
-        S s = blockentityrenderer.createRenderState();
-        blockentityrenderer.extractRenderState(p_425295_, s, p_430180_, vec3, p_424456_);
-        return s;
     }
 
     public <S extends BlockEntityRenderState> void submit(S p_425460_, PoseStack p_427977_, SubmitNodeCollector p_429959_, CameraRenderState p_430199_) {
@@ -134,12 +158,9 @@ public class BlockEntityRenderDispatcher implements ResourceManagerReloadListene
 
     public Map<BlockEntityType, BlockEntityRenderer> getBlockEntityRenderMap() {
         if (this.renderers instanceof ImmutableMap) {
-            // Добавляем оператор <> (diamond operator), чтобы HashMap унаследовал типы от поля this.renderers
             this.renderers = new HashMap<>(this.renderers);
         }
 
-        // Выполняем двойное приведение (через сырой Map),
-        // чтобы вернуть ожидаемый метод тип без ошибок компиляции
         return (Map<BlockEntityType, BlockEntityRenderer>) (Map) this.renderers;
     }
 }

@@ -14,8 +14,7 @@ public class PlayerConfiguration {
         HumanoidModel modelBiped, AbstractClientPlayer player, PoseStack matrixStackIn, SubmitNodeCollector bufferIn, int packedLightIn, int packedOverlayIn
     ) {
         if (this.initialized) {
-            for (int i = 0; i < this.playerItemModels.length; i++) {
-                PlayerItemModel playeritemmodel = this.playerItemModels[i];
+            for (PlayerItemModel playeritemmodel : this.playerItemModels) {
                 playeritemmodel.render(modelBiped, player, matrixStackIn, bufferIn, packedLightIn, packedOverlayIn);
             }
         }

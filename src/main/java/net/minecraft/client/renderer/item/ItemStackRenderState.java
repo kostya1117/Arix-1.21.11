@@ -21,14 +21,21 @@ import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
 import org.jspecify.annotations.Nullable;
+import team.creative.itemphysiclite.mixin.ItemStackRenderStateAccessor;
+import team.creative.itemphysiclite.mixin.LayerRenderStateAccessor;
 
-public class ItemStackRenderState {
+public class ItemStackRenderState implements ItemStackRenderStateAccessor {
     ItemDisplayContext displayContext = ItemDisplayContext.NONE;
     private int activeLayerCount;
     private boolean animated;
     private boolean oversizedInGui;
-    private  AABB cachedModelBoundingBox;
+    private AABB cachedModelBoundingBox;
     private ItemStackRenderState.LayerRenderState[] layers = new ItemStackRenderState.LayerRenderState[]{new ItemStackRenderState.LayerRenderState()};
+
+    @Override
+    public ItemStackRenderState.LayerRenderState callFirstLayer() {
+        return this.firstLayer();
+    }
 
     public void ensureCapacity(int p_378622_) {
         int i = this.layers.length;
@@ -83,7 +90,7 @@ public class ItemStackRenderState {
         return this.firstLayer().usesBlockLight;
     }
 
-    public  TextureAtlasSprite pickParticleIcon(RandomSource p_376964_) {
+    public TextureAtlasSprite pickParticleIcon(RandomSource p_376964_) {
         return this.activeLayerCount == 0 ? null : this.layers[p_376964_.nextInt(this.activeLayerCount)].particleIcon;
     }
 
@@ -131,24 +138,25 @@ public class ItemStackRenderState {
         return this.oversizedInGui;
     }
 
+
     public enum FoilType {
         NONE,
         STANDARD,
         SPECIAL;
     }
 
-    public class LayerRenderState {
+    public class LayerRenderState implements LayerRenderStateAccessor {
         private static final Vector3fc[] NO_EXTENTS = new Vector3fc[0];
         public static final Supplier<Vector3fc[]> NO_EXTENTS_SUPPLIER = () -> NO_EXTENTS;
         private final List<BakedQuad> quads = new ArrayList<>();
         boolean usesBlockLight;
-         TextureAtlasSprite particleIcon;
+        TextureAtlasSprite particleIcon;
         ItemTransform transform = ItemTransform.NO_TRANSFORM;
-        private  RenderType renderType;
+        private RenderType renderType;
         private ItemStackRenderState.FoilType foilType = ItemStackRenderState.FoilType.NONE;
         private int[] tintLayers = new int[0];
-        private  SpecialModelRenderer<Object> specialRenderer;
-        private  Object argumentForSpecialRendering;
+        private SpecialModelRenderer<Object> specialRenderer;
+        private Object argumentForSpecialRendering;
         Supplier<Vector3fc[]> extents = NO_EXTENTS_SUPPLIER;
         private ItemStack itemStack;
         private BlockModelPart renderModel;
@@ -191,7 +199,7 @@ public class ItemStackRenderState {
             this.transform = p_395712_;
         }
 
-        public <T> void setupSpecialModel(SpecialModelRenderer<T> p_375891_,  T p_375474_) {
+        public <T> void setupSpecialModel(SpecialModelRenderer<T> p_375891_, T p_375474_) {
             this.specialRenderer = eraseSpecialRenderer(p_375891_);
             this.argumentForSpecialRendering = p_375474_;
         }
@@ -218,27 +226,27 @@ public class ItemStackRenderState {
             this.transform.apply(ItemStackRenderState.this.displayContext.leftHand(), p_427684_.last());
             if (this.specialRenderer != null && this.renderType == null) {
                 this.specialRenderer
-                    .submit(
-                        this.argumentForSpecialRendering,
-                        ItemStackRenderState.this.displayContext,
-                        p_427684_,
-                        p_427380_,
-                        p_425208_,
-                        p_423311_,
-                        this.foilType != ItemStackRenderState.FoilType.NONE,
-                        p_425742_
-                    );
+                        .submit(
+                                this.argumentForSpecialRendering,
+                                ItemStackRenderState.this.displayContext,
+                                p_427684_,
+                                p_427380_,
+                                p_425208_,
+                                p_423311_,
+                                this.foilType != ItemStackRenderState.FoilType.NONE,
+                                p_425742_
+                        );
             } else if (this.renderType != null) {
                 p_427380_.submitItem(
-                    p_427684_,
-                    ItemStackRenderState.this.displayContext,
-                    p_425208_,
-                    p_423311_,
-                    p_425742_,
-                    this.tintLayers,
-                    this.quads,
-                    this.renderType,
-                    this.foilType
+                        p_427684_,
+                        ItemStackRenderState.this.displayContext,
+                        p_425208_,
+                        p_423311_,
+                        p_425742_,
+                        this.tintLayers,
+                        this.quads,
+                        this.renderType,
+                        this.foilType
                 );
             }
 
@@ -255,6 +263,16 @@ public class ItemStackRenderState {
 
         public void setItemStack(ItemStack itemStack) {
             this.itemStack = itemStack;
+        }
+
+        @Override
+        public ItemTransform getTransform() {
+            return transform;
+        }
+
+        @Override
+        public RenderType getRenderType() {
+            return renderType;
         }
     }
 }

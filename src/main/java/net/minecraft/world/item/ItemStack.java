@@ -110,6 +110,7 @@ import org.apache.commons.lang3.function.TriConsumer;
 import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
+import squeek.appleskin.client.TooltipOverlayHandler;
 
 public final class ItemStack implements DataComponentHolder, IItemStack {
     private static final List<Component> OP_NBT_WARNING = List.of(
@@ -242,8 +243,8 @@ public final class ItemStack implements DataComponentHolder, IItemStack {
         if (shulkerView.isPresent()) return shulkerView;
 
         // AppleSkin: food overlay
-        if (appleskin.client.TooltipOverlayHandler.INSTANCE != null) {
-            Optional<TooltipComponent> foodOverlay = appleskin.client.TooltipOverlayHandler.INSTANCE.getFoodTooltipImage(this);
+        if (TooltipOverlayHandler.INSTANCE != null) {
+            Optional<TooltipComponent> foodOverlay = TooltipOverlayHandler.INSTANCE.getFoodTooltipImage(this);
             if (foodOverlay.isPresent()) return foodOverlay;
         }
 

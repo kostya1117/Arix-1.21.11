@@ -96,6 +96,7 @@ import ru.arixcompany.features.module.modules.render.Animations;
 import ru.arixcompany.features.module.modules.render.NoRender;
 import ru.arixcompany.utils.animation.Animation;
 import ru.arixcompany.utils.animation.impl.quad.EaseInOutQuad;
+import squeek.appleskin.client.HUDOverlayHandler;
 
 public class Gui {
     private static final Identifier CROSSHAIR_SPRITE = Identifier.withDefaultNamespace("hud/crosshair");
@@ -888,8 +889,8 @@ public class Gui {
             this.renderAirBubbles(p_283143_, player, l2, j2, i1);
             Profiler.get().pop();
 
-            if (appleskin.client.HUDOverlayHandler.INSTANCE != null)
-                appleskin.client.HUDOverlayHandler.INSTANCE.onRenderHealth(p_283143_, player, l, j1);
+            if (HUDOverlayHandler.INSTANCE != null)
+                HUDOverlayHandler.INSTANCE.onRenderHealth(p_283143_, player, l, j1);
         }
     }
 
@@ -1029,8 +1030,8 @@ public class Gui {
 
     private void renderFood(GuiGraphics p_330960_, Player p_328268_, int p_331606_, int p_330339_) {
         // AppleSkin: exhaustion underlay (before vanilla food)
-        if (appleskin.client.HUDOverlayHandler.INSTANCE != null)
-            appleskin.client.HUDOverlayHandler.INSTANCE.onPreRenderFood(p_330960_, p_328268_, p_331606_, p_330339_);
+        if (HUDOverlayHandler.INSTANCE != null)
+            HUDOverlayHandler.INSTANCE.onPreRenderFood(p_330960_, p_328268_, p_331606_, p_330339_);
 
         FoodData fooddata = p_328268_.getFoodData();
         int i = fooddata.getFoodLevel();
@@ -1066,8 +1067,8 @@ public class Gui {
         }
 
         // AppleSkin: saturation + hunger overlay (after vanilla food)
-        if (appleskin.client.HUDOverlayHandler.INSTANCE != null)
-            appleskin.client.HUDOverlayHandler.INSTANCE.onRenderFood(p_330960_, p_328268_, p_331606_, p_330339_);
+        if (HUDOverlayHandler.INSTANCE != null)
+            HUDOverlayHandler.INSTANCE.onRenderFood(p_330960_, p_328268_, p_331606_, p_330339_);
     }
 
     private void renderVehicleHealth(GuiGraphics p_283368_) {

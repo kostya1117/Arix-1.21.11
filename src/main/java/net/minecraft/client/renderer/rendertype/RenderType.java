@@ -29,11 +29,12 @@ import net.optifine.shaders.ShadersRender;
 import org.joml.Matrix4fStack;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
+import team.creative.itemphysiclite.mixin.RenderTypeAccessor;
 
 import static net.minecraft.client.renderer.rendertype.LayeringTransform.VIEW_OFFSET_Z_LAYERING;
 import static net.minecraft.client.renderer.rendertype.OutputTarget.ITEM_ENTITY_TARGET;
 
-public class RenderType implements IRenderType {
+public class RenderType implements IRenderType, RenderTypeAccessor {
     private static final int MEGABYTE = 1048576;
     public static final int BIG_BUFFER_SIZE = 4194304;
     public static final int SMALL_BUFFER_SIZE = 786432;
@@ -203,6 +204,7 @@ public class RenderType implements IRenderType {
         return this.state.sortOnUpload;
     }
 
+    @Override
     public String getName() {
         return this.name;
     }

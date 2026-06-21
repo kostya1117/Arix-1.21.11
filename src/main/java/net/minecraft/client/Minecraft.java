@@ -264,7 +264,6 @@ import net.minecraft.world.level.validation.DirectoryValidator;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
-import net.minecraft.world.phys.Vec3;
 import org.apache.commons.io.FileUtils;
 import org.joml.Vector3f;
 import org.jspecify.annotations.Nullable;
@@ -275,8 +274,8 @@ import ru.arixcompany.features.event.EventRepo;
 import ru.arixcompany.features.event.player.EventGameTicked;
 import ru.arixcompany.features.event.player.EventShield;
 import ru.arixcompany.features.event.world.*;
-import ru.arixcompany.features.module.modules.combat.HitAura;
 import ru.arixcompany.utils.player.TickLoopTaskExecutor;
+import squeek.appleskin.client.HUDOverlayHandler;
 
 public class Minecraft extends ReentrantBlockableEventLoop<Runnable> implements WindowEventHandler {
     static Minecraft instance;
@@ -1795,8 +1794,8 @@ public class Minecraft extends ReentrantBlockableEventLoop<Runnable> implements 
 
         EventRepo.call(new EventTick());
 
-        if (appleskin.client.HUDOverlayHandler.INSTANCE != null)
-            appleskin.client.HUDOverlayHandler.INSTANCE.onClientTick();
+        if (HUDOverlayHandler.INSTANCE != null)
+            HUDOverlayHandler.INSTANCE.onClientTick();
 
         ProfilerFiller profilerfiller = Profiler.get();
         profilerfiller.push("gui");

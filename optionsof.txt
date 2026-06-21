@@ -64,13 +64,13 @@ ofChatShadow:true
 ofTelemetry:0
 ofHeldItemTooltips:true
 key_of.key.zoom:key.keyboard.c
-ofQuickInfo:false
+ofQuickInfo:true
 ofQuickInfoFps:6
-ofQuickInfoChunks:true
-ofQuickInfoEntities:true
+ofQuickInfoChunks:false
+ofQuickInfoEntities:false
 ofQuickInfoParticles:false
 ofQuickInfoUpdates:true
-ofQuickInfoGpu:false
+ofQuickInfoGpu:true
 ofQuickInfoPos:5
 ofQuickInfoFacing:3
 ofQuickInfoBiome:false
@@ -80,5 +80,5 @@ ofQuickInfoNativeMemory:3
 ofQuickInfoTargetBlock:3
 ofQuickInfoTargetFluid:3
 ofQuickInfoTargetEntity:3
-ofQuickInfoLabels:5
+ofQuickInfoLabels:6
 ofQuickInfoBackground:false

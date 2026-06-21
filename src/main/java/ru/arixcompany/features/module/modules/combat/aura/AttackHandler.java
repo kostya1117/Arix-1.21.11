@@ -36,7 +36,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 @UtilityClass
 public final class AttackHandler implements IMinecraft {
-    private float currentCooldownThreshold = 0.9f;
+    private float currentCooldownThreshold = generateHumanCooldown();
     Randomizer randomizer = new Randomizer();
     HitAura hitAura = Arix.getInstance().getModuleRepo().getModule(HitAura.class);
     public void performAttack(LivingEntity target, boolean rayCast, float ranges) {
@@ -250,7 +250,7 @@ public final class AttackHandler implements IMinecraft {
             mc.player.swing(hand);
        // }
 
-          //currentCooldownThreshold = generateHumanCooldown();
+          currentCooldownThreshold = generateHumanCooldown();
 
         if (hitAura.misc.isSelected("Ломать щит")) {
             if (target instanceof Player entity) {

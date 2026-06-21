@@ -13,9 +13,10 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.phys.AABB;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
+// Импорты мода (проверьте наличие этих классов в classpath Recaf)
+import team.creative.itemphysiclite.ItemEntityRenderStateExtender;
+import team.creative.itemphysiclite.ItemPhysicLite;
 
 public class ItemEntityRenderer extends EntityRenderer<ItemEntity, ItemEntityRenderState> {
     private static final float ITEM_MIN_HOVER_HEIGHT = 0.0625F;
@@ -35,13 +36,22 @@ public class ItemEntityRenderer extends EntityRenderer<ItemEntity, ItemEntityRen
         return new ItemEntityRenderState();
     }
 
+    @Override
     public void extractRenderState(ItemEntity p_365788_, ItemEntityRenderState p_361751_, float p_369533_) {
         super.extractRenderState(p_365788_, p_361751_, p_369533_);
         p_361751_.bobOffset = p_365788_.bobOffs;
         p_361751_.extractItemGroupRenderState(p_365788_, p_365788_.getItem(), this.itemModelResolver);
+
+        ((ItemEntityRenderStateExtender) p_361751_).extractPhysic(p_365788_);
     }
 
+    @Override
     public void submit(ItemEntityRenderState p_426384_, PoseStack p_430644_, SubmitNodeCollector p_429208_, CameraRenderState p_423141_) {
+        if (ItemPhysicLite.submit(p_426384_, p_430644_, p_429208_, p_423141_, this.random)) {
+            super.submit(p_426384_, p_430644_, p_429208_, p_423141_);
+            return;
+        }
+
         if (!p_426384_.item.isEmpty()) {
             p_430644_.pushPose();
             AABB aabb = p_426384_.item.getModelBoundingBox();
@@ -60,9 +70,7 @@ public class ItemEntityRenderer extends EntityRenderer<ItemEntity, ItemEntityRen
         submitMultipleFromCount(p_430176_, p_426685_, p_430605_, p_425809_, p_429667_, p_425809_.item.getModelBoundingBox());
     }
 
-    public static void submitMultipleFromCount(
-        PoseStack p_426862_, SubmitNodeCollector p_430116_, int p_425551_, ItemClusterRenderState p_430657_, RandomSource p_424140_, AABB p_427782_
-    ) {
+    public static void submitMultipleFromCount(PoseStack p_426862_, SubmitNodeCollector p_430116_, int p_425551_, ItemClusterRenderState p_430657_, RandomSource p_424140_, AABB p_427782_) {
         int i = p_430657_.count;
         if (i != 0) {
             p_424140_.setSeed(p_430657_.seed);
@@ -70,7 +78,6 @@ public class ItemEntityRenderer extends EntityRenderer<ItemEntity, ItemEntityRen
             float f = (float)p_427782_.getZsize();
             if (f > 0.0625F) {
                 itemstackrenderstate.submit(p_426862_, p_430116_, p_425551_, OverlayTexture.NO_OVERLAY, p_430657_.outlineColor);
-
                 for (int j = 1; j < i; j++) {
                     p_426862_.pushPose();
                     float f1 = (p_424140_.nextFloat() * 2.0F - 1.0F) * 0.15F;
@@ -85,7 +92,6 @@ public class ItemEntityRenderer extends EntityRenderer<ItemEntity, ItemEntityRen
                 p_426862_.translate(0.0F, 0.0F, -(f4 * (i - 1) / 2.0F));
                 itemstackrenderstate.submit(p_426862_, p_430116_, p_425551_, OverlayTexture.NO_OVERLAY, p_430657_.outlineColor);
                 p_426862_.translate(0.0F, 0.0F, f4);
-
                 for (int k = 1; k < i; k++) {
                     p_426862_.pushPose();
                     float f5 = (p_424140_.nextFloat() * 2.0F - 1.0F) * 0.15F * 0.5F;
@@ -108,7 +114,6 @@ public class ItemEntityRenderer extends EntityRenderer<ItemEntity, ItemEntityRen
             float f = (float)aabb.getZsize();
             if (f > 0.0625F) {
                 itemstackrenderstate.submit(p_330844_, p_428133_, p_334169_, OverlayTexture.NO_OVERLAY, p_377874_.outlineColor);
-
                 for (int j = 1; j < i; j++) {
                     p_330844_.pushPose();
                     float f1 = (p_331892_.nextFloat() * 2.0F - 1.0F) * 0.15F;
@@ -123,7 +128,6 @@ public class ItemEntityRenderer extends EntityRenderer<ItemEntity, ItemEntityRen
                 p_330844_.translate(0.0F, 0.0F, -(f4 * (i - 1) / 2.0F));
                 itemstackrenderstate.submit(p_330844_, p_428133_, p_334169_, OverlayTexture.NO_OVERLAY, p_377874_.outlineColor);
                 p_330844_.translate(0.0F, 0.0F, f4);
-
                 for (int k = 1; k < i; k++) {
                     p_330844_.pushPose();
                     float f5 = (p_331892_.nextFloat() * 2.0F - 1.0F) * 0.15F * 0.5F;

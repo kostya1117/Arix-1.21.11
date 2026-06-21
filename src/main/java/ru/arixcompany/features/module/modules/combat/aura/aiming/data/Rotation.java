@@ -157,24 +157,29 @@ public record Rotation(float yaw, float pitch, boolean isNormalized) implements 
                 angleDifference(other.pitch, this.pitch)
         );
     }
-public Rotation towardsLinear(Rotation other, float horizontalFactor, float verticalFactor) {
-    RotationDelta diff = rotationDeltaTo(other);
+    public Rotation towardsLinear(Rotation other, float horizontalFactor, float verticalFactor) {
+        double d2 = mc.options.sensitivity().get() * 0.6 + 0.2;
+        double interpolationFactor = d2 * d2 * d2 * 8.0D;
 
-    float rotationDifference = diff.length();
+        RotationDelta diff = rotationDeltaTo(other);
+        float rotationDifference = diff.length();
 
-    float maxYaw   = Math.abs(diff.deltaYaw()   / rotationDifference) * horizontalFactor;
-    float maxPitch = Math.abs(diff.deltaPitch()  / rotationDifference) * verticalFactor;
+        float maxYaw   = Math.abs(diff.deltaYaw()   / rotationDifference) * horizontalFactor;
+        float maxPitch = Math.abs(diff.deltaPitch()  / rotationDifference) * verticalFactor;
 
-    Interpolate.StepProfile profile = Interpolate.PROFILES.getOrDefault(
-            HitAura.interrot.getSelected(),
-            Interpolate.PROFILES.get("Линейное")
-    );
+        Interpolate.StepProfile profile = Interpolate.PROFILES.getOrDefault(
+                HitAura.interrot.getSelected(),
+                Interpolate.PROFILES.get("Линейное")
+        );
 
-    float yawStep   = Math.copySign(Interpolate.applyStep(diff.deltaYaw(),   maxYaw,   profile), diff.deltaYaw());
-    float pitchStep = Math.copySign(Interpolate.applyStep(diff.deltaPitch(),  maxPitch, profile), diff.deltaPitch());
+        float maxStepYaw = (float) (Interpolate.applyStep(diff.deltaYaw(), maxYaw, profile) / interpolationFactor);
+        float yawStep = Mth.clamp(diff.deltaYaw(), -maxStepYaw, maxStepYaw);
 
-    return new Rotation(this.yaw + yawStep, this.pitch + pitchStep);
-}
+        float maxStepPitch = (float) (Interpolate.applyStep(diff.deltaPitch(), maxPitch, profile) / interpolationFactor);
+        float pitchStep = Mth.clamp(diff.deltaPitch(), -maxStepPitch, maxStepPitch);
+
+        return new Rotation(this.yaw + yawStep, this.pitch + pitchStep);
+    }
 
 
     /**
@@ -183,12 +188,12 @@ public Rotation towardsLinear(Rotation other, float horizontalFactor, float vert
      * 8.0F * 0.15F = 1.2F makes the speed exactly proportional to Minecraft's GCD.
      */
     public Rotation interpolateToSmooth(Rotation other, float partialTick) {
-        double d2 = Minecraft.getInstance().options.sensitivity().get() * 0.6F + 0.2F;
-        float interpolationFactor = (float) (Math.pow(d2, 3) * 8.0F * 0.15F * partialTick);
+        double d2 = mc.options.sensitivity().get() * 0.6 + 0.2;
+        double interpolationFactor = d2 * d2 * d2 * 8.0D * partialTick;
 
         return new Rotation(
-                Mth.rotLerp(interpolationFactor, this.yaw, other.yaw),
-                Mth.lerp(interpolationFactor, this.pitch, other.pitch)
+                (float) Mth.rotLerp(interpolationFactor, this.yaw, other.yaw),
+                (float) Mth.lerp(interpolationFactor, this.pitch, other.pitch)
         );
     }
 

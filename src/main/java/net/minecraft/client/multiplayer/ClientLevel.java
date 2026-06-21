@@ -8,6 +8,10 @@ import com.mojang.logging.LogUtils;
 import com.viaversion.viafabricplus.features.world.disable_sequencing.PendingUpdateManager1_18_2;
 import com.viaversion.viafabricplus.injection.access.world.always_tick_entities.IEntity;
 import com.viaversion.viafabricplus.settings.impl.DebugSettings;
+import dev.tr7zw.entityculling.EntityCullingModBase;
+import dev.tr7zw.entityculling.NMSCullingHelper;
+import dev.tr7zw.entityculling.versionless.access.Cullable;
+import dev.tr7zw.transition.mc.GeneralUtil;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
@@ -74,10 +78,14 @@ import net.minecraft.world.attribute.AmbientParticle;
 import net.minecraft.world.attribute.EnvironmentAttributeSystem;
 import net.minecraft.world.attribute.EnvironmentAttributes;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Display;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySelector;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragonPart;
+import net.minecraft.world.entity.monster.warden.AngerLevel;
+import net.minecraft.world.entity.monster.warden.Warden;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.item.BlockItem;
@@ -389,36 +397,72 @@ public class ClientLevel extends Level implements CacheSlot.Cleaner<ClientLevel>
         return p_194185_.chunkPosition().getChessboardDistance(this.minecraft.player.chunkPosition()) <= this.serverSimulationDistance;
     }
 
-    public void tickNonPassenger(Entity p_104640_) {
-        final IEntity mixinEntity = p_104640_;
-        if (!mixinEntity.viaFabricPlus$isInLoadedChunkAndShouldTick() && !p_104640_.isSpectator()) {
-            p_104640_.setOldPosAndRot();
-            this.viaFabricPlus$checkChunk(p_104640_);
-            if (mixinEntity.viaFabricPlus$isInLoadedChunkAndShouldTick()) {
-                for (Entity entity2 : p_104640_.getPassengers()) {
-                    this.tickPassenger(p_104640_, entity2);
+    public void tickNonPassenger(Entity entity) {
+        if (!EntityCullingModBase.instance.config.tickCulling || EntityCullingModBase.instance.config.skipEntityCulling) {
+            EntityCullingModBase.instance.tickedEntities++;
+        } else {
+            if (EntityCullingModBase.instance.config.forceDisplayCulling && entity instanceof net.minecraft.world.entity.Display display) {
+                this.processDisplay(display);
+            }
+
+            if (NMSCullingHelper.ignoresCulling(entity)
+                    || entity == GeneralUtil.getPlayer()
+                    || entity == GeneralUtil.getCameraEntity()
+                    || entity.isPassenger()
+                    || entity.isVehicle()
+                    || entity instanceof net.minecraft.world.entity.vehicle.minecart.AbstractMinecart) {
+
+                EntityCullingModBase.instance.tickedEntities++;
+
+            } else if (EntityCullingModBase.instance.tickCullWhistelist.contains(entity.getType())
+                    || EntityCullingModBase.instance.entityWhitelist.contains(entity.getType())) {
+
+                EntityCullingModBase.instance.tickedEntities++;
+
+            } else {
+                if (entity instanceof Cullable cull) {
+                    if (cull.isCulled() || cull.isOutOfCamera()) {
+                        this.basicTick(entity);
+                        EntityCullingModBase.instance.skippedEntityTicks++;
+                        return;
+                    } else {
+                        cull.setOutOfCamera(true);
+                    }
+                }
+                EntityCullingModBase.instance.tickedEntities++;
+            }
+        }
+        if (!entity.viaFabricPlus$isInLoadedChunkAndShouldTick() && !entity.isSpectator()) {
+            entity.setOldPosAndRot();
+            this.viaFabricPlus$checkChunk(entity);
+            if (entity.viaFabricPlus$isInLoadedChunkAndShouldTick()) {
+                for (Entity passenger : entity.getPassengers()) {
+                    this.tickPassenger(entity, passenger);
                 }
             }
             return;
         }
 
-        p_104640_.setOldPosAndRot();
-        p_104640_.tickCount++;
-        Profiler.get().push(() -> BuiltInRegistries.ENTITY_TYPE.getKey(p_104640_.getType()).toString());
-        if (ReflectorForge.canUpdate(p_104640_)) {
-            p_104640_.tick();
+        entity.setOldPosAndRot();
+        entity.tickCount++;
+
+        net.minecraft.util.profiling.ProfilerFiller profiler = net.minecraft.util.profiling.Profiler.get();
+        profiler.push(() -> net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType()).toString());
+
+        if (ReflectorForge.canUpdate(entity)) {
+            entity.tick();
         }
 
-        if (p_104640_.isRemoved()) {
-            this.onEntityRemoved(p_104640_);
+        if (entity.isRemoved()) {
+            this.onEntityRemoved(entity);
         }
 
-        Profiler.get().pop();
+        profiler.pop();
 
-        this.viaFabricPlus$checkChunk(p_104640_);
-        if (p_104640_.viaFabricPlus$isInLoadedChunkAndShouldTick()) {
-            for (Entity entity : p_104640_.getPassengers()) {
-                this.tickPassenger(p_104640_, entity);
+        this.viaFabricPlus$checkChunk(entity);
+        if (entity.viaFabricPlus$isInLoadedChunkAndShouldTick()) {
+            for (Entity passenger : entity.getPassengers()) {
+                this.tickPassenger(entity, passenger);
             }
         }
     }
@@ -1469,5 +1513,44 @@ public class ClientLevel extends Level implements CacheSlot.Cleaner<ClientLevel>
 
         public void onSectionChange(Entity p_233660_) {
         }
+    }
+    private void processDisplay(net.minecraft.world.entity.Display display) {
+        if (display.getBoundingBoxForCulling().getSize() == 0 && display instanceof Display accessor) {
+            accessor.setWidth(3);
+            accessor.setHeight(3);
+            // cause culling data update
+            display.setPos(display.getX(), display.getY(), display.getZ());
+        }
+    }
+
+    private void basicTick(Entity entity) {
+        entity.setOldPosAndRot();
+        ++entity.tickCount;
+        if (entity instanceof LivingEntity living) {
+            living.aiStep();
+            if (living.hurtTime > 0)
+                living.hurtTime--;
+        }
+        // the warden sounds are generated clientside instead of serverside, so simulate
+        // that part of the code here.
+        if (entity instanceof Warden warden) {
+            if (minecraft.level.isClientSide() && !warden.isSilent()
+                    && warden.tickCount % getWardenHeartBeatDelay(warden) == 0) {
+                minecraft.level.playLocalSound(warden.getX(), warden.getY(), warden.getZ(), SoundEvents.WARDEN_HEARTBEAT,
+                        warden.getSoundSource(), 5.0F, warden.getVoicePitch(), false);
+            }
+        }
+    }
+
+    /**
+     * Copy of that method, since it's private. No need to use an access widener for
+     * this
+     *
+     * @param warden
+     * @return
+     */
+    private int getWardenHeartBeatDelay(Warden warden) {
+        float f = warden.getClientAngerLevel() / AngerLevel.ANGRY.getMinimumAnger();
+        return 40 - Mth.floor(Mth.clamp(f, 0.0F, 1.0F) * 30.0F);
     }
 }

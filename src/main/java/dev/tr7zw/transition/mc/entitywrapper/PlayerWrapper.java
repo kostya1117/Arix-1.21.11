@@ -2,6 +2,7 @@ package dev.tr7zw.transition.mc.entitywrapper;
 
 import dev.tr7zw.transition.mc.PlayerUtil;
 //? if >= 1.21.2 {
+import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.entity.state.*;
 import net.minecraft.world.entity.player.PlayerSkin;
 import net.minecraft.resources.Identifier; // Используем Identifier, как в вашем коде ClientAsset
@@ -57,7 +58,9 @@ public class PlayerWrapper extends LivingEntityWrapper implements IMinecraft {
 //            return renderState.skin.cape().texturePath();
 //        }
 //        return null;
-         return Identifier.arix("images/cape.png");
+        if (mc.player == null || mc.level == null)
+            return null;
+        return mc.player.getLocationCape();
     }
     //? } else {
     /*
@@ -78,15 +81,8 @@ public class PlayerWrapper extends LivingEntityWrapper implements IMinecraft {
     }
 
     public boolean isCapeVisible() {
-        //? if >= 1.21.2 {
-        // Проверяем: включен ли плащ в настройках скина и есть ли сама текстура
-        // return renderState.showCape && renderState.skin.cape() != null && !renderState.isSpectator;
-        return true;
-        //? } else {
-        /*
-        return player.isCapeLoaded() && player.isModelPartShown(PlayerModelPart.CAPE) && !isPlayerInvisible();
-        */
-        //? }
+        //$ is_cape_visible
+        return renderState.showCape && !isPlayerInvisible();
     }
 
     public boolean hasElytraEquipped() {

@@ -1,0 +1,162 @@
+---- Minecraft Crash Report ----
+// Uh... Did I do that?
+
+Time: 2026-06-21 15:22:39
+Description: Rendering entity in world
+
+java.lang.NullPointerException: Cannot invoke "net.minecraft.world.entity.Entity.isInvisible()" because "entityLiving" is null
+	at net.optifine.player.PlayerItemsLayer.renderEquippedItems(PlayerItemsLayer.java:30)
+	at net.optifine.player.PlayerItemsLayer.submit(PlayerItemsLayer.java:25)
+	at net.minecraft.client.renderer.entity.LivingEntityRenderer.submit(LivingEntityRenderer.java:153)
+	at net.minecraft.client.renderer.entity.LivingEntityRenderer.submit(LivingEntityRenderer.java:55)
+	at net.minecraft.client.renderer.entity.EntityRenderDispatcher.submit(EntityRenderDispatcher.java:182)
+	at net.minecraft.client.renderer.LevelRenderer.submitEntities(LevelRenderer.java:1207)
+	at net.minecraft.client.renderer.LevelRenderer.lambda$addMainPass$2(LevelRenderer.java:921)
+	at com.mojang.blaze3d.framegraph.FrameGraphBuilder.execute(FrameGraphBuilder.java:71)
+	at net.minecraft.client.renderer.LevelRenderer.renderLevel(LevelRenderer.java:793)
+	at net.minecraft.client.renderer.GameRenderer.renderLevel(GameRenderer.java:1007)
+	at net.minecraft.client.renderer.GameRenderer.render(GameRenderer.java:667)
+	at net.minecraft.client.Minecraft.runTick(Minecraft.java:1312)
+	at net.minecraft.client.Minecraft.run(Minecraft.java:901)
+	at net.minecraft.client.main.Main.main(Main.java:226)
+	at mcp.client.Start.main(Start.java:15)
+
+
+A detailed walkthrough of the error, its code path and all known details is as follows:
+---------------------------------------------------------------------------------------
+
+-- Head --
+Thread: Render thread
+Stacktrace:
+	at net.optifine.player.PlayerItemsLayer.renderEquippedItems(PlayerItemsLayer.java:30)
+	at net.optifine.player.PlayerItemsLayer.submit(PlayerItemsLayer.java:25)
+	at net.minecraft.client.renderer.entity.LivingEntityRenderer.submit(LivingEntityRenderer.java:153)
+
+-- EntityRenderState being rendered --
+Details:
+	EntityRenderState: net.minecraft.client.renderer.entity.state.AvatarRenderState
+	Entity's Exact location: -6.54, 76.00, 11.41
+Stacktrace:
+	at net.minecraft.client.renderer.entity.EntityRenderDispatcher.submit(EntityRenderDispatcher.java:182)
+	at net.minecraft.client.renderer.LevelRenderer.submitEntities(LevelRenderer.java:1207)
+	at net.minecraft.client.renderer.LevelRenderer.lambda$addMainPass$2(LevelRenderer.java:921)
+	at com.mojang.blaze3d.framegraph.FrameGraphBuilder.execute(FrameGraphBuilder.java:71)
+	at net.minecraft.client.renderer.LevelRenderer.renderLevel(LevelRenderer.java:793)
+	at net.minecraft.client.renderer.GameRenderer.renderLevel(GameRenderer.java:1007)
+	at net.minecraft.client.renderer.GameRenderer.render(GameRenderer.java:667)
+	at net.minecraft.client.Minecraft.runTick(Minecraft.java:1312)
+	at net.minecraft.client.Minecraft.run(Minecraft.java:901)
+	at net.minecraft.client.main.Main.main(Main.java:226)
+	at mcp.client.Start.main(Start.java:15)
+
+-- Renderer details --
+Details:
+	Assigned renderer: net.minecraft.client.renderer.entity.player.AvatarRenderer@bdb13a1
+Stacktrace:
+	at net.minecraft.client.renderer.entity.EntityRenderDispatcher.fillRendererDetails(EntityRenderDispatcher.java:227)
+	at net.minecraft.client.renderer.entity.EntityRenderDispatcher.submit(EntityRenderDispatcher.java:221)
+	at net.minecraft.client.renderer.LevelRenderer.submitEntities(LevelRenderer.java:1207)
+	at net.minecraft.client.renderer.LevelRenderer.lambda$addMainPass$2(LevelRenderer.java:921)
+	at com.mojang.blaze3d.framegraph.FrameGraphBuilder.execute(FrameGraphBuilder.java:71)
+	at net.minecraft.client.renderer.LevelRenderer.renderLevel(LevelRenderer.java:793)
+	at net.minecraft.client.renderer.GameRenderer.renderLevel(GameRenderer.java:1007)
+	at net.minecraft.client.renderer.GameRenderer.render(GameRenderer.java:667)
+	at net.minecraft.client.Minecraft.runTick(Minecraft.java:1312)
+	at net.minecraft.client.Minecraft.run(Minecraft.java:901)
+	at net.minecraft.client.main.Main.main(Main.java:226)
+	at mcp.client.Start.main(Start.java:15)
+
+-- Uptime --
+Details:
+	JVM uptime: 251.948s
+	Wall uptime: 174.348s
+	High-res time: 161.958s
+	Client ticks: 1975 ticks / 98.750s
+
+-- Affected level --
+Details:
+	All players: 50 total; LocalPlayer{name=Kyrokerexxonx, id=1605155, pos=(0.3541027035317675, 75.0, 15.751744623108557), mode=SURVIVAL, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x00000189bd559cc8@31358330}, RemotePlayer{name=Piona_228Ez, id=1535346, pos=(18.441938196112297, 75.0, 0.5752067444256391), mode=SURVIVAL, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x00000189bd559cc8@31358330}, RemotePlayer{name=Iluxa0768, id=1576702, pos=(18.441938196112297, 75.0, 0.5752067444256391), mode=SURVIVAL, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x00000189bd559cc8@31358330}, RemotePlayer{name=Toffi_Topchikc, id=1412648, pos=(18.441938196112297, 75.0, 0.5752067444256391), mode=SURVIVAL, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x00000189bd559cc8@31358330}, RemotePlayer{name=bobrvtapkax, id=1504815, pos=(11.252685546875, 75.3708224826389, 8.329454210069445), mode=SURVIVAL, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x00000189bd559cc8@31358330}, RemotePlayer{name=sexysquad, id=1510303, pos=(19.178952060897117, 75.0, 6.3754695849521985), mode=SURVIVAL, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x00000189bd559cc8@31358330}, RemotePlayer{name=nybik3, id=1573939, pos=(18.441938196112297, 75.0, 0.5752067444256391), mode=SURVIVAL, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x00000189bd559cc8@31358330}, RemotePlayer{name=doloho123, id=1543453, pos=(18.441938196112297, 75.0, 0.5752067444256391), mode=SURVIVAL, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x00000189bd559cc8@31358330}, RemotePlayer{name=IzDCeqeF, id=1578090, pos=(18.441938196112297, 75.0, 0.5752067444256391), mode=SURVIVAL, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x00000189bd559cc8@31358330}, RemotePlayer{name=safasaa, id=1547110, pos=(18.441938196112297, 75.0, 0.5752067444256391), mode=SURVIVAL, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x00000189bd559cc8@31358330}, RemotePlayer{name=DiacraNaj, id=1577103, pos=(18.232421875, 75.0, 2.664306640625), mode=SURVIVAL, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x00000189bd559cc8@31358330}, RemotePlayer{name=FuzzyLeft, id=1459704, pos=(18.441938196112297, 75.0, 0.5752067444256391), mode=SURVIVAL, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x00000189bd559cc8@31358330}, RemotePlayer{name=Emenadu, id=1542741, pos=(18.441938196112297, 75.0, 0.5752067444256391), mode=SURVIVAL, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x00000189bd559cc8@31358330}, RemotePlayer{name=trtherapy, id=1605002, pos=(-6.811026559932479, 76.07388008744628, 11.534519836320717), mode=SURVIVAL, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x00000189bd559cc8@31358330}, RemotePlayer{name=Marazm_soo_ez, id=1554576, pos=(14.547414123254661, 75.0, 8.565423960358785), mode=SURVIVAL, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x00000189bd559cc8@31358330}, RemotePlayer{name=domerxyesos, id=1595556, pos=(-9.911624107831791, 76.12044270833333, 14.419376326195987), mode=SURVIVAL, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x00000189bd559cc8@31358330}, RemotePlayer{name=WARNING_POLYBIT, id=1596955, pos=(2.309593952333035, 75.0, 1.8008402712542397), mode=SURVIVAL, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x00000189bd559cc8@31358330}, RemotePlayer{name=TTmMaury, id=1559554, pos=(7.640616303083661, 75.0, 8.943404911865985), mode=SURVIVAL, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x00000189bd559cc8@31358330}, RemotePlayer{name=kakaha999, id=1591397, pos=(0.17919921875, 75.0, 0.3076171875), mode=SURVIVAL, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x00000189bd559cc8@31358330}, RemotePlayer{name=DejaneiroBro, id=1585334, pos=(-6.307168416498999, 77.05021049910123, -15.37292563924651), mode=SURVIVAL, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x00000189bd559cc8@31358330}, RemotePlayer{name=ollliia_sey, id=1589804, pos=(25.70715882693737, 75.0, 23.30000001192093), mode=SURVIVAL, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x00000189bd559cc8@31358330}, RemotePlayer{name=KodiItsReal, id=1441576, pos=(-10.711158939549849, 76.0, 7.30355188883134), mode=SURVIVAL, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x00000189bd559cc8@31358330}, RemotePlayer{name=nykaH_Dirt, id=1548091, pos=(-8.104528882607449, 75.0, 2.1678830180240696), mode=SURVIVAL, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x00000189bd559cc8@31358330}, RemotePlayer{name=venom_4cb, id=1594716, pos=(-10.7001953125, 75.0, 0.577880859375), mode=SURVIVAL, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x00000189bd559cc8@31358330}, RemotePlayer{name=hazelcscc, id=1601509, pos=(-1.68798828125, 75.0, 0.16064453125), mode=SURVIVAL, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x00000189bd559cc8@31358330}, RemotePlayer{name=Uvuzuz, id=1517096, pos=(1.963847254060346, 75.0, -5.92355843099796), mode=SURVIVAL, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x00000189bd559cc8@31358330}, RemotePlayer{name=Danu13, id=1587341, pos=(5.860243907517922, 75.0, -3.0674882679463416), mode=SURVIVAL, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x00000189bd559cc8@31358330}, RemotePlayer{name=angelgodbroken0, id=1589429, pos=(-16.561588492338114, 76.139999995629, 22.699982449564494), mode=SURVIVAL, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x00000189bd559cc8@31358330}, RemotePlayer{name=StefGunManAZV, id=1550805, pos=(11.283708427628616, 75.58769964840677, -3.3701334197150197), mode=SURVIVAL, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x00000189bd559cc8@31358330}, RemotePlayer{name=qqqqqq11123, id=1568852, pos=(33.38267882005323, 76.0, -6.776532568432387), mode=SURVIVAL, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x00000189bd559cc8@31358330}, RemotePlayer{name=qwe13eyyer, id=1536394, pos=(35.4159516147985, 81.0, 27.57171326684207), mode=SURVIVAL, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x00000189bd559cc8@31358330}, RemotePlayer{name=I_Want_To_Loli, id=1560741, pos=(-27.608154296875, 81.0, 12.54833984375), mode=SURVIVAL, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x00000189bd559cc8@31358330}, RemotePlayer{name=jhablares, id=1412447, pos=(-9.263572076380894, 75.0, -4.999626197128884), mode=SURVIVAL, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x00000189bd559cc8@31358330}, RemotePlayer{name=kot_v_shapke, id=1472395, pos=(-2.7183734843778358, 75.0, -7.500595164245822), mode=SURVIVAL, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x00000189bd559cc8@31358330}, RemotePlayer{name=Bestdiyyor, id=1589269, pos=(-0.4872405176048987, 76.0, -12.196343284733686), mode=SURVIVAL, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x00000189bd559cc8@31358330}, RemotePlayer{name=zelonoydemon, id=1551948, pos=(-0.6149384194474229, 75.0, -0.10526284619622522), mode=SURVIVAL, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x00000189bd559cc8@31358330}, RemotePlayer{name=123grisha, id=1569692, pos=(-7.62255859375, 75.0, -9.022216796875), mode=SURVIVAL, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x00000189bd559cc8@31358330}, RemotePlayer{name=peweeed, id=1434833, pos=(-9.849175347222221, 78.1030002170139, 15.519314236111112), mode=SURVIVAL, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x00000189bd559cc8@31358330}, RemotePlayer{name=lukmankaban, id=1564162, pos=(-12.30517578125, 77.0, 18.131103515625), mode=SURVIVAL, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x00000189bd559cc8@31358330}, RemotePlayer{name=Iwantday1, id=1534817, pos=(5.084716796875, 76.0, -16.20849609375), mode=SURVIVAL, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x00000189bd559cc8@31358330}, RemotePlayer{name=galaxy_, id=1577110, pos=(15.948191847056952, 75.0, -17.873673901125184), mode=SURVIVAL, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x00000189bd559cc8@31358330}, RemotePlayer{name=hefuctere2233, id=1577239, pos=(33.043920751483604, 80.0, -25.405839639573216), mode=SURVIVAL, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x00000189bd559cc8@31358330}, RemotePlayer{name=petyapetyx, id=1540023, pos=(-25.123875619438607, 82.0, 29.185255927606544), mode=SURVIVAL, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x00000189bd559cc8@31358330}, RemotePlayer{name=OlmHeal7hy, id=1544988, pos=(-28.64754144295001, 77.0, 22.822016602217797), mode=SURVIVAL, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x00000189bd559cc8@31358330}, RemotePlayer{name=pepehnele1488, id=1600688, pos=(-23.268744574652775, 84.15711805555556, 30.913438585069443), mode=SURVIVAL, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x00000189bd559cc8@31358330}, RemotePlayer{name=KittyTallMannnn, id=1594923, pos=(-12.6181640625, 76.0, -14.3271484375), mode=SURVIVAL, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x00000189bd559cc8@31358330}, RemotePlayer{name=mrpingvinchik, id=1544031, pos=(-26.68508581499395, 84.0, -26.322197391474884), mode=SURVIVAL, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x00000189bd559cc8@31358330}, RemotePlayer{name=GILC15, id=1517386, pos=(-12.822168850435014, 77.53340096900492, 13.937329766694793), mode=SURVIVAL, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x00000189bd559cc8@31358330}, RemotePlayer{name=67abana, id=1605354, pos=(9.427734375, 75.0, 1.01806640625), mode=SURVIVAL, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x00000189bd559cc8@31358330}, RemotePlayer{name=suppdana2, id=1595351, pos=(17.4560546875, 75.0, 0.618408203125), mode=SURVIVAL, permission=net.minecraft.server.permissions.PermissionSet$$Lambda/0x00000189bd559cc8@31358330}
+	Chunk stats: 289, 169
+	Level dimension: minecraft:spawn
+	Level spawn location: World: (0,75,0), Section: (at 0,11,0 in 0,4,0; chunk contains blocks 0,0,0 to 15,255,15), Region: (0,0; contains chunks 0,0 to 31,31, blocks 0,0,0 to 511,255,511)
+	Level time: 32920 game time, 5000 day time
+	Server brand: §6Spooky§cTime.net <- §6Spooky§cCore 1.16.5
+	Server type: Non-integrated multiplayer server
+	Tracked entity count: 71
+
+-- Last reload --
+Details:
+	Reload number: 1
+	Reload reason: initial
+	Finished: Yes
+	Packs: vanilla
+
+-- System Details --
+Details:
+	Minecraft Version: 1.21.11
+	Minecraft Version ID: 1.21.11
+	Operating System: Windows 11 (amd64) version 10.0
+	Java Version: 21.0.11, Amazon.com Inc.
+	Java VM Version: OpenJDK 64-Bit Server VM (mixed mode, sharing), Amazon.com Inc.
+	Memory: 139399992 bytes (132 MiB) / 761266176 bytes (726 MiB) up to 4271898624 bytes (4074 MiB)
+	CPUs: 4
+	Processor Vendor: GenuineIntel
+	Processor Name: Intel(R) Core(TM) i5-4460  CPU @ 3.20GHz
+	Identifier: Intel64 Family 6 Model 60 Stepping 3
+	Microarchitecture: Haswell (Client)
+	Frequency (GHz): 3.19
+	Number of physical packages: 1
+	Number of physical CPUs: 4
+	Number of logical CPUs: 4
+	Graphics card #0 name: NVIDIA GeForce GTX 1080
+	Graphics card #0 vendor: NVIDIA
+	Graphics card #0 VRAM (MiB): 8192.00
+	Graphics card #0 deviceId: VideoController1
+	Graphics card #0 versionInfo: 32.0.15.8228
+	Memory slot #0 capacity (MiB): 8192.00
+	Memory slot #0 clockSpeed (GHz): 1.60
+	Memory slot #0 type: DDR3
+	Memory slot #1 capacity (MiB): 8192.00
+	Memory slot #1 clockSpeed (GHz): 1.60
+	Memory slot #1 type: DDR3
+	Virtual memory max (MiB): 30113.52
+	Virtual memory used (MiB): 17911.29
+	Swap memory total (MiB): 13824.00
+	Swap memory used (MiB): 0.00
+	Space in storage for jna.tmpdir (MiB): <path not set>
+	Space in storage for org.lwjgl.system.SharedLibraryExtractPath (MiB): <path not set>
+	Space in storage for io.netty.native.workdir (MiB): <path not set>
+	Space in storage for java.io.tmpdir (MiB): available: 1652.63, total: 476108.00
+	Space in storage for workdir (MiB): available: 1652.63, total: 476108.00
+	JVM Flags: 0 total; 
+	Debug Flags: 0 total; 
+	Launched Version: mcp
+	Backend library: LWJGL version 3.3.3+5
+	Backend API: NVIDIA GeForce GTX 1080/PCIe/SSE2 GL version 3.3.0 NVIDIA 582.28, NVIDIA Corporation
+	Window size: 1920x1009
+	GFLW Platform: win32
+	Render Extensions: GL_ARB_buffer_storage, GL_KHR_debug, GL_ARB_vertex_attrib_binding, GL_ARB_direct_state_access, GL_EXT_texture_filter_anisotropic
+	GL debug messages: 
+	Is Modded: Definitely; Client brand changed to 'optifine'
+	Universe: 400921fb54442d18
+	Type: Client (map_client.txt)
+	Transparency: regular
+	Render Distance: 5/16 chunks
+	Resource Packs: vanilla
+	Current Language: ru_ru
+	Locale: ru_RU
+	System encoding: Cp1251
+	File encoding: UTF-8
+	CPU: 4x Intel(R) Core(TM) i5-4460 CPU @ 3.20GHz
+	OptiFine Version: OptiFine_1.21.11_HD_U_J9
+	OptiFine Build: null
+	Render Distance Chunks: 16
+	Mipmaps: 4
+	Anisotropic Filtering: 1
+	Antialiasing: 0
+	Multitexture: false
+	Shaders: null
+	OpenGlVersion: 3.3.0 NVIDIA 582.28
+	OpenGlRenderer: NVIDIA GeForce GTX 1080/PCIe/SSE2
+	OpenGlVendor: NVIDIA Corporation
+	CpuCount: 4

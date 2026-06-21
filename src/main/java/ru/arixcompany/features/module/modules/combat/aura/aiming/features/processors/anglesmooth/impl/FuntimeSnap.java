@@ -117,7 +117,7 @@ public class FuntimeSnap extends FactorAngleSmooth implements IMinecraft {
         boolean burst = burstTicks > 0;
         if (burst) burstTicks--;
 
-        double t = Util.getNanos() / 1.0E9 * Mth.PI2 * 2.0;
+        double t = Util.getNanos() / 1.0E9 * Mth.PI2 * 4;
         float yawJitter = (burst ? 3f : 5f) * Mth.sin(t);
         float pitchJitter = (burst ? 2f : 3f) * Mth.cos(t);
 
