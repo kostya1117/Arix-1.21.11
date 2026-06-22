@@ -80,7 +80,7 @@ public class ArmorStandRenderer extends LivingEntityRenderer<ArmorStand, ArmorSt
         }
     }
 
-    protected boolean shouldShowName(ArmorStand p_363344_, double p_365520_) {
+    public boolean shouldShowName(ArmorStand p_363344_, double p_365520_) {
         return p_363344_.isCustomNameVisible();
     }
 

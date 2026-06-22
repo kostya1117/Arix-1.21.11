@@ -62,7 +62,7 @@ public class AutoAccept extends Module {
 
     public AutoAccept() {
         super("AutoAccept", Category.Misc);
-        setup(onlyFriends);
+        setup(onlyFriends,clanAccept);
     }
 
     @EventHandler

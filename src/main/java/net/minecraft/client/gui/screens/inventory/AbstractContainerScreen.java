@@ -110,6 +110,44 @@ public abstract class AbstractContainerScreen<T extends AbstractContainerMenu> e
                         p_281248_   // mouseY
                 )
         );
+
+        if (this.minecraft.player == null) return;
+
+        for (Slot slot : this.menu.slots) {
+            if (!slot.isActive()) continue;
+            ItemStack invStack = slot.getItem();
+            if (invStack.isEmpty()) continue;
+
+            int slotX = this.leftPos + slot.x;
+            int slotY = this.topPos + slot.y;
+
+            float secs = ru.arixcompany.utils.player.inv.CooldownHelper.getRemainingSeconds(this.minecraft.player, invStack, p_281886_);
+            if (secs > 0) {
+                String cdText = String.format("%.0f", Math.ceil(secs));
+                int total = ru.arixcompany.utils.player.inv.CooldownHelper.getTotalTicks(this.minecraft.player, invStack);
+                int remaining = ru.arixcompany.utils.player.inv.CooldownHelper.getRemainingTicks(this.minecraft.player, invStack);
+                float progress = total > 0 ? (float) remaining / total : 0;
+                int color = getInvCooldownColor(progress);
+                p_283479_.pose().pushMatrix();
+                p_283479_.pose().translate(slotX + 1, slotY + 12);
+                p_283479_.pose().scale(0.8f, 0.8f);
+                p_283479_.drawString(this.font, cdText, 0, 0, color);
+                p_283479_.pose().popMatrix();
+            }
+
+            ru.arixcompany.features.module.modules.player.Assistant assistant = ru.arixcompany.Arix.getInstance() != null && ru.arixcompany.Arix.getInstance().getModuleRepo() != null
+                    ? ru.arixcompany.Arix.getInstance().getModuleRepo().getModule(ru.arixcompany.features.module.modules.player.Assistant.class) : null;
+            if (assistant != null && assistant.isState()) {
+                String keyName = assistant.getBindKeyForStack(invStack);
+                if (keyName != null && !keyName.isEmpty()) {
+                    p_283479_.pose().pushMatrix();
+                    p_283479_.pose().translate(slotX + 1, slotY + 1);
+                    p_283479_.pose().scale(0.85f, 0.85f);
+                    p_283479_.drawString(this.font, keyName, 0, 0, 0xFFFFFFFF);
+                    p_283479_.pose().popMatrix();
+                }
+            }
+        }
     }
 
     public void renderContents(GuiGraphics p_409971_, int p_409213_, int p_408205_, float p_408282_) {
@@ -164,6 +202,23 @@ public abstract class AbstractContainerScreen<T extends AbstractContainerMenu> e
                 this.snapbackData = null;
             }
         }
+    }
+
+    private static int getInvCooldownColor(float progress) {
+        float r;
+        float g;
+        if (progress > 0.5f) {
+            float t = (progress - 0.5f) * 2.0f;
+            r = 1.0f;
+            g = 1.0f - t;
+        } else {
+            float t = progress * 2.0f;
+            r = t;
+            g = 1.0f;
+        }
+        int ri = Mth.clamp((int)(r * 255), 0, 255);
+        int gi = Mth.clamp((int)(g * 255), 0, 255);
+        return 0xFF000000 | (ri << 16) | (gi << 8);
     }
 
     protected void renderSlots(GuiGraphics p_366639_, int p_458409_, int p_458008_) {

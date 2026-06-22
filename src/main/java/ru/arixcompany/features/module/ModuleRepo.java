@@ -65,11 +65,11 @@ public class ModuleRepo implements IMinecraft {
        modules.add(new ChestStealer());
        modules.add(new Particles());
        modules.add(new AutoSwap());
-       modules.add(new ServerAssist());
        modules.add(new AspectRatio());
        modules.add(new SeeInvisibles());
        modules.add(new CustomModels());
        modules.add(new Speed());
+       modules.add(new Assistant());
    }
 
    public void init() {

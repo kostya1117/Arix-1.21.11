@@ -53,6 +53,11 @@ public class ScriptRepo {
             return this;
         }
 
+        public <E> ScriptTask scheduleDelayed(Class<E> eventClass, StepTask<E> action, long delayMs) {
+            steps.add(new Step<>(eventClass, action, delayMs));
+            return this;
+        }
+
         public boolean tryTick(Object event) {
             Step<?> nextStep = steps.peek();
 

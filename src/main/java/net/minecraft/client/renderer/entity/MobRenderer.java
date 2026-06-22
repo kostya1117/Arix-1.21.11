@@ -14,7 +14,7 @@ public abstract class MobRenderer<T extends Mob, S extends LivingEntityRenderSta
         super(p_174304_, p_174305_, p_174306_);
     }
 
-    protected boolean shouldShowName(T p_360956_, double p_369719_) {
+    public boolean shouldShowName(T p_360956_, double p_369719_) {
         return super.shouldShowName(p_360956_, p_369719_) && (p_360956_.shouldShowName() || p_360956_.hasCustomName() && p_360956_ == this.entityRenderDispatcher.crosshairPickEntity);
     }
 
